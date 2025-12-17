@@ -27,8 +27,9 @@
   ],
   "object_events": [
     {
+      "local_id": "LOCALID_ROUTE22_RIVAL",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BLUE",
+      "graphics_id": "OBJ_EVENT_GFX_BLUE",
       "x": 25,
       "y": 4,
       "elevation": 3,

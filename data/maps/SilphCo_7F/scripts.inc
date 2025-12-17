@@ -1,6 +1,3 @@
-.set LOCALID_RIVAL,     1
-.set LOCALID_WORKER_M2, 8
-
 SilphCo_7F_MapScripts:: @ 8161984
 	map_script MAP_SCRIPT_ON_LOAD, SilphCo_7F_OnLoad
 	map_script MAP_SCRIPT_ON_TRANSITION, SilphCo_7F_OnTransition
@@ -18,7 +15,7 @@ SilphCo_7F_OnTransition:: @ 81619AB
 	end
 
 SilphCo_7F_EventScript_SetObjRocketsGone:: @ 81619B7
-	setobjectmovementtype LOCALID_WORKER_M2, MOVEMENT_TYPE_FACE_UP
+	setobjectmovementtype LOCALID_SILPH_CO_7F_WORKER_M2, MOVEMENT_TYPE_FACE_UP
 	return
 
 SilphCo_7F_EventScript_RivalTriggerTop:: @ 81619BC
@@ -36,10 +33,10 @@ SilphCo_7F_EventScript_RivalTriggerBottom:: @ 81619C8
 SilphCo_7F_EventScript_RivalScene:: @ 81619D4
 	textcolor 0
 	playbgm MUS_ENCOUNTER_RIVAL, 0
-	applymovement LOCALID_RIVAL, Movement_ExclamationMark
+	applymovement LOCALID_SILPH_CO_RIVAL, Movement_ExclamationMark
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestDown
-	applymovement LOCALID_RIVAL, Movement_Delay48
+	applymovement LOCALID_SILPH_CO_RIVAL, Movement_Delay48
 	waitmovement 0
 	msgbox SilphCo_7F_Text_RivalWhatKeptYou
 	compare VAR_TEMP_1, 0
@@ -47,7 +44,7 @@ SilphCo_7F_EventScript_RivalScene:: @ 81619D4
 	compare VAR_TEMP_1, 1
 	call_if_eq SilphCo_7F_EventScript_RivalApproachBottom
 	msgbox SilphCo_7F_Text_RivalIntro
-	setvar VAR_LAST_TALKED, LOCALID_RIVAL
+	setvar VAR_LAST_TALKED, LOCALID_SILPH_CO_RIVAL
 	compare VAR_STARTER_MON, 2
 	call_if_eq SilphCo_7F_EventScript_RivalSquirtle
 	compare VAR_STARTER_MON, 1
@@ -63,7 +60,7 @@ SilphCo_7F_EventScript_RivalScene:: @ 81619D4
 	call_if_eq SilphCo_7F_EventScript_RivalExitBottom
 	playse SE_WARP_IN
 	fadedefaultbgm
-	removeobject LOCALID_RIVAL
+	removeobject LOCALID_SILPH_CO_RIVAL
 	waitse
 	setvar VAR_MAP_SCENE_SILPH_CO_7F, 1
 	releaseall
@@ -71,7 +68,7 @@ SilphCo_7F_EventScript_RivalScene:: @ 81619D4
 
 SilphCo_7F_EventScript_RivalApproachTop:: @ 8161A73
 	closemessage
-	applymovement LOCALID_RIVAL, SilphCo_7F_Movement_RivalApproachTop
+	applymovement LOCALID_SILPH_CO_RIVAL, SilphCo_7F_Movement_RivalApproachTop
 	waitmovement 0
 	return
 
@@ -91,12 +88,12 @@ SilphCo_7F_EventScript_RivalCharmander:: @ 8161A96
 	return
 
 SilphCo_7F_EventScript_RivalExitTop:: @ 8161AA1
-	applymovement LOCALID_RIVAL, SilphCo_7F_Movement_RivalExitTop
+	applymovement LOCALID_SILPH_CO_RIVAL, SilphCo_7F_Movement_RivalExitTop
 	waitmovement 0
 	return
 
 SilphCo_7F_EventScript_RivalExitBottom:: @ 8161AAC
-	applymovement LOCALID_RIVAL, SilphCo_7F_Movement_RivalExitBottom
+	applymovement LOCALID_SILPH_CO_RIVAL, SilphCo_7F_Movement_RivalExitBottom
 	waitmovement 0
 	return
 

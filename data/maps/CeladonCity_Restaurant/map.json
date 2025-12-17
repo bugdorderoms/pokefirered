@@ -17,7 +17,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_CHEF",
+      "graphics_id": "OBJ_EVENT_GFX_CHEF",
       "x": 12,
       "y": 7,
       "elevation": 3,
@@ -31,7 +31,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
+      "graphics_id": "OBJ_EVENT_GFX_WOMAN_2",
       "x": 11,
       "y": 4,
       "elevation": 3,
@@ -45,7 +45,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
+      "graphics_id": "OBJ_EVENT_GFX_FAT_MAN",
       "x": 9,
       "y": 4,
       "elevation": 3,
@@ -59,7 +59,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BALDING_MAN",
+      "graphics_id": "OBJ_EVENT_GFX_BALDING_MAN",
       "x": 1,
       "y": 2,
       "elevation": 0,
@@ -73,7 +73,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WORKER_M",
+      "graphics_id": "OBJ_EVENT_GFX_WORKER_M",
       "x": 3,
       "y": 7,
       "elevation": 0,

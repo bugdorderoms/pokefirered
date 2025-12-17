@@ -92,12 +92,12 @@ static u32 TeachyTvGrassAnimationCheckIfNeedsToGenerateGrassObj(s16 x, s16 y);
 static void TeachyTvGrassAnimationObjCallback(struct Sprite *sprite);
 static void TeachyTvRestorePlayerPartyCallback(void);
 static void TeachyTvPreBattleAnimAndSetBattleCallback(u32 taskId);
-static void TeachyTvLoadMapTilesetToBuffer(struct Tileset *ts, u8 *dstBuffer, u16 size);
-static void TeachyTvPushBackNewMapPalIndexArrayEntry(const struct MapLayout *mStruct, u16 *buf1, u8 *palIndexArray, u16 mapEntry, u16 offset);
+static void TeachyTvLoadMapTilesetToBuffer(const struct Tileset *ts, u8 *dstBuffer, u16 size);
+static void TeachyTvPushBackNewMapPalIndexArrayEntry(const struct Tileset *primaryTileset, const struct Tileset *secondaryTileset, u16 *buf1, u8 *palIndexArray, u16 mapEntry, u16 offset);
 static void TeachyTvComputeMapTilesFromTilesetAndMetaTiles(const u16 *metaTilesArray, u8 *blockBuf, u8 *tileset);
 static void TeachyTvComputeSingleMapTileBlockFromTilesetAndMetaTiles(u8 *blockBuf, u8 *tileset, u32 metaTile);
 static u16 TeachyTvComputePalIndexArrayEntryByMetaTile(u8 *palIndexArrayBuf, u16 metaTile);
-static void TeachyTvLoadMapPalette(const struct MapLayout * mStruct, const u8 *palIndexArray);
+static void TeachyTvLoadMapPalette(const struct Tileset *primaryTileset, const struct Tileset *secondaryTileset, const u8 *palIndexArray);
 
 static const struct BgTemplate sBgTemplates[] = 
 {
@@ -1238,14 +1238,16 @@ static void TeachyTvLoadBg3Map(u16 *buffer)
     void * palIndicesBuffer;
     u32 numMapTilesRows = 0;
     const struct MapLayout *layout = &Route1_Layout;
+    const struct Tileset *primaryTileset = GetMapPrimaryTilesetOfSeason(layout, SEASON_SUMMER);
+    const struct Tileset *secondaryTileset = GetMapSecondaryTilesetOfSeason(layout, SEASON_SUMMER);
     u16 * blockIndicesBuffer = AllocZeroed(0x800);
     tilesetsBuffer = AllocZeroed(NUM_TILES_TOTAL * TILE_SIZE_4BPP);
     palIndicesBuffer = Alloc(16);
 
     memset(palIndicesBuffer, 0xFF, 16);
 
-    TeachyTvLoadMapTilesetToBuffer(layout->primaryTileset, tilesetsBuffer, NUM_TILES_IN_PRIMARY);
-    TeachyTvLoadMapTilesetToBuffer(layout->secondaryTileset, tilesetsBuffer + NUM_TILES_IN_PRIMARY * TILE_SIZE_4BPP, NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY);
+    TeachyTvLoadMapTilesetToBuffer(primaryTileset, tilesetsBuffer, NUM_TILES_IN_PRIMARY);
+    TeachyTvLoadMapTilesetToBuffer(secondaryTileset, tilesetsBuffer + NUM_TILES_IN_PRIMARY * TILE_SIZE_4BPP, NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY);
 
     for (i = 0; i < 9; i++)
     {
@@ -1264,7 +1266,7 @@ static void TeachyTvLoadBg3Map(u16 *buffer)
                 blockIndicesBuffer[k] = currentBlockIdx;
                 numMapTilesRows++;
             }
-            TeachyTvPushBackNewMapPalIndexArrayEntry(layout, &buffer[64 * i + 2 * j], palIndicesBuffer, currentBlockIdx, k);
+            TeachyTvPushBackNewMapPalIndexArrayEntry(primaryTileset, secondaryTileset, &buffer[64 * i + 2 * j], palIndicesBuffer, currentBlockIdx, k);
         }
     }
 
@@ -1276,15 +1278,15 @@ static void TeachyTvLoadBg3Map(u16 *buffer)
         memset(mapTilesRowBuffer, 0, 0x80);
         
         if (blockIndicesBuffer[i] < NUM_METATILES_IN_PRIMARY)
-            TeachyTvComputeMapTilesFromTilesetAndMetaTiles((const void *)layout->primaryTileset->metatiles + blockIndicesBuffer[i] * (NUM_TILES_PER_METATILE * 2), mapTilesRowBuffer, tilesetsBuffer);
+            TeachyTvComputeMapTilesFromTilesetAndMetaTiles((const void *)primaryTileset->metatiles + blockIndicesBuffer[i] * (NUM_TILES_PER_METATILE * 2), mapTilesRowBuffer, tilesetsBuffer);
         else
-            TeachyTvComputeMapTilesFromTilesetAndMetaTiles((const void *)layout->secondaryTileset->metatiles + (blockIndicesBuffer[i] - NUM_METATILES_IN_PRIMARY) * (NUM_TILES_PER_METATILE * 2), mapTilesRowBuffer, tilesetsBuffer);
+            TeachyTvComputeMapTilesFromTilesetAndMetaTiles((const void *)secondaryTileset->metatiles + (blockIndicesBuffer[i] - NUM_METATILES_IN_PRIMARY) * (NUM_TILES_PER_METATILE * 2), mapTilesRowBuffer, tilesetsBuffer);
 
         CpuFastCopy(mapTilesRowBuffer, bgTilesBuffer + i * 0x40, 0x80);
     }
 
     LoadBgTiles(3, bgTilesBuffer, numMapTilesRows * 0x80, 0);
-    TeachyTvLoadMapPalette(layout, palIndicesBuffer);
+    TeachyTvLoadMapPalette(primaryTileset, secondaryTileset, palIndicesBuffer);
 
     Free(mapTilesRowBuffer);
     Free(bgTilesBuffer);
@@ -1293,7 +1295,7 @@ static void TeachyTvLoadBg3Map(u16 *buffer)
     Free(blockIndicesBuffer);
 }
 
-static void TeachyTvLoadMapTilesetToBuffer(struct Tileset *ts, u8 *dstBuffer, u16 size)
+static void TeachyTvLoadMapTilesetToBuffer(const struct Tileset *ts, u8 *dstBuffer, u16 size)
 {
     if (ts)
     {
@@ -1304,14 +1306,14 @@ static void TeachyTvLoadMapTilesetToBuffer(struct Tileset *ts, u8 *dstBuffer, u1
     }
 }
 
-static void TeachyTvPushBackNewMapPalIndexArrayEntry(const struct MapLayout *mStruct, u16 *buf1, u8 *palIndexArray, u16 mapEntry, u16 offset)
+static void TeachyTvPushBackNewMapPalIndexArrayEntry(const struct Tileset *primaryTileset, const struct Tileset *secondaryTileset, u16 *buf1, u8 *palIndexArray, u16 mapEntry, u16 offset)
 {
     const u16 * metaTileEntryAddr;
     
     if (mapEntry < NUM_METATILES_IN_PRIMARY)
-        metaTileEntryAddr = &mStruct->primaryTileset->metatiles[NUM_TILES_PER_METATILE * mapEntry];
+        metaTileEntryAddr = &primaryTileset->metatiles[NUM_TILES_PER_METATILE * mapEntry];
     else
-        metaTileEntryAddr = &mStruct->secondaryTileset->metatiles[NUM_TILES_PER_METATILE * (mapEntry - NUM_METATILES_IN_PRIMARY)];
+        metaTileEntryAddr = &secondaryTileset->metatiles[NUM_TILES_PER_METATILE * (mapEntry - NUM_METATILES_IN_PRIMARY)];
 
     buf1[0] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, metaTileEntryAddr[0]) << 12) + 4 * offset;
     buf1[1] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, metaTileEntryAddr[1]) << 12) + 4 * offset + 1;
@@ -1408,7 +1410,7 @@ static u16 TeachyTvComputePalIndexArrayEntryByMetaTile(u8 *palIndexArrayBuf, u16
     return (0xF - i);
 }
 
-static void TeachyTvLoadMapPalette(const struct MapLayout * mStruct, const u8 * palIndexArray)
+static void TeachyTvLoadMapPalette(const struct Tileset *primaryTileset, const struct Tileset *secondaryTileset, const u8 * palIndexArray)
 {
     u32 i;
     const struct Tileset * ts;
@@ -1420,9 +1422,9 @@ static void TeachyTvLoadMapPalette(const struct MapLayout * mStruct, const u8 * 
             break;
         
         if (palIndexArray[i] >= NUM_PALS_IN_PRIMARY)
-            dest = mStruct->secondaryTileset->palettes[palIndexArray[i]];
+            dest = secondaryTileset->palettes[palIndexArray[i]];
         else
-            dest = mStruct->primaryTileset->palettes[palIndexArray[i]];
+            dest = primaryTileset->palettes[palIndexArray[i]];
         
         LoadPalette(dest, 0x10 * (15 - i), 0x20);
     }

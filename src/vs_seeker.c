@@ -27,6 +27,8 @@
 #include "constants/items.h"
 #include "constants/trainer_types.h"
 
+#define NO_REMATCH_LOCALID LOCALID_PLAYER
+
 enum
 {
    VSSEEKER_NOT_CHARGED,
@@ -599,12 +601,12 @@ static void GatherNearbyTrainerInfo(void)
             vsSeekerObjectIdx++;
         }
     }
-    sVsSeeker->trainerInfo[vsSeekerObjectIdx].localId = 0xFF;
+    sVsSeeker->trainerInfo[vsSeekerObjectIdx].localId = NO_REMATCH_LOCALID;
 }
 
 static void Task_VsSeeker_3(u32 taskId)
 {
-    if (ScriptMovement_IsObjectMovementFinished(0xFF, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup))
+    if (ScriptMovement_IsObjectMovementFinished(NO_REMATCH_LOCALID, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup))
     {
         if (sVsSeeker->responseCode == VSSEEKER_RESPONSE_NO_RESPONSE)
             DisplayItemMessageOnField(taskId, 2, VSSeeker_Text_TrainersNotReady, Task_ItemUse_CloseMessageBoxAndReturnToField);
@@ -628,7 +630,7 @@ static u32 CanUseVsSeeker(void)
     
     if (vsSeekerChargeSteps == 100)
     {
-        if (GetRematchableTrainerLocalId() == 0xFF)
+        if (GetRematchableTrainerLocalId() == NO_REMATCH_LOCALID)
             return VSSEEKER_NO_ONE_IN_RANGE;
         else
             return VSSEEKER_CAN_USE;
@@ -649,7 +651,7 @@ static u32 GetVsSeekerResponseInArea(const VsSeekerData * vsSeekerData)
     u32 response = 0;
     s32 vsSeekerIdx = 0;
 
-    while (sVsSeeker->trainerInfo[vsSeekerIdx].localId != 0xFF)
+    while (sVsSeeker->trainerInfo[vsSeekerIdx].localId != NO_REMATCH_LOCALID)
     {
         if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[vsSeekerIdx]))
         {
@@ -1037,7 +1039,7 @@ static u32 GetRematchableTrainerLocalId(void)
 {
     u32 i, idx;
 
-    for (i = 0; sVsSeeker->trainerInfo[i].localId != 0xFF; i++)
+    for (i = 0; sVsSeeker->trainerInfo[i].localId != NO_REMATCH_LOCALID; i++)
     {
         if (IsTrainerVisibleOnScreen(&sVsSeeker->trainerInfo[i]))
         {
@@ -1045,7 +1047,7 @@ static u32 GetRematchableTrainerLocalId(void)
                 return sVsSeeker->trainerInfo[i].localId;
         }
     }
-    return 0xFF;
+    return NO_REMATCH_LOCALID;
 }
 
 static void StartTrainerObjectMovementScript(struct VsSeekerTrainerInfo * trainerInfo, const u8 * script)
@@ -1080,7 +1082,7 @@ static void StartAllRespondantIdleMovements(void)
 
     for (i = 0; i < sVsSeeker->numRematchableTrainers; i++)
     {
-        for (j = 0; sVsSeeker->trainerInfo[j].localId != 0xFF; j++)
+        for (j = 0; sVsSeeker->trainerInfo[j].localId != NO_REMATCH_LOCALID; j++)
         {
             if (sVsSeeker->trainerInfo[j].trainerIdx == sVsSeeker->trainerIdxArray[i])
             {

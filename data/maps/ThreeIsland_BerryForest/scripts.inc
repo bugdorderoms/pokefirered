@@ -1,5 +1,3 @@
-.set LOCALID_LOSTELLE, 1
-
 ThreeIsland_BerryForest_MapScripts:: @ 8163C71
 	map_script MAP_SCRIPT_ON_TRANSITION, ThreeIsland_BerryForest_OnTransition
 	.byte 0
@@ -14,9 +12,9 @@ ThreeIsland_BerryForest_EventScript_Lostelle:: @ 8163C83
 	faceplayer
 	msgbox ThreeIsland_BerryForest_Text_HelpScaryPokemon
 	playse SE_PIN
-	applymovement LOCALID_LOSTELLE, Movement_ExclamationMark
+	applymovement LOCALID_BERRY_FOREST_LOSTELLE, Movement_ExclamationMark
 	waitmovement 0
-	applymovement LOCALID_LOSTELLE, ThreeIsland_BerryForest_Movement_LostelleLookAround
+	applymovement LOCALID_BERRY_FOREST_LOSTELLE, ThreeIsland_BerryForest_Movement_LostelleLookAround
 	waitmovement 0
 	msgbox ThreeIsland_BerryForest_Text_HereItComesAgain
 	waitse
@@ -24,7 +22,7 @@ ThreeIsland_BerryForest_EventScript_Lostelle:: @ 8163C83
 	waitmoncry
 	setwildbattle SPECIES_HYPNO, 30, ITEM_NONE
 	dowildbattle
-	applymovement LOCALID_LOSTELLE, Movement_FacePlayer
+	applymovement LOCALID_BERRY_FOREST_LOSTELLE, Movement_FacePlayer
 	waitmovement 0
 	msgbox ThreeIsland_BerryForest_Text_ThankYouHaveThis
 	giveitem ITEM_IAPAPA_BERRY

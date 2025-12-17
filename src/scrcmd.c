@@ -1019,7 +1019,7 @@ bool32 ScrCmd_waitmovement(struct ScriptContext * ctx)
     
     u32 localId = VarGet(cmd->localId);
 
-    if (localId != 0)
+    if (localId != LOCALID_NONE)
         sMovingNpcId = localId;
     
     sMovingNpcMapBank = gSaveBlock1Ptr->location.mapGroup;
@@ -1035,7 +1035,7 @@ bool32 ScrCmd_waitmovement_at(struct ScriptContext * ctx)
     
     u32 localId = VarGet(cmd->localId);
 
-    if (localId != 0)
+    if (localId != LOCALID_NONE)
         sMovingNpcId = localId;
     
     sMovingNpcMapBank = cmd->mapGroup;

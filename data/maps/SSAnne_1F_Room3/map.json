@@ -17,7 +17,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_LITTLE_GIRL",
+      "graphics_id": "OBJ_EVENT_GFX_LITTLE_GIRL",
       "x": 3,
       "y": 4,
       "elevation": 3,
@@ -31,7 +31,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WIGGLYTUFF",
+      "graphics_id": "OBJ_EVENT_GFX_WIGGLYTUFF",
       "x": 4,
       "y": 2,
       "elevation": 3,
@@ -45,7 +45,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BALDING_MAN",
+      "graphics_id": "OBJ_EVENT_GFX_BALDING_MAN",
       "x": 0,
       "y": 4,
       "elevation": 3,

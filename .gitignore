@@ -48,6 +48,7 @@ ld_script_sapphire.txt
 sound/**/*.bin
 sound/songs/midi/*.s
 src/data/wild_encounters.h
+include/constants/map_event_ids.h
 tags
 tools/agbcc
 tools/binutils

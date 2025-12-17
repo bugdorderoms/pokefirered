@@ -28,7 +28,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
+      "graphics_id": "OBJ_EVENT_GFX_WOMAN_1",
       "x": 9,
       "y": 8,
       "elevation": 3,
@@ -42,7 +42,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_LASS",
+      "graphics_id": "OBJ_EVENT_GFX_LASS",
       "x": 75,
       "y": 3,
       "elevation": 3,
@@ -56,7 +56,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 67,
       "y": 5,
       "elevation": 3,
@@ -70,7 +70,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BOY",
+      "graphics_id": "OBJ_EVENT_GFX_BOY",
       "x": 15,
       "y": 14,
       "elevation": 3,
@@ -84,7 +84,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
+      "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
       "x": 47,
       "y": 3,
       "elevation": 3,
@@ -98,7 +98,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
+      "graphics_id": "OBJ_EVENT_GFX_BLACKBELT",
       "x": 50,
       "y": 3,
       "elevation": 3,
@@ -112,11 +112,11 @@
     },
     {
       "type": "clone",
-	  "graphics_id": "OBJ_EVENT_GFX_COOLTRAINER_M",
+      "graphics_id": "OBJ_EVENT_GFX_COOLTRAINER_M",
       "x": 109,
       "y": 3,
       "target_local_id": 12,
-	  "target_map": "MAP_CERULEAN_CITY"
+      "target_map": "MAP_CERULEAN_CITY"
     }
   ],
   "warp_events": [

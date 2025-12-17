@@ -34,6 +34,8 @@ endif
 
 include config.mk
 
+GLOBAL_DEPS := include/constants/map_event_ids.h
+
 GCC_VER = $(shell $(CC) -dumpversion)
 
 ifeq ($(MODERN),0)
@@ -127,6 +129,7 @@ infoshell = $(foreach line, $(shell $1 | sed "s/ /__SPACE__/g"), $(info $(subst 
 # Disable dependency scanning for clean/tidy/tools
 ifeq (,$(filter-out all compare syms modern check,$(MAKECMDGOALS)))
 $(call infoshell, $(MAKE) tools)
+$(call infoshell, $(MAKE) $(GLOBAL_DEPS))
 else
 NODEP := 1
 endif
@@ -204,6 +207,7 @@ mostlyclean: tidy
 	$(RM) $(SONG_OBJS) $(MID_SUBDIR)/*.s
 	find . \( -iname '*.1bpp' -o -iname '*.4bpp' -o -iname '*.8bpp' -o -iname '*.gbapal' -o -iname '*.lz' -o -iname '*.latfont' -o -iname '*.hwjpnfont' -o -iname '*.fwjpnfont' \) -exec rm {} +
 	$(RM) $(DATA_ASM_SUBDIR)/layouts/layouts.inc $(DATA_ASM_SUBDIR)/layouts/layouts_table.inc
+	$(RM) $(DATA_ASM_SUBDIR)/tilesets/tilesets.inc
 	$(RM) $(DATA_ASM_SUBDIR)/maps/connections.inc $(DATA_ASM_SUBDIR)/maps/events.inc $(DATA_ASM_SUBDIR)/maps/groups.inc $(DATA_ASM_SUBDIR)/maps/headers.inc
 	find $(DATA_ASM_SUBDIR)/maps \( -iname 'connections.inc' -o -iname 'events.inc' -o -iname 'header.inc' \) -exec rm {} +
 	$(RM) $(AUTO_GEN_TARGETS)
@@ -273,7 +277,7 @@ ifeq ($(DINFO),1)
 override CFLAGS += -g
 endif
 
-$(C_BUILDDIR)/%.o : $(C_SUBDIR)/%.c $$(c_dep)
+$(C_BUILDDIR)/%.o : $(C_SUBDIR)/%.c $$(c_dep) | $(GLOBAL_DEPS)
 	@$(CPP) $(CPPFLAGS) -include $(INSERTS) $< -o $(C_BUILDDIR)/$*.i
 	@$(PREPROC) $(C_BUILDDIR)/$*.i charmap.txt | $(CC1) $(CFLAGS) -o $(C_BUILDDIR)/$*.s
 	@echo -e ".text\n\t.align\t2, 0 @ Don't pad with nop\n" >> $(C_BUILDDIR)/$*.s
@@ -285,7 +289,7 @@ else
 $(C_BUILDDIR)/%.o: c_asm_dep = $(shell [[ -f $(C_SUBDIR)/$*.s ]] && $(SCANINC) -I "" $(C_SUBDIR)/$*.s)
 endif
 
-$(C_BUILDDIR)/%.o: $(C_SUBDIR)/%.s $$(c_asm_dep)
+$(C_BUILDDIR)/%.o: $(C_SUBDIR)/%.s $$(c_asm_dep) | $(GLOBAL_DEPS)
 	$(AS) $(ASFLAGS) -o $@ $<
 
 ifeq ($(NODEP),1)
@@ -306,7 +310,7 @@ $(foreach src, $(ASM_SRCS), $(eval $(call ASM_DEP,$(patsubst $(ASM_SUBDIR)/%.s,$
 endif
 
 ifeq ($(NODEP),1)
-$(DATA_ASM_BUILDDIR)/%.o: $(DATA_ASM_SUBDIR)/%.s
+$(DATA_ASM_BUILDDIR)/%.o: $(DATA_ASM_SUBDIR)/%.s | $(GLOBAL_DEPS)
 	$(PREPROC) $< charmap.txt | $(CPP) -I include | $(AS) $(ASFLAGS) -o $@
 else
 define DATA_ASM_DEP

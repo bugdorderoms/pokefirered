@@ -1,6 +1,3 @@
-.equ LOCALID_RIVAL,	1
-.equ LOCALID_PROF_OAK, 2
-
 IndigoPlateau_Exterior_MapScripts:: @ 816723B
 	map_script MAP_SCRIPT_ON_TRANSITION, IndigoPlateau_Exterior_OnTransition
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, IndigoPlateau_Exterior_OnFrame
@@ -33,8 +30,8 @@ IndigoPlateau_Exterior_EventScript_Credits:: @ 8167264
 	opendoor 11, 6
 	waitdooranim
 	special SpawnCameraObject
-	addobject LOCALID_RIVAL
-	applymovement LOCALID_RIVAL, IndigoPlateau_Exterior_Movement_RivalExitBuilding
+	addobject LOCALID_CREDITS_RIVAL
+	applymovement LOCALID_CREDITS_RIVAL, IndigoPlateau_Exterior_Movement_RivalExitBuilding
 	applymovement OBJ_EVENT_ID_PLAYER, IndigoPlateau_Exterior_Movement_PushPlayerOutOfWay
 	waitmovement 0
 	closedoor 11, 6
@@ -42,15 +39,15 @@ IndigoPlateau_Exterior_EventScript_Credits:: @ 8167264
 
 	@ Rival runs off
 	applymovement OBJ_EVENT_ID_PLAYER, IndigoPlateau_Exterior_Movement_PlayerWatchRivalLeave
-	applymovement LOCALID_RIVAL, IndigoPlateau_Exterior_Movement_RivalLeave
+	applymovement LOCALID_CREDITS_RIVAL, IndigoPlateau_Exterior_Movement_RivalLeave
 	waitmovement 0
 	delay 100
 
 	@ Oak exits building
 	opendoor 11, 6
 	waitdooranim
-	addobject LOCALID_PROF_OAK
-	applymovement LOCALID_PROF_OAK, IndigoPlateau_Exterior_Movement_OakExitBuilding
+	addobject LOCALID_CREDITS_PROF_OAK
+	applymovement LOCALID_CREDITS_PROF_OAK, IndigoPlateau_Exterior_Movement_OakExitBuilding
 	waitmovement 0
 	closedoor 11, 6
 	waitdooranim
@@ -58,7 +55,7 @@ IndigoPlateau_Exterior_EventScript_Credits:: @ 8167264
 
 	@ Oak looks at player, then walks off
 	applymovement OBJ_EVENT_ID_PLAYER, IndigoPlateau_Exterior_Movement_PlayerWatchOakLeave
-	applymovement LOCALID_PROF_OAK, IndigoPlateau_Exterior_Movement_OakLeave
+	applymovement LOCALID_CREDITS_PROF_OAK, IndigoPlateau_Exterior_Movement_OakLeave
 	waitmovement 0
 	delay 100
 
@@ -79,8 +76,8 @@ IndigoPlateau_Exterior_EventScript_Credits:: @ 8167264
 	@ Reset the map state and roll the credits
 	special RemoveCameraObject
 	setvar VAR_MAP_SCENE_INDIGO_PLATEAU_EXTERIOR, 0
-	removeobject LOCALID_RIVAL
-	removeobject LOCALID_PROF_OAK
+	removeobject LOCALID_CREDITS_RIVAL
+	removeobject LOCALID_CREDITS_PROF_OAK
 	special DoCredits
 	waitstate
 	releaseall

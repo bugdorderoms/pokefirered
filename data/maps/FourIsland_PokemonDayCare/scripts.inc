@@ -1,5 +1,3 @@
-.set LOCALID_DAYCARE_WOMAN, 1
-
 FourIsland_PokemonDayCare_MapScripts:: @ 817193F
 	.byte 0
 
@@ -129,7 +127,7 @@ FourIsland_PokemonDayCare_CheckEnoughMoney:: @ 8171AEB
 	end
 
 FourIsland_PokemonDayCare_RetrieveMon:: @ 8171B05
-	applymovement LOCALID_DAYCARE_WOMAN, FourIsland_PokemonDayCare_Movement_RetrieveMon
+	applymovement LOCALID_FOUR_ISLAND_DAYCARE_WOMAN, FourIsland_PokemonDayCare_Movement_RetrieveMon
 	waitmovement 0
 	specialvar VAR_RESULT, TakePokemonFromDaycare
 	special SubtractMoneyFromVar0x8005

@@ -446,8 +446,6 @@ EventScript_BodySlamTaught:: @ 81C4DE2
 	release
 	end
 
-.set LOCALID_CAPE_BRINK_TUTOR, 1
-
 TwoIsland_CapeBrink_House_EventScript_StarterTutor:: @ 81C4DEC
 	lock
 	faceplayer

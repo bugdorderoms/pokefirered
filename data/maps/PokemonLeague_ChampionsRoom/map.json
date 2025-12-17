@@ -16,8 +16,9 @@
   "connections": null,
   "object_events": [
     {
+      "local_id": "LOCALID_CHAMPIONS_ROOM_RIVAL",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BLUE",
+      "graphics_id": "OBJ_EVENT_GFX_BLUE",
       "x": 6,
       "y": 8,
       "elevation": 3,
@@ -30,8 +31,9 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_CHAMPIONS_ROOM_PROF_OAK",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_PROF_OAK",
+      "graphics_id": "OBJ_EVENT_GFX_PROF_OAK",
       "x": 6,
       "y": 15,
       "elevation": 0,

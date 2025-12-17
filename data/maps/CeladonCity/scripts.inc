@@ -1,6 +1,3 @@
-.set LOCALID_FAT_MAN,   2
-.set LOCALID_POLIWRATH, 3
-
 CeladonCity_MapScripts:: @ 8166C8F
 	map_script MAP_SCRIPT_ON_TRANSITION, CeladonCity_OnTransition
 	.byte 0
@@ -36,7 +33,7 @@ CeladonCity_EventScript_FatMan:: @ 8166CC5
 	faceplayer
 	msgbox CeladonCity_Text_MyTrustedPalPoliwrath
 	closemessage
-	applymovement LOCALID_FAT_MAN, Movement_FaceOriginalDirection
+	applymovement LOCALID_CELADON_FAT_MAN, Movement_FaceOriginalDirection
 	waitmovement 0
 	release
 	end
@@ -49,7 +46,7 @@ CeladonCity_EventScript_Poliwrath:: @ 8166CDC
 	msgbox CeladonCity_Text_Poliwrath
 	closemessage
 	waitmoncry
-	applymovement LOCALID_POLIWRATH, Movement_FaceOriginalDirection
+	applymovement LOCALID_CELADON_POLIWRATH, Movement_FaceOriginalDirection
 	waitmovement 0
 	release
 	end

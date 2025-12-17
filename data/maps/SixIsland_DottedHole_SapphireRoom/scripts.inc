@@ -1,6 +1,3 @@
-.equ LOCALID_SAPPHIRE, 1
-.equ LOCALID_THIEF,	2
-
 SixIsland_DottedHole_SapphireRoom_MapScripts:: @ 81641B4
 	.byte 0
 
@@ -13,10 +10,10 @@ SixIsland_DottedHole_SapphireRoom_EventScript_Sapphire:: @ 81641B5
 	waitmessage
 	waitfanfare
 	closemessage
-	setobjectxyperm LOCALID_THIEF, 5, 0
-	addobject LOCALID_THIEF
+	setobjectxyperm LOCALID_DOTTED_HOLE_THIEF, 5, 0
+	addobject LOCALID_DOTTED_HOLE_THIEF
 	playse SE_FALL
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefFallIn
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefFallIn
 	waitmovement 0
 	playse SE_M_STRENGTH
 	compare VAR_FACING, DIR_NORTH
@@ -73,7 +70,7 @@ SixIsland_DottedHole_SapphireRoom_EventScript_Sapphire:: @ 81641B5
 	call_if_eq SixIsland_DottedHole_SapphireRoom_EventScript_ThiefExitWest
 	playse SE_EXIT
 	delay 35
-	removeobject LOCALID_THIEF
+	removeobject LOCALID_DOTTED_HOLE_THIEF
 	setflag FLAG_LEARNED_YES_NAH_CHANSEY
 	release
 	end
@@ -100,48 +97,48 @@ SixIsland_DottedHole_SapphireRoom_EventScript_PlayerFaceThiefDown:: @ 816431A
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefLookAtSapphireNorth:: @ 8164325
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromLeft
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromLeft
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefLookAtSapphireSouth:: @ 8164330
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromLeft
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromLeft
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefLookAtSapphireEast:: @ 816433B
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromBelow
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromBelow
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefLookAtSapphireWest:: @ 8164346
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromBelow
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefLookAtSapphireFromBelow
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefGetSapphireNorth:: @ 8164351
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromLeft
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromLeft
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefGetSapphireSouth:: @ 8164366
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromLeft
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromLeft
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefGetSapphireEast:: @ 816437B
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromBelow
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromBelow
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefGetSapphireWest:: @ 8164390
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromBelow
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefGetSapphireFromBelow
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestLeft
 	waitmovement 0
@@ -149,25 +146,25 @@ SixIsland_DottedHole_SapphireRoom_EventScript_ThiefGetSapphireWest:: @ 8164390
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefExitNorth:: @ 81643A5
 	applymovement OBJ_EVENT_ID_PLAYER, SixIsland_DottedHole_SapphireRoom_Movement_PlayerWatchThiefExit
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitNorth
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitNorth
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefExitSouth:: @ 81643B7
 	applymovement OBJ_EVENT_ID_PLAYER, SixIsland_DottedHole_SapphireRoom_Movement_PlayerWatchThiefExit
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitSouth
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitSouth
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefExitEast:: @ 81643C9
 	applymovement OBJ_EVENT_ID_PLAYER, SixIsland_DottedHole_SapphireRoom_Movement_PlayerWatchThiefExit
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitEastWest
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitEastWest
 	waitmovement 0
 	return
 
 SixIsland_DottedHole_SapphireRoom_EventScript_ThiefExitWest:: @ 81643DB
 	applymovement OBJ_EVENT_ID_PLAYER, SixIsland_DottedHole_SapphireRoom_Movement_PlayerWatchThiefExit
-	applymovement LOCALID_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitEastWest
+	applymovement LOCALID_DOTTED_HOLE_THIEF, SixIsland_DottedHole_SapphireRoom_Movement_ThiefExitEastWest
 	waitmovement 0
 	return
 

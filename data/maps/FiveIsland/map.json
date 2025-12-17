@@ -28,7 +28,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_FISHER",
+      "graphics_id": "OBJ_EVENT_GFX_FISHER",
       "x": 8,
       "y": 5,
       "elevation": 3,
@@ -42,7 +42,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
+      "graphics_id": "OBJ_EVENT_GFX_BUG_CATCHER",
       "x": 16,
       "y": 10,
       "elevation": 3,
@@ -56,11 +56,11 @@
     },
     {
       "type": "clone",
-	  "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
+      "graphics_id": "OBJ_EVENT_GFX_CUT_TREE",
       "x": 32,
       "y": 9,
       "target_local_id": 4,
-	  "target_map": "MAP_FIVE_ISLAND_MEADOW"
+      "target_map": "MAP_FIVE_ISLAND_MEADOW"
     }
   ],
   "warp_events": [

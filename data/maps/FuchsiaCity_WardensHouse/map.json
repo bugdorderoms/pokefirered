@@ -17,7 +17,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_OLD_MAN_2",
+      "graphics_id": "OBJ_EVENT_GFX_OLD_MAN_2",
       "x": 3,
       "y": 5,
       "elevation": 3,
@@ -31,7 +31,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
+      "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
       "x": 11,
       "y": 6,
       "elevation": 3,
@@ -45,7 +45,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 11,
       "y": 5,
       "elevation": 3,
@@ -59,7 +59,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "0",
+      "graphics_id": "0",
       "x": 4,
       "y": 1,
       "elevation": 0,

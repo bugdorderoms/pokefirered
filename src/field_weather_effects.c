@@ -2485,7 +2485,7 @@ static const union AnimCmd sFlyingLeaves_Autumn[] = {
     ANIMCMD_END,
 };
 
-static const union AnimCmd *const sFlyingLeavesAnimTable[] = {
+static const union AnimCmd *const sFlyingLeavesAnimTable[NUM_SEASONS] = {
     [SEASON_SUMMER] = sFlyingLeaves_Summer,
     [SEASON_AUTUMN] = sFlyingLeaves_Autumn,
     [SEASON_WINTER] = sFlyingLeaves_Summer, // No leaves in winter
@@ -2667,7 +2667,7 @@ static void UpdateLeaveSprite(struct Sprite *sprite)
 
 static void CreateLeaveSprites(void)
 {
-    u32 i, spriteId, season;
+    u32 i, spriteId;
     struct Sprite *sprite;
     
     if (!gWeatherPtr->flyingLeavesSpritesCreated)
@@ -2675,10 +2675,8 @@ static void CreateLeaveSprites(void)
         gWeatherPtr->flyingLeavesSpritesCreated = TRUE;
         
         LoadWeatherSpritePalette(&sLeavesSpriteTemplate); // Necessary be loaded for NPC shadows
-        
-        season = DNSGetCurrentSeason();
-        
-        if (season != SEASON_WINTER)
+
+        if (gMain.tilesetSeason != SEASON_WINTER)
         {
             LoadSpriteSheet(&sLeavesSpriteSheet);
             
@@ -2690,7 +2688,7 @@ static void CreateLeaveSprites(void)
                 {
                     sprite = &gSprites[spriteId];
                     
-                    StartSpriteAnim(sprite, season);
+                    StartSpriteAnim(sprite, gMain.tilesetSeason);
                     SetLeaveSpriteData(sprite, 4 * i);
                     gWeatherPtr->leaveSprites[i] = sprite;
                 }

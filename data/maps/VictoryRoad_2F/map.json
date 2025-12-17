@@ -166,6 +166,7 @@
       "type": "object"
     },
     {
+      "local_id": "LOCALID_VICTORY_ROAD_2F_BOULDER1",
       "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
       "in_connection": false,
       "x": 6,
@@ -181,6 +182,7 @@
       "type": "object"
     },
     {
+      "local_id": "LOCALID_VICTORY_ROAD_2F_BOULDER2",
       "graphics_id": "OBJ_EVENT_GFX_PUSHABLE_BOULDER",
       "in_connection": false,
       "x": 33,

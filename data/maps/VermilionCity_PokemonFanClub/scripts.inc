@@ -1,6 +1,3 @@
-.set LOCALID_WOMAN,   5
-.set LOCALID_FAT_MAN, 6
-
 .set SPOKE_TO_WOMAN_LAST,   FLAG_TEMP_2
 .set SPOKE_TO_FAT_MAN_LAST, FLAG_TEMP_3
 
@@ -59,7 +56,7 @@ VermilionCity_PokemonFanClub_EventScript_Woman:: @ 816B528
 	goto_if_set SPOKE_TO_FAT_MAN_LAST, VermilionCity_PokemonFanClub_EventScript_WomanSpokeToFatMan
 	msgbox VermilionCity_PokemonFanClub_Text_AdoreMySeel
 	closemessage
-	applymovement LOCALID_WOMAN, Movement_FaceOriginalDirection
+	applymovement LOCALID_POKEMON_FAN_CLUB_WOMAN, Movement_FaceOriginalDirection
 	waitmovement 0
 	setflag SPOKE_TO_WOMAN_LAST
 	release
@@ -68,7 +65,7 @@ VermilionCity_PokemonFanClub_EventScript_Woman:: @ 816B528
 VermilionCity_PokemonFanClub_EventScript_WomanSpokeToFatMan:: @ 816B54B
 	msgbox VermilionCity_PokemonFanClub_Text_SeelFarMoreAttractive
 	closemessage
-	applymovement LOCALID_WOMAN, Movement_FaceOriginalDirection
+	applymovement LOCALID_POKEMON_FAN_CLUB_WOMAN, Movement_FaceOriginalDirection
 	waitmovement 0
 	clearflag SPOKE_TO_FAT_MAN_LAST
 	release
@@ -80,7 +77,7 @@ VermilionCity_PokemonFanClub_EventScript_FatMan:: @ 816B563
 	goto_if_set SPOKE_TO_WOMAN_LAST, VermilionCity_PokemonFanClub_EventScript_FatManSpokeToWoman
 	msgbox VermilionCity_PokemonFanClub_Text_AdmirePikachusTail
 	closemessage
-	applymovement LOCALID_FAT_MAN, Movement_FaceOriginalDirection
+	applymovement LOCALID_POKEMON_FAN_CLUB_FAT_MAN, Movement_FaceOriginalDirection
 	waitmovement 0
 	setflag SPOKE_TO_FAT_MAN_LAST
 	release
@@ -89,7 +86,7 @@ VermilionCity_PokemonFanClub_EventScript_FatMan:: @ 816B563
 VermilionCity_PokemonFanClub_EventScript_FatManSpokeToWoman:: @ 816B586
 	msgbox VermilionCity_PokemonFanClub_Text_PikachuTwiceAsCute
 	closemessage
-	applymovement LOCALID_FAT_MAN, Movement_FaceOriginalDirection
+	applymovement LOCALID_POKEMON_FAN_CLUB_FAT_MAN, Movement_FaceOriginalDirection
 	waitmovement 0
 	clearflag SPOKE_TO_WOMAN_LAST
 	release

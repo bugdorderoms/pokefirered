@@ -25,7 +25,8 @@ enum
     SEASON_SUMMER,
     SEASON_AUTUMN,
     SEASON_WINTER,
-    SEASON_SPRING
+    SEASON_SPRING,
+    NUM_SEASONS,
 };
 
 enum

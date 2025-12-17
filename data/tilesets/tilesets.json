@@ -1,0 +1,277 @@
+{
+    "tilesets_table_label": "gMapTilesets",
+    "tilesets": [
+      {
+          "name": "gTileset_Building",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_General",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_BerryForest",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_BikeShop",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_BurgledHouse",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CableClub",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Cave",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CeladonCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CeladonGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CeruleanCave",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CeruleanCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CeruleanGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CinnabarGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_CinnabarIsland",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Condominiums",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_DepartmentStore",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_DiglettsCave",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Dummy1",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Dummy2",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Dummy3",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Dummy4",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_FanClubDaycare",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_FuchsiaCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_FuchsiaGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_GameCorner",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_GenericBuilding1",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_GenericBuilding2",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_HallOfFame",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_HoennBuilding",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_IndigoPlateau",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_IslandHarbor",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Lab",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_LavenderTown",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Mart",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_MtEmber",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_Museum",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_NavelRock",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PalletTown",
+          "lightning": "gLightningColors_PalletTown"
+      },
+      {
+          "name": "gTileset_PewterCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PewterGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PokemonCenter",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PokemonLeague",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PokemonMansion",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PokemonTower",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_PowerPlant",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_RestaurantHotel",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_RockTunnel",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SafariZoneBuilding",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SaffronCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SaffronGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_School",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SeaCottage",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SeafoamIslands",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SeviiIslands45",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SeviiIslands67",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SeviiIslands123",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SilphCo",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_SSAnne",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_TanobyRuins",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_TrainerTower",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_UndergroundPath",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_UnusedGatehouse1",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_UnusedGatehouse2",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_VermilionCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_VermilionGym",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_ViridianCity",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_ViridianForest",
+          "lightning": "NULL"
+      },
+      {
+          "name": "gTileset_ViridianGym",
+          "lightning": "NULL"
+      }
+    ]
+}

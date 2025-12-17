@@ -1,8 +1,3 @@
-.equ LOCALID_ROCKET1, 1
-.equ LOCALID_ROCKET2, 2
-.equ LOCALID_LORELEI, 3
-.equ LOCALID_ROCKET3, 4
-
 FourIsland_IcefallCave_Back_MapScripts:: @ 8163D82
 	map_script MAP_SCRIPT_ON_TRANSITION, FourIsland_IcefallCave_Back_OnTransition
 	.byte 0
@@ -20,39 +15,39 @@ FourIsland_IcefallCave_Back_EventScript_LoreleiRocketsScene:: @ 8163D98
 	lockall
 	textcolor 1
 	msgbox FourIsland_IcefallCave_Back_Text_LoreleiKeepHandsOffMons
-	applymovement LOCALID_ROCKET1, FourIsland_IcefallCave_Back_Movement_WalkInPlaceDown
+	applymovement LOCALID_ICEFALL_ROCKET1, FourIsland_IcefallCave_Back_Movement_WalkInPlaceDown
 	waitmovement 0
 	textcolor 0
 	msgbox FourIsland_IcefallCave_Back_Text_ShutItLadyLeaveUsBe
 	closemessage
 	playse SE_PIN
-	applymovement LOCALID_LORELEI, Movement_ExclamationMark
+	applymovement LOCALID_ICEFALL_LORELEI, Movement_ExclamationMark
 	waitmovement 0
-	applymovement LOCALID_LORELEI, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_ICEFALL_LORELEI, Movement_WalkInPlaceFastestDown
 	waitmovement 0
-	applymovement LOCALID_LORELEI, Movement_Delay48
+	applymovement LOCALID_ICEFALL_LORELEI, Movement_Delay48
 	waitmovement 0
 	textcolor 1
 	msgbox FourIsland_IcefallCave_Back_Text_LoreleiPlayerHelpMeKickPoachersOut
 	closemessage
-	applymovement LOCALID_LORELEI, Movement_WalkInPlaceFastestRight
+	applymovement LOCALID_ICEFALL_LORELEI, Movement_WalkInPlaceFastestRight
 	waitmovement 0
 	delay 18
-	applymovement LOCALID_LORELEI, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_ICEFALL_LORELEI, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	delay 35
-	applymovement LOCALID_ROCKET3, FourIsland_IcefallCave_Back_Movement_Rocket3FaceLorelei
-	applymovement LOCALID_LORELEI, FourIsland_IcefallCave_Back_Movement_LoreleiToRockets
+	applymovement LOCALID_ICEFALL_ROCKET3, FourIsland_IcefallCave_Back_Movement_Rocket3FaceLorelei
+	applymovement LOCALID_ICEFALL_LORELEI, FourIsland_IcefallCave_Back_Movement_LoreleiToRockets
 	applymovement OBJ_EVENT_ID_PLAYER, FourIsland_IcefallCave_Back_Movement_PlayerToRockets
 	waitmovement 0
-	applymovement LOCALID_ROCKET2, FourIsland_IcefallCave_Back_Movement_WalkInPlaceDown
+	applymovement LOCALID_ICEFALL_ROCKET2, FourIsland_IcefallCave_Back_Movement_WalkInPlaceDown
 	waitmovement 0
 	playbgm MUS_ENCOUNTER_ROCKET, 0
 	textcolor 0
 	msgbox FourIsland_IcefallCave_Back_Text_GruntIntro
-	setvar VAR_LAST_TALKED, LOCALID_ROCKET3
+	setvar VAR_LAST_TALKED, LOCALID_ICEFALL_ROCKET3
 	trainerbattle_no_intro TRAINER_TEAM_ROCKET_GRUNT_45, FourIsland_IcefallCave_Back_Text_GruntDefeat
-	applymovement LOCALID_LORELEI, FourIsland_IcefallCave_Back_Movement_WalkInPlaceUp
+	applymovement LOCALID_ICEFALL_LORELEI, FourIsland_IcefallCave_Back_Movement_WalkInPlaceUp
 	waitmovement 0
 	textcolor 1
 	msgbox FourIsland_IcefallCave_Back_Text_LoreleiWhereHaveYouTakenMons
@@ -65,22 +60,22 @@ FourIsland_IcefallCave_Back_EventScript_LoreleiRocketsScene:: @ 8163D98
 	playmoncry SPECIES_LAPRAS, CRY_MODE_ENCOUNTER
 	waitbuttonpress
 	waitmoncry
-	applymovement LOCALID_ROCKET1, FourIsland_IcefallCave_Back_Movement_Rocket1ReactToThreat
+	applymovement LOCALID_ICEFALL_ROCKET1, FourIsland_IcefallCave_Back_Movement_Rocket1ReactToThreat
 	waitmovement 0
 	textcolor 0
 	msgbox FourIsland_IcefallCave_Back_Text_OkayRocketWareHouseFiveIsland
 	closemessage
-	applymovement LOCALID_LORELEI, FourIsland_IcefallCave_Back_Movement_LoreleiWatchRocketsExit
+	applymovement LOCALID_ICEFALL_LORELEI, FourIsland_IcefallCave_Back_Movement_LoreleiWatchRocketsExit
 	applymovement OBJ_EVENT_ID_PLAYER, FourIsland_IcefallCave_Back_Movement_PlayerWatchRocketsExit
-	applymovement LOCALID_ROCKET1, FourIsland_IcefallCave_Back_Movement_Rocket1Exit
-	applymovement LOCALID_ROCKET2, FourIsland_IcefallCave_Back_Movement_Rocket2Exit
-	applymovement LOCALID_ROCKET3, FourIsland_IcefallCave_Back_Movement_Rocket3Exit
+	applymovement LOCALID_ICEFALL_ROCKET1, FourIsland_IcefallCave_Back_Movement_Rocket1Exit
+	applymovement LOCALID_ICEFALL_ROCKET2, FourIsland_IcefallCave_Back_Movement_Rocket2Exit
+	applymovement LOCALID_ICEFALL_ROCKET3, FourIsland_IcefallCave_Back_Movement_Rocket3Exit
 	waitmovement 0
-	removeobject LOCALID_ROCKET1
-	removeobject LOCALID_ROCKET2
-	removeobject LOCALID_ROCKET3
+	removeobject LOCALID_ICEFALL_ROCKET1
+	removeobject LOCALID_ICEFALL_ROCKET2
+	removeobject LOCALID_ICEFALL_ROCKET3
 	delay 50
-	applymovement LOCALID_LORELEI, FourIsland_IcefallCave_Back_Movement_LoreleiWalkToPlayer
+	applymovement LOCALID_ICEFALL_LORELEI, FourIsland_IcefallCave_Back_Movement_LoreleiWalkToPlayer
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestLeft
 	waitmovement 0

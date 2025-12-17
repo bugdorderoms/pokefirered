@@ -1,5 +1,3 @@
-.set LOCALID_PROF_OAK, 1
-
 PokemonLeague_HallOfFame_MapScripts:: @ 8162D4C
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, PokemonLeague_HallOfFame_OnFrame
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, PokemonLeague_HallOfFame_OnWarp
@@ -22,13 +20,13 @@ PokemonLeague_HallOfFame_EventScript_EnterRoom:: @ 8162D70
 	textcolor 0
 	applymovement OBJ_EVENT_ID_PLAYER, PokemonLeague_HallOfFame_Movement_EnterRoom
 	waitmovement 0
-	applymovement LOCALID_PROF_OAK, Movement_WalkInPlaceFastestLeft
+	applymovement LOCALID_HALL_OF_FAME_PROF_OAK, Movement_WalkInPlaceFastestLeft
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
 	delay 18
 	msgbox PokemonLeague_HallOfFame_Text_OakCongratulations
 	closemessage
-	applymovement LOCALID_PROF_OAK, Movement_WalkInPlaceFastestUp
+	applymovement LOCALID_HALL_OF_FAME_PROF_OAK, Movement_WalkInPlaceFastestUp
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	delay 20

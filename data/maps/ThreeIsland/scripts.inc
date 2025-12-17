@@ -1,13 +1,3 @@
-.equ LOCALID_ANTIBIKER1, 1
-.equ LOCALID_ANTIBIKER2, 2
-.equ LOCALID_PAXTON, 3
-.equ LOCALID_BIKER1, 5
-.equ LOCALID_BIKER2, 7
-.equ LOCALID_BIKER3, 4
-.equ LOCALID_BIKER4, 6
-.equ LOCALID_BIKER5, 8
-.equ LOCALID_BIKER6, 14
-
 ThreeIsland_MapScripts:: @ 81677AD
 	map_script MAP_SCRIPT_ON_TRANSITION, ThreeIsland_OnTransition
 	.byte 0
@@ -24,8 +14,8 @@ ThreeIsland_EventScript_HideAntiBikers:: @ 81677CB
 	return
 
 ThreeIsland_EventScript_SetAntiBikersMovementAfterBikers:: @ 81677CF
-	setobjectmovementtype LOCALID_ANTIBIKER1, MOVEMENT_TYPE_LOOK_AROUND
-	setobjectmovementtype LOCALID_ANTIBIKER2, MOVEMENT_TYPE_LOOK_AROUND
+	setobjectmovementtype LOCALID_THREE_ISLAND_ANTIBIKER1, MOVEMENT_TYPE_LOOK_AROUND
+	setobjectmovementtype LOCALID_THREE_ISLAND_ANTIBIKER2, MOVEMENT_TYPE_LOOK_AROUND
 	return
 
 ThreeIsland_EventScript_Biker:: @ 81677D8
@@ -46,14 +36,14 @@ ThreeIsland_EventScript_AntiBiker1:: @ 81677E5
 	end
 
 ThreeIsland_EventScript_AntiBiker1GotFullRestore:: @ 8167806
-	applymovement LOCALID_ANTIBIKER1, Movement_FacePlayer
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER1, Movement_FacePlayer
 	waitmovement 0
 	msgbox ThreeIsland_Text_YouveGotImpressiveMons
 	release
 	end
 
 ThreeIsland_EventScript_GiveFullRestore:: @ 816781A
-	applymovement LOCALID_ANTIBIKER1, Movement_FacePlayer
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER1, Movement_FacePlayer
 	waitmovement 0
 	msgbox ThreeIsland_Text_ThankYouOhYourMonGotHurt
 	checkitemspace ITEM_FULL_RESTORE, 1
@@ -76,7 +66,7 @@ ThreeIsland_EventScript_BikerArgumentScene:: @ 816786F
 	call_if_eq ThreeIsland_EventScript_PlayerFaceLeft
 	compare VAR_TEMP_1, 2
 	call_if_eq ThreeIsland_EventScript_PlayerFaceLeft
-	applymovement LOCALID_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
 	waitmovement 0
 	msgbox ThreeIsland_Text_GoBackToKanto
 	compare VAR_TEMP_1, 0
@@ -85,7 +75,7 @@ ThreeIsland_EventScript_BikerArgumentScene:: @ 816786F
 	call_if_eq ThreeIsland_EventScript_PlayerFaceRight
 	compare VAR_TEMP_1, 2
 	call_if_eq ThreeIsland_EventScript_PlayerFaceBiker
-	applymovement LOCALID_BIKER1, ThreeIsland_Movement_SpeakLeft
+	applymovement LOCALID_THREE_ISLAND_BIKER1, ThreeIsland_Movement_SpeakLeft
 	waitmovement 0
 	msgbox ThreeIsland_Text_BossIsOnHisWay
 	compare VAR_TEMP_1, 0
@@ -94,7 +84,7 @@ ThreeIsland_EventScript_BikerArgumentScene:: @ 816786F
 	call_if_eq ThreeIsland_EventScript_PlayerFaceUp
 	compare VAR_TEMP_1, 2
 	call_if_eq ThreeIsland_EventScript_PlayerFaceAntiBiker
-	applymovement LOCALID_ANTIBIKER2, ThreeIsland_Movement_SpeakRight
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER2, ThreeIsland_Movement_SpeakRight
 	waitmovement 0
 	msgbox ThreeIsland_Text_GetOffIslandNow
 	compare VAR_TEMP_1, 0
@@ -103,7 +93,7 @@ ThreeIsland_EventScript_BikerArgumentScene:: @ 816786F
 	call_if_eq ThreeIsland_EventScript_PlayerFaceRight
 	compare VAR_TEMP_1, 2
 	call_if_eq ThreeIsland_EventScript_PlayerFaceBiker
-	applymovement LOCALID_BIKER3, ThreeIsland_Movement_SpeakLeft
+	applymovement LOCALID_THREE_ISLAND_BIKER3, ThreeIsland_Movement_SpeakLeft
 	waitmovement 0
 	msgbox ThreeIsland_Text_WhosGonnaMakeMe
 	return
@@ -153,7 +143,7 @@ ThreeIsland_EventScript_AntiBiker2:: @ 8167989
 	end
 
 ThreeIsland_EventScript_AntiBiker2BikersGone:: @ 81679A1
-	applymovement LOCALID_ANTIBIKER2, Movement_FacePlayer
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER2, Movement_FacePlayer
 	waitmovement 0
 	msgbox ThreeIsland_Text_LostelleWentOffTowardsBondBridge
 	release
@@ -162,19 +152,19 @@ ThreeIsland_EventScript_AntiBiker2BikersGone:: @ 81679A1
 ThreeIsland_EventScript_BikerBossIntroTrigger:: @ 81679B5
 	lockall
 	textcolor 0
-	applymovement LOCALID_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
 	waitmovement 0
 	msgbox ThreeIsland_Text_AreYouBossGoBackToKanto
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_SpeakLeft
 	waitmovement 0
 	msgbox ThreeIsland_Text_JustGotHerePal
-	applymovement LOCALID_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
 	waitmovement 0
 	msgbox ThreeIsland_Text_FollowersRaisingHavoc
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_SpeakLeft
 	waitmovement 0
 	msgbox ThreeIsland_Text_OughtToBeThankingUs
-	applymovement LOCALID_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
+	applymovement LOCALID_THREE_ISLAND_ANTIBIKER1, ThreeIsland_Movement_SpeakRight
 	waitmovement 0
 	msgbox ThreeIsland_Text_YouCowardsToughInPack
 	setvar VAR_MAP_SCENE_THREE_ISLAND, 3
@@ -221,46 +211,46 @@ ThreeIsland_EventScript_BattleBikersTriggerRight:: @ 8167A4D
 
 ThreeIsland_EventScript_BattleBikersScene:: @ 8167A59
 	textcolor 0
-	applymovement LOCALID_BIKER1, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER1, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	playse SE_PIN
-	applymovement LOCALID_BIKER1, Movement_ExclamationMark
+	applymovement LOCALID_THREE_ISLAND_BIKER1, Movement_ExclamationMark
 	waitmovement 0
-	applymovement LOCALID_BIKER1, Movement_Delay48
+	applymovement LOCALID_THREE_ISLAND_BIKER1, Movement_Delay48
 	waitmovement 0
-	applymovement LOCALID_BIKER1, ThreeIsland_Movement_BikerApproach
+	applymovement LOCALID_THREE_ISLAND_BIKER1, ThreeIsland_Movement_BikerApproach
 	waitmovement 0
 	playbgm MUS_ENCOUNTER_BOY, 0
 	msgbox ThreeIsland_Text_WannaMakeSomethingOfYourStaring, MSGBOX_YESNO
 	compare VAR_RESULT, NO
 	goto_if_eq ThreeIsland_EventScript_LeaveBikersAlone
 	msgbox ThreeIsland_Text_Biker1Intro
-	setvar VAR_LAST_TALKED, LOCALID_BIKER1
+	setvar VAR_LAST_TALKED, LOCALID_THREE_ISLAND_BIKER1
 	trainerbattle_no_intro TRAINER_BIKER_GOON, ThreeIsland_Text_Biker1Defeat
-	applymovement LOCALID_BIKER1, ThreeIsland_Movement_BikerSpeak
+	applymovement LOCALID_THREE_ISLAND_BIKER1, ThreeIsland_Movement_BikerSpeak
 	waitmovement 0
 	msgbox ThreeIsland_Text_Biker1PostBattle
 	closemessage
-	applymovement LOCALID_BIKER2, ThreeIsland_Movement_BikerApproach
+	applymovement LOCALID_THREE_ISLAND_BIKER2, ThreeIsland_Movement_BikerApproach
 	waitmovement 0
 	playbgm MUS_ENCOUNTER_BOY, 0
 	msgbox ThreeIsland_Text_Biker2Intro
-	setvar VAR_LAST_TALKED, LOCALID_BIKER2
+	setvar VAR_LAST_TALKED, LOCALID_THREE_ISLAND_BIKER2
 	trainerbattle_no_intro TRAINER_BIKER_GOON_2, ThreeIsland_Text_Biker2Defeat
-	applymovement LOCALID_BIKER2, ThreeIsland_Movement_BikerSpeak
+	applymovement LOCALID_THREE_ISLAND_BIKER2, ThreeIsland_Movement_BikerSpeak
 	waitmovement 0
 	msgbox ThreeIsland_Text_Biker2PostBattle
 	closemessage
-	applymovement LOCALID_BIKER3, ThreeIsland_Movement_BikerApproach
+	applymovement LOCALID_THREE_ISLAND_BIKER3, ThreeIsland_Movement_BikerApproach
 	waitmovement 0
 	playbgm MUS_ENCOUNTER_BOY, 0
 	msgbox ThreeIsland_Text_Biker3Intro
-	setvar VAR_LAST_TALKED, LOCALID_BIKER3
+	setvar VAR_LAST_TALKED, LOCALID_THREE_ISLAND_BIKER3
 	trainerbattle_no_intro TRAINER_BIKER_GOON_3, ThreeIsland_Text_Biker3Defeat
-	applymovement LOCALID_BIKER3, Movement_WalkInPlaceFastestLeft
+	applymovement LOCALID_THREE_ISLAND_BIKER3, Movement_WalkInPlaceFastestLeft
 	waitmovement 0
-	applymovement LOCALID_BIKER4, Movement_WalkInPlaceFastestDown
-	applymovement LOCALID_BIKER5, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER4, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER5, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	msgbox ThreeIsland_Text_Biker3PostBattle
 	closemessage
@@ -283,45 +273,45 @@ ThreeIsland_EventScript_BattleBikersScene:: @ 8167A59
 	closemessage
 	fadescreen FADE_TO_BLACK
 	removeobject LOCALID_PAXTON
-	removeobject LOCALID_BIKER1
-	removeobject LOCALID_BIKER2
-	removeobject LOCALID_BIKER3
-	removeobject LOCALID_BIKER4
-	removeobject LOCALID_BIKER5
-	removeobject LOCALID_BIKER6
+	removeobject LOCALID_THREE_ISLAND_BIKER1
+	removeobject LOCALID_THREE_ISLAND_BIKER2
+	removeobject LOCALID_THREE_ISLAND_BIKER3
+	removeobject LOCALID_THREE_ISLAND_BIKER4
+	removeobject LOCALID_THREE_ISLAND_BIKER5
+	removeobject LOCALID_THREE_ISLAND_BIKER6
 	fadescreen FADE_FROM_BLACK
 	setvar VAR_MAP_SCENE_THREE_ISLAND, 4
 	releaseall
 	end
 
 ThreeIsland_EventScript_PaxtonApproachLeft:: @ 8167BC6
-	applymovement LOCALID_BIKER3, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER3, Movement_WalkInPlaceFastestDown
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_PaxtonApproachLeft
 	waitmovement 0
 	return
 
 ThreeIsland_EventScript_PaxtonApproachMidLeft:: @ 8167BD8
-	applymovement LOCALID_BIKER3, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER3, Movement_WalkInPlaceFastestDown
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_PaxtonApproachMidLeft
 	waitmovement 0
 	return
 
 ThreeIsland_EventScript_PaxtonApproachMid:: @ 8167BEA
-	applymovement LOCALID_BIKER3, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER3, Movement_WalkInPlaceFastestDown
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_PaxtonApproachMid
 	applymovement OBJ_EVENT_ID_PLAYER, ThreeIsland_Movement_PlayerFacePaxton
 	waitmovement 0
 	return
 
 ThreeIsland_EventScript_PaxtonApproachMidRight:: @ 8167C03
-	applymovement LOCALID_BIKER3, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER3, Movement_WalkInPlaceFastestDown
 	applymovement OBJ_EVENT_ID_PLAYER, ThreeIsland_Movement_PlayerFacePaxton
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_PaxtonApproachMidRight
 	waitmovement 0
 	return
 
 ThreeIsland_EventScript_PaxtonApproachRight:: @ 8167C1C
-	applymovement LOCALID_BIKER3, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_THREE_ISLAND_BIKER3, Movement_WalkInPlaceFastestDown
 	applymovement OBJ_EVENT_ID_PLAYER, ThreeIsland_Movement_PlayerFacePaxton
 	applymovement LOCALID_PAXTON, ThreeIsland_Movement_PaxtonApproachRight
 	waitmovement 0
@@ -332,7 +322,7 @@ ThreeIsland_EventScript_LeaveBikersAlone:: @ 8167C35
 	closemessage
 	applymovement OBJ_EVENT_ID_PLAYER, ThreeIsland_Movement_PlayerLeaveBikers
 	waitmovement 0
-	applymovement LOCALID_BIKER1, ThreeIsland_Movement_Biker1ReturnToPack
+	applymovement LOCALID_THREE_ISLAND_BIKER1, ThreeIsland_Movement_Biker1ReturnToPack
 	waitmovement 0
 	fadedefaultbgm
 	releaseall

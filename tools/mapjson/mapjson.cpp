@@ -520,6 +520,8 @@ string generate_layout_headers_text(Json layouts_data) {
     ostringstream text;
 
     text << "@\n@ DO NOT MODIFY THIS FILE! It is auto-generated from data/layouts/layouts.json\n@\n\n";
+	
+	text << "#include \"" << "constants/tilesets.h" << "\"\n\n";
 
     for (auto &layout : layouts_data["layouts"].array_items()) {
         if (layout == Json::object()) continue;
@@ -605,6 +607,126 @@ void process_layouts(string layouts_filepath) {
     write_text_file(file_dir + ".." + s + ".." + s + "include" + s + "constants" + s + "layouts.h", layouts_constants_text);
 }
 
+string parse_tileset(const Json &data, const string &field)
+{
+	if (data.object_items().find(field) != data.object_items().end())
+		return json_to_string(data, field);
+	
+	return "0";
+}
+
+string generate_tilesets_table_text(Json tilesets_data) {
+    ostringstream text;
+
+    text << "@\n@ DO NOT MODIFY THIS FILE! It is auto-generated from data/tilesets/tilesets.json\n@\n\n";
+
+    text << "\t.align 2\n"
+         << json_to_string(tilesets_data, "tilesets_table_label") << "::\n";
+
+    for (auto &tileset : tilesets_data["tilesets"].array_items()) {
+        string tileset_name = json_to_string(tileset, "name", true);
+		
+        text << "\t.4byte " << tileset_name << "\n"
+		     << "\t.4byte " << parse_tileset(tileset, "autumn") << "\n"
+			 << "\t.4byte " << parse_tileset(tileset, "winter") << "\n"
+			 << "\t.4byte " << parse_tileset(tileset, "spring") << "\n"
+			 << "\t.4byte " << json_to_string(tileset, "lightning") << "\n";
+    }
+
+    return text.str();
+}
+
+string generate_tilesets_constants_text(Json tilesets_data) {
+    ostringstream text;
+
+    text << "#ifndef GUARD_CONSTANTS_TILESETS_H\n"
+         << "#define GUARD_CONSTANTS_TILESETS_H\n\n";
+
+    text << "//\n// DO NOT MODIFY THIS FILE! It is auto-generated from data/tilesets/tilesets.json\n//\n\n";
+	
+	text << "#define gTileset_None 0\n";
+
+    int i = 1;
+    for (auto &tileset : tilesets_data["tilesets"].array_items()) {
+        if (tileset != Json::object()) {
+			string tileset_name = json_to_string(tileset, "name", true);
+			
+			text << "#define " << tileset_name << " " << i << "\n";
+		}
+        i++;
+    }
+
+    text << "\n#endif // GUARD_CONSTANTS_TILESETS_H\n";
+
+    return text.str();
+}
+
+void process_tilesets(string tilesets_filepath) {
+	string err;
+	Json tilesets_data = Json::parse(read_text_file(tilesets_filepath), err);
+	
+	if (tilesets_data == Json())
+        FATAL_ERROR("%s\n", err.c_str());
+	
+	string tilesets_table_text = generate_tilesets_table_text(tilesets_data);
+	string tilesets_constants_text = generate_tilesets_constants_text(tilesets_data);
+	
+	string file_dir = get_directory_name(tilesets_filepath);
+    char s = file_dir.back();
+	
+    write_text_file(file_dir + "tilesets_table.inc", tilesets_table_text);
+    write_text_file(file_dir + ".." + s + ".." + s + "include" + s + "constants" + s + "tilesets.h", tilesets_constants_text);
+}
+
+void process_event_constants(const vector<string> &map_filepaths, string output_ids_file) {
+	ostringstream ids_file_text;
+
+    ids_file_text << "#ifndef GUARD_CONSTANTS_MAP_EVENT_IDS_H\n"
+                  << "#define GUARD_CONSTANTS_MAP_EVENT_IDS_H\n\n";
+
+    ids_file_text << "//\n// DO NOT MODIFY THIS FILE! It is auto-generated from data/maps/*/map.json\n//\n\n";
+	
+    for (const string &filepath : map_filepaths) {
+        string err;
+        string map_json_text = read_text_file(filepath);
+        Json map_data = Json::parse(map_json_text, err);
+		
+        if (map_data == Json())
+			FATAL_ERROR("Failed to read '%s' while generating map event constants: %s\n", filepath.c_str(), err.c_str());
+		
+		string map_id = json_to_string(map_data, "id");
+		
+		// Get IDs from the object/clone events.
+        ostringstream map_ids_text;
+        auto obj_events = map_data["object_events"].array_items();
+        for (unsigned int i = 0; i < obj_events.size(); i++) {
+            auto obj_event = obj_events[i];
+			
+            if (obj_event.object_items().find("local_id") != obj_event.object_items().end())
+                map_ids_text << "#define " << json_to_string(obj_event, "local_id") << " " << i + 1 << "\n";
+        }
+		
+        // Get IDs from the warp events.
+        auto warp_events = map_data["warp_events"].array_items();
+        for (unsigned int i = 0; i < warp_events.size(); i++) {
+            auto warp_event = warp_events[i];
+			
+            if (warp_event.object_items().find("warp_id") != warp_event.object_items().end())
+                map_ids_text << "#define " << json_to_string(warp_event, "warp_id") << " " << i << "\n";
+        }
+		
+        // Only output if we found any IDs
+        string temp = map_ids_text.str();
+        if (!temp.empty()) {
+            ids_file_text << "// " << map_id << "\n" << temp << "\n";
+        }
+	}
+
+    ids_file_text << "\n#endif // GUARD_CONSTANTS_MAP_EVENT_IDS_H\n";
+	
+    write_text_file(output_ids_file, ids_file_text.str());
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 3)
         FATAL_ERROR("USAGE: mapjson <mode> <game-version> [options]\n");
@@ -616,8 +738,8 @@ int main(int argc, char *argv[]) {
 
     char *mode_arg = argv[1];
     string mode(mode_arg);
-    if (mode != "layouts" && mode != "map" && mode != "groups")
-        FATAL_ERROR("ERROR: <mode> must be 'layouts', 'map', or 'groups'.\n");
+    if (mode != "layouts" && mode != "map" && mode != "groups" && mode != "tilesets" && mode != "event_constants")
+        FATAL_ERROR("ERROR: <mode> must be 'layouts', 'map', 'groups', 'tilesets' or 'event_constants'.\n");
 
     if (mode == "map") {
         if (argc != 5)
@@ -644,6 +766,28 @@ int main(int argc, char *argv[]) {
 
         process_layouts(filepath);
     }
+	else if (mode == "tilesets") {
+		if (argc != 4)
+			FATAL_ERROR("USAGE: mapjson tilesets <game-version> <tilesets_file>\n");
+		
+		string filepath(argv[3]);
+		
+		process_tilesets(filepath);
+	}
+	else if (mode == "event_constants") {
+		if (argc < 5)
+            FATAL_ERROR("USAGE: mapjson event_constants <game-version> <map_file> [additional_map_files] <output_ids_file>\n");
+		
+		vector<string> filepaths;
+        const int firstMapFileArg = 3;
+        const int lastMapFileArg = argc - 2;
+        for (int i = firstMapFileArg; i <= lastMapFileArg; i++) {
+            filepaths.push_back(argv[i]);
+        }
+        string output_ids_file(argv[argc - 1]);
+
+        process_event_constants(filepaths, output_ids_file);
+	}
 
     return 0;
 }

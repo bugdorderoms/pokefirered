@@ -2,11 +2,12 @@
 #include "heal_location.h"
 #include "event_data.h"
 #include "constants/maps.h"
+#include "constants/map_event_ids.h"
 #include "constants/heal_locations.h"
 
 // Arrays described here because porymap will overrwrite the below data file
 
-// sSpawnPoints
+// sHealLocations
 // This array defines the fly points for unlocked spawns.
 
 // sWhiteoutRespawnHealCenterMapIdxs
@@ -28,9 +29,9 @@ static u32 GetHealLocationIndexFromMapGroupAndNum(u32 mapGroup, u32 mapNum)
 {
     u32 i;
 
-    for (i = 0; i < ARRAY_COUNT(sSpawnPoints); i++)
+    for (i = 0; i < ARRAY_COUNT(sHealLocations); i++)
     {
-        if (sSpawnPoints[i].group == mapGroup && sSpawnPoints[i].map == mapNum)
+        if (sHealLocations[i].group == mapGroup && sHealLocations[i].map == mapNum)
             return i + 1;
     }
     return 0;
@@ -38,10 +39,10 @@ static u32 GetHealLocationIndexFromMapGroupAndNum(u32 mapGroup, u32 mapNum)
 
 const struct HealLocation * GetHealLocation(u32 idx)
 {
-    if (idx == 0 || idx > ARRAY_COUNT(sSpawnPoints))
+    if (idx == 0 || idx > ARRAY_COUNT(sHealLocations))
         return NULL;
     
-    return &sSpawnPoints[idx - 1];
+    return &sHealLocations[idx - 1];
 }
 
 void SetWhiteoutRespawnWarpAndHealerNpc(struct WarpData * warp)

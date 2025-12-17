@@ -1,5 +1,3 @@
-.set LOCALID_SCIENTIST, 1
-
 SixIsland_RuinValley_MapScripts:: @ 8168B53
 	map_script MAP_SCRIPT_ON_LOAD, SixIsland_RuinValley_OnLoad
 	.byte 0
@@ -15,10 +13,10 @@ SixIsland_RuinValley_EventScript_OpenDottedHoleDoor:: @ 8168B63
 SixIsland_RuinValley_EventScript_Scientist:: @ 8168B6D
 	lock
 	msgbox SixIsland_RuinValley_Text_CantFigureOutHowToGetInside
-	applymovement LOCALID_SCIENTIST, Movement_FacePlayer
+	applymovement LOCALID_RUIN_VALLEY_SCIENTIST, Movement_FacePlayer
 	waitmovement 0
 	msgbox SixIsland_RuinValley_Text_IFoundThisPlace
-	applymovement LOCALID_SCIENTIST, Movement_FaceOriginalDirection
+	applymovement LOCALID_RUIN_VALLEY_SCIENTIST, Movement_FaceOriginalDirection
 	waitmovement 0
 	release
 	end

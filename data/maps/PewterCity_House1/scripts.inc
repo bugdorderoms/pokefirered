@@ -1,5 +1,3 @@
-.set LOCALID_NIDORAN, 3
-
 PewterCity_House1_MapScripts:: @ 816A71C
 	.byte 0
 
@@ -18,7 +16,7 @@ PewterCity_House1_EventScript_Nidoran:: @ 816A736
 	lock
 	faceplayer
 	call PewterCity_House1_EventScript_DoNidoranCry
-	applymovement LOCALID_NIDORAN, Movement_FaceOriginalDirection
+	applymovement LOCALID_PEWTER_HOUSE_NIDORAN, Movement_FaceOriginalDirection
 	waitmovement 0
 	release
 	end

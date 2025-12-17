@@ -44,6 +44,8 @@ struct Main
     /*0x439*/ u8 inPc:1;
     /*0x439*/ u8 inParty:1;
     /*0x439*/ u8 tilesetPaletteReloaded:1; // For dns
+    /*0x439*/ u8 tilesetSeason:2;
+    /*0x439*/ u8 unused:1;
 };
 
 extern struct Main gMain;

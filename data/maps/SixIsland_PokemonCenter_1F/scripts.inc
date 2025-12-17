@@ -1,5 +1,3 @@
-.equ LOCALID_RIVAL, 2
-
 SixIsland_PokemonCenter_1F_MapScripts:: @ 8171D6A
 	map_script MAP_SCRIPT_ON_TRANSITION, SixIsland_PokemonCenter_1F_OnTransition
 	map_script MAP_SCRIPT_ON_RESUME, CableClub_OnResume
@@ -23,25 +21,25 @@ SixIsland_PokemonCenter_1F_OnFrame:: @ 8171D8D
 SixIsland_PokemonCenter_1F_EventScript_RivalScene:: @ 8171D97
 	lockall
 	textcolor 0
-	applymovement LOCALID_RIVAL, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_SIX_ISLAND_RIVAL, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	playbgm MUS_ENCOUNTER_RIVAL, 0
-	applymovement LOCALID_RIVAL, Movement_ExclamationMark
+	applymovement LOCALID_SIX_ISLAND_RIVAL, Movement_ExclamationMark
 	waitmovement 0
-	applymovement LOCALID_RIVAL, Movement_Delay48
+	applymovement LOCALID_SIX_ISLAND_RIVAL, Movement_Delay48
 	waitmovement 0
 	delay 25
-	applymovement LOCALID_RIVAL, SixIsland_PokemonCenter_1F_Movement_RivalApproach
+	applymovement LOCALID_SIX_ISLAND_RIVAL, SixIsland_PokemonCenter_1F_Movement_RivalApproach
 	waitmovement 0
 	msgbox SixIsland_PokemonCenter_1F_Text_RivalImpossibleToGetAllMonsAroundHere
 	closemessage
 	applymovement OBJ_EVENT_ID_PLAYER, SixIsland_PokemonCenter_1F_Movement_PlayerWatchRivalExit
-	applymovement LOCALID_RIVAL, SixIsland_PokemonCenter_1F_Movement_RivalExit
+	applymovement LOCALID_SIX_ISLAND_RIVAL, SixIsland_PokemonCenter_1F_Movement_RivalExit
 	waitmovement 0
 	fadedefaultbgm
 	playse SE_EXIT
 	delay 35
-	removeobject LOCALID_RIVAL
+	removeobject LOCALID_SIX_ISLAND_RIVAL
 	setvar VAR_MAP_SCENE_SIX_ISLAND_POKEMON_CENTER_1F, 1
 	setvar VAR_MAP_SCENE_FOUR_ISLAND, 1
 	releaseall

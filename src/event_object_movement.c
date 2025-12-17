@@ -20,6 +20,7 @@
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
 #include "constants/trainer_types.h"
+#include "constants/map_event_ids.h"
 
 static void MoveCoordsInDirection(u32, s16 *, s16 *, s16, s16);
 static bool32 ObjectEventExecSingleMovementAction(struct ObjectEvent *, struct Sprite *);
@@ -988,7 +989,7 @@ static const u8 gUnknown_83A65A9[][4] = {
 static void ClearObjectEvent(struct ObjectEvent *objectEvent)
 {
     *objectEvent = (struct ObjectEvent){};
-    objectEvent->localId = 0xFF;
+    objectEvent->localId = LOCALID_PLAYER;
     objectEvent->mapNum = MAP_NUM(UNDEFINED);
     objectEvent->mapGroup = MAP_GROUP(UNDEFINED);
     objectEvent->movementActionId = 0xFF;
@@ -7108,7 +7109,7 @@ static void CalcWhetherObjectIsOffscreen(struct ObjectEvent *objectEvent, struct
     u16 x, y;
     u16 x2, y2;
     const struct ObjectEventGraphicsInfo *graphicsInfo;
-    s16 var;
+    s16 minX;
 
     objectEvent->offScreen = FALSE;
     
@@ -7129,12 +7130,12 @@ static void CalcWhetherObjectIsOffscreen(struct ObjectEvent *objectEvent, struct
         x2 = graphicsInfo->width + (s16)x;
         y2 = graphicsInfo->height + (s16)y;
         
-        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SSANNE_EXTERIOR) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(SSANNE_EXTERIOR) && objectEvent->localId == 1)
-            var = -32;
+        if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(SSANNE_EXTERIOR) && gSaveBlock1Ptr->location.mapNum == MAP_NUM(SSANNE_EXTERIOR) && objectEvent->localId == LOCALID_SS_ANNE)
+            minX = -32;
         else
-            var = -16;
+            minX = -16;
         
-        if ((s16)x >= 256 || (s16)x2 < var || (s16)y >= 176 || (s16)y2 < -16)
+        if ((s16)x >= (DISPLAY_WIDTH + 16) || (s16)x2 < minX || (s16)y >= (DISPLAY_HEIGHT + 16) || (s16)y2 < -16)
             objectEvent->offScreen = TRUE;
     }
 }

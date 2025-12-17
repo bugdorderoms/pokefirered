@@ -1616,6 +1616,7 @@ static bool32 LoadMapInStepsLink(u8 *state)
     switch (*state)
     {
     case 0:
+        UpdateCurrentTilesetSeason();
         InitOverworldBgs_ResetHeap();
         ScriptContext1_Init();
         ScriptContext2_Disable();
@@ -1692,6 +1693,7 @@ static bool32 LoadMapInStepsLocal(u8 *state)
     switch (*state)
     {
     case 0:
+        UpdateCurrentTilesetSeason();
         InitOverworldBgs_ResetHeap();
         FieldClearVBlankHBlankCallbacks();
         LoadMapFromWarp();

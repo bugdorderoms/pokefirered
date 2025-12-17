@@ -1,5 +1,3 @@
-.equ LOCALID_ROCKET, 1
-
 Route24_MapScripts:: @ 816861F
 	.byte 0
 
@@ -60,19 +58,19 @@ Route24_EventScript_BattleRocket:: @ 81686B9
 	waitmessage
 	playbgm MUS_ENCOUNTER_ROCKET, 0
 	waitbuttonpress
-	setvar VAR_LAST_TALKED, LOCALID_ROCKET
+	setvar VAR_LAST_TALKED, LOCALID_ROUTE24_ROCKET
 	trainerbattle_no_intro TRAINER_TEAM_ROCKET_GRUNT_6, Route24_Text_RocketDefeat
 	msgbox Route24_Text_YoudBecomeTopRocketLeader
 	setvar VAR_MAP_SCENE_ROUTE24, 1
 	return
 
 Route24_EventScript_RocketApproachPlayer:: @ 81686FD
-	applymovement LOCALID_ROCKET, Route24_Movement_RocketApproachPlayer
+	applymovement LOCALID_ROUTE24_ROCKET, Route24_Movement_RocketApproachPlayer
 	waitmovement 0
 	return
 
 Route24_EventScript_RocketMotionToPlayer:: @ 8168708
-	applymovement LOCALID_ROCKET, Movement_WalkInPlaceFastestLeft
+	applymovement LOCALID_ROUTE24_ROCKET, Movement_WalkInPlaceFastestLeft
 	waitmovement 0
 	return
 
@@ -87,7 +85,7 @@ Route24_EventScript_NoRoomForNuggetTrigger:: @ 8168713
 	end
 
 Route24_EventScript_RocketWalkBackToPos:: @ 8168733
-	applymovement LOCALID_ROCKET, Route24_Movement_RocketWalkBackToPos
+	applymovement LOCALID_ROUTE24_ROCKET, Route24_Movement_RocketWalkBackToPos
 	waitmovement 0
 	return
 

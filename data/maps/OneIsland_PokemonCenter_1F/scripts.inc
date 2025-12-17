@@ -1,6 +1,3 @@
-.equ LOCALID_BILL,  2
-.equ LOCALID_CELIO, 3
-
 OneIsland_PokemonCenter_1F_MapScripts:: @ 8170BF8
 	map_script MAP_SCRIPT_ON_TRANSITION, OneIsland_PokemonCenter_1F_OnTransition
 	map_script MAP_SCRIPT_ON_RESUME, CableClub_OnResume
@@ -43,15 +40,15 @@ OneIsland_PokemonCenter_1F_EventScript_SetCelioQuestDone:: @ 8170C73
 	return
 
 OneIsland_PokemonCenter_1F_EventScript_SetBillCelioFirstMeetingPos:: @ 8170C79
-	setobjectxyperm LOCALID_BILL, 9, 8
-	setobjectmovementtype LOCALID_BILL, MOVEMENT_TYPE_FACE_UP
+	setobjectxyperm LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, 9, 8
+	setobjectmovementtype LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, MOVEMENT_TYPE_FACE_UP
 	setobjectxyperm LOCALID_CELIO, 15, 6
 	setobjectmovementtype LOCALID_CELIO, MOVEMENT_TYPE_FACE_UP
 	return
 
 OneIsland_PokemonCenter_1F_EventScript_SetBillCelioReadyToLeavePos:: @ 8170C90
-	setobjectxyperm LOCALID_BILL, 14, 7
-	setobjectmovementtype LOCALID_BILL, MOVEMENT_TYPE_FACE_LEFT
+	setobjectxyperm LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, 14, 7
+	setobjectmovementtype LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, MOVEMENT_TYPE_FACE_LEFT
 	setobjectxyperm LOCALID_CELIO, 14, 8
 	setobjectmovementtype LOCALID_CELIO, MOVEMENT_TYPE_FACE_LEFT
 	return
@@ -64,7 +61,7 @@ OneIsland_PokemonCenter_1F_EventScript_MeetCelioScene:: @ 8170CB1
 	lockall
 	textcolor 0
 	applymovement OBJ_EVENT_ID_PLAYER, OneIsland_PokemonCenter_1F_Movement_PlayerWalkToCelio
-	applymovement LOCALID_BILL, OneIsland_PokemonCenter_1F_Movement_BillWalkToCelio
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, OneIsland_PokemonCenter_1F_Movement_BillWalkToCelio
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_BillHeyThereCelio
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
@@ -78,11 +75,11 @@ OneIsland_PokemonCenter_1F_EventScript_MeetCelioScene:: @ 8170CB1
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_CelioCantBelieveYouCameOut
 	msgbox OneIsland_PokemonCenter_1F_Text_BillHowsYourResearchComing
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestDown
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_ThisIsMyBuddyCelio
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestRight
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestRight
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
@@ -96,10 +93,10 @@ OneIsland_PokemonCenter_1F_EventScript_MeetCelioScene:: @ 8170CB1
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_CelioPCsCantLinkWithYours
 	closemessage
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestUp
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_BillLetMeHelpYou
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestUp
 	waitmovement 0
@@ -118,7 +115,7 @@ OneIsland_PokemonCenter_1F_EventScript_MeetCelioScene:: @ 8170CB1
 	setflag FLAG_SYS_SEVII_MAP_123
 	msgbox OneIsland_PokemonCenter_1F_Text_BillCatchYouLater
 	closemessage
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestUp
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	applymovement LOCALID_CELIO, Movement_WalkInPlaceFastestUp
 	waitmovement 0
@@ -198,7 +195,7 @@ OneIsland_PokemonCenter_1F_EventScript_Bill:: @ 8170E9D
 	end
 
 OneIsland_PokemonCenter_1F_EventScript_BillGoTakeStroll:: @ 8170EB1
-	applymovement LOCALID_BILL, Movement_FacePlayer
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_FacePlayer
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_GotPCWorkingStrollAWhileMore
 	release
@@ -438,7 +435,7 @@ OneIsland_PokemonCenter_1F_EventScript_LeaveOneIslandTriggerBottom:: @ 81711CE
 OneIsland_PokemonCenter_1F_EventScript_LeaveOneIslandScene:: @ 81711DA
 	textcolor 0
 	playse SE_PIN
-	applymovement LOCALID_BILL, Movement_ExclamationMark
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_ExclamationMark
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_BillOhHeyPlayer
 	closemessage
@@ -455,14 +452,14 @@ OneIsland_PokemonCenter_1F_EventScript_LeaveOneIslandScene:: @ 81711DA
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_CelioJobWentQuick
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	applymovement LOCALID_CELIO, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_BillYouveLearnedALot
 	msgbox OneIsland_PokemonCenter_1F_Text_CelioOhReallyEhehe
 	closemessage
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestLeft
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestLeft
 	waitmovement 0
 	delay 10
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
@@ -470,7 +467,7 @@ OneIsland_PokemonCenter_1F_EventScript_LeaveOneIslandScene:: @ 81711DA
 	delay 15
 	msgbox OneIsland_PokemonCenter_1F_Text_BillWeShouldHeadBackToKanto
 	closemessage
-	applymovement LOCALID_BILL, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	delay 15
 	applymovement LOCALID_CELIO, Movement_WalkInPlaceFastestLeft
@@ -481,7 +478,7 @@ OneIsland_PokemonCenter_1F_EventScript_LeaveOneIslandScene:: @ 81711DA
 	closemessage
 	delay 25
 	applymovement OBJ_EVENT_ID_PLAYER, OneIsland_PokemonCenter_1F_Movement_PlayerExit
-	applymovement LOCALID_BILL, OneIsland_PokemonCenter_1F_Movement_BillExit
+	applymovement LOCALID_ONE_ISLAND_POKEMON_CENTER_BILL, OneIsland_PokemonCenter_1F_Movement_BillExit
 	waitmovement 0
 	playse SE_EXIT
 	setflag FLAG_HIDE_ONE_ISLAND_POKECENTER_BILL

@@ -1,5 +1,3 @@
-.equ LOCALID_MOM, 1
-
 PalletTown_PlayersHouse_1F_MapScripts:: @ 8168C08
 	.byte 0
 

@@ -34,6 +34,10 @@ u32 ExtractMetatileAttribute(u32 attributes, u32 attributeType);
 u32 MapGridGetMetatileAttributeAt(s16 x, s16 y, u32 attributeType);
 void MapGridSetMetatileImpassabilityAt(s32 x, s32 y, bool32 impassable);
 bool32 CameraMove(s32 x, s32 y);
+const struct Tileset *GetMapPrimaryTilesetOfSeason(const struct MapLayout* mapLayout, u32 season);
+const struct Tileset *GetMapSecondaryTilesetOfSeason(const struct MapLayout* mapLayout, u32 season);
+const struct Tileset *GetMapPrimaryTileset(const struct MapLayout* mapLayout);
+const struct Tileset *GetMapSecondaryTileset(const struct MapLayout* mapLayout);
 void CopyMapTilesetsToVram(struct MapLayout const * mapLayout);
 void LoadMapTilesetPalettes(struct MapLayout const * mapLayout);
 void InitMap(void);
@@ -44,5 +48,6 @@ void CopyPrimaryTilesetToVram(const struct MapLayout *mapLayout);
 void CopySecondaryTilesetToVram(const struct MapLayout *mapLayout);
 void GetCameraFocusCoords(u16 *x, u16 *y);
 void SetCameraFocusCoords(u16 x, u16 y);
+void UpdateCurrentTilesetSeason(void);
 
 #endif //GUARD_FIELDMAP_H

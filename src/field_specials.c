@@ -54,6 +54,7 @@
 #include "constants/event_objects.h"
 #include "constants/metatile_labels.h"
 #include "constants/regions.h"
+#include "constants/map_event_ids.h"
 
 struct FieldSpecialListMenu
 {
@@ -2115,7 +2116,7 @@ static void MoveDeoxysObject(u32 num)
     
     LoadPalette(sDeoxysObjectPals[num], 0x1A0, 0x08);
     ApplyGlobalFieldPaletteTint(10);
-    TryGetObjectEventIdByLocalIdAndMap(1, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, &mapObjId);
+    TryGetObjectEventIdByLocalIdAndMap(LOCALID_BIRTH_ISLAND_EXTERIOR_ROCK, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, &mapObjId);
     
     if (num == 0)
         PlaySE(SE_M_CONFUSE_RAY);
@@ -2123,9 +2124,9 @@ static void MoveDeoxysObject(u32 num)
         PlaySE(SE_DEOXYS_MOVE);
     
     CreateTask(Task_WaitDeoxysFieldEffect, 8);
-    gFieldEffectArguments[0] = 1;
-    gFieldEffectArguments[1] = 56;
-    gFieldEffectArguments[2] = 2;
+    gFieldEffectArguments[0] = LOCALID_BIRTH_ISLAND_EXTERIOR_ROCK;
+    gFieldEffectArguments[1] = MAP_NUM(BIRTH_ISLAND_EXTERIOR);
+    gFieldEffectArguments[2] = MAP_GROUP(BIRTH_ISLAND_EXTERIOR);
     gFieldEffectArguments[3] = sDeoxysCoords[num][0];
     gFieldEffectArguments[4] = sDeoxysCoords[num][1];
     
@@ -2135,7 +2136,7 @@ static void MoveDeoxysObject(u32 num)
         gFieldEffectArguments[5] = 5;
     
     FieldEffectStart(FLDEFF_MOVE_DEOXYS_ROCK);
-    Overworld_SetMapObjTemplateCoords(1, sDeoxysCoords[num][0], sDeoxysCoords[num][1]);
+    Overworld_SetMapObjTemplateCoords(LOCALID_BIRTH_ISLAND_EXTERIOR_ROCK, sDeoxysCoords[num][0], sDeoxysCoords[num][1]);
 }
 
 static void Task_WaitDeoxysFieldEffect(u32 taskId)

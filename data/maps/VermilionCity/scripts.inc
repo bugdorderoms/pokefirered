@@ -1,5 +1,3 @@
-.equ LOCALID_FERRY_SAILOR, 6
-
 VermilionCity_MapScripts:: @ 81668DC
 	map_script MAP_SCRIPT_ON_TRANSITION, VermilionCity_OnTransition
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, VermilionCity_OnFrame
@@ -198,7 +196,7 @@ VermilionCity_EventScript_ExitedTicketCheck:: @ 8166B98
 
 VermilionCity_EventScript_CheckTicket:: @ 8166BA0
 	textcolor 0
-	applymovement LOCALID_FERRY_SAILOR, Movement_WalkInPlaceFastestLeft
+	applymovement LOCALID_VERMILION_FERRY_SAILOR, Movement_WalkInPlaceFastestLeft
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
 	compare VAR_MAP_SCENE_VERMILION_CITY, 3

@@ -1,4 +1,6 @@
 #include "global.h"
+#include "tileset_anims.h"
+#include "fieldmap.h"
 
 static EWRAM_DATA struct {
     const u16 *src;
@@ -14,8 +16,7 @@ static u16 sSecondaryTilesetAnimCounterMax;
 static void (*sPrimaryTilesetAnimCallback)(u16);
 static void (*sSecondaryTilesetAnimCallback)(u16);
 
-static void _InitPrimaryTilesetAnimation(void);
-static void _InitSecondaryTilesetAnimation(void);
+static void InitPrimaryTilesetAnimation(void);
 
 // palette: general 00
 static const u16 sTilesetAnims_General_Flower_Frame0[] = INCBIN_U16("data/tilesets/primary/general/anim/flower/0.4bpp");
@@ -164,13 +165,8 @@ void TransferTilesetAnimsBuffer(void)
 void InitTilesetAnimations(void)
 {
     ResetTilesetAnimBuffer();
-    _InitPrimaryTilesetAnimation();
-    _InitSecondaryTilesetAnimation();
-}
-
-void InitSecondaryTilesetAnimation(void)
-{
-    _InitSecondaryTilesetAnimation();
+    InitPrimaryTilesetAnimation();
+    InitSecondaryTilesetAnimation();
 }
 
 void UpdateTilesetAnimations(void)
@@ -187,22 +183,32 @@ void UpdateTilesetAnimations(void)
         sSecondaryTilesetAnimCallback(sSecondaryTilesetAnimCounter);
 }
 
-static void _InitPrimaryTilesetAnimation(void)
+static void InitPrimaryTilesetAnimation(void)
 {
+    const struct Tileset *tileset;
+    
     sPrimaryTilesetAnimCounter = 0;
     sPrimaryTilesetAnimCounterMax = 0;
     sPrimaryTilesetAnimCallback = NULL;
-    if (gMapHeader.mapLayout->primaryTileset && gMapHeader.mapLayout->primaryTileset->callback)
-        gMapHeader.mapLayout->primaryTileset->callback();
+    
+    tileset = GetMapPrimaryTileset(gMapHeader.mapLayout);
+    
+    if (tileset && tileset->callback)
+        tileset->callback();
 }
 
-static void _InitSecondaryTilesetAnimation(void)
+void InitSecondaryTilesetAnimation(void)
 {
+    const struct Tileset *tileset;
+    
     sSecondaryTilesetAnimCounter = 0;
     sSecondaryTilesetAnimCounterMax = 0;
     sSecondaryTilesetAnimCallback = NULL;
-    if (gMapHeader.mapLayout->secondaryTileset && gMapHeader.mapLayout->secondaryTileset->callback)
-        gMapHeader.mapLayout->secondaryTileset->callback();
+    
+    tileset = GetMapSecondaryTileset(gMapHeader.mapLayout);
+    
+    if (tileset && tileset->callback)
+        tileset->callback();
 }
 
 static void QueueAnimTiles_General_Flower(u16 timer)

@@ -16,8 +16,9 @@
   "connections": null,
   "object_events": [
     {
+      "local_id": "LOCALID_CHANSEY_DANCE_MAN",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BALDING_MAN",
+      "graphics_id": "OBJ_EVENT_GFX_BALDING_MAN",
       "x": 2,
       "y": 4,
       "elevation": 3,
@@ -31,7 +32,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_CHANSEY",
+      "graphics_id": "OBJ_EVENT_GFX_CHANSEY",
       "x": 4,
       "y": 2,
       "elevation": 3,
@@ -45,7 +46,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 6,
       "y": 4,
       "elevation": 0,

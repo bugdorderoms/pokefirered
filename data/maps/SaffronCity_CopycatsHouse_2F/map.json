@@ -17,7 +17,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_DODUO",
+      "graphics_id": "OBJ_EVENT_GFX_DODUO",
       "x": 6,
       "y": 8,
       "elevation": 3,
@@ -31,7 +31,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_PIKACHU",
+      "graphics_id": "OBJ_EVENT_GFX_PIKACHU",
       "x": 4,
       "y": 6,
       "elevation": 3,
@@ -45,7 +45,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_JIGGLYPUFF",
+      "graphics_id": "OBJ_EVENT_GFX_JIGGLYPUFF",
       "x": 7,
       "y": 2,
       "elevation": 3,
@@ -59,7 +59,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_LITTLE_GIRL",
+      "graphics_id": "OBJ_EVENT_GFX_LITTLE_GIRL",
       "x": 9,
       "y": 6,
       "elevation": 3,

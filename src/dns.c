@@ -3,6 +3,7 @@
 #include "task.h"
 #include "main.h"
 #include "dns.h"
+#include "global.fieldmap.h"
 #include "string_util.h"
 #include "rtc.h"
 #include "fieldmap.h"
@@ -12,6 +13,7 @@
 #include "battle_main.h"
 #include "constants/battle.h"
 #include "constants/map_types.h"
+#include "constants/tilesets.h"
 
 /*******************************************************/
 /*********    Day and Night Configuration     **********/
@@ -204,7 +206,7 @@ static const u8 sSeasonsByMonth[MONTH_COUNT] =
     [MONTH_DEC - 1] = SEASON_SPRING
 };
 
-static const u8 sSeasonNames[][7] =
+static const u8 sSeasonNames[NUM_SEASONS][7] =
 {
     [SEASON_SUMMER] = _("Summer"),
     [SEASON_AUTUMN] = _("Autumn"),
@@ -320,17 +322,17 @@ void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 
 }
 
 #if LIT_UP_WINDOWS
-static void TryLightningUpTilesetPalettes(struct Tileset const *tileset, bool32 fadeActive)
+static void TryLightningUpTilesetPalettes(u32 tilesetId, bool32 fadeActive)
 {
     u32 i, colorSlot;
     const struct LightningColor *lightColors;
     
-    if (tileset && tileset->lightningColors)
+    if (tilesetId != gTileset_None && gMapTilesets[tilesetId].lightningColors)
     {
         i = 0;
         while (TRUE)
         {
-            lightColors = &tileset->lightningColors[i];
+            lightColors = &gMapTilesets[tilesetId].lightningColors[i];
             
             // End of table
             if (lightColors->color == RGB_BLACK)
@@ -357,8 +359,8 @@ static void DoDNSLightningWindowsEffect(void)
     
     if (LIT_UP_TIME)
     {
-        TryLightningUpTilesetPalettes(gMapHeader.mapLayout->primaryTileset, fadeActive);
-        TryLightningUpTilesetPalettes(gMapHeader.mapLayout->secondaryTileset, fadeActive);
+        TryLightningUpTilesetPalettes(gMapHeader.mapLayout->primaryTilesetId, fadeActive);
+        TryLightningUpTilesetPalettes(gMapHeader.mapLayout->secondaryTilesetId, fadeActive);
         gMain.tilesetPaletteReloaded = FALSE;
     }
     else if (!fadeActive && !gMain.tilesetPaletteReloaded)

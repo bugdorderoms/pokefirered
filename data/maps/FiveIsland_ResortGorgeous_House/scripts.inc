@@ -1,6 +1,3 @@
-.equ LOCALID_SELPHY, 1
-.equ LOCALID_BUTLER, 2
-
 .equ SHOWN_REQUESTED_MON, FLAG_TEMP_2
 
 FiveIsland_ResortGorgeous_House_MapScripts:: @ 8171EBD
@@ -40,12 +37,12 @@ FiveIsland_ResortGorgeous_House_EventScript_CheckForRequestedMon:: @ 8171F19
 FiveIsland_ResortGorgeous_House_EventScript_ShowRequestedMon:: @ 8171F34
 	special SampleResortGorgeousMonAndReward
 	msgbox FiveIsland_ResortGorgeous_House_Text_MonYouCaughtForMeThankYou
-	addobject LOCALID_BUTLER
-	applymovement LOCALID_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerEnter
+	addobject LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerEnter
 	waitmovement 0
 	textcolor 0
 	msgbox FiveIsland_ResortGorgeous_House_Text_ButlerYesMyLady
-	applymovement LOCALID_SELPHY, Movement_WalkInPlaceFastestUp
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_SELPHY, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	textcolor 1
 	msgbox FiveIsland_ResortGorgeous_House_Text_SelphyGiveTokenOfAppreciation
@@ -60,7 +57,7 @@ FiveIsland_ResortGorgeous_House_EventScript_ShowRequestedMon:: @ 8171F34
 	call_if_eq FiveIsland_ResortGorgeous_House_EventScript_ButlerApproachPlayerEast
 	compare VAR_FACING, DIR_WEST
 	call_if_eq FiveIsland_ResortGorgeous_House_EventScript_ButlerApproachPlayerWest
-	moveobjectoffscreen LOCALID_BUTLER
+	moveobjectoffscreen LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER
 	msgbox FiveIsland_ResortGorgeous_House_Text_ButlerPleaseAcceptThisAsHerThanks
 	giveitem VAR_RESORT_GORGEOUS_REWARD
 	compare VAR_RESULT, FALSE
@@ -71,30 +68,30 @@ FiveIsland_ResortGorgeous_House_EventScript_ShowRequestedMon:: @ 8171F34
 	end
 
 FiveIsland_ResortGorgeous_House_EventScript_ButlerApproachPlayerNorth:: @ 8171FCD
-	applymovement LOCALID_SELPHY, Movement_WalkInPlaceFastestDown
-	applymovement LOCALID_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerNorth
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_SELPHY, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerNorth
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestLeft
 	waitmovement 0
 	return
 
 FiveIsland_ResortGorgeous_House_EventScript_ButlerApproachPlayerSouth:: @ 8171FE9
-	applymovement LOCALID_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerSouth
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerSouth
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	return
 
 FiveIsland_ResortGorgeous_House_EventScript_ButlerApproachPlayerEast:: @ 8171FFE
-	applymovement LOCALID_SELPHY, Movement_WalkInPlaceFastestLeft
-	applymovement LOCALID_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerEast
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_SELPHY, Movement_WalkInPlaceFastestLeft
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerEast
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestUp
 	waitmovement 0
 	return
 
 FiveIsland_ResortGorgeous_House_EventScript_ButlerApproachPlayerWest:: @ 817201A
-	applymovement LOCALID_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerWest
+	applymovement LOCALID_RESORT_GORGEOUS_HOUSE_BUTLER, FiveIsland_ResortGorgeous_House_Movement_ButlerApproachPlayerWest
 	waitmovement 0
 	return
 

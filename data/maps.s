@@ -9,7 +9,8 @@
 	.include "constants/constants.inc"
 
 	.section .rodata
-
+	
+	.include "data/tilesets/tilesets_table.inc"
 	.include "data/layouts/layouts.inc"
 	.include "data/layouts/layouts_table.inc"
 	.include "data/maps/headers.inc"

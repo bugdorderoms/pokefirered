@@ -5,6 +5,8 @@
 #include "new_menu_helpers.h"
 #include "fieldmap.h"
 #include "wild_encounter.h"
+#include "global.fieldmap.h"
+#include "constants/tilesets.h"
 
 struct ConnectionFlags
 {
@@ -399,12 +401,12 @@ static u32 GetAttributeByMetatileIdAndMapLayout(const struct MapLayout *mapLayou
 
     if (metatile < NUM_METATILES_IN_PRIMARY)
     {
-        attributes = mapLayout->primaryTileset->metatileAttributes;
+        attributes = GetMapPrimaryTileset(mapLayout)->metatileAttributes;
         return ExtractMetatileAttribute(attributes[metatile], attributeType);
     }
     else if (metatile < NUM_METATILES_TOTAL)
     {
-        attributes = mapLayout->secondaryTileset->metatileAttributes;
+        attributes = GetMapSecondaryTileset(mapLayout)->metatileAttributes;
         return ExtractMetatileAttribute(attributes[metatile - NUM_METATILES_IN_PRIMARY], attributeType);
     }
     else
@@ -814,35 +816,35 @@ static void LoadTilesetPalette(struct Tileset const *tileset, u16 destOffset, u1
 
 void CopyPrimaryTilesetToVram(const struct MapLayout *mapLayout)
 {
-    CopyTilesetToVram(mapLayout->primaryTileset, NUM_TILES_IN_PRIMARY, 0);
+    CopyTilesetToVram(GetMapPrimaryTileset(mapLayout), NUM_TILES_IN_PRIMARY, 0);
 }
 
 void CopySecondaryTilesetToVram(const struct MapLayout *mapLayout)
 {
-    CopyTilesetToVram(mapLayout->secondaryTileset, NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY, NUM_TILES_IN_PRIMARY);
+    CopyTilesetToVram(GetMapSecondaryTileset(mapLayout), NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY, NUM_TILES_IN_PRIMARY);
 }
 
 void CopySecondaryTilesetToVramUsingHeap(const struct MapLayout *mapLayout)
 {
-    CopyTilesetToVramUsingHeap(mapLayout->secondaryTileset, NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY, NUM_TILES_IN_PRIMARY);
+    CopyTilesetToVramUsingHeap(GetMapSecondaryTileset(mapLayout), NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY, NUM_TILES_IN_PRIMARY);
 }
 
 static void LoadPrimaryTilesetPalette(const struct MapLayout *mapLayout)
 {
-    LoadTilesetPalette(mapLayout->primaryTileset, 0, NUM_PALS_IN_PRIMARY * 16 * 2);
+    LoadTilesetPalette(GetMapPrimaryTileset(mapLayout), 0, NUM_PALS_IN_PRIMARY * 16 * 2);
 }
 
 void LoadSecondaryTilesetPalette(const struct MapLayout *mapLayout)
 {
-    LoadTilesetPalette(mapLayout->secondaryTileset, NUM_PALS_IN_PRIMARY * 16, (NUM_PALS_TOTAL - NUM_PALS_IN_PRIMARY) * 16 * 2);
+    LoadTilesetPalette(GetMapSecondaryTileset(mapLayout), NUM_PALS_IN_PRIMARY * 16, (NUM_PALS_TOTAL - NUM_PALS_IN_PRIMARY) * 16 * 2);
 }
 
 void CopyMapTilesetsToVram(struct MapLayout const *mapLayout)
 {
     if (mapLayout)
     {
-        CopyTilesetToVramUsingHeap(mapLayout->primaryTileset, NUM_TILES_IN_PRIMARY, 0);
-        CopyTilesetToVramUsingHeap(mapLayout->secondaryTileset, NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY, NUM_TILES_IN_PRIMARY);
+        CopyTilesetToVramUsingHeap(GetMapPrimaryTileset(mapLayout), NUM_TILES_IN_PRIMARY, 0);
+        CopyTilesetToVramUsingHeap(GetMapSecondaryTileset(mapLayout), NUM_TILES_TOTAL - NUM_TILES_IN_PRIMARY, NUM_TILES_IN_PRIMARY);
     }
 }
 
@@ -853,4 +855,41 @@ void LoadMapTilesetPalettes(struct MapLayout const *mapLayout)
         LoadPrimaryTilesetPalette(mapLayout);
         LoadSecondaryTilesetPalette(mapLayout);
     }
+}
+
+const struct Tileset *GetMapPrimaryTileset(const struct MapLayout* mapLayout)
+{
+    return GetMapPrimaryTilesetOfSeason(mapLayout, gMain.tilesetSeason);
+}
+
+const struct Tileset *GetMapSecondaryTileset(const struct MapLayout* mapLayout)
+{
+    return GetMapSecondaryTilesetOfSeason(mapLayout, gMain.tilesetSeason);
+}
+
+const struct Tileset *GetMapPrimaryTilesetOfSeason(const struct MapLayout* mapLayout, u32 season)
+{
+    if (mapLayout->primaryTilesetId == gTileset_None)
+        return NULL;
+    
+    if (gMapTilesets[mapLayout->primaryTilesetId - 1].tilesets[season] != NULL)
+        return gMapTilesets[mapLayout->primaryTilesetId - 1].tilesets[season];
+
+    return gMapTilesets[mapLayout->primaryTilesetId - 1].tilesets[SEASON_SUMMER];
+}
+
+const struct Tileset *GetMapSecondaryTilesetOfSeason(const struct MapLayout* mapLayout, u32 season)
+{
+    if (mapLayout->secondaryTilesetId == gTileset_None)
+        return NULL;
+    
+    if (gMapTilesets[mapLayout->secondaryTilesetId - 1].tilesets[season] != NULL)
+        return gMapTilesets[mapLayout->secondaryTilesetId - 1].tilesets[season];
+
+    return gMapTilesets[mapLayout->secondaryTilesetId - 1].tilesets[SEASON_SUMMER];
+}
+
+void UpdateCurrentTilesetSeason(void)
+{
+    gMain.tilesetSeason = DNSGetCurrentSeason();
 }

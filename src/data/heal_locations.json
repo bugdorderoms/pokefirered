@@ -1,0 +1,164 @@
+{
+  "heal_locations": [
+    {
+      "id": "SPAWN_PALLET_TOWN",
+      "map": "PALLET_TOWN",
+      "x": 6,
+      "y": 8,
+      "respawn_map": "PALLET_TOWN_PLAYERS_HOUSE_1F",
+      "respawn_npc": "LOCALID_MOM"
+    },
+    {
+      "id": "SPAWN_VIRIDIAN_CITY",
+      "map": "VIRIDIAN_CITY",
+      "x": 26,
+      "y": 27,
+      "respawn_map": "VIRIDIAN_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_VIRIDIAN_NURSE"
+    },
+    {
+      "id": "SPAWN_PEWTER_CITY",
+      "map": "PEWTER_CITY",
+      "x": 17,
+      "y": 26,
+      "respawn_map": "PEWTER_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_PEWTER_NURSE"
+    },
+    {
+      "id": "SPAWN_CERULEAN_CITY",
+      "map": "CERULEAN_CITY",
+      "x": 22,
+      "y": 20,
+      "respawn_map": "CERULEAN_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_CERULEAN_NURSE"
+    },
+    {
+      "id": "SPAWN_LAVENDER_TOWN",
+      "map": "LAVENDER_TOWN",
+      "x": 6,
+      "y": 6,
+      "respawn_map": "LAVENDER_TOWN_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_LAVENDER_NURSE"
+    },
+    {
+      "id": "SPAWN_VERMILION_CITY",
+      "map": "VERMILION_CITY",
+      "x": 15,
+      "y": 7,
+      "respawn_map": "VERMILION_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_VERMILION_NURSE"
+    },
+    {
+      "id": "SPAWN_CELADON_CITY",
+      "map": "CELADON_CITY",
+      "x": 48,
+      "y": 12,
+      "respawn_map": "CELADON_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_CELADON_NURSE"
+    },
+    {
+      "id": "SPAWN_FUCHSIA_CITY",
+      "map": "FUCHSIA_CITY",
+      "x": 25,
+      "y": 32,
+      "respawn_map": "FUCHSIA_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_FUCHSIA_NURSE"
+    },
+    {
+      "id": "SPAWN_CINNABAR_ISLAND",
+      "map": "CINNABAR_ISLAND",
+      "x": 14,
+      "y": 12,
+      "respawn_map": "CINNABAR_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_CINNABAR_NURSE"
+    },
+    {
+      "id": "SPAWN_INDIGO_PLATEAU",
+      "map": "INDIGO_PLATEAU_EXTERIOR",
+      "x": 11,
+      "y": 7,
+      "respawn_map": "INDIGO_PLATEAU_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_LEAGUE_NURSE"
+    },
+    {
+      "id": "SPAWN_SAFFRON_CITY",
+      "map": "SAFFRON_CITY",
+      "x": 24,
+      "y": 39,
+      "respawn_map": "SAFFRON_CITY_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_SAFFRON_NURSE"
+    },
+    {
+      "id": "SPAWN_ROUTE4",
+      "map": "ROUTE4",
+      "x": 12,
+      "y": 6,
+      "respawn_map": "ROUTE4_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_ROUTE4_NURSE"
+    },
+    {
+      "id": "SPAWN_ROUTE10",
+      "map": "ROUTE10",
+      "x": 13,
+      "y": 21,
+      "respawn_map": "ROUTE10_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_ROUTE10_NURSE"
+    },
+    {
+      "id": "SPAWN_ONE_ISLAND",
+      "map": "ONE_ISLAND",
+      "x": 14,
+      "y": 6,
+      "respawn_map": "ONE_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_ONE_ISLAND_NURSE"
+    },
+    {
+      "id": "SPAWN_TWO_ISLAND",
+      "map": "TWO_ISLAND",
+      "x": 21,
+      "y": 8,
+      "respawn_map": "TWO_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_TWO_ISLAND_NURSE"
+    },
+    {
+      "id": "SPAWN_THREE_ISLAND",
+      "map": "THREE_ISLAND",
+      "x": 14,
+      "y": 28,
+      "respawn_map": "THREE_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_THREE_ISLAND_NURSE"
+    },
+    {
+      "id": "SPAWN_FOUR_ISLAND",
+      "map": "FOUR_ISLAND",
+      "x": 18,
+      "y": 21,
+      "respawn_map": "FOUR_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_FOUR_ISLAND_NURSE"
+    },
+    {
+      "id": "SPAWN_FIVE_ISLAND",
+      "map": "FIVE_ISLAND",
+      "x": 18,
+      "y": 7,
+      "respawn_map": "FIVE_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_FIVE_ISLAND_NURSE"
+    },
+    {
+      "id": "SPAWN_SEVEN_ISLAND",
+      "map": "SEVEN_ISLAND",
+      "x": 12,
+      "y": 4,
+      "respawn_map": "SEVEN_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_SEVEN_ISLAND_NURSE"
+    },
+    {
+      "id": "SPAWN_SIX_ISLAND",
+      "map": "SIX_ISLAND",
+      "x": 11,
+      "y": 12,
+      "respawn_map": "SIX_ISLAND_POKEMON_CENTER_1F",
+      "respawn_npc": "LOCALID_SIX_ISLAND_NURSE"
+    }
+  ]
+}

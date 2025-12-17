@@ -16,8 +16,9 @@
   "connections": null,
   "object_events": [
     {
+      "local_id": "LOCALID_SS_ANNE_RIVAL",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_BLUE",
+      "graphics_id": "OBJ_EVENT_GFX_BLUE",
       "x": 30,
       "y": 2,
       "elevation": 3,
@@ -31,7 +32,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_SAILOR",
+      "graphics_id": "OBJ_EVENT_GFX_SAILOR",
       "x": 2,
       "y": 7,
       "elevation": 3,

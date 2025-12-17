@@ -1,7 +1,3 @@
-.equ LOCALID_DADDY,	1
-.equ LOCALID_BIKER,	2
-.equ LOCALID_LOSTELLE, 3
-
 TwoIsland_JoyfulGameCorner_MapScripts:: @ 81713D0
 	map_script MAP_SCRIPT_ON_TRANSITION, TwoIsland_JoyfulGameCorner_OnTransition
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, TwoIsland_JoyfulGameCorner_OnWarp
@@ -14,9 +10,9 @@ TwoIsland_JoyfulGameCorner_OnTransition:: @ 81713E5
 	end
 
 TwoIsland_JoyfulGameCorner_EventScript_SetLostelleReturnedPos:: @ 81713EF
-	setobjectxyperm LOCALID_DADDY, 6, 2
-	setobjectmovementtype LOCALID_DADDY, MOVEMENT_TYPE_FACE_DOWN
-	setobjectmovementtype LOCALID_LOSTELLE, MOVEMENT_TYPE_LOOK_AROUND
+	setobjectxyperm LOCALID_JOYFUL_GAME_CORNER_DADDY, 6, 2
+	setobjectmovementtype LOCALID_JOYFUL_GAME_CORNER_DADDY, MOVEMENT_TYPE_FACE_DOWN
+	setobjectmovementtype LOCALID_JOYFUL_GAME_CORNER_LOSTELLE, MOVEMENT_TYPE_LOOK_AROUND
 	setvar VAR_MAP_SCENE_TWO_ISLAND_JOYFUL_GAME_CORNER, 4
 	return
 
@@ -43,7 +39,7 @@ TwoIsland_JoyfulGameCorner_EventScript_FoundLostelleScene:: @ 8171435
 	special BufferBigGuyOrBigGirlString
 	msgbox TwoIsland_JoyfulGameCorner_Text_LostelleItsOkayDaddy
 	closemessage
-	applymovement LOCALID_LOSTELLE, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_JOYFUL_GAME_CORNER_LOSTELLE, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	setvar VAR_MAP_SCENE_TWO_ISLAND_JOYFUL_GAME_CORNER, 3
 	releaseall
@@ -52,18 +48,18 @@ TwoIsland_JoyfulGameCorner_EventScript_FoundLostelleScene:: @ 8171435
 TwoIsland_JoyfulGameCorner_EventScript_HelpFindLostelleScene:: @ 817145F
 	lockall
 	textcolor 0
-	applymovement LOCALID_DADDY, Movement_171520
+	applymovement LOCALID_JOYFUL_GAME_CORNER_DADDY, Movement_171520
 	waitmovement 0
 	msgbox TwoIsland_JoyfulGameCorner_Text_WhereHasLostelleGottenTo
 	closemessage
-	applymovement LOCALID_DADDY, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_JOYFUL_GAME_CORNER_DADDY, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	playse SE_PIN
-	applymovement LOCALID_DADDY, Movement_ExclamationMark
+	applymovement LOCALID_JOYFUL_GAME_CORNER_DADDY, Movement_ExclamationMark
 	waitmovement 0
-	applymovement LOCALID_DADDY, Movement_Delay48
+	applymovement LOCALID_JOYFUL_GAME_CORNER_DADDY, Movement_Delay48
 	waitmovement 0
-	applymovement LOCALID_DADDY, Movement_171527
+	applymovement LOCALID_JOYFUL_GAME_CORNER_DADDY, Movement_171527
 	waitmovement 0
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
@@ -74,19 +70,19 @@ TwoIsland_JoyfulGameCorner_EventScript_HelpFindLostelleScene:: @ 817145F
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_17152C
 	waitmovement 0
 	playbgm MUS_ENCOUNTER_BOY, 0
-	addobject LOCALID_BIKER
-	applymovement LOCALID_BIKER, TwoIsland_JoyfulGameCorner_Movement_BikerLookAround
+	addobject LOCALID_JOYFUL_GAME_CORNER_BIKER
+	applymovement LOCALID_JOYFUL_GAME_CORNER_BIKER, TwoIsland_JoyfulGameCorner_Movement_BikerLookAround
 	waitmovement 0
 	msgbox TwoIsland_JoyfulGameCorner_Text_IsThisOnlyThreeIsland
-	applymovement LOCALID_BIKER, Movement_WalkInPlaceFastestRight
+	applymovement LOCALID_JOYFUL_GAME_CORNER_BIKER, Movement_WalkInPlaceFastestRight
 	waitmovement 0
 	msgbox TwoIsland_JoyfulGameCorner_Text_ThisIsTwoIslandMoveIt
 	msgbox TwoIsland_JoyfulGameCorner_Text_TheseIslandsAreConfusing
 	closemessage
-	applymovement LOCALID_BIKER, Movement_WalkInPlaceFastestDown
+	applymovement LOCALID_JOYFUL_GAME_CORNER_BIKER, Movement_WalkInPlaceFastestDown
 	waitmovement 0
 	playse SE_EXIT
-	removeobject LOCALID_BIKER
+	removeobject LOCALID_JOYFUL_GAME_CORNER_BIKER
 	fadedefaultbgm
 	delay 60
 	msgbox TwoIsland_JoyfulGameCorner_Text_PunkScuffedUpMyFloor

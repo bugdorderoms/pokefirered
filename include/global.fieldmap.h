@@ -1,6 +1,7 @@
-
 #ifndef GUARD_GLOBAL_FIELDMAP_H
 #define GUARD_GLOBAL_FIELDMAP_H
+
+#include "dns.h"
 
 #define METATILE_BEHAVIOR_MASK 0x00FF
 #define METATILE_COLLISION_MASK 0x0C00
@@ -58,7 +59,12 @@ struct Tileset
     /*0x0c*/ const u16 *metatiles;
     /*0x10*/ TilesetCB callback;
     /*0x14*/ const u32 *metatileAttributes;
-    /*0x18*/ const struct LightningColor *lightningColors;
+};
+
+struct MapTilesets
+{
+    const struct Tileset *tilesets[NUM_SEASONS];
+    const struct LightningColor *lightningColors;
 };
 
 struct MapLayout
@@ -67,8 +73,8 @@ struct MapLayout
     /*0x04*/ s32 height;
     /*0x08*/ u16 *border;
     /*0x0c*/ u16 *map;
-    /*0x10*/ struct Tileset *primaryTileset;
-    /*0x14*/ struct Tileset *secondaryTileset;
+    /*0x10*/ u32 primaryTilesetId;
+    /*0x14*/ u32 secondaryTilesetId;
     /*0x18*/ u8 borderWidth;
     /*0x19*/ u8 borderHeight;
 };
@@ -414,5 +420,6 @@ extern struct MapHeader gMapHeader;
 extern struct PlayerAvatar gPlayerAvatar;
 extern struct Camera gCamera;
 extern struct SpinData gPlayerSpinData;
+extern const struct MapTilesets gMapTilesets[];
 
 #endif // GUARD_GLOBAL_FIELDMAP_H

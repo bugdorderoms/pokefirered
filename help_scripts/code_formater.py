@@ -42,7 +42,7 @@ def format_file(file_path, from_tabs_to_spaces):
     return False
 
 # (tabs → spaces)
-for file in itertools.chain(dir_path.rglob('*.h'), dir_path.rglob('*.c')):
+for file in itertools.chain(dir_path.rglob('*.h'), dir_path.rglob('*.c'), dir_path.rglob('*.json')):
     if format_file(file, from_tabs_to_spaces=True):
         print(f"Formatted: {file}")
 

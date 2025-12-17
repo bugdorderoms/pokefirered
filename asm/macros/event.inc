@@ -543,17 +543,17 @@
 		.endif
 	.endm
 
-	@ Blocks script execution until the movements being applied to the specified (index) Object finish. If the specified Object is 0x0000,
-	@ then the command will block script execution until all Objects affected by applymovement finish their movements.
-	@ If the specified Object is not currently being manipulated with applymovement, then this command does nothing.
+	@ Blocks script execution until the movements being applied to the specified (localId) Object finish.
+	@ If localId is LOCALID_NONE (0), then the id of the last-moved object will be used instead.
+	@ If the specified object is not currently being manipulated with applymovement, then this command does nothing.
 	@ If no map is specified, then the current map is used.
-	.macro waitmovement index:req, mapGroup, mapNum
+	.macro waitmovement localId=LOCALID_NONE, mapGroup, mapNum
 		.ifb \mapGroup
 			.byte 0x51
-			.2byte \index
+			.2byte \localId
 		.else
 			.byte 0x52
-			.2byte \index
+			.2byte \localId
 			.byte \mapGroup
 			.byte \mapNum
 		.endif

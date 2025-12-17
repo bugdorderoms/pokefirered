@@ -1,5 +1,3 @@
-.set LOCALID_PROSPECTOR, 1
-
 ThreeIsland_DunsparceTunnel_MapScripts:: @ 8164D26
 	map_script MAP_SCRIPT_ON_TRANSITION, ThreeIsland_DunsparceTunnel_OnTransition
 	.byte 0

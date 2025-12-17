@@ -390,7 +390,7 @@ void FadeInNewBGM(u32 songNum, u32 speed)
     if (gDisableMusic)
         songNum = 0;
     
-    if (songNum == 0xFFFF)
+    if (songNum == MUS_NONE)
         songNum = 0;
     
     m4aSongNumStart(songNum);
@@ -549,7 +549,7 @@ static void RestoreBGMVolumeAfterPokemonCry(void)
 
 void PlayBGM(u32 songNum)
 {
-    if (gDisableMusic || songNum == 0xFFFF)
+    if (gDisableMusic || songNum == MUS_NONE)
         songNum = 0;
     
     m4aSongNumStart(songNum);

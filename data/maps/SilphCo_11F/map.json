@@ -17,7 +17,7 @@
   "object_events": [
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_OLD_MAN_2",
+      "graphics_id": "OBJ_EVENT_GFX_OLD_MAN_2",
       "x": 9,
       "y": 9,
       "elevation": 3,
@@ -31,7 +31,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_WORKER_F",
+      "graphics_id": "OBJ_EVENT_GFX_WORKER_F",
       "x": 11,
       "y": 9,
       "elevation": 3,
@@ -44,8 +44,9 @@
       "flag": "0"
     },
     {
+      "local_id": "LOCALID_SILPH_CO_GIOVANNI",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_GIOVANNI",
+      "graphics_id": "OBJ_EVENT_GFX_GIOVANNI",
       "x": 6,
       "y": 11,
       "elevation": 3,
@@ -58,8 +59,9 @@
       "flag": "FLAG_HIDE_SILPH_ROCKETS"
     },
     {
+      "local_id": "LOCALID_SILPH_CO_11F_GRUNT1",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 16,
       "y": 12,
       "elevation": 3,
@@ -73,7 +75,7 @@
     },
     {
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
+      "graphics_id": "OBJ_EVENT_GFX_ITEM_BALL",
       "x": 16,
       "y": 18,
       "elevation": 3,
@@ -86,8 +88,9 @@
       "flag": "FLAG_HIDE_SILPH_CO_11F_ZINC"
     },
     {
+      "local_id": "LOCALID_SILPH_CO_11F_GRUNT2",
       "type": "object",
-	  "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
+      "graphics_id": "OBJ_EVENT_GFX_ROCKET_M",
       "x": 2,
       "y": 19,
       "elevation": 3,
