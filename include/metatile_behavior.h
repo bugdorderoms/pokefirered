@@ -130,6 +130,7 @@ bool32 MetatileBehavior_IsSnacks(u32 metatileBehavior);
 bool32 MetatileBehavior_IsStrengthButton(u32 metatileBehavior);
 bool32 MetatileBehavior_IsPlayerFacingCableClubWirelessMonitor(u32 tile, u32 playerDirection);
 bool32 MetatileBehavior_IsPlayerFacingBattleRecords(u32 tile, u32 playerDirection);
+bool32 MetatileBehavior_IsSnow(u32 metatileBehavior);
 bool32 MetatileBehavior_IsIndigoPlateauMark(u32 metatileBehavior);
 bool32 MetatileBehavior_IsIndigoPlateauMark2(u32 metatileBehavior);
 bool32 MetatileBehavior_IsFood(u32 metatileBehavior);
@@ -150,6 +151,5 @@ bool32 MetatileBehavior_IsNeatlyLinedUpTools(u32 metatileBehavior);
 bool32 MetatileBehavior_IsImpressiveMachine(u32 metatileBehavior);
 bool32 MetatileBehavior_IsVideoGame(u32 metatileBehavior);
 bool32 MetatileBehavior_IsBurglary(u32 metatileBehavior);
-bool32 MetatileBehavior_IsTrainerTowerMonitor(u32 metatileBehavior);
 
 #endif // GUARD_METATILE_BEHAVIOR

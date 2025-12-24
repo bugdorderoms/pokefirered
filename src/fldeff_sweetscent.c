@@ -27,18 +27,18 @@ bool32 SetUpFieldMove_SweetScent(void)
 
 static void FieldCallback_SweetScent(void)
 {
-    FieldEffectStart(FLDEFF_SWEET_SCENT);
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
+    FieldEffectStart(FLDEFF_SWEET_SCENT);
 }
 
-bool32 FldEff_SweetScent(void)
+u32 FldEff_SweetScent(void)
 {
     u32 taskId;
 
     SetWeatherScreenFadeOut();
     taskId = CreateFieldEffectShowMon();
     FLDEFF_SET_FUNC_TO_DATA(StartSweetScentFieldEffect);
-    return FALSE;
+    return 0;
 }
 
 #define SWEET_SCENT_AFFECTED_PALETTES ~(Bit(gSprites[gPlayerAvatar.spriteId].oam.paletteNum + 16) | Bit(13) | Bit(14) | Bit(15))

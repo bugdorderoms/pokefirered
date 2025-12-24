@@ -40,10 +40,6 @@ static bool32 TrainerSeeFunc_OffscreenAboveTrainerCreateCameraObj(u32 taskId, st
 static bool32 TrainerSeeFunc_OffscreenAboveTrainerCameraObjMoveUp(u32 taskId, struct Task * task, struct ObjectEvent * trainerObj);
 static bool32 TrainerSeeFunc_OffscreenAboveTrainerCameraObjMoveDown(u32 taskId, struct Task * task, struct ObjectEvent * trainerObj);
 static void Task_DestroyTrainerApproachTask(u32 taskId);
-static void SpriteCB_TrainerIcons(struct Sprite * sprite);
-static void SetIconSpriteData(struct Sprite *sprite, u32 fldEffId, u32 spriteAnimNum);
-
-static const u16 sGfx_Emoticons[] = INCBIN_U16("graphics/misc/emoticons.4bpp");
 
 // u8 func(struct ObjectEvent * trainerObj, s16 range, s16 x, s16 y)
 // range is the maximum distance the trainer can see
@@ -275,8 +271,7 @@ static bool32 TrainerSeeFunc_StartExclMark(u32 taskId, struct Task * task, struc
         task->tFuncId = 12;
     else
     {
-        ObjectEventGetLocalIdAndMap(trainerObj, (u8 *)&gFieldEffectArguments[0], (u8 *)&gFieldEffectArguments[1], (u8 *)&gFieldEffectArguments[2]);
-        FieldEffectStart(FLDEFF_EXCLAMATION_MARK_ICON);
+        StartFieldEffectForObjectEvent(FLDEFF_EXCLAMATION_MARK_ICON, trainerObj);
         ObjectEventSetHeldMovement(trainerObj, GetFaceDirectionMovementAction(trainerObj->facingDirection));
         task->tFuncId++;
     }
@@ -450,8 +445,7 @@ static bool32 TrainerSeeFunc_OffscreenAboveTrainerCameraObjMoveUp(u32 taskId, st
     }
     else
     {
-        ObjectEventGetLocalIdAndMap(trainerObj, (u8 *)&gFieldEffectArguments[0], (u8 *)&gFieldEffectArguments[1], (u8 *)&gFieldEffectArguments[2]);
-        FieldEffectStart(FLDEFF_EXCLAMATION_MARK_ICON);
+        StartFieldEffectForObjectEvent(FLDEFF_EXCLAMATION_MARK_ICON, trainerObj);
         task->tData5 = 0;
         task->tFuncId++;
     }
@@ -535,222 +529,3 @@ static void Task_DestroyTrainerApproachTask(u32 taskId)
     DestroyTask(taskId);
     EnableBothScriptContexts();
 }
-
-// Trainer See Excl Mark Field Effect
-
-#define sLocalId    data[0]
-#define sMapNum     data[1]
-#define sMapGroup   data[2]
-#define sData3      data[3]
-#define sData4      data[4]
-#define sFldEffId   data[7]
-
-static const struct OamData sOamData_Emoticons = {
-    .y = 0,
-    .affineMode = ST_OAM_AFFINE_OFF,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .mosaic = 0,
-    .bpp = ST_OAM_4BPP,
-    .shape = SPRITE_SHAPE(16x16),
-    .x = 0,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(16x16),
-    .tileNum = 0,
-    .priority = 1,
-    .paletteNum = 0,
-    .affineParam = 0,
-};
-
-static const struct SpriteFrameImage sSpriteImages_Emoticons[] = {
-    {sGfx_Emoticons + 0x000, 0x80},
-    {sGfx_Emoticons + 0x040, 0x80},
-    {sGfx_Emoticons + 0x080, 0x80},
-
-    {sGfx_Emoticons + 0x180, 0x80},
-    {sGfx_Emoticons + 0x1C0, 0x80},
-    {sGfx_Emoticons + 0x200, 0x80},
-
-    {sGfx_Emoticons + 0x0C0, 0x80},
-    {sGfx_Emoticons + 0x100, 0x80},
-    {sGfx_Emoticons + 0x140, 0x80},
-
-    {sGfx_Emoticons + 0x240, 0x80},
-    {sGfx_Emoticons + 0x280, 0x80},
-    {sGfx_Emoticons + 0x2C0, 0x80},
-
-    {sGfx_Emoticons + 0x300, 0x80},
-    {sGfx_Emoticons + 0x340, 0x80},
-    {sGfx_Emoticons + 0x380, 0x80},
-};
-
-static const union AnimCmd sAnimCmd_ExclamationMark1[] = {
-    ANIMCMD_FRAME( 0,  4),
-    ANIMCMD_FRAME( 1,  4),
-    ANIMCMD_FRAME( 2, 52),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sAnimCmd_DoubleExclMark[] = {
-    ANIMCMD_FRAME( 6,  4),
-    ANIMCMD_FRAME( 7,  4),
-    ANIMCMD_FRAME( 8, 52),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sAnimCmd_X[] = {
-    ANIMCMD_FRAME( 3,  4),
-    ANIMCMD_FRAME( 4,  4),
-    ANIMCMD_FRAME( 5, 52),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sAnimCmd_SmileyFace[] = {
-    ANIMCMD_FRAME( 9,  4),
-    ANIMCMD_FRAME(10,  4),
-    ANIMCMD_FRAME(11, 52),
-    ANIMCMD_END
-};
-
-static const union AnimCmd sAnimCmd_QuestionMark[] = {
-    ANIMCMD_FRAME(12,  4),
-    ANIMCMD_FRAME(13,  4),
-    ANIMCMD_FRAME(14, 52),
-    ANIMCMD_END
-};
-
-static const union AnimCmd *const sSpriteAnimTable_Emoticons[] = {
-    sAnimCmd_ExclamationMark1,
-    sAnimCmd_DoubleExclMark,
-    sAnimCmd_X,
-    sAnimCmd_SmileyFace,
-    sAnimCmd_QuestionMark
-};
-
-static const struct SpriteTemplate sSpriteTemplate_Emoticons = {
-    .tileTag = 0xFFFF,
-    .paletteTag = 0x1100,
-    .oam = &sOamData_Emoticons,
-    .anims = sSpriteAnimTable_Emoticons,
-    .images = sSpriteImages_Emoticons,
-    .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_TrainerIcons
-};
-
-u32 FldEff_ExclamationMarkIcon1(void)
-{
-    u32 spriteId;
-
-    LoadObjectEventPalette(0x1100);
-    UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
-    
-    spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x53);
-
-    if (spriteId != MAX_SPRITES)
-        SetIconSpriteData(&gSprites[spriteId], FLDEFF_EXCLAMATION_MARK_ICON, 0);
-
-    return 0;
-}
-
-u32 FldEff_DoubleExclMarkIcon(void)
-{
-    u32 spriteId;
-    
-    LoadObjectEventPalette(0x1100);
-    UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
-
-    spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
-
-    if (spriteId != MAX_SPRITES)
-        SetIconSpriteData(&gSprites[spriteId], FLDEFF_DOUBLE_EXCL_MARK_ICON, 1);
-
-    return 0;
-}
-
-u32 FldEff_XIcon(void)
-{
-    u32 spriteId;
-
-    LoadObjectEventPalette(0x1100);
-    UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
-    
-    spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
-
-    if (spriteId != MAX_SPRITES)
-        SetIconSpriteData(&gSprites[spriteId], FLDEFF_X_ICON, 2);
-
-    return 0;
-}
-
-u32 FldEff_SmileyFaceIcon(void)
-{
-    u32 spriteId;
-
-    LoadObjectEventPalette(0x1100);
-    UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
-    
-    spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
-
-    if (spriteId != MAX_SPRITES)
-        SetIconSpriteData(&gSprites[spriteId], FLDEFF_SMILEY_FACE_ICON, 3);
-
-    return 0;
-}
-
-u32 FldEff_QuestionMarkIcon(void)
-{
-    u32 spriteId;
-
-    LoadObjectEventPalette(0x1100);
-    UpdateSpritePaletteWithWeather(IndexOfSpritePaletteTag(0x1100));
-    
-    spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Emoticons, 0, 0, 0x52);
-
-    if (spriteId != MAX_SPRITES)
-        SetIconSpriteData(&gSprites[spriteId], FLDEFF_QUESTION_MARK_ICON, 4);
-
-    return 0;
-}
-
-static void SetIconSpriteData(struct Sprite *sprite, u32 fldEffId, u32 spriteAnimNum)
-{
-    sprite->oam.priority = 1;
-    sprite->coordOffsetEnabled = 1;
-
-    sprite->sLocalId = gFieldEffectArguments[0];
-    sprite->sMapNum = gFieldEffectArguments[1];
-    sprite->sMapGroup = gFieldEffectArguments[2];
-    sprite->sData3 = -5;
-    sprite->sFldEffId = fldEffId;
-
-    StartSpriteAnim(sprite, spriteAnimNum);
-}
-
-static void SpriteCB_TrainerIcons(struct Sprite *sprite)
-{
-    u8 objEventId;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->sLocalId, sprite->sMapNum, sprite->sMapGroup, &objEventId) || sprite->animEnded)
-        FieldEffectStop(sprite, sprite->sFldEffId);
-    else
-    {
-        struct Sprite *objEventSprite = &gSprites[gObjectEvents[objEventId].spriteId];
-
-        sprite->sData4 += sprite->sData3;
-        sprite->x = objEventSprite->x;
-        sprite->y = objEventSprite->y - 16;
-        sprite->x2 = objEventSprite->x2;
-        sprite->y2 = objEventSprite->y2 + sprite->sData4;
-        
-        if (sprite->sData4)
-            sprite->sData3++;
-        else
-            sprite->sData3 = 0;
-    }
-}
-
-#undef sLocalId
-#undef sMapNum
-#undef sMapGroup
-#undef sData3
-#undef sData4
-#undef sFldEffId

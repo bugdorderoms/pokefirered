@@ -877,8 +877,6 @@ static void PlayerAvatarTransition_Bike(struct ObjectEvent * playerObjEvent)
 
 static void PlayerAvatarTransition_Surfing(struct ObjectEvent * playerObjEvent)
 {
-    u32 fieldEffectId;
-    
     if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
         UpdatePlayerSprite(playerObjEvent, PLAYER_AVATAR_GFX_RIDE, PLAYER_AVATAR_FLAG_SURFING);
@@ -886,9 +884,8 @@ static void PlayerAvatarTransition_Surfing(struct ObjectEvent * playerObjEvent)
         gFieldEffectArguments[0] = playerObjEvent->currentCoords.x;
         gFieldEffectArguments[1] = playerObjEvent->currentCoords.y;
         gFieldEffectArguments[2] = gPlayerAvatar.objectEventId;
-        fieldEffectId = FieldEffectStart(FLDEFF_SURF_BLOB);
-        playerObjEvent->fieldEffectSpriteId = fieldEffectId;
-        SetSurfBlob_BobState(fieldEffectId, 1);
+        playerObjEvent->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
+        SetSurfBlob_BobState(playerObjEvent->fieldEffectSpriteId, 1);
     }
 }
 

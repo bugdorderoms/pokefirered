@@ -29,10 +29,7 @@ enum
 #define B_TRANSITION_MUGSHOT 12
 #define B_TRANSITION_ANTI_CLOCKWISE_SPIRAL 13
 
-extern const struct SpritePalette gSpritePalette_SlidingPokeball;
-
 bool32 BT_IsDone(void);
 void BT_StartOnField(u32 transitionId);
-bool32 FldEff_Pokeball(void);
 
 #endif // GUARD_BATTLE_TRANSITION_H

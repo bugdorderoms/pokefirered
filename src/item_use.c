@@ -10,6 +10,7 @@
 #include "event_scripts.h"
 #include "ev_iv_display.h"
 #include "field_effect.h"
+#include "field_effect_helpers.h"
 #include "field_fadetransition.h"
 #include "event_object_movement.h"
 #include "field_player_avatar.h"

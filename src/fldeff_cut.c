@@ -1,5 +1,6 @@
 #include "global.h"
 #include "gflib.h"
+#include "event_data.h"
 #include "event_object_lock.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
@@ -105,12 +106,12 @@ static const struct SpriteFrameImage sSpriteFrameImages_FldEff_CutGrass[] = {
 };
 
 const struct SpritePalette gFldEffPalette_CutGrass[] = {
-    gUnknown_8398688, 4096
+    gUnknown_8398688, FLDEFF_PAL_TAG_CUT_GRASS
 };
 
 static const struct SpriteTemplate sSpriteTemplate_FldEff_CutGrass = {
-    .tileTag = 0xFFFF,
-    .paletteTag = 4096,
+    .tileTag = SPRITE_INVALID_TAG,
+    .paletteTag = FLDEFF_PAL_TAG_CUT_GRASS,
     .oam = &sOamData_FldEff_CutGrass,
     .anims = sSpriteAnimTable_FldEff_CutGrass,
     .images = sSpriteFrameImages_FldEff_CutGrass,
@@ -159,7 +160,6 @@ bool32 SetUpFieldMove_Cut(void)
         gPostMenuFieldCallback = FieldCallback_CutTree;
         return TRUE;
     }
-    
     else
     {
         PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
@@ -195,16 +195,16 @@ bool32 SetUpFieldMove_Cut(void)
 
 static void FieldCallback_CutGrass(void)
 {
-    FieldEffectStart(FLDEFF_USE_CUT_ON_GRASS);
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
+    FieldEffectStart(FLDEFF_USE_CUT_ON_GRASS);
 }
 
-bool32 FldEff_UseCutOnGrass(void)
+u32 FldEff_UseCutOnGrass(void)
 {
     u32 taskId = CreateFieldEffectShowMon();
     FLDEFF_SET_FUNC_TO_DATA(FieldMoveCallback_CutGrass);
     IncrementGameStat(GAME_STAT_USED_CUT);
-    return FALSE;
+    return 0;
 }
 
 static void FieldCallback_CutTree(void)
@@ -213,12 +213,12 @@ static void FieldCallback_CutTree(void)
     ScriptContext1_SetupScript(EventScript_FldEffCut);
 }
 
-bool32 FldEff_UseCutOnTree(void)
+u32 FldEff_UseCutOnTree(void)
 {
     u32 taskId = CreateFieldEffectShowMon();
     FLDEFF_SET_FUNC_TO_DATA(FieldMoveCallback_CutTree);
     IncrementGameStat(GAME_STAT_USED_CUT);
-    return FALSE;
+    return 0;
 }
 
 static void FieldMoveCallback_CutGrass(void)
@@ -231,7 +231,7 @@ static void FieldMoveCallback_CutGrass(void)
         FieldEffectStart(FLDEFF_CUT_GRASS);
 }
 
-bool32 FldEff_CutGrass(void)
+u32 FldEff_CutGrass(void)
 {
     u32 i, j;
     u32 cutRange;
@@ -269,12 +269,15 @@ bool32 FldEff_CutGrass(void)
     }
     DrawWholeMapView();
     sCutGrassSpriteArrayPtr = Alloc(CUT_GRASS_SPRITE_COUNT);
+    
+    FieldEffect_LoadFadedPal(gFldEffPalette_CutGrass);
+    
     for (i = 0; i < 8; i++)
     {
         sCutGrassSpriteArrayPtr[i] = CreateSprite(&sSpriteTemplate_FldEff_CutGrass, gSprites[gPlayerAvatar.spriteId].oam.x + 8, gSprites[gPlayerAvatar.spriteId].oam.y + 20, 0);
         gSprites[sCutGrassSpriteArrayPtr[i]].data[2] = i * (0x100 / CUT_GRASS_SPRITE_COUNT);
     }
-    return FALSE;
+    return 0;
 }
 
 static void SetCutGrassMetatileAt(s16 x, s16 y)
@@ -409,4 +412,20 @@ static void Task_FieldEffectShowMon_Cleanup(u32 taskId)
     FLDEFF_CALL_FUNC_IN_DATA();
     gPlayerAvatar.preventStep = FALSE;
     DestroyTask(taskId);
+}
+
+bool32 CheckObjectGraphicsInFrontOfPlayer(u32 graphicsId)
+{
+    u32 mapObjId;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
+    gPlayerFacingPosition.height = PlayerGetZCoord();
+    
+    mapObjId = GetObjectEventIdByXYZ(gPlayerFacingPosition.x, gPlayerFacingPosition.y, gPlayerFacingPosition.height);
+    
+    if (gObjectEvents[mapObjId].graphicsId != graphicsId)
+        return FALSE;
+    
+    gSpecialVar_LastTalked = gObjectEvents[mapObjId].localId;
+    return TRUE;
 }

@@ -9,7 +9,7 @@ static const u8 sTilesSurfable[] =
     MB_DEEP_WATER,
     MB_WATERFALL,
     MB_OCEAN_WATER,
-    MB_1B,
+    MB_UNUSED_REFLECTIVE,
     MB_EASTWARD_CURRENT,
     MB_WESTWARD_CURRENT,
     MB_NORTHWARD_CURRENT,
@@ -66,7 +66,7 @@ bool32 MetatileBehavior_IsDeepSand(u32 metatileBehavior) { return FALSE; }
 
 bool32 MetatileBehavior_IsReflective(u32 metatileBehavior)
 {
-    return (metatileBehavior == MB_POND_WATER || metatileBehavior == MB_PUDDLE || metatileBehavior == MB_1B || metatileBehavior == MB_ICE);
+    return (metatileBehavior == MB_POND_WATER || metatileBehavior == MB_PUDDLE || metatileBehavior == MB_UNUSED_REFLECTIVE || metatileBehavior == MB_ICE);
 }
 
 bool32 MetatileBehavior_IsIce(u32 metatileBehavior)
@@ -295,12 +295,12 @@ bool32 MetatileBehavior_UnusedIsTallGrass(u32 metatileBehavior)
 
 bool32 MetatileBehavior_IsIndoorEncounter(u32 metatileBehavior)
 {
-    return (metatileBehavior == MB_0B);
+    return (metatileBehavior == MB_INDOOR_ENCOUNTER);
 }
 
 bool32 MetatileBehavior_IsMountain(u32 metatileBehavior)
 {
-    return (metatileBehavior == MB_0C);
+    return (metatileBehavior == MB_MOUNTAIN);
 }
 
 bool32 MetatileBehavior_IsDiveable(u32 metatileBehavior)
@@ -554,7 +554,7 @@ bool32 MetatileBehavior_IsPlayerFacingCableClubWirelessMonitor(u32 tile, u32 pla
 {
     if (playerDirection != DIR_NORTH)
         return FALSE;
-    else if (tile == MB_8D)
+    else if (tile == MB_WIRELESS_MONITOR)
         return TRUE;
     else
         return FALSE;
@@ -568,6 +568,11 @@ bool32 MetatileBehavior_IsPlayerFacingBattleRecords(u32 tile, u32 playerDirectio
         return TRUE;
     else
         return FALSE;
+}
+
+bool32 MetatileBehavior_IsSnow(u32 metatileBehavior)
+{
+    return (metatileBehavior == MB_SNOW);
 }
 
 bool32 MetatileBehavior_IsIndigoPlateauMark(u32 metatileBehavior)
@@ -661,9 +666,4 @@ bool32 MetatileBehavior_IsVideoGame(u32 metatileBehavior)
 bool32 MetatileBehavior_IsBurglary(u32 metatileBehavior)
 {
     return (metatileBehavior == MB_BURGLARY);
-}
-
-bool32 MetatileBehavior_IsTrainerTowerMonitor(u32 metatileBehavior)
-{
-    return (metatileBehavior == MB_TRAINER_TOWER_MONITOR);
 }

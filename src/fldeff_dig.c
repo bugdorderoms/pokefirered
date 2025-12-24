@@ -24,17 +24,17 @@ bool32 SetUpFieldMove_Dig(void)
 static void FieldCallback_Dig(void)
 {
     Overworld_ResetStateForLeavingMap();
-    FieldEffectStart(FLDEFF_USE_DIG);
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
+    FieldEffectStart(FLDEFF_USE_DIG);
 }
 
-bool32 FldEff_UseDig(void)
+u32 FldEff_UseDig(void)
 {
     u32 taskId = CreateFieldEffectShowMon();
 
     FLDEFF_SET_FUNC_TO_DATA(sub_80C9AFC);
     SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
-    return FALSE;
+    return 0;
 }
 
 static void sub_80C9AFC(void)

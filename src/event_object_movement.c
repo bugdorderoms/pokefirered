@@ -63,7 +63,6 @@ static void DoRippleFieldEffect(struct ObjectEvent*, struct Sprite*);
 static void DoGroundEffects_OnSpawn(struct ObjectEvent*, struct Sprite*);
 static void DoGroundEffects_OnBeginStep(struct ObjectEvent*, struct Sprite*);
 static void DoGroundEffects_OnFinishStep(struct ObjectEvent*, struct Sprite*);
-static void CreateReflectionEffectSprites(void);
 static u32 GetObjectEventIdByLocalId(u32);
 static u32 GetObjectEventIdByLocalIdAndMapInternal(u32, u32, u32);
 static bool32 GetAvailableObjectEventId(u32, u32, u32, u8 *);
@@ -406,36 +405,6 @@ static const u8 gInitialMovementTypeFacingDirections[MOVEMENT_TYPES_COUNT] = {
     [MOVEMENT_TYPE_WANDER_AROUND_SLOWEST] = DIR_SOUTH,
 };
 
-#define OBJ_EVENT_PAL_TAG_PLAYER_RED                  0x1100
-#define OBJ_EVENT_PAL_TAG_PLAYER_RED_REFLECTION       0x1101
-#define OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION           0x1102
-#define OBJ_EVENT_PAL_TAG_NPC_BLUE                    0x1103
-#define OBJ_EVENT_PAL_TAG_NPC_PINK                    0x1104
-#define OBJ_EVENT_PAL_TAG_NPC_GREEN                   0x1105
-#define OBJ_EVENT_PAL_TAG_NPC_WHITE                   0x1106
-#define OBJ_EVENT_PAL_TAG_NPC_BLUE_REFLECTION         0x1107
-#define OBJ_EVENT_PAL_TAG_NPC_PINK_REFLECTION         0x1108
-#define OBJ_EVENT_PAL_TAG_NPC_GREEN_REFLECTION        0x1109
-#define OBJ_EVENT_PAL_TAG_NPC_WHITE_REFLECTION        0x110A
-#define OBJ_EVENT_PAL_TAG_RS_QUINTY_PLUMP             0x110B
-#define OBJ_EVENT_PAL_TAG_RS_QUINTY_PLUMP_REFLECTION  0x110C
-#define OBJ_EVENT_PAL_TAG_RS_TRUCK                    0x110D
-#define OBJ_EVENT_PAL_TAG_RS_MACHOKE                  0x110E
-#define OBJ_EVENT_PAL_TAG_RS_POOCHYENA                0x110F
-#define OBJ_EVENT_PAL_TAG_PLAYER_GREEN                0x1110
-#define OBJ_EVENT_PAL_TAG_PLAYER_GREEN_REFLECTION     0x1111
-#define OBJ_EVENT_PAL_TAG_RS_MOVING_BOX               0x1112
-#define OBJ_EVENT_PAL_TAG_METEORITE                   0x1113
-#define OBJ_EVENT_PAL_TAG_SEAGALLOP                   0x1114
-#define OBJ_EVENT_PAL_TAG_SS_ANNE                     0x1115
-#define OBJ_EVENT_PAL_TAG_RS_PLAYER_UNDERWATER        0x1116
-#define OBJ_EVENT_PAL_TAG_RS_KYOGRE                   0x1117
-#define OBJ_EVENT_PAL_TAG_RS_KYOGRE_REFLECTION        0x1118
-#define OBJ_EVENT_PAL_TAG_RS_GROUDON                  0x1119
-#define OBJ_EVENT_PAL_TAG_RS_GROUDON_REFLECTION       0x111A
-#define OBJ_EVENT_PAL_TAG_RS_SUBMARINE_SHADOW         0x111B
-
-#include "data/field_effects/field_effect_object_template_pointers.h"
 #include "data/object_events/object_event_pic_tables.h"
 #include "data/object_events/object_event_anims.h"
 #include "data/object_events/base_oam.h"
@@ -466,7 +435,6 @@ static const struct SpritePalette sObjectEventSpritePalettes[] = {
 };
 
 //#include "data/object_events/berry_tree_graphics_tables.h"
-#include "data/field_effects/field_effect_objects.h"
 
 static const s16 gMovementDelaysMedium[] = {32, 64,  96, 128};
 static const s16 gMovementDelaysLong[] =   {32, 64, 128, 192};
@@ -1009,21 +977,6 @@ void ResetObjectEvents(void)
     ClearAllObjectEvents();
     ClearPlayerAvatarInfo();
     CreateReflectionEffectSprites();
-}
-
-static void CreateReflectionEffectSprites(void)
-{
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_REFLECTION_DISTORTION], 0, 0, 31);
-    gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
-    InitSpriteAffineAnim(&gSprites[spriteId]);
-    StartSpriteAffineAnim(&gSprites[spriteId], 0);
-    gSprites[spriteId].invisible = TRUE;
-
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_REFLECTION_DISTORTION], 0, 0, 31);
-    gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
-    InitSpriteAffineAnim(&gSprites[spriteId]);
-    StartSpriteAffineAnim(&gSprites[spriteId], 1);
-    gSprites[spriteId].invisible = TRUE;
 }
 
 u32 GetFirstInactiveObjectEventId(void)
@@ -1805,13 +1758,6 @@ void ShowOrHideObjectByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup, bool
 
     if (!TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId))
         gObjectEvents[objectEventId].invisible = state;
-}
-
-void ObjectEventGetLocalIdAndMap(struct ObjectEvent *objectEvent, void *localId, void *mapNum, void *mapGroup)
-{
-    *(u8*)(localId) = objectEvent->localId;
-    *(u8*)(mapNum) = objectEvent->mapNum;
-    *(u8*)(mapGroup) = objectEvent->mapGroup;
 }
 
 void EnableObjectGroundEffectsByXY(s16 x, s16 y)
@@ -3742,8 +3688,7 @@ static void MovementType_TreeDisguise(struct Sprite *sprite)
 
     if (objectEvent->directionSequenceIndex == 0 || (objectEvent->directionSequenceIndex == 1 && !sprite->data[7]))
     {
-        ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-        objectEvent->fieldEffectSpriteId = FieldEffectStart(FLDEFF_TREE_DISGUISE);
+        objectEvent->fieldEffectSpriteId = StartFieldEffectForObjectEvent(FLDEFF_TREE_DISGUISE, objectEvent);
         objectEvent->directionSequenceIndex = 1;
         sprite->data[7]++;
     }
@@ -3762,8 +3707,7 @@ static void MovementType_MountainDisguise(struct Sprite *sprite)
 
     if (objectEvent->directionSequenceIndex == 0 || (objectEvent->directionSequenceIndex == 1 && !sprite->data[7]))
     {
-        ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-        objectEvent->fieldEffectSpriteId = FieldEffectStart(FLDEFF_MOUNTAIN_DISGUISE);
+        objectEvent->fieldEffectSpriteId = StartFieldEffectForObjectEvent(FLDEFF_MOUNTAIN_DISGUISE, objectEvent);
         objectEvent->directionSequenceIndex = 1;
         sprite->data[7]++;
     }
@@ -6211,40 +6155,35 @@ static bool32 MovementAction_SetVisible_Step0(struct ObjectEvent *objectEvent, s
 
 static bool32 MovementAction_EmoteExclamationMark_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_EXCLAMATION_MARK_ICON);
+    StartFieldEffectForObjectEvent(FLDEFF_EXCLAMATION_MARK_ICON, objectEvent);
     sprite->data[2] = 1;
     return TRUE;
 }
 
 static bool32 MovementAction_EmoteQuestionMark_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_QUESTION_MARK_ICON);
+    StartFieldEffectForObjectEvent(FLDEFF_QUESTION_MARK_ICON, objectEvent);
     sprite->data[2] = 1;
     return TRUE;
 }
 
 static bool32 MovementAction_EmoteHeart_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_X_ICON);
+    StartFieldEffectForObjectEvent(FLDEFF_X_ICON, objectEvent);
     sprite->data[2] = 1;
     return TRUE;
 }
 
 static bool32 do_double_excl_bubble(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_DOUBLE_EXCL_MARK_ICON);
+    StartFieldEffectForObjectEvent(FLDEFF_DOUBLE_EXCL_MARK_ICON, objectEvent);
     sprite->data[2] = 1;
     return TRUE;
 }
 
 static bool32 do_smile_bubble(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
-    ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
-    FieldEffectStart(FLDEFF_SMILEY_FACE_ICON);
+    StartFieldEffectForObjectEvent(FLDEFF_SMILEY_FACE_ICON, objectEvent);
     sprite->data[2] = 1;
     return TRUE;
 }
@@ -7238,6 +7177,8 @@ static void GetGroundEffectFlags_Tracks(struct ObjectEvent *objEvent, u32 *flags
         *flags |= GROUND_EFFECT_FLAG_DEEP_SAND;
     else if (MetatileBehavior_IsSand(objEvent->previousMetatileBehavior) || MetatileBehavior_IsFootprints(objEvent->previousMetatileBehavior))
         *flags |= GROUND_EFFECT_FLAG_SAND;
+    else if (MetatileBehavior_IsSnow(objEvent->previousMetatileBehavior))
+        *flags |= GROUND_EFFECT_FLAG_SNOW;
 }
 
 static void GetGroundEffectFlags_SandHeap(struct ObjectEvent *objEvent, u32 *flags)
@@ -7520,7 +7461,7 @@ void GroundEffect_SpawnOnTallGrass(struct ObjectEvent *objEvent, struct Sprite *
     gFieldEffectArguments[4] = objEvent->localId << 8 | objEvent->mapNum;
     gFieldEffectArguments[5] = objEvent->mapGroup;
     gFieldEffectArguments[6] = (u8)gSaveBlock1Ptr->location.mapNum << 8 | (u8)gSaveBlock1Ptr->location.mapGroup;
-    gFieldEffectArguments[7] = 1;
+    gFieldEffectArguments[7] = TRUE;
     FieldEffectStart(FLDEFF_TALL_GRASS);
 }
 
@@ -7533,7 +7474,7 @@ void GroundEffect_StepOnTallGrass(struct ObjectEvent *objEvent, struct Sprite *s
     gFieldEffectArguments[4] = objEvent->localId << 8 | objEvent->mapNum;
     gFieldEffectArguments[5] = objEvent->mapGroup;
     gFieldEffectArguments[6] = (u8)gSaveBlock1Ptr->location.mapNum << 8 | (u8)gSaveBlock1Ptr->location.mapGroup;
-    gFieldEffectArguments[7] = 0;
+    gFieldEffectArguments[7] = FALSE;
     FieldEffectStart(FLDEFF_TALL_GRASS);
 }
 
@@ -7594,16 +7535,21 @@ void GroundEffect_DeepSandTracks(struct ObjectEvent *objEvent, struct Sprite *sp
     sGroundEffectTracksFuncs[GetObjectEventGraphicsInfo(objEvent->graphicsId)->tracks](objEvent, sprite, 1);
 }
 
+void GroundEffect_Snow(struct ObjectEvent *objEvent, struct Sprite *sprite)
+{
+    sGroundEffectTracksFuncs[GetObjectEventGraphicsInfo(objEvent->graphicsId)->tracks](objEvent, sprite, 2);
+}
+
 static void DoTracksGroundEffect_None(struct ObjectEvent *objEvent, struct Sprite *sprite, u32 a)
 {
 }
 
 static void DoTracksGroundEffect_Footprints(struct ObjectEvent *objEvent, struct Sprite *sprite, u32 a)
 {
-    // First half-word is a Field Effect script id. (gFieldEffectScriptPointers)
-    u16 sandFootprints_FieldEffectData[2] = {
+    u16 sandFootprints_FieldEffectData[3] = {
         FLDEFF_SAND_FOOTPRINTS,
-        FLDEFF_DEEP_SAND_FOOTPRINTS
+        FLDEFF_DEEP_SAND_FOOTPRINTS,
+        FLDEFF_SNOW_FOOTPRINTS
     };
 
     gFieldEffectArguments[0] = objEvent->previousCoords.x;
@@ -7635,8 +7581,7 @@ static void DoTracksGroundEffect_BikeTireTracks(struct ObjectEvent *objEvent, st
         gFieldEffectArguments[1] = objEvent->previousCoords.y;
         gFieldEffectArguments[2] = 149;
         gFieldEffectArguments[3] = 2;
-        gFieldEffectArguments[4] =
-        bikeTireTracks_Transitions[objEvent->previousMovementDirection][objEvent->facingDirection - 5];
+        gFieldEffectArguments[4] = bikeTireTracks_Transitions[objEvent->previousMovementDirection][objEvent->facingDirection - 5];
         FieldEffectStart(FLDEFF_BIKE_TIRE_TRACKS);
     }
 }
@@ -7741,16 +7686,9 @@ static void (*const sGroundEffectFuncs[])(struct ObjectEvent *objEvent, struct S
     GroundEffect_JumpLandingDust,
     GroundEffect_ShortGrass,
     GroundEffect_HotSprings,
-    GroundEffect_Seaweed
+    GroundEffect_Seaweed,
+    GroundEffect_Snow
 };
-
-void SetUpShadow(struct ObjectEvent *objectEvent)
-{
-    gFieldEffectArguments[0] = objectEvent->localId;
-    gFieldEffectArguments[1] = objectEvent->mapNum;
-    gFieldEffectArguments[2] = objectEvent->mapGroup;
-    FldEff_Shadow();
-}
 
 static void DoFlaggedGroundEffects(struct ObjectEvent *objEvent, struct Sprite *sprite, u32 flags)
 {
@@ -8425,7 +8363,9 @@ bool32 RfuUnionObjectIsWarping(u32 objectEventId)
 
 u32 StartFieldEffectForObjectEvent(u32 fieldEffectId, struct ObjectEvent * objectEvent)
 {
-    ObjectEventGetLocalIdAndMap(objectEvent, (u8 *)&gFieldEffectArguments[0], (u8 *)&gFieldEffectArguments[1], (u8 *)&gFieldEffectArguments[2]);
+    gFieldEffectArguments[0] = objectEvent->localId;
+    gFieldEffectArguments[1] = objectEvent->mapNum;
+    gFieldEffectArguments[2] = objectEvent->mapGroup;
     return FieldEffectStart(fieldEffectId);
 }
 

@@ -126,7 +126,6 @@ static void BT_Phase2Mugshot(u32 taskId);
 static void BT_Phase1SubTask(u32 taskId);
 
 static void SpriteCB_BT_Phase2Mugshots(struct Sprite *sprite);
-static void SpriteCB_BT_Phase2SlidingPokeballs(struct Sprite *sprite);
 static void SpriteCB_BT_Phase2WhiteFadeInStripes(struct Sprite *sprite);
 
 static bool32 BT_Phase2MugshotsSpriteFuncs_Wait(struct Sprite *sprite);
@@ -177,7 +176,6 @@ static void BT_Phase2Mugshots_CreateSprites(struct Task *task);
 
 static const u32 sBigPokeballTileset[] = INCBIN_U32("graphics/battle_transitions/big_pokeball_tileset.4bpp");
 static const u32 sSlidingPokeballTilemap[] = INCBIN_U32("graphics/battle_transitions/sliding_pokeball_tilemap.bin");
-static const u8 sSpriteImage_SlidingPokeball[] = INCBIN_U8("graphics/battle_transitions/sliding_pokeball.4bpp");
 static const u32 sVsBarTileset[] = INCBIN_U32("graphics/battle_transitions/vsbar_tileset.4bpp");
 static const u32 sGridSquareTileset[] = INCBIN_U32("graphics/battle_transitions/grid_square_tileset.4bpp");
 
@@ -247,8 +245,6 @@ static const s16 gUnknown_83FA400[] = { -16, 256 };
 
 static const s16 gUnknown_83FA404[] = { 0, 16, 32, 8, 24 };
 
-static const s16 gUnknown_83FA40E[] = { 8, -8 };
-
 static const TransitionStateFunc sBT_Phase2ClockwiseBlackFadeFuncs[] =
 {
     BT_Phase2ClockwiseBlackFade_Init,
@@ -317,8 +313,23 @@ static const TransitionSpriteCallback sBT_Phase2MugshotSpriteFuncs[] =
 };
 
 static const s16 sMugShotSlideVelocity[] = { 12, -12 };
-
 static const s16 sMugShotSlideDeceleration[] = { -1, 1 };
+
+static const struct OamData sMugShotOamAttributes = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(64x64),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x64),
+    .tileNum = 0x000,
+    .priority = 0,
+    .paletteNum = 0x0,
+    .affineParam = 0
+};
 
 static const TransitionStateFunc sBT_Phase2SlicedScreenFuncs[] =
 {
@@ -371,60 +382,6 @@ static const TransitionStateFunc sBT_Phase1FadeFuncs[] =
 {
     BT_Phase1_FadeOut,
     BT_Phase1_FadeIn,
-};
-
-static const struct SpriteFrameImage sSpriteImageTable_SlidingPokeball[] =
-{
-    {
-        .data = sSpriteImage_SlidingPokeball, 
-        .size = 0x200,
-    },
-};
-
-static const union AnimCmd sSpriteAnim_SlidingPokeball[] =
-{
-    ANIMCMD_FRAME(0, 1),
-    ANIMCMD_END,
-};
-
-static const union AnimCmd *const sSpriteAnimTable_SlidingPokeball[] = { sSpriteAnim_SlidingPokeball };
-
-static const union AffineAnimCmd sSpriteAffineAnim_SlidingPokeball1[] =
-{
-    AFFINEANIMCMD_FRAME(0, 0, -4, 1),
-    AFFINEANIMCMD_JUMP(0),
-};
-
-static const union AffineAnimCmd sSpriteAffineAnim_SlidingPokeball2[] =
-{
-    AFFINEANIMCMD_FRAME(0, 0, 4, 1),
-    AFFINEANIMCMD_JUMP(0),
-};
-
-static const union AffineAnimCmd *const sSpriteAffineAnimTable_SlidingPokeball[] =
-{
-    sSpriteAffineAnim_SlidingPokeball1,
-    sSpriteAffineAnim_SlidingPokeball2,
-};
-
-static const struct SpriteTemplate sSpriteTemplate_SlidingPokeball =
-{
-    .tileTag = SPRITE_INVALID_TAG,
-    .paletteTag = 0x1009,
-    .oam = &gObjectEventBaseOam_32x32,
-    .anims = sSpriteAnimTable_SlidingPokeball,
-    .images = sSpriteImageTable_SlidingPokeball,
-    .affineAnims = sSpriteAffineAnimTable_SlidingPokeball,
-    .callback = SpriteCB_BT_Phase2SlidingPokeballs,
-};
-
-// this palette is shared by big pokeball and sliding pokeball
-static const u16 sSlidingPokeballBigPokeballPalette[] = INCBIN_U16("graphics/battle_transitions/sliding_pokeball.gbapal");
-
-const struct SpritePalette gSpritePalette_SlidingPokeball =
-{
-    .data = sSlidingPokeballBigPokeballPalette,
-    .tag = 0x1009,
 };
 
 static const u16 sVsBarPurplePalette[] = INCBIN_U16("graphics/battle_transitions/purple_bg.gbapal");
@@ -737,7 +694,7 @@ static bool32 BT_Phase2BigPokeball_Init(struct Task *task)
     CpuFill16(0, tilemapAddr, 0x800);
     CpuCopy16(sBigPokeballTileset, tilesetAddr, 0x580);
     
-    LoadPalette(sSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    LoadPalette(gSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
     
     ++task->tState;
     
@@ -924,7 +881,7 @@ static bool32 BT_Phase2SlidingPokeballs_LoadBgGfx(struct Task *task)
     BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
     CpuCopy16(sSlidingPokeballTilemap, tilesetAddr, 0x40);
     CpuFill32(0, tilemapAddr, 0x800);
-    LoadPalette(sSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    LoadPalette(gSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
     ++task->tState;
     return FALSE;
 }
@@ -960,59 +917,6 @@ static bool32 BT_Phase2SlidingPokeballs_IsDone(struct Task *task)
         DestroyTask(FindTaskIdByFunc(BT_Phase2SlidingPokeballs));
     }
     return FALSE;
-}
-
-bool32 FldEff_Pokeball(void)
-{
-    u32 spriteId = CreateSpriteAtEnd(&sSpriteTemplate_SlidingPokeball, gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
-    
-    gSprites[spriteId].oam.priority = 0;
-    gSprites[spriteId].oam.affineMode = 1;
-    gSprites[spriteId].data[0] = gFieldEffectArguments[2];
-    gSprites[spriteId].data[1] = gFieldEffectArguments[3];
-    gSprites[spriteId].data[2] = -1;
-    InitSpriteAffineAnim(&gSprites[spriteId]);
-    StartSpriteAffineAnim(&gSprites[spriteId], gFieldEffectArguments[2]);
-    return FALSE;
-}
-
-#define SOME_VRAM_STORE(ptr, posY, posX, toStore)                       \
-{                                                                       \
-    u32 index = (posY) * 32 + posX;                                     \
-    ptr[index] = toStore;                                               \
-}
-
-static void SpriteCB_BT_Phase2SlidingPokeballs(struct Sprite *sprite)
-{
-    s16 arr0[ARRAY_COUNT(gUnknown_83FA40E)];
-
-    memcpy(arr0, gUnknown_83FA40E, sizeof(gUnknown_83FA40E));
-    
-    if (sprite->data[1])
-        --sprite->data[1];
-    else
-    {
-        if ((u16)sprite->x <= 240)
-        {
-            s16 posX = sprite->x >> 3;
-            s16 posY = sprite->y >> 3;
-
-            if (posX != sprite->data[2])
-            {
-                u16 *ptr;
-
-                sprite->data[2] = posX;
-                ptr = (u16 *)BG_SCREEN_ADDR((GetGpuReg(REG_OFFSET_BG0CNT) >> 8) & 0x1F);
-                SOME_VRAM_STORE(ptr, posY - 2, posX, 0xF001);
-                SOME_VRAM_STORE(ptr, posY - 1, posX, 0xF001);
-                SOME_VRAM_STORE(ptr, posY - 0, posX, 0xF001);
-                SOME_VRAM_STORE(ptr, posY + 1, posX, 0xF001);
-            }
-        }
-        sprite->x += arr0[sprite->data[0]];
-        if (sprite->x < -15 || sprite->x > 255)
-            FieldEffectStop(sprite, FLDEFF_POKEBALL);
-    }
 }
 
 #define trStartPtX data[0]
@@ -2012,6 +1916,24 @@ static void HBCB_BT_Phase2Mugshot(void)
     REG_BG0HOFS = REG_VCOUNT < 80 ? sTransitionStructPtr->bg0HOfsOpponent : sTransitionStructPtr->bg0HOfsPlayer;
 }
 
+static u32 CreateTrainerSprite(u32 trainerSpriteID, s16 x, s16 y, u32 subpriority)
+{
+    struct SpriteTemplate spriteTemplate;
+    
+    LoadCompressedSpritePalette(&gTrainerFrontPicTable[trainerSpriteID].palette);
+    LoadCompressedSpriteSheet(&gTrainerFrontPicTable[trainerSpriteID].pic);
+    
+    spriteTemplate.tileTag = gTrainerFrontPicTable[trainerSpriteID].pic.tag;
+    spriteTemplate.paletteTag = gTrainerFrontPicTable[trainerSpriteID].palette.tag;
+    spriteTemplate.oam = &sMugShotOamAttributes;
+    spriteTemplate.anims = gDummySpriteAnimTable;
+    spriteTemplate.images = NULL;
+    spriteTemplate.affineAnims = gDummySpriteAffineAnimTable;
+    spriteTemplate.callback = SpriteCallbackDummy;
+    
+    return CreateSprite(&spriteTemplate, x, y, subpriority);
+}
+
 static void BT_Phase2Mugshots_CreateSprites(struct Task *task)
 {
     struct Sprite *opponentSprite, *playerSprite;
@@ -2453,7 +2375,7 @@ static bool32 BT_Phase2GridSquares_LoadGfx(struct Task *task)
     CpuCopy16(sGridSquareTileset, tilesetAddr, 0x20);
     CpuFill16(0xF000, tilemapAddr, 0x800);
     
-    LoadPalette(sSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    LoadPalette(gSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
     
     ++task->tState;
     return FALSE;

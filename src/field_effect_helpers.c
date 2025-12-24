@@ -1,142 +1,386 @@
 #include "global.h"
-#include "gflib.h"
 #include "event_object_movement.h"
-#include "field_camera.h"
-#include "field_effect.h"
-#include "field_effect_helpers.h"
-#include "field_weather.h"
 #include "fieldmap.h"
+#include "field_effect.h"
+#include "field_fadetransition.h"
+#include "field_player_avatar.h"
+#include "field_weather.h"
+#include "gflib.h"
 #include "math_util.h"
 #include "metatile_behavior.h"
-#include "palette.h"
-#include "constants/field_effects.h"
+#include "object_event_graphics.h"
+#include "overworld.h"
+#include "script.h"
+#include "special_field_anim.h"
+#include "task.h"
+#include "trig.h"
 #include "constants/event_objects.h"
+#include "constants/metatile_behaviors.h"
 #include "constants/songs.h"
 
-static void UpdateObjectReflectionSprite(struct Sprite * sprite);
-static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct Sprite * sprite);
-static void UpdateGrassFieldEffectSubpriority(struct Sprite * sprite, u32 z, u32 offset);
-static void FadeFootprintsTireTracks_Step0(struct Sprite * sprite);
-static void FadeFootprintsTireTracks_Step1(struct Sprite * sprite);
-static void UpdateFeetInFlowingWaterFieldEffect(struct Sprite * sprite);
-static void UpdateAshFieldEffect_Step0(struct Sprite * sprite);
-static void UpdateAshFieldEffect_Step1(struct Sprite * sprite);
-static void UpdateAshFieldEffect_Step2(struct Sprite * sprite);
-static void SynchroniseSurfAnim(struct ObjectEvent * objectEvent, struct Sprite * sprite);
-static void SynchroniseSurfPosition(struct ObjectEvent * objectEvent, struct Sprite * sprite);
-static void CreateBobbingEffect(struct ObjectEvent * objectEvent, struct Sprite * linkedSprite, struct Sprite * sprite);
-static void SpriteCB_UnderwaterSurfBlob(struct Sprite * sprite);
-static u32 ShowDisguiseFieldEffect(u32 fldEff, u32 templateIdx);
-void LoadSpecialReflectionPalette(struct Sprite *sprite);
+////////////////////
+// ESCALATOR WARP //
+////////////////////
 
-extern u16 gReflectionPaletteBuffer[32];
+static void Task_EscalatorWarpFieldEffect(u32 taskId);
+static bool32 EscalatorWarpEffect_1(struct Task * task);
+static bool32 EscalatorWarpEffect_2(struct Task * task);
+static bool32 EscalatorWarpEffect_3(struct Task * task);
+static bool32 EscalatorWarpEffect_4(struct Task * task);
+static bool32 EscalatorWarpEffect_5(struct Task * task);
+static bool32 EscalatorWarpEffect_6(struct Task * task);
+static void Escalator_AnimatePlayerGoingDown(struct Task * task);
+static void Escalator_AnimatePlayerGoingUp(struct Task * task);
+static void Escalator_TransitionToWarpInEffect(void);
+static void FieldCB_EscalatorWarpIn(void);
+static void Task_EscalatorWarpInFieldEffect(u32 taskId);
+static bool32 EscalatorWarpInEffect_1(struct Task * task);
+static bool32 EscalatorWarpInEffect_2(struct Task * task);
+static bool32 EscalatorWarpInEffect_3(struct Task * task);
+static bool32 EscalatorWarpInEffect_4(struct Task * task);
+static bool32 EscalatorWarpInEffect_5(struct Task * task);
+static bool32 EscalatorWarpInEffect_6(struct Task * task);
+static bool32 EscalatorWarpInEffect_7(struct Task * task);
 
-void SetUpReflection(struct ObjectEvent * objectEvent, struct Sprite * sprite, bool32 stillReflection)
+static bool32 (*const sEscalatorWarpFieldEffectFuncs[])(struct Task * task) = {
+    EscalatorWarpEffect_1,
+    EscalatorWarpEffect_2,
+    EscalatorWarpEffect_3,
+    EscalatorWarpEffect_4,
+    EscalatorWarpEffect_5,
+    EscalatorWarpEffect_6
+};
+
+static bool32 (*const sEscalatorWarpInFieldEffectFuncs[])(struct Task * task) = {
+    EscalatorWarpInEffect_1,
+    EscalatorWarpInEffect_2,
+    EscalatorWarpInEffect_3,
+    EscalatorWarpInEffect_4,
+    EscalatorWarpInEffect_5,
+    EscalatorWarpInEffect_6,
+    EscalatorWarpInEffect_7
+};
+
+void StartEscalatorWarp(u32 metatileBehavior, u32 priority)
 {
-    struct Sprite * reflectionSprite = &gSprites[CreateCopySpriteAt(sprite, sprite->x, sprite->y, 0x98)];
-
-    reflectionSprite->callback = UpdateObjectReflectionSprite;
-    reflectionSprite->oam.priority = 3;
-    reflectionSprite->usingSheet = TRUE;
-    reflectionSprite->anims = gDummySpriteAnimTable;
-    StartSpriteAnim(reflectionSprite, 0);
-    reflectionSprite->affineAnims = gDummySpriteAffineAnimTable;
-    reflectionSprite->affineAnimBeginning = TRUE;
-    reflectionSprite->subspriteMode = SUBSPRITES_OFF;
-    reflectionSprite->data[0] = sprite->data[0];
-    reflectionSprite->data[1] = objectEvent->localId;
-    reflectionSprite->data[7] = stillReflection;
-    LoadObjectReflectionPalette(objectEvent, reflectionSprite);
-
-    if (!stillReflection)
-        reflectionSprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+    gTasks[CreateTask(Task_EscalatorWarpFieldEffect, priority)].data[1] = (metatileBehavior == MB_UP_ESCALATOR);
 }
 
-#define OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION 0x1102
-
-static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct Sprite * sprite)
+static void Task_EscalatorWarpFieldEffect(u32 taskId)
 {
-    u32 bridgeType;
-    u16 bridgeReflectionVerticalOffsets[] = { 12, 28, 44 };
-    
-    sprite->data[2] = 0;
-    
-    if (!GetObjectEventGraphicsInfo(objectEvent->graphicsId)->disableReflectionPaletteLoad && ((bridgeType = MetatileBehavior_GetBridgeType(objectEvent->previousMetatileBehavior)) || (bridgeType = MetatileBehavior_GetBridgeType(objectEvent->currentMetatileBehavior))))
+    while (sEscalatorWarpFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
+}
+
+static bool32 EscalatorWarpEffect_1(struct Task * task)
+{
+    FreezeObjectEvents();
+    CameraObjectReset2();
+    StartEscalator(task->data[1]);
+    task->data[0]++;
+    return FALSE;
+}
+
+static bool32 EscalatorWarpEffect_2(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+
+    if (!ObjectEventIsMovementOverridden(objectEvent) || ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
-        // When walking on a bridge high above water (Route 120), the reflection is a solid dark blue color.
-        // This is so the sprite blends in with the dark water metatile underneath the bridge.
-        sprite->data[2] = bridgeReflectionVerticalOffsets[bridgeType - 1];
-        LoadObjectEventPalette(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
-        sprite->oam.paletteNum = IndexOfSpritePaletteTag(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
-        UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
+        ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(GetPlayerFacingDirection()));
+        
+        objectEvent->noShadow = TRUE; // hide shadow for cleaner movement
+        
+        task->data[0]++;
+        task->data[2] = 0;
+        task->data[3] = 0;
+        
+        if ((u8)task->data[1] == 0)
+            task->data[0] = 4;
+
+        PlaySE(SE_ESCALATOR);
+    }
+    return FALSE;
+}
+
+static void Escalator_BeginFadeOutToNewMap(void)
+{
+    TryFadeOutOldMapMusic();
+    WarpFadeOutScreen();
+}
+
+static bool32 EscalatorWarpEffect_3(struct Task * task)
+{
+    Escalator_AnimatePlayerGoingDown(task);
+    
+    if (task->data[2] > 3)
+    {
+        Escalator_BeginFadeOutToNewMap();
+        task->data[0]++;
+    }
+    return FALSE;
+}
+
+static bool32 EscalatorWarpEffect_4(struct Task * task)
+{
+    Escalator_AnimatePlayerGoingDown(task);
+    Escalator_TransitionToWarpInEffect();
+    return FALSE;
+}
+
+static bool32 EscalatorWarpEffect_5(struct Task * task)
+{
+    Escalator_AnimatePlayerGoingUp(task);
+    
+    if (task->data[2] > 3)
+    {
+        Escalator_BeginFadeOutToNewMap();
+        task->data[0]++;
+    }
+    return FALSE;
+}
+
+static bool32 EscalatorWarpEffect_6(struct Task * task)
+{
+    Escalator_AnimatePlayerGoingUp(task);
+    Escalator_TransitionToWarpInEffect();
+    return FALSE;
+}
+
+static void Escalator_AnimatePlayerGoingDown(struct Task * task)
+{
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+
+    sprite->x2 = Cos(0x84, task->data[2]);
+    sprite->y2 = Sin(0x94, task->data[2]);
+    
+    task->data[3]++;
+    if (task->data[3] & 1)
+        task->data[2]++;
+}
+
+static void Escalator_AnimatePlayerGoingUp(struct Task * task)
+{
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+
+    sprite->x2 = Cos(0x7c, task->data[2]);
+    sprite->y2 = Sin(0x76, task->data[2]);
+    
+    task->data[3]++;
+    if (task->data[3] & 1)
+        task->data[2]++;
+}
+
+static void Escalator_TransitionToWarpInEffect(void)
+{
+    if (!gPaletteFade.active && IsNotWaitingForBGMStop())
+    {
+        StopEscalator();
+        WarpIntoMap();
+        gFieldCallback = FieldCB_EscalatorWarpIn;
+        SetMainCallback2(CB2_LoadMap);
+        DestroyTask(FindTaskIdByFunc(Task_EscalatorWarpFieldEffect));
+    }
+}
+
+static void FieldCB_EscalatorWarpIn(void)
+{
+    Overworld_PlaySpecialMapMusic();
+    WarpFadeInScreen();
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    CreateTask(Task_EscalatorWarpInFieldEffect, 0);
+    gFieldCallback = NULL;
+}
+
+static void Task_EscalatorWarpInFieldEffect(u32 taskId)
+{
+    while (sEscalatorWarpInFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]));
+}
+
+static bool32 EscalatorWarpInEffect_1(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x, y;
+    bool32 goingUp;
+    
+    CameraObjectReset2();
+    objectEvent->noShadow = TRUE;
+    ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(DIR_EAST));
+    PlayerGetDestCoords(&x, &y);
+    
+    task->data[0]++;
+    task->data[1] = 16;
+    
+    if (MapGridGetMetatileBehaviorAt(x, y) == MB_DOWN_ESCALATOR)
+    {
+        goingUp = TRUE;
+        task->data[0] = 3;
     }
     else
-        LoadSpecialReflectionPalette(sprite);
-}
-
-void LoadSpecialReflectionPalette(struct Sprite *sprite)
-{
-    struct SpritePalette reflectionPalette;
+        goingUp = FALSE;
     
-    CpuCopy16(&gPlttBufferUnfaded[0x100 + sprite->oam.paletteNum * 16], gReflectionPaletteBuffer, 32);
-    TintPalette_CustomTone(gReflectionPaletteBuffer, 16, Q_8_8(1.0), Q_8_8(1.0), Q_8_8(3.5));
-    reflectionPalette.data = gReflectionPaletteBuffer;
-    reflectionPalette.tag = GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) + 0x1000;
-    LoadSpritePalette(&reflectionPalette);
-    sprite->oam.paletteNum = IndexOfSpritePaletteTag(reflectionPalette.tag);
-    UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
+    StartEscalator(goingUp);
+    return TRUE;
 }
 
-static void UpdateObjectReflectionSprite(struct Sprite * reflectionSprite)
+static bool32 EscalatorWarpInEffect_2(struct Task * task)
 {
-    struct ObjectEvent * objectEvent = &gObjectEvents[reflectionSprite->data[0]];
-    struct Sprite * mainSprite = &gSprites[objectEvent->spriteId];
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
 
-    if (!objectEvent->active || !objectEvent->hasReflection || objectEvent->localId != reflectionSprite->data[1])
-        reflectionSprite->inUse = FALSE;
-    else
-    {
-        reflectionSprite->oam.shape = mainSprite->oam.shape;
-        reflectionSprite->oam.size = mainSprite->oam.size;
-        reflectionSprite->oam.matrixNum = mainSprite->oam.matrixNum | ST_OAM_VFLIP;
-        reflectionSprite->oam.tileNum = mainSprite->oam.tileNum;
-        reflectionSprite->subspriteTables = mainSprite->subspriteTables;
-        reflectionSprite->subspriteTableNum = mainSprite->subspriteTableNum;
-        reflectionSprite->invisible = mainSprite->invisible;
-        reflectionSprite->x = mainSprite->x;
-        reflectionSprite->y = mainSprite->y + (GetObjectEventGraphicsInfo(objectEvent->graphicsId)->height - 2) + reflectionSprite->data[2];
-        reflectionSprite->centerToCornerVecX = mainSprite->centerToCornerVecX;
-        reflectionSprite->centerToCornerVecY = mainSprite->centerToCornerVecY;
-        reflectionSprite->x2 = mainSprite->x2;
-        reflectionSprite->y2 = -mainSprite->y2;
-        reflectionSprite->coordOffsetEnabled = mainSprite->coordOffsetEnabled;
-
-        // Check if the reflection is not still.
-        if (reflectionSprite->data[7] == FALSE)
-        {
-            // Sets the reflection sprite's rot/scale matrix to the appropriate
-            // matrix based on whether or not the main sprite is horizontally flipped.
-            // If the sprite is facing to the east, then it is flipped, and its matrixNum is 8.
-            reflectionSprite->oam.matrixNum = 0;
-            if (mainSprite->oam.matrixNum & ST_OAM_HFLIP)
-                reflectionSprite->oam.matrixNum = 1;
-        }
-    }
+    sprite->x2 = Cos(0x84, task->data[1]);
+    sprite->y2 = Sin(0x94, task->data[1]);
+    task->data[0]++;
+    return FALSE;
 }
 
-extern const struct SpriteTemplate * const gFieldEffectObjectTemplatePointers[];
+static bool32 EscalatorWarpInEffect_3(struct Task * task)
+{
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+
+    sprite->x2 = Cos(0x84, task->data[1]);
+    sprite->y2 = Sin(0x94, task->data[1]);
+    
+    if (++task->data[2] & 1)
+        task->data[1]--;
+
+    if (task->data[1] == 0)
+    {
+        sprite->x2 = 0;
+        sprite->y2 = 0;
+        task->data[0] = 5;
+    }
+    return FALSE;
+}
+
+static bool32 EscalatorWarpInEffect_4(struct Task * task)
+{
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+
+    sprite->x2 = Cos(0x7c, task->data[1]);
+    sprite->y2 = Sin(0x76, task->data[1]);
+    task->data[0]++;
+    return FALSE;
+}
+
+static bool32 EscalatorWarpInEffect_5(struct Task * task)
+{
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+
+    sprite->x2 = Cos(0x7c, task->data[1]);
+    sprite->y2 = Sin(0x76, task->data[1]);
+    
+    if (++task->data[2] & 1)
+        task->data[1]--;
+
+    if (task->data[1] == 0)
+    {
+        sprite->x2 = 0;
+        sprite->y2 = 0;
+        task->data[0]++;
+    }
+    return FALSE;
+}
+
+static bool32 EscalatorWarpInEffect_6(struct Task * task)
+{
+    if (IsEscalatorMoving())
+        return FALSE;
+
+    StopEscalator();
+    task->data[0]++;
+    return TRUE;
+}
+
+static bool32 EscalatorWarpInEffect_7(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    
+    objectEvent->noShadow = FALSE;
+    
+    if (ObjectEventClearHeldMovementIfFinished(objectEvent))
+    {
+        CameraObjectReset1();
+        ScriptContext2_Disable();
+        UnfreezeObjectEvents();
+        ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(DIR_EAST));
+        DestroyTask(FindTaskIdByFunc(Task_EscalatorWarpInFieldEffect));
+    }
+    return FALSE;
+}
+
+////////////////
+// WARP ARROW //
+////////////////
+
+static const struct SpriteFrameImage sPicTable_Arrow[] =
+{
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 0),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 1),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 2),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 3),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 4),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 5),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 6),
+    overworld_frame(gFieldEffectObjectPic_Arrow, 2, 2, 7),
+};
+
+static const union AnimCmd sArrowAnim_South[] =
+{
+    ANIMCMD_FRAME(2, 32),
+    ANIMCMD_FRAME(3, 32),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sArrowAnim_North[] =
+{
+    ANIMCMD_FRAME(0, 32),
+    ANIMCMD_FRAME(1, 32),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sArrowAnim_West[] =
+{
+    ANIMCMD_FRAME(4, 32),
+    ANIMCMD_FRAME(5, 32),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sArrowAnim_East[] =
+{
+    ANIMCMD_FRAME(6, 32),
+    ANIMCMD_FRAME(7, 32),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const sAnimTable_Arrow[] =
+{
+    [DIR_SOUTH - 1] = sArrowAnim_South,
+    [DIR_NORTH - 1] = sArrowAnim_North,
+    [DIR_WEST  - 1] = sArrowAnim_West,
+    [DIR_EAST  - 1] = sArrowAnim_East,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_Arrow =
+{
+    .tileTag = SPRITE_INVALID_TAG,
+    .paletteTag = OBJ_EVENT_PAL_TAG_PLAYER_RED,
+    .oam = &gObjectEventBaseOam_16x16,
+    .anims = sAnimTable_Arrow,
+    .images = sPicTable_Arrow,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
 
 u32 CreateWarpArrowSprite(void)
 {
     u32 spriteId;
-    struct Sprite * sprite;
 
-    LoadFieldEffectPalette(FLDEFFOBJ_ARROW);
+    LoadFieldEffectPalette(&sSpriteTemplate_Arrow);
     
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_ARROW], 0, 0, 0x52);
+    spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Arrow, 0, 0, 0x52);
     if (spriteId != MAX_SPRITES)
     {
-        sprite = &gSprites[spriteId];
+        struct Sprite *sprite = &gSprites[spriteId];
         sprite->oam.priority = 1;
         sprite->coordOffsetEnabled = TRUE;
         sprite->invisible = TRUE;
@@ -162,1170 +406,603 @@ void ShowWarpArrowSprite(u32 spriteId, u32 direction, s16 x, s16 y)
     }
 }
 
-const u8 gShadowEffectTemplateIds[] = {
-    [SHADOW_SIZE_S]  = FLDEFFOBJ_SHADOW_S,
-    [SHADOW_SIZE_M]  = FLDEFFOBJ_SHADOW_M,
-    [SHADOW_SIZE_L]  = FLDEFFOBJ_SHADOW_L,
-    [SHADOW_SIZE_XL] = FLDEFFOBJ_SHADOW_XL
+//////////////////////
+// WATER REFLECTION //
+//////////////////////
+
+static void SpriteCB_UpdateObjectReflectionSprite(struct Sprite * sprite);
+static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct Sprite * sprite);
+static void LoadSpecialReflectionPalette(struct Sprite *sprite);
+
+static const union AffineAnimCmd sAffineAnim_ReflectionDistortion_0[] =
+{
+    AFFINEANIMCMD_FRAME(-256, 256, 128, 0),
+    AFFINEANIMCMD_FRAME(1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_FRAME(-1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_FRAME(-1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_FRAME(1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_JUMP(1),
 };
 
-const u16 gShadowVerticalOffsets[] = {
-    [SHADOW_SIZE_S]  =  4,
-    [SHADOW_SIZE_M]  =  4,
-    [SHADOW_SIZE_L]  =  4,
-    [SHADOW_SIZE_XL] = 16
+static const union AffineAnimCmd sAffineAnim_ReflectionDistortion_1[] =
+{
+    AFFINEANIMCMD_FRAME(256, 256, 128, 0),
+    AFFINEANIMCMD_FRAME(-1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_FRAME(1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_FRAME(1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_FRAME(-1, 0, 0, 4),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8),
+    AFFINEANIMCMD_JUMP(1),
 };
 
-u32 FldEff_Shadow(void)
+static const union AffineAnimCmd *const sAffineAnims_ReflectionDistortion[] =
 {
-    s32 i;
-    u32 objectEventId, spriteId;
-    const struct ObjectEventGraphicsInfo * graphicsInfo;
-    
-    // Search backwards, bc of CreateSpriteAtEnd
-    for (i = MAX_SPRITES - 1; i > -1; i--)
-    {
-        // Check if a shadow sprite already exists
-        if (gSprites[i].callback == UpdateShadowFieldEffect && gSprites[i].data[0] == gFieldEffectArguments[0] && gSprites[i].data[1] == gFieldEffectArguments[1]
-        && gSprites[i].data[2] == gFieldEffectArguments[2])
-            return 0;
-    }
-    objectEventId = GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    graphicsInfo = GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId);
-    
-    LoadSpriteSheetByTemplate(gFieldEffectObjectTemplatePointers[gShadowEffectTemplateIds[graphicsInfo->shadowSize]]);
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[gShadowEffectTemplateIds[graphicsInfo->shadowSize]], 0, 0, 0x94);
-    
-    if (spriteId != MAX_SPRITES)
-    {
-        gSprites[spriteId].coordOffsetEnabled = TRUE;
-        gSprites[spriteId].oam.objMode = ST_OAM_OBJ_BLEND;
-        gSprites[spriteId].data[0] = gFieldEffectArguments[0];
-        gSprites[spriteId].data[1] = gFieldEffectArguments[1];
-        gSprites[spriteId].data[2] = gFieldEffectArguments[2];
-        gSprites[spriteId].data[3] = (graphicsInfo->height >> 1) - gShadowVerticalOffsets[graphicsInfo->shadowSize];
-    }
-    return 0;
-}
-
-void UpdateShadowFieldEffect(struct Sprite * sprite)
-{
-    u8 objectEventId;
-    struct ObjectEvent * objectEvent;
-    struct Sprite * linkedSprite;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->data[0], sprite->data[1], sprite->data[2], &objectEventId))
-        FieldEffectStop(sprite, FLDEFF_SHADOW);
-    else
-    {
-        objectEvent = &gObjectEvents[objectEventId];
-        linkedSprite = &gSprites[objectEvent->spriteId];
-        
-        sprite->oam.priority = linkedSprite->oam.priority;
-        sprite->x = linkedSprite->x;
-        sprite->y = linkedSprite->y + sprite->data[3];
-        sprite->invisible = linkedSprite->invisible;
-        
-        if (objectEvent->jumpDone)
-        {
-            objectEvent->jumpDone = FALSE;
-            objectEvent->noShadow = TRUE;
-        }
-        
-        if (!objectEvent->active || objectEvent->noShadow || objectEvent->inHotSprings || objectEvent->inSandPile || gWeatherPtr->noShadows
-        || MetatileBehavior_IsPokeGrass(objectEvent->currentMetatileBehavior) || MetatileBehavior_IsSurfable(objectEvent->currentMetatileBehavior)
-        || MetatileBehavior_IsReflective(objectEvent->currentMetatileBehavior) || MetatileBehavior_IsPuddle(objectEvent->currentMetatileBehavior)
-        || MetatileBehavior_IsSurfable(objectEvent->previousMetatileBehavior) || MetatileBehavior_IsReflective(objectEvent->previousMetatileBehavior))
-            FieldEffectStop(sprite, FLDEFF_SHADOW);
-    }
-}
-
-u32 FldEff_TallGrass(void)
-{
-    s16 x = gFieldEffectArguments[0];
-    s16 y = gFieldEffectArguments[1];
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_TALL_GRASS], x, y, 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = gFieldEffectArguments[0];
-        sprite->data[2] = gFieldEffectArguments[1];
-        sprite->data[3] = gFieldEffectArguments[4];
-        sprite->data[4] = gFieldEffectArguments[5];
-        sprite->data[5] = gFieldEffectArguments[6];
-        
-        if (gFieldEffectArguments[7])
-            SeekSpriteAnim(sprite, 4);
-    }
-    return 0;
-}
-
-void UpdateTallGrassFieldEffect(struct Sprite * sprite)
-{
-    u8 localId;
-    u8 mapNum = sprite->data[5] >> 8;
-    u8 mapGroup = sprite->data[5];
-    u8 objectEventId;
-    struct ObjectEvent * objectEvent;
-
-    if (gCamera.active && (gSaveBlock1Ptr->location.mapNum != mapNum || gSaveBlock1Ptr->location.mapGroup != mapGroup))
-    {
-        sprite->data[1] -= gCamera.x;
-        sprite->data[2] -= gCamera.y;
-        sprite->data[5] = ((u8)gSaveBlock1Ptr->location.mapNum << 8) | (u8)gSaveBlock1Ptr->location.mapGroup;
-    }
-    localId = sprite->data[3] >> 8;
-    mapNum = sprite->data[3];
-    mapGroup = sprite->data[4];
-    
-    if (TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId) || !MetatileBehavior_IsTallGrass_2(MapGridGetMetatileBehaviorAt(sprite->data[1], sprite->data[2]))
-    || (sprite->data[7] && sprite->animEnded))
-        FieldEffectStop(sprite, FLDEFF_TALL_GRASS);
-    else
-    {
-        objectEvent = &gObjectEvents[objectEventId];
-        
-        if ((objectEvent->currentCoords.x != sprite->data[1] || objectEvent->currentCoords.y != sprite->data[2]) && (objectEvent->previousCoords.x != sprite->data[1] || objectEvent->previousCoords.y != sprite->data[2]))
-            sprite->data[7] = TRUE;
-
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-        UpdateGrassFieldEffectSubpriority(sprite, sprite->data[0], sprite->animCmdIndex == 0 ? 4 : 0);
-    }
-}
-
-u32 FldEff_JumpTallGrass(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 12);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_JUMP_TALL_GRASS], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = 12;
-    }
-    return 0;
-}
-
-u32 FindTallGrassFieldEffectSpriteId(u32 localId, u32 mapNum, u32 mapGroup, s16 x, s16 y)
-{
-    struct Sprite * sprite;
-    u32 i;
-
-    for (i = 0; i < MAX_SPRITES; i++)
-    {
-        if (gSprites[i].inUse)
-        {
-            sprite = &gSprites[i];
-            
-            if (sprite->callback == UpdateTallGrassFieldEffect && (x == sprite->data[1] && y == sprite->data[2]) && (localId == (sprite->data[3] >> 8) && mapNum == (sprite->data[3] & 0xFF) && mapGroup == sprite->data[4]))
-                return i;
-        }
-    }
-    return MAX_SPRITES;
-}
-
-u32 FldEff_LongGrass(void)
-{
-    s16 x = gFieldEffectArguments[0];
-    s16 y = gFieldEffectArguments[1];
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_LONG_GRASS], x, y, 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = ZCoordToPriority(gFieldEffectArguments[2]);
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = gFieldEffectArguments[0];
-        sprite->data[2] = gFieldEffectArguments[1];
-        sprite->data[3] = gFieldEffectArguments[4];
-        sprite->data[4] = gFieldEffectArguments[5];
-        sprite->data[5] = gFieldEffectArguments[6];
-        
-        if (gFieldEffectArguments[7])
-            SeekSpriteAnim(sprite, 6);
-    }
-    return 0;
-}
-
-void UpdateLongGrassFieldEffect(struct Sprite * sprite)
-{
-    u8 localId;
-    u8 mapNum = sprite->data[5] >> 8;
-    u8 mapGroup = sprite->data[5];
-    u32 metatileBehavior;
-    u8 objectEventId;
-    struct ObjectEvent * objectEvent;
-
-    if (gCamera.active && (gSaveBlock1Ptr->location.mapNum != mapNum || gSaveBlock1Ptr->location.mapGroup != mapGroup))
-    {
-        sprite->data[1] -= gCamera.x;
-        sprite->data[2] -= gCamera.y;
-        sprite->data[5] = ((u8)gSaveBlock1Ptr->location.mapNum << 8) | (u8)gSaveBlock1Ptr->location.mapGroup;
-    }
-    localId = sprite->data[3] >> 8;
-    mapNum = sprite->data[3];
-    mapGroup = sprite->data[4];
-    metatileBehavior = MapGridGetMetatileBehaviorAt(sprite->data[1], sprite->data[2]);
-    if (TryGetObjectEventIdByLocalIdAndMap(localId, mapNum, mapGroup, &objectEventId) || !MetatileBehavior_IsLongGrass(metatileBehavior) || (sprite->data[7] && sprite->animEnded))
-    {
-        FieldEffectStop(sprite, FLDEFF_LONG_GRASS);
-    }
-    else
-    {
-        objectEvent = &gObjectEvents[objectEventId];
-        if ((objectEvent->currentCoords.x != sprite->data[1] || objectEvent->currentCoords.y != sprite->data[2]) && (objectEvent->previousCoords.x != sprite->data[1] || objectEvent->previousCoords.y != sprite->data[2]))
-        {
-            sprite->data[7] = TRUE;
-        }
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-        UpdateGrassFieldEffectSubpriority(sprite, sprite->data[0], 0);
-    }
-}
-
-u32 FldEff_JumpLongGrass(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_JUMP_LONG_GRASS], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = 18;
-    }
-    return 0;
-}
-
-u32 FldEff_ShortGrass(void)
-{
-    u32 objectEventId = GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    struct ObjectEvent * objectEvent = &gObjectEvents[objectEventId];
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SHORT_GRASS], 0, 0, 0);
-    struct Sprite * sprite;
-
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &(gSprites[spriteId]);
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gSprites[objectEvent->spriteId].oam.priority;
-        sprite->data[0] = gFieldEffectArguments[0];
-        sprite->data[1] = gFieldEffectArguments[1];
-        sprite->data[2] = gFieldEffectArguments[2];
-        sprite->data[3] = gSprites[objectEvent->spriteId].x;
-        sprite->data[4] = gSprites[objectEvent->spriteId].y;
-    }
-    return 0;
-}
-
-void UpdateShortGrassFieldEffect(struct Sprite * sprite)
-{
-    u8 objectEventId;
-    s16 x, y;
-    const struct ObjectEventGraphicsInfo * graphicsInfo;
-    struct Sprite * linkedSprite;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->data[0], sprite->data[1], sprite->data[2], &objectEventId) || !gObjectEvents[objectEventId].inShortGrass)
-        FieldEffectStop(sprite, FLDEFF_SHORT_GRASS);
-    else
-    {
-        graphicsInfo = GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId);
-        linkedSprite = &gSprites[gObjectEvents[objectEventId].spriteId];
-        y = linkedSprite->y;
-        x = linkedSprite->x;
-        
-        if (x != sprite->data[3] || y != sprite->data[4])
-        {
-            sprite->data[3] = x;
-            sprite->data[4] = y;
-            
-            if (sprite->animEnded)
-                StartSpriteAnim(sprite, 0);
-        }
-        sprite->x = x;
-        sprite->y = y;
-        sprite->y2 = (graphicsInfo->height >> 1) - 8;
-        sprite->subpriority = linkedSprite->subpriority - 1;
-        sprite->oam.priority = linkedSprite->oam.priority;
-        UpdateObjectEventSpriteVisibility(sprite, linkedSprite->invisible);
-    }
-}
-
-u32 FldEff_SandFootprints(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SAND_FOOTPRINTS], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[7] = FLDEFF_SAND_FOOTPRINTS;
-        StartSpriteAnim(sprite, gFieldEffectArguments[4]);
-    }
-    return 0;
-}
-
-u32 FldEff_DeepSandFootprints(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_DEEP_SAND_FOOTPRINTS], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[7] = FLDEFF_DEEP_SAND_FOOTPRINTS;
-        StartSpriteAnim(sprite, gFieldEffectArguments[4]);
-    }
-    return spriteId;
-}
-
-u32 FldEff_BikeTireTracks(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_BIKE_TIRE_TRACKS], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[7] = FLDEFF_BIKE_TIRE_TRACKS;
-        StartSpriteAnim(sprite, gFieldEffectArguments[4]);
-    }
-    return spriteId;
-}
-
-void (*const gFadeFootprintsTireTracksFuncs[])(struct Sprite * sprite) = {
-    FadeFootprintsTireTracks_Step0,
-    FadeFootprintsTireTracks_Step1
+    sAffineAnim_ReflectionDistortion_0,
+    sAffineAnim_ReflectionDistortion_1,
 };
 
-void UpdateFootprintsTireTracksFieldEffect(struct Sprite * sprite)
+static const struct SpriteTemplate sSpriteTemplate_ReflectionDistortion =
 {
-    gFadeFootprintsTireTracksFuncs[sprite->data[0]](sprite);
-}
-
-static void FadeFootprintsTireTracks_Step0(struct Sprite * sprite)
-{
-    // Wait 40 frames before the flickering starts.
-    if (++sprite->data[1] > 40)
-        sprite->data[0] = 1;
-
-    UpdateObjectEventSpriteVisibility(sprite, FALSE);
-}
-
-static void FadeFootprintsTireTracks_Step1(struct Sprite * sprite)
-{
-    sprite->invisible ^= TRUE;
-    sprite->data[1]++;
-    
-    UpdateObjectEventSpriteVisibility(sprite, sprite->invisible);
-    
-    if (sprite->data[1] > 56)
-        FieldEffectStop(sprite, sprite->data[7]);
-}
-
-u32 FldEff_Splash(void)
-{
-    struct ObjectEvent * objectEvent = &gObjectEvents[GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2])];
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SPLASH], 0, 0, 0);
-    struct Sprite * sprite;
-    const struct ObjectEventGraphicsInfo * graphicsInfo;
-
-    if (spriteId != MAX_SPRITES)
-    {
-        graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gSprites[objectEvent->spriteId].oam.priority;
-        sprite->data[0] = gFieldEffectArguments[0];
-        sprite->data[1] = gFieldEffectArguments[1];
-        sprite->data[2] = gFieldEffectArguments[2];
-        sprite->y2 = (graphicsInfo->height >> 1) - 4;
-        PlaySE(SE_PUDDLE);
-    }
-    return 0;
-}
-
-void UpdateSplashFieldEffect(struct Sprite * sprite)
-{
-    u8 objectEventId;
-
-    if (sprite->animEnded || TryGetObjectEventIdByLocalIdAndMap(sprite->data[0], sprite->data[1], sprite->data[2], &objectEventId))
-        FieldEffectStop(sprite, FLDEFF_SPLASH);
-    else
-    {
-        sprite->x = gSprites[gObjectEvents[objectEventId].spriteId].x;
-        sprite->y = gSprites[gObjectEvents[objectEventId].spriteId].y;
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-    }
-}
-
-u32 FldEff_JumpSmallSplash(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 12);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_JUMP_SMALL_SPLASH], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = FLDEFF_JUMP_SMALL_SPLASH;
-    }
-    return 0;
-}
-
-u32 FldEff_JumpBigSplash(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_JUMP_BIG_SPLASH], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = FLDEFF_JUMP_BIG_SPLASH;
-    }
-    return 0;
-}
-
-u32 FldEff_FeetInFlowingWater(void)
-{
-    struct ObjectEvent * objectEvent = &gObjectEvents[GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2])];
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SPLASH], 0, 0, 0);
-    struct Sprite * sprite;
-    const struct ObjectEventGraphicsInfo * graphicsInfo;
-
-    if (spriteId != MAX_SPRITES)
-    {
-        graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
-        sprite = &gSprites[spriteId];
-        sprite->callback = UpdateFeetInFlowingWaterFieldEffect;
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gSprites[objectEvent->spriteId].oam.priority;
-        sprite->data[0] = gFieldEffectArguments[0];
-        sprite->data[1] = gFieldEffectArguments[1];
-        sprite->data[2] = gFieldEffectArguments[2];
-        sprite->data[3] = -1;
-        sprite->data[4] = -1;
-        sprite->y2 = (graphicsInfo->height >> 1) - 4;
-        StartSpriteAnim(sprite, 1);
-    }
-    return 0;
-}
-
-static void UpdateFeetInFlowingWaterFieldEffect(struct Sprite * sprite)
-{
-    u8 objectEventId;
-    struct Sprite * linkedSprite;
-    struct ObjectEvent * objectEvent;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->data[0], sprite->data[1], sprite->data[2], &objectEventId) || !gObjectEvents[objectEventId].inShallowFlowingWater)
-        FieldEffectStop(sprite, FLDEFF_FEET_IN_FLOWING_WATER);
-    else
-    {
-        objectEvent = &gObjectEvents[objectEventId];
-        linkedSprite = &gSprites[objectEvent->spriteId];
-        sprite->x = linkedSprite->x;
-        sprite->y = linkedSprite->y;
-        sprite->subpriority = linkedSprite->subpriority;
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-        if (objectEvent->currentCoords.x != sprite->data[3] || objectEvent->currentCoords.y != sprite->data[4])
-        {
-            sprite->data[3] = objectEvent->currentCoords.x;
-            sprite->data[4] = objectEvent->currentCoords.y;
-            
-            if (!sprite->invisible)
-                PlaySE(SE_PUDDLE);
-        }
-    }
-}
-
-u32 FldEff_Ripple(void)
-{
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_RIPPLE], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    struct Sprite * sprite;
-
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_RIPPLE;
-    }
-    return 0;
-}
-
-u32 FldEff_HotSpringsWater(void)
-{
-    struct ObjectEvent * objectEvent = &gObjectEvents[GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2])];
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_HOT_SPRINGS_WATER], 0, 0, 0);
-    struct Sprite * sprite;
-
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gSprites[objectEvent->spriteId].oam.priority;
-        sprite->data[0] = gFieldEffectArguments[0];
-        sprite->data[1] = gFieldEffectArguments[1];
-        sprite->data[2] = gFieldEffectArguments[2];
-        sprite->data[3] = gSprites[objectEvent->spriteId].x;
-        sprite->data[4] = gSprites[objectEvent->spriteId].y;
-    }
-    return 0;
-}
-
-void UpdateHotSpringsWaterFieldEffect(struct Sprite * sprite)
-{
-    u8 objectEventId;
-    struct Sprite * linkedSprite;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->data[0], sprite->data[1], sprite->data[2], &objectEventId) || !gObjectEvents[objectEventId].inHotSprings)
-        FieldEffectStop(sprite, FLDEFF_HOT_SPRINGS_WATER);
-    else
-    {
-        linkedSprite = &gSprites[gObjectEvents[objectEventId].spriteId];
-        sprite->x = linkedSprite->x;
-        sprite->y = (GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId)->height >> 1) + linkedSprite->y - 8;
-        sprite->subpriority = linkedSprite->subpriority - 1;
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-    }
-}
-
-u32 FldEff_ShakingGrass(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_UNUSED_GRASS], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_SHAKING_GRASS;
-    }
-    return spriteId;
-}
-
-u32 FldEff_ShakingGrass2(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_UNUSED_GRASS_2], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_SHAKING_LONG_GRASS;
-    }
-    return spriteId;
-}
-
-u32 FldEff_SandHole(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_UNUSED_SAND], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_SAND_HOLE;
-    }
-    return spriteId;
-}
-
-u32 FldEff_WaterSurfacing(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_WATER_SURFACING], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_WATER_SURFACING;
-    }
-    return spriteId;
-}
-
-void StartAshFieldEffect(s16 x, s16 y, u32 metatileId, s16 d)
-{
-    gFieldEffectArguments[0] = x;
-    gFieldEffectArguments[1] = y;
-    gFieldEffectArguments[2] = 0x52;
-    gFieldEffectArguments[3] = 1;
-    gFieldEffectArguments[4] = metatileId;
-    gFieldEffectArguments[5] = d;
-    FieldEffectStart(FLDEFF_ASH);
-}
-
-u32 FldEff_Ash(void)
-{
-    s16 x = gFieldEffectArguments[0];
-    s16 y = gFieldEffectArguments[1];
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_ASH], x, y, gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[1] = gFieldEffectArguments[0];
-        sprite->data[2] = gFieldEffectArguments[1];
-        sprite->data[3] = gFieldEffectArguments[4];
-        sprite->data[4] = gFieldEffectArguments[5];
-    }
-    return 0;
-}
-
-void (*const gAshFieldEffectFuncs[])(struct Sprite * sprite) = {
-    UpdateAshFieldEffect_Step0,
-    UpdateAshFieldEffect_Step1,
-    UpdateAshFieldEffect_Step2
+    .tileTag = 0x0,
+    .paletteTag = SPRITE_INVALID_TAG,
+    .oam = &gDummyOamData,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_ReflectionDistortion,
+    .callback = SpriteCallbackDummy,
 };
 
-void UpdateAshFieldEffect(struct Sprite * sprite)
+static void CreateReflectionSprite(u32 affineAnimNum)
 {
-    gAshFieldEffectFuncs[sprite->data[0]](sprite);
-}
-
-static void UpdateAshFieldEffect_Step0(struct Sprite * sprite)
-{
-    sprite->invisible = TRUE;
-    sprite->animPaused = TRUE;
-    if (--sprite->data[4] == 0)
-        sprite->data[0] = 1;
-}
-
-static void UpdateAshFieldEffect_Step1(struct Sprite * sprite)
-{
-    sprite->invisible = FALSE;
-    sprite->animPaused = FALSE;
-    MapGridSetMetatileIdAt(sprite->data[1], sprite->data[2], sprite->data[3]);
-    CurrentMapDrawMetatileAt(sprite->data[1], sprite->data[2]);
-    gObjectEvents[gPlayerAvatar.objectEventId].triggerGroundEffectsOnMove = TRUE;
-    sprite->data[0] = 2;
-}
-
-static void UpdateAshFieldEffect_Step2(struct Sprite * sprite)
-{
-    UpdateObjectEventSpriteVisibility(sprite, FALSE);
-    
-    if (sprite->animEnded)
-        FieldEffectStop(sprite, FLDEFF_ASH);
-}
-
-u32 FldEff_SurfBlob(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    LoadFieldEffectPalette(FLDEFFOBJ_SURF_BLOB);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SURF_BLOB], gFieldEffectArguments[0], gFieldEffectArguments[1], 0x96);
-    if (spriteId !=MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->data[2] = gFieldEffectArguments[2];
-        sprite->data[3] = 0;
-        sprite->data[6] = -1;
-        sprite->data[7] = -1;
-    }
-    FieldEffectActiveListRemove(FLDEFF_SURF_BLOB);
-    return spriteId;
-}
-
-void SetSurfBlob_BobState(u32 spriteId, u8 value)
-{
-    gSprites[spriteId].data[0] = (gSprites[spriteId].data[0] & ~0xF) | (value & 0xF);
-}
-
-void SetSurfBlob_DontSyncAnim(u32 spriteId, u8 value)
-{
-    gSprites[spriteId].data[0] = (gSprites[spriteId].data[0] & ~0xF0) | ((value & 0xF) << 4);
-}
-
-void SetSurfBlob_PlayerOffset(u32 spriteId, u8 hasOffset, s16 offset)
-{
-    gSprites[spriteId].data[0] = (gSprites[spriteId].data[0] & ~0xF00) | ((hasOffset & 0xF) << 8);
-    gSprites[spriteId].data[1] = offset;
-}
-
-void UpdateSurfBlobFieldEffect(struct Sprite * sprite)
-{
-    struct ObjectEvent * objectEvent = &gObjectEvents[sprite->data[2]];
-    struct Sprite * linkedSprite = &gSprites[objectEvent->spriteId];
-
-    SynchroniseSurfAnim(objectEvent, sprite);
-    SynchroniseSurfPosition(objectEvent, sprite);
-    CreateBobbingEffect(objectEvent, linkedSprite, sprite);
-    sprite->oam.priority = linkedSprite->oam.priority;
-}
-
-static void SynchroniseSurfAnim(struct ObjectEvent * objectEvent, struct Sprite * sprite)
-{
-    u8 surfBlobDirectionAnims[] = {
-        [DIR_NONE] = 0,
-        [DIR_SOUTH] = 0,
-        [DIR_NORTH] = 1,
-        [DIR_WEST] = 2,
-        [DIR_EAST] = 3
-    };
-
-    if (((sprite->data[0] & 0xF0) >> 4) == 0)
-        StartSpriteAnimIfDifferent(sprite, surfBlobDirectionAnims[objectEvent->movementDirection]);
-}
-
-void SynchroniseSurfPosition(struct ObjectEvent * objectEvent, struct Sprite * sprite)
-{
-    u32 i;
-    s16 x = objectEvent->currentCoords.x;
-    s16 y = objectEvent->currentCoords.y;
-    s32 spriteY = sprite->y2;
-
-    if (spriteY == 0 && (x != sprite->data[6] || y != sprite->data[7]))
-    {
-        sprite->data[5] = spriteY;
-        sprite->data[6] = x;
-        sprite->data[7] = y;
-        
-        for (i = DIR_SOUTH; i <= DIR_EAST; i++, x = sprite->data[6], y = sprite->data[7])
-        {
-            MoveCoords(i, &x, &y);
-            
-            if (MapGridGetZCoordAt(x, y) == 3)
-            {
-                sprite->data[5]++;
-                break;
-            }
-        }
-    }
-}
-
-static void CreateBobbingEffect(struct ObjectEvent * objectEvent, struct Sprite * linkedSprite, struct Sprite * sprite)
-{
-    u16 unk_83FECFA[] = {7, 15};
-    u8 v0 = sprite->data[0] & 0xF;
-    
-    if (v0 != 0)
-    {
-        if (((u16)(++ sprite->data[4]) & unk_83FECFA[sprite->data[5]]) == 0)
-            sprite->y2 += sprite->data[3];
-
-        if ((sprite->data[4] & 0x1F) == 0)
-            sprite->data[3] = -sprite->data[3];
-
-        if (v0 != 2)
-        {
-            linkedSprite->y2 = ((sprite->data[0] & 0xF00) >> 8) == 0 ? sprite->y2 : sprite->data[1] + sprite->y2;
-            
-            if (sprite->animCmdIndex != 0)
-                linkedSprite->y2++;
-            
-            sprite->x = linkedSprite->x;
-            sprite->y = linkedSprite->y + 8;
-        }
-    }
-}
-
-u32 StartUnderwaterSurfBlobBobbing(u32 oldSpriteId)
-{
-    u32 spriteId = CreateSpriteAtEnd(&gDummySpriteTemplate, 0, 0, -1);
-
-    gSprites[spriteId].callback = SpriteCB_UnderwaterSurfBlob;
+    u32 spriteId = CreateSpriteAtEnd(&sSpriteTemplate_ReflectionDistortion, 0, 0, 31);
+    gSprites[spriteId].oam.affineMode = ST_OAM_AFFINE_NORMAL;
+    InitSpriteAffineAnim(&gSprites[spriteId]);
+    StartSpriteAffineAnim(&gSprites[spriteId], affineAnimNum);
     gSprites[spriteId].invisible = TRUE;
-    gSprites[spriteId].data[0] = oldSpriteId;
-    gSprites[spriteId].data[1] = 1;
+}
+
+void CreateReflectionEffectSprites(void)
+{
+    CreateReflectionSprite(0);
+    CreateReflectionSprite(1);
+}
+
+void SetUpReflection(struct ObjectEvent * objectEvent, struct Sprite * sprite, bool32 stillReflection)
+{
+    struct Sprite * reflectionSprite = &gSprites[CreateCopySpriteAt(sprite, sprite->x, sprite->y, 0x98)];
+
+    reflectionSprite->callback = SpriteCB_UpdateObjectReflectionSprite;
+    reflectionSprite->oam.priority = 3;
+    reflectionSprite->usingSheet = TRUE;
+    reflectionSprite->anims = gDummySpriteAnimTable;
+    StartSpriteAnim(reflectionSprite, 0);
+    reflectionSprite->affineAnims = gDummySpriteAffineAnimTable;
+    reflectionSprite->affineAnimBeginning = TRUE;
+    reflectionSprite->subspriteMode = SUBSPRITES_OFF;
+    reflectionSprite->data[0] = sprite->data[0];
+    reflectionSprite->data[1] = objectEvent->localId;
+    reflectionSprite->data[7] = stillReflection;
+    LoadObjectReflectionPalette(objectEvent, reflectionSprite);
+
+    if (!stillReflection)
+        reflectionSprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+}
+
+#define OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION 0x1102
+
+static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct Sprite * sprite)
+{
+    u32 bridgeType;
     
-    return spriteId;
-}
-
-static void SpriteCB_UnderwaterSurfBlob(struct Sprite * sprite)
-{
-    if (((sprite->data[2]++) & 0x03) == 0)
-        gSprites[sprite->data[0]].y2 += sprite->data[1];
-
-    if ((sprite->data[2] & 0x0F) == 0)
-        sprite->data[1] = -sprite->data[1];
-}
-
-u32 FldEff_Dust(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 12);
+    sprite->data[2] = 0;
     
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_GROUND_IMPACT_DUST], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
-    if (spriteId != MAX_SPRITES)
+    if (!GetObjectEventGraphicsInfo(objectEvent->graphicsId)->disableReflectionPaletteLoad && ((bridgeType = MetatileBehavior_GetBridgeType(objectEvent->previousMetatileBehavior))
+    || (bridgeType = MetatileBehavior_GetBridgeType(objectEvent->currentMetatileBehavior))))
     {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = gFieldEffectArguments[2];
-        sprite->data[1] = 10;
+        u16 bridgeReflectionVerticalOffsets[] = { 12, 28, 44 };
+        
+        // When walking on a bridge high above water (Route 120), the reflection is a solid dark blue color.
+        // This is so the sprite blends in with the dark water metatile underneath the bridge.
+        sprite->data[2] = bridgeReflectionVerticalOffsets[bridgeType - 1];
+        LoadObjectEventPalette(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
+        sprite->oam.paletteNum = IndexOfSpritePaletteTag(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
+        UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
     }
-    return 0;
+    else
+        LoadSpecialReflectionPalette(sprite);
 }
 
-u32 FldEff_SandPile(void)
+static void LoadSpecialReflectionPalette(struct Sprite *sprite)
 {
-    struct ObjectEvent * objectEvent = &gObjectEvents[GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2])];
-    u32 spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SAND_PILE], 0, 0, 0);
-    struct Sprite * sprite;
-    const struct ObjectEventGraphicsInfo * graphicsInfo;
-
-    if (spriteId != MAX_SPRITES)
-    {
-        graphicsInfo = GetObjectEventGraphicsInfo(objectEvent->graphicsId);
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gSprites[objectEvent->spriteId].oam.priority;
-        sprite->data[0] = gFieldEffectArguments[0];
-        sprite->data[1] = gFieldEffectArguments[1];
-        sprite->data[2] = gFieldEffectArguments[2];
-        sprite->data[3] = gSprites[objectEvent->spriteId].x;
-        sprite->data[4] = gSprites[objectEvent->spriteId].y;
-        sprite->y2 = (graphicsInfo->height >> 1) - 2;
-        SeekSpriteAnim(sprite, 2);
-    }
-    return 0;
+    struct SpritePalette reflectionPalette;
+    
+    CpuCopy16(&gPlttBufferUnfaded[0x100 + sprite->oam.paletteNum * 16], gReflectionPaletteBuffer, 32);
+    TintPalette_CustomTone(gReflectionPaletteBuffer, 16, Q_8_8(1.0), Q_8_8(1.0), Q_8_8(3.5));
+    
+    reflectionPalette.data = gReflectionPaletteBuffer;
+    reflectionPalette.tag = GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) + 0x1000;
+    LoadSpritePalette(&reflectionPalette);
+    
+    sprite->oam.paletteNum = IndexOfSpritePaletteTag(reflectionPalette.tag);
+    UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
 }
 
-void UpdateSandPileFieldEffect(struct Sprite * sprite)
+static void SpriteCB_UpdateObjectReflectionSprite(struct Sprite * reflectionSprite)
 {
-    u8 objectEventId;
-    s16 x, y;
+    struct ObjectEvent * objectEvent = &gObjectEvents[reflectionSprite->data[0]];
 
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->data[0], sprite->data[1], sprite->data[2], &objectEventId) || !gObjectEvents[objectEventId].inSandPile)
-        FieldEffectStop(sprite, FLDEFF_SAND_PILE);
+    if (!objectEvent->active || !objectEvent->hasReflection || objectEvent->localId != reflectionSprite->data[1])
+        reflectionSprite->inUse = FALSE;
     else
     {
-        y = gSprites[gObjectEvents[objectEventId].spriteId].y;
-        x = gSprites[gObjectEvents[objectEventId].spriteId].x;
+        struct Sprite * mainSprite = &gSprites[objectEvent->spriteId];
         
-        if (x != sprite->data[3] || y != sprite->data[4])
+        reflectionSprite->oam.shape = mainSprite->oam.shape;
+        reflectionSprite->oam.size = mainSprite->oam.size;
+        reflectionSprite->oam.matrixNum = mainSprite->oam.matrixNum | ST_OAM_VFLIP;
+        reflectionSprite->oam.tileNum = mainSprite->oam.tileNum;
+        reflectionSprite->subspriteTables = mainSprite->subspriteTables;
+        reflectionSprite->subspriteTableNum = mainSprite->subspriteTableNum;
+        reflectionSprite->invisible = mainSprite->invisible;
+        reflectionSprite->x = mainSprite->x;
+        reflectionSprite->y = mainSprite->y + (GetObjectEventGraphicsInfo(objectEvent->graphicsId)->height - 2) + reflectionSprite->data[2];
+        reflectionSprite->centerToCornerVecX = mainSprite->centerToCornerVecX;
+        reflectionSprite->centerToCornerVecY = mainSprite->centerToCornerVecY;
+        reflectionSprite->x2 = mainSprite->x2;
+        reflectionSprite->y2 = -mainSprite->y2;
+        reflectionSprite->coordOffsetEnabled = mainSprite->coordOffsetEnabled;
+
+        // Check if the reflection is not still.
+        if (!reflectionSprite->data[7])
         {
-            sprite->data[3] = x;
-            sprite->data[4] = y;
-            
-            if (sprite->animEnded)
-                StartSpriteAnim(sprite, 0);
+            // Sets the reflection sprite's rot/scale matrix to the appropriate
+            // matrix based on whether or not the main sprite is horizontally flipped.
+            // If the sprite is facing to the east, then it is flipped, and its matrixNum is 8.
+            reflectionSprite->oam.matrixNum = 0;
+            if (mainSprite->oam.matrixNum & ST_OAM_HFLIP)
+                reflectionSprite->oam.matrixNum = 1;
         }
-        sprite->x = x;
-        sprite->y = y;
-        sprite->subpriority = gSprites[gObjectEvents[objectEventId].spriteId].subpriority;
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
     }
 }
 
-u32 FldEff_Bubbles(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
+///////////////////////////////
+// TELEPORT/ESCAPE ROPE SPIN //
+///////////////////////////////
 
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 0);
+static void Task_DoTeleportFieldEffect(u32 taskId);
+static void TeleportFieldEffectTask1(struct Task * task);
+static void TeleportFieldEffectTask2(struct Task * task);
+static void TeleportFieldEffectTask3(struct Task * task);
+static void TeleportFieldEffectTask4(struct Task * task);
+static void FieldCallback_TeleportIn(void);
+static void Task_DoTeleportInFieldEffect(u32 taskId);
+static void TeleportInFieldEffectTask1(struct Task * task);
+static void TeleportInFieldEffectTask2(struct Task * task);
+static void TeleportInFieldEffectTask3(struct Task * task);
+static void Task_DoEscapeRopeFieldEffect(u32 taskId);
+static void EscapeRopeFieldEffect_Step0(struct Task * task);
+static void EscapeRopeFieldEffect_Step1(struct Task * task);
+static void FieldCallback_EscapeRopeExit(void);
+static void Task_DoEscapeRopeExitFieldEffect(u32 taskId);
+static void EscapeRopeExitFieldEffect_Step0(struct Task * task);
+static void EscapeRopeExitFieldEffect_Step1(struct Task * task);
+
+static void (*const sTeleportEffectFuncs[])(struct Task * ) = {
+    TeleportFieldEffectTask1,
+    TeleportFieldEffectTask2,
+    TeleportFieldEffectTask3,
+    TeleportFieldEffectTask4
+};
+
+static void (*const sTeleportInEffectFuncs[])(struct Task * ) = {
+    TeleportInFieldEffectTask1,
+    TeleportInFieldEffectTask2,
+    TeleportInFieldEffectTask3
+};
+
+static void (*const sEscapeRopeFieldEffectFuncs[])(struct Task * task) = {
+    EscapeRopeFieldEffect_Step0,
+    EscapeRopeFieldEffect_Step1
+};
+
+static void (*const sEscapeRopeExitEffectFuncs[])(struct Task * task) = {
+    EscapeRopeExitFieldEffect_Step0,
+    EscapeRopeExitFieldEffect_Step1
+};
+
+static const u8 sSpinDirections[] = {
+    [DIR_NONE]  = DIR_SOUTH,
+    [DIR_SOUTH] = DIR_WEST,
+    [DIR_WEST]  = DIR_NORTH,
+    [DIR_NORTH] = DIR_EAST,
+    [DIR_EAST]  = DIR_SOUTH,
+};
+
+void CreateTeleportFieldEffectTask(void)
+{
+    CreateTask(Task_DoTeleportFieldEffect, 0);
+}
+
+static void Task_DoTeleportFieldEffect(u32 taskId)
+{
+    sTeleportEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]);
+}
+
+static void TeleportFieldEffectTask1(struct Task * task)
+{
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    CameraObjectReset2();
+    task->data[15] = GetPlayerFacingDirection();
+    task->data[0]++;
+}
+
+static void TeleportFieldEffectTask2(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
     
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_BUBBLES], gFieldEffectArguments[0], gFieldEffectArguments[1], 0x52);
-    if (spriteId != MAX_SPRITES)
+    if (task->data[1] == 0 || (--task->data[1]) == 0)
     {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
+        ObjectEventTurn(objectEvent, sSpinDirections[objectEvent->facingDirection]);
+        task->data[1] = 8;
+        task->data[2]++;
+    }
+    
+    if (task->data[2] > 7 && task->data[15] == objectEvent->facingDirection)
+    {
+        task->data[0]++;
+        task->data[1] = 4;
+        task->data[2] = 8;
+        task->data[3] = 1;
+        PlaySE(SE_WARP_IN);
+    }
+}
+
+static void TeleportFieldEffectTask3(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+    
+    if ((--task->data[1]) <= 0)
+    {
+        task->data[1] = 4;
+        ObjectEventTurn(objectEvent, sSpinDirections[objectEvent->facingDirection]);
+    }
+    sprite->y -= task->data[3];
+    task->data[4] += task->data[3];
+    
+    if ((--task->data[2]) <= 0 && (task->data[2] = 4, task->data[3] < 8))
+        task->data[3] <<= 1;
+    
+    if (task->data[4] > 8 && (sprite->oam.priority = 1, sprite->subspriteMode != SUBSPRITES_OFF))
+        sprite->subspriteMode = SUBSPRITES_IGNORE_PRIORITY;
+    
+    if (task->data[4] >= 0xa8)
+    {
+        task->data[0]++;
+        TryFadeOutOldMapMusic();
+        WarpFadeOutScreen();
+    }
+}
+
+static void TeleportFieldEffectTask4(struct Task * task)
+{
+    if (!gPaletteFade.active && IsNotWaitingForBGMStop())
+    {
+        SetWarpDestinationToLastHealLocation();
+        WarpIntoMap();
+        SetMainCallback2(CB2_LoadMap);
+        gFieldCallback = FieldCallback_TeleportIn;
+        DestroyTask(FindTaskIdByFunc(Task_DoTeleportFieldEffect));
+    }
+}
+
+static void FieldCallback_TeleportIn(void)
+{
+    Overworld_PlaySpecialMapMusic();
+    WarpFadeInScreen();
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    gFieldCallback = NULL;
+    gObjectEvents[gPlayerAvatar.objectEventId].invisible = TRUE;
+    CameraObjectReset2();
+    CreateTask(Task_DoTeleportInFieldEffect, 0);
+}
+
+static void Task_DoTeleportInFieldEffect(u32 taskId)
+{
+    sTeleportInEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]);
+}
+
+static void TeleportInFieldEffectTask1(struct Task * task)
+{
+    struct Sprite * sprite;
+    s16 centerToCornerVecY;
+    
+    if (IsWeatherNotFadingIn())
+    {
+        sprite = &gSprites[gPlayerAvatar.spriteId];
+        centerToCornerVecY = -(sprite->centerToCornerVecY << 1);
+        sprite->y2 = -(sprite->y + sprite->centerToCornerVecY + gSpriteCoordOffsetY + centerToCornerVecY);
+        gObjectEvents[gPlayerAvatar.objectEventId].invisible = FALSE;
+        task->data[0]++;
+        task->data[1] = 8;
+        task->data[2] = 1;
+        task->data[14] = sprite->subspriteMode;
+        task->data[15] = GetPlayerFacingDirection();
+        PlaySE(SE_WARP_IN);
+    }
+}
+
+static void TeleportInFieldEffectTask2(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    struct Sprite * sprite = &gSprites[gPlayerAvatar.spriteId];
+    
+    if ((sprite->y2 += task->data[1]) >= -8)
+    {
+        if (task->data[13] == 0)
+        {
+            task->data[13]++;
+            objectEvent->triggerGroundEffectsOnMove = TRUE;
+            sprite->subspriteMode = task->data[14];
+        }
+    }
+    else
+    {
         sprite->oam.priority = 1;
-    }
-    return 0;
-}
-
-void UpdateBubblesFieldEffect(struct Sprite * sprite)
-{
-    sprite->data[0] += 0x80;
-    sprite->data[0] &= 0x100;
-    
-    sprite->y -= sprite->data[0] >> 8;
-    
-    UpdateObjectEventSpriteVisibility(sprite, FALSE);
-    
-    if (sprite->invisible || sprite->animEnded)
-        FieldEffectStop(sprite, FLDEFF_BUBBLES);
-}
-
-u32 FldEff_BerryTreeGrowthSparkle(void)
-{
-    u32 spriteId;
-    struct Sprite * sprite;
-
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 4);
-    LoadFieldEffectPalette(FLDEFFOBJ_SPARKLE);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SPARKLE], gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
-        sprite->data[0] = FLDEFF_BERRY_TREE_GROWTH_SPARKLE;
-    }
-    return 0;
-}
-
-u32 ShowTreeDisguiseFieldEffect(void)
-{
-    return ShowDisguiseFieldEffect(FLDEFF_TREE_DISGUISE, FLDEFFOBJ_TREE_DISGUISE);
-}
-
-u32 ShowMountainDisguiseFieldEffect(void)
-{
-    return ShowDisguiseFieldEffect(FLDEFF_MOUNTAIN_DISGUISE, FLDEFFOBJ_MOUNTAIN_DISGUISE);
-}
-
-u32 ShowSandDisguiseFieldEffect(void)
-{
-    return ShowDisguiseFieldEffect(FLDEFF_SAND_DISGUISE, FLDEFFOBJ_SAND_DISGUISE);
-}
-
-static u32 ShowDisguiseFieldEffect(u32 fldEff, u32 templateIdx)
-{
-    u32 spriteId;
-    u8 objEventId;
-    struct Sprite * sprite;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2], &objEventId))
-    {
-        FieldEffectActiveListRemove(fldEff);
-        return MAX_SPRITES;
-    }
-    LoadFieldEffectPalette(templateIdx);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[templateIdx], 0, 0, 0);
-    if (spriteId != MAX_SPRITES)
-    {
-        sprite = &gSprites[spriteId];
-        sprite->coordOffsetEnabled++;
-        sprite->data[1] = fldEff;
-        sprite->data[2] = gFieldEffectArguments[0];
-        sprite->data[3] = gFieldEffectArguments[1];
-        sprite->data[4] = gFieldEffectArguments[2];
-    }
-    return spriteId;
-}
-
-void UpdateDisguiseFieldEffect(struct Sprite * sprite)
-{
-    u8 objectEventId;
-    const struct ObjectEventGraphicsInfo * graphicsInfo;
-    struct Sprite * linkedSprite;
-
-    if (TryGetObjectEventIdByLocalIdAndMap(sprite->data[2], sprite->data[3], sprite->data[4], &objectEventId))
-        FieldEffectStop(sprite, sprite->data[1]);
-
-    graphicsInfo = GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId);
-    linkedSprite = &gSprites[gObjectEvents[objectEventId].spriteId];
-    sprite->invisible = linkedSprite->invisible;
-    sprite->x = linkedSprite->x;
-    sprite->y = (graphicsInfo->height >> 1) + linkedSprite->y - 16;
-    sprite->subpriority = linkedSprite->subpriority - 1;
-    if (sprite->data[0] == 1)
-    {
-        sprite->data[0]++;
-        StartSpriteAnim(sprite, 1);
-    }
-    if (sprite->data[0] == 2 && sprite->animEnded)
-    {
-        sprite->data[7] = 1;
-    }
-    if (sprite->data[0] == 3)
-    {
-        FieldEffectStop(sprite, sprite->data[1]);
-    }
-}
-
-void StartRevealDisguise(struct ObjectEvent * objectEvent)
-{
-    if (objectEvent->directionSequenceIndex == 1)
-        gSprites[objectEvent->fieldEffectSpriteId].data[0]++;
-}
-
-bool32 UpdateRevealDisguise(struct ObjectEvent * objectEvent)
-{
-    struct Sprite * sprite;
-
-    if (objectEvent->directionSequenceIndex == 2 || objectEvent->directionSequenceIndex == 0)
-        return TRUE;
-
-    sprite = &gSprites[objectEvent->fieldEffectSpriteId];
-    
-    if (sprite->data[7])
-    {
-        objectEvent->directionSequenceIndex = 2;
-        sprite->data[0]++;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-u32 FldEff_Sparkle(void)
-{
-    u32 spriteId;
-
-    gFieldEffectArguments[0] += 7;
-    gFieldEffectArguments[1] += 7;
-    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
-    
-    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_SMALL_SPARKLE], gFieldEffectArguments[0], gFieldEffectArguments[1], 0x52);
-    if (spriteId != MAX_SPRITES)
-    {
-        gSprites[spriteId].oam.priority = gFieldEffectArguments[2];
-        gSprites[spriteId].coordOffsetEnabled = TRUE;
-    }
-    return 0;
-}
-
-void UpdateSparkleFieldEffect(struct Sprite * sprite)
-{
-    if (sprite->data[0] == 0)
-    {
-        if (sprite->animEnded)
-        {
-            sprite->invisible = TRUE;
-            sprite->data[0]++;
-        }
-
-        if (sprite->data[0] == 0)
-            return;
-    }
-
-    if (++sprite->data[1] > 34)
-        FieldEffectStop(sprite, FLDEFF_SPARKLE);
-}
-
-void UpdateJumpImpactEffect(struct Sprite * sprite)
-{
-    if (sprite->animEnded)
-        FieldEffectStop(sprite, sprite->data[1]);
-    else
-    {
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-        SetObjectSubpriorityByZCoord(sprite->data[0], sprite, 0);
-    }
-}
-
-void WaitFieldEffectSpriteAnim(struct Sprite * sprite)
-{
-    if (sprite->animEnded)
-        FieldEffectStop(sprite, sprite->data[0]);
-    else
-        UpdateObjectEventSpriteVisibility(sprite, FALSE);
-}
-
-void LoadFieldEffectPalette(u32 fieldEffect)
-{
-    const struct SpriteTemplate *spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffect];
-
-    if (spriteTemplate->paletteTag != 0xFFFF)
-        LoadObjectEventPalette(spriteTemplate->paletteTag);
-}
-
-static void UpdateGrassFieldEffectSubpriority(struct Sprite * sprite, u32 z, u32 offset)
-{
-    u32 i;
-    s16 var, xhi, lyhi, yhi, ylo;
-    struct Sprite * linkedSprite;
-
-    SetObjectSubpriorityByZCoord(z, sprite, offset);
-    
-    for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
-    {
-        struct ObjectEvent * objectEvent = &gObjectEvents[i];
         
-        if (objectEvent->active)
+        if (sprite->subspriteMode != SUBSPRITES_OFF)
+            sprite->subspriteMode = SUBSPRITES_IGNORE_PRIORITY;
+    }
+    
+    if (sprite->y2 >= -0x30 && task->data[1] > 1 && !(sprite->y2 & 1))
+        task->data[1]--;
+    
+    if ((--task->data[2]) == 0)
+    {
+        task->data[2] = 4;
+        ObjectEventTurn(objectEvent, sSpinDirections[objectEvent->facingDirection]);
+    }
+    
+    if (sprite->y2 >= 0)
+    {
+        sprite->y2 = 0;
+        task->data[0]++;
+        task->data[1] = 1;
+        task->data[2] = 0;
+    }
+}
+
+static void TeleportInFieldEffectTask3(struct Task * task)
+{
+    struct ObjectEvent * objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    
+    if ((--task->data[1]) == 0)
+    {
+        ObjectEventTurn(objectEvent, sSpinDirections[objectEvent->facingDirection]);
+        task->data[1] = 8;
+        
+        if ((++task->data[2]) > 4 && task->data[14] == objectEvent->facingDirection)
         {
-            linkedSprite = &gSprites[objectEvent->spriteId];
-            xhi = sprite->x + sprite->centerToCornerVecX;
-            var = sprite->x - sprite->centerToCornerVecX;
-            
-            if (xhi < linkedSprite->x && var > linkedSprite->x)
-            {
-                lyhi = linkedSprite->y + linkedSprite->centerToCornerVecY;
-                var = linkedSprite->y;
-                
-                ylo = sprite->y - sprite->centerToCornerVecY;
-                yhi = ylo + linkedSprite->centerToCornerVecY;
-                
-                if ((lyhi < yhi || lyhi < ylo) && var > yhi && sprite->subpriority <= linkedSprite->subpriority)
-                {
-                    sprite->subpriority = linkedSprite->subpriority + 2;
-                    break;
-                }
-            }
+            ScriptContext2_Disable();
+            CameraObjectReset1();
+            UnfreezeObjectEvents();
+            DestroyTask(FindTaskIdByFunc(Task_DoTeleportInFieldEffect));
         }
+    }
+}
+
+void StartEscapeRopeFieldEffect(void)
+{
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    CreateTask(Task_DoEscapeRopeFieldEffect, 80);
+}
+
+static void Task_DoEscapeRopeFieldEffect(u32 taskId)
+{
+    sEscapeRopeFieldEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]);
+}
+
+static void EscapeRopeFieldEffect_Step0(struct Task * task)
+{
+    task->data[0]++;
+    task->data[13] = 64;
+    task->data[14] = GetPlayerFacingDirection();
+    task->data[15] = 0;
+}
+
+static u32 sub_808576C(struct ObjectEvent * playerObj, s16 *delay_p, s16 *stage_p)
+{
+    if (!ObjectEventIsMovementOverridden(playerObj) || ObjectEventClearHeldMovementIfFinished(playerObj))
+    {
+        if (*delay_p != 0 && --(*delay_p) != 0)
+            return playerObj->facingDirection;
+        
+        ObjectEventSetHeldMovement(playerObj, GetFaceDirectionMovementAction(sSpinDirections[playerObj->facingDirection]));
+        
+        if (*stage_p < 12)
+            (*stage_p)++;
+        *delay_p = 12 >> (*stage_p); // 12 >> 4 = 0
+        
+        return sSpinDirections[playerObj->facingDirection];
+    }
+    return playerObj->facingDirection;
+}
+
+static bool32 sub_80857F0(struct ObjectEvent * playerObj, s16 *state_p, s16 *y_p)
+{
+    struct Sprite * sprite = &gSprites[playerObj->spriteId];
+    
+    switch (*state_p)
+    {
+    case 0:
+        CameraObjectReset2();
+        (*state_p)++;
+        // fallthrough
+    case 1:
+        sprite->y2 -= 8;
+        (*y_p) -= 8;
+        if (*y_p <= -16)
+        {
+            playerObj->fixedPriority = TRUE;
+            sprite->oam.priority = 1;
+            sprite->subpriority = 0;
+            sprite->subspriteMode = SUBSPRITES_OFF;
+            (*state_p)++;
+        }
+        break;
+    case 2:
+        sprite->y2 -= 8;
+        (*y_p) -= 8;
+        if (*y_p <= -88)
+        {
+            (*state_p)++;
+            return FALSE;
+        }
+        break;
+    case 3:
+        return FALSE;
+    }
+    return TRUE;
+}
+
+static void EscapeRopeFieldEffect_Step1(struct Task * task)
+{
+    struct ObjectEvent * playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 *data = task->data;
+    
+    sub_808576C(playerObj, &task->data[1], &task->data[2]);
+    
+    if (data[3] < 60)
+    {
+        if (++data[3] == 20)
+            PlaySE(SE_WARP_IN);
+    }
+    else if (data[4] == 0 && !sub_80857F0(playerObj, &task->data[5], &task->data[6]))
+    {
+        TryFadeOutOldMapMusic();
+        WarpFadeOutScreen();
+        data[4] = 1;
+    }
+    
+    if (data[4] == 1 && !gPaletteFade.active && IsNotWaitingForBGMStop())
+    {
+        SetObjectEventDirection(playerObj, task->data[15]);
+        SetWarpDestinationToEscapeWarp();
+        WarpIntoMap();
+        gFieldCallback = FieldCallback_EscapeRopeExit;
+        SetMainCallback2(CB2_LoadMap);
+        DestroyTask(FindTaskIdByFunc(Task_DoEscapeRopeFieldEffect));
+    }
+}
+
+static void FieldCallback_EscapeRopeExit(void)
+{
+    Overworld_PlaySpecialMapMusic();
+    WarpFadeInScreen();
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    gFieldCallback = NULL;
+    gObjectEvents[gPlayerAvatar.objectEventId].invisible = TRUE;
+    CreateTask(Task_DoEscapeRopeExitFieldEffect, 0);
+}
+
+static void Task_DoEscapeRopeExitFieldEffect(u32 taskId)
+{
+    sEscapeRopeExitEffectFuncs[gTasks[taskId].data[0]](&gTasks[taskId]);
+}
+
+static void EscapeRopeExitFieldEffect_Step0(struct Task * task)
+{
+    if (IsWeatherNotFadingIn())
+    {
+        PlaySE(SE_WARP_OUT);
+        task->data[15] = GetPlayerFacingDirection();
+        task->data[0]++;
+    }
+}
+
+static bool32 sub_80858A4(struct ObjectEvent * playerObj, s16 *state_p, s16 *y_p, s16 *priority_p, s16 *subpriority_p, s16 *subspriteMode_p)
+{
+    struct Sprite * sprite = &gSprites[playerObj->spriteId];
+    
+    switch (*state_p)
+    {
+    case 0:
+        CameraObjectReset2();
+        *y_p = -88;
+        sprite->y2 -= 88;
+        *priority_p = sprite->oam.priority;
+        *subpriority_p = sprite->subpriority;
+        *subspriteMode_p = sprite->subspriteMode;
+        playerObj->fixedPriority = TRUE;
+        sprite->oam.priority = 1;
+        sprite->subpriority = 0;
+        sprite->subspriteMode = SUBSPRITES_OFF;
+        (*state_p)++;
+        // fallthrough
+    case 1:
+        sprite->y2 += 4;
+        (*y_p) += 4;
+        if (*y_p >= -16)
+        {
+            sprite->oam.priority = *priority_p;
+            sprite->subpriority = *subpriority_p;
+            sprite->subspriteMode = *subspriteMode_p;
+            (*state_p)++;
+        }
+        break;
+    case 2:
+        sprite->y2 += 4;
+        (*y_p) += 4;
+        if (*y_p >= 0)
+        {
+            PlaySE(SE_CLICK);
+            CameraObjectReset1();
+            (*state_p)++;
+            return FALSE;
+        }
+        break;
+    case 3:
+        return FALSE;
+    }
+    return TRUE;
+}
+
+static void EscapeRopeExitFieldEffect_Step1(struct Task * task)
+{
+    s16 *data = task->data;
+    struct ObjectEvent * playerObj = &gObjectEvents[gPlayerAvatar.objectEventId];
+    bool32 finished = sub_80858A4(playerObj, &data[1], &data[2], &data[3], &data[4], &data[5]);
+    
+    playerObj->invisible = FALSE;
+    
+    if (data[6] < 8)
+        data[6]++;
+    else if (data[7] == 0)
+    {
+        data[6]++;
+        data[8] = sub_808576C(playerObj, &data[9], &data[10]);
+        
+        if (data[6] >= 50 && data[8] == data[15])
+            data[7] = 1;
+    }
+    
+    if (!finished && data[8] == data[15] && ObjectEventCheckHeldMovementStatus(playerObj))
+    {
+        playerObj->invisible = FALSE;
+        playerObj->fixedPriority = FALSE;
+        ScriptContext2_Disable();
+        UnfreezeObjectEvents();
+        DestroyTask(FindTaskIdByFunc(Task_DoEscapeRopeExitFieldEffect));
     }
 }

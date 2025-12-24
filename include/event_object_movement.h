@@ -50,6 +50,7 @@ typedef void (*MovementAction)(u32 direction);
 #define GROUND_EFFECT_FLAG_SHORT_GRASS           Bit(17)
 #define GROUND_EFFECT_FLAG_HOT_SPRINGS           Bit(18)
 #define GROUND_EFFECT_FLAG_SEAWEED               Bit(19)
+#define GROUND_EFFECT_FLAG_SNOW                  Bit(20)
 
 // Exported RAM declarations
 
@@ -88,7 +89,6 @@ void ShowOrHideObjectByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup, bool
 void SetObjectPositionByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup, s16 x, s16 y);
 void UnfixObjectPriorityByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup);
 void SetObjectPriorityByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup, u32 subpriority);
-void ObjectEventGetLocalIdAndMap(struct ObjectEvent *objectEvent, void *localId, void *mapNum, void *mapGroup);
 void ShiftObjectEventCoords(struct ObjectEvent *, s16, s16);
 void TryOverrideObjectEventTemplateCoords(u32, u32, u32);
 void UpdateObjectEventCurrentMovement(struct ObjectEvent *, struct Sprite *, bool32(struct ObjectEvent *, struct Sprite *));
@@ -172,6 +172,7 @@ void SetSpriteDataForNormalStep4(struct Sprite *, u32);
 void SetAndStartSpriteAnim(struct Sprite *, u32, u32);
 u32 ObjectEventGetHeldMovementActionId(struct ObjectEvent *objectEvent);
 u32 GetMoveDirectionAnimNum(u32 direction);
+u32 StartFieldEffectForObjectEvent(u32 fieldEffectId, struct ObjectEvent * objectEvent);
 
 // Exported data declarations
 
