@@ -297,9 +297,12 @@ struct BattleMove
 
 extern const struct BattleMove gBattleMoves[];
 
+struct AIScript;
+
 struct ALIGNED_NO_PADDING(2) BattleMoveEffect
 {
     const u8 *battleScript;
+    s8 (*aiFunc)(struct AIScript *, s8, u32);
     u16 normalizeUnaffected:1; // Move effects with this flag will not change type if affected by Normalize and similar abilities.
     u16 twoTurnsEffect:1; // Move effects with this flag will be considered a Two turns effect.
     u16 semiInvulnerableEffect:1; // Move effects with this flag will cause the battler to be semi invulnerable.

@@ -86,9 +86,13 @@ u32 GetMostSuitableMonToSwitchInto(u32 battlerId);
 bool32 BattleAI_ShouldUseItem(u32 battlerId);
 
 // battle_ai_funcs
+s8 ChangeScore(s8 score, s8 val);
 s8 BattleAIFunc_CheckBadMove(struct AIScript *data, s8 score);
 s8 BattleAIFunc_CheckGoodMove(struct AIScript *data, s8 score);
 s8 BattleAIFunc_Safari(struct AIScript *data, s8 score);
 s8 BattleAIFunc_Roamer(struct AIScript *data, s8 score);
+
+#define CHANGE_SCORE(val) score = ChangeScore(score, val)
+#define RETURN_SCORE(val) return ChangeScore(score, val)
 
 #endif // GUARD_BATTLE_AI_H

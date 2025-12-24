@@ -155,6 +155,7 @@ SECTIONS {
 		src/battle_ai_util.o(.text);
 		src/battle_ai_funcs.o(.text);
 		src/battle_ai_switch_items.o(.text);
+		src/battle_ai_move_effects.o(.text);
         src/battle_anim_effects_1.o(.text);
         src/battle_anim_effects_2.o(.text);
         src/battle_anim_water.o(.text);

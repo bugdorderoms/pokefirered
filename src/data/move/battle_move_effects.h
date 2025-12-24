@@ -13,22 +13,26 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
     [EFFECT_OHKO] =
     {
         .battleScript = BattleScript_EffectOHKO,
+        .aiFunc = BattleAIFunc_EffectOHKO,
     },
     
     [EFFECT_TWO_TURNS_ATTACK] =
     {
         .battleScript = BattleScript_EffectTwoTurnMoves,
+        .aiFunc = BattleAIFunc_EffectTwoTurnsAttack,
         .twoTurnsEffect = TRUE,
     },
     
     [EFFECT_USER_ATTACK_UP_2] =
     {
         .battleScript = BattleScript_EffectUserAttackUp2,
+        .aiFunc = BattleAIFunc_EffectUserAttackUp2,
     },
     
     [EFFECT_RANDOM_SWITCH] =
     {
         .battleScript = BattleScript_EffectRandomSwitch,
+        .aiFunc = BattleAIFunc_EffectRandomSwitch,
     },
     
     [EFFECT_SEMI_INVULNERABLE] =
