@@ -614,7 +614,7 @@ static void Task_StartWirelessCableClubBattle(u32 taskId)
             data[0] = 2;
         break;
     case 2:
-        SendBlock(0, &gLocalLinkPlayer, sizeof(struct LinkPlayer));
+        SendBlock(&gLocalLinkPlayer, sizeof(struct LinkPlayer));
         data[0] = 3;
         break;
     case 3:

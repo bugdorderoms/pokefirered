@@ -209,7 +209,7 @@ void RfuSendQueue_Enqueue(struct RfuSendQueue *queue, u8 *src)
     }
 }
 
-bool8 RfuRecvQueue_Dequeue(struct RfuRecvQueue *queue, u8 *dest)
+void RfuRecvQueue_Dequeue(struct RfuRecvQueue *queue, u8 *dest)
 {
     u16 imeBak;
     s32 i;
@@ -223,7 +223,7 @@ bool8 RfuRecvQueue_Dequeue(struct RfuRecvQueue *queue, u8 *dest)
             dest[i] = 0;
         }
         REG_IME = imeBak;
-        return FALSE;
+        return;
     }
     for (i = 0; i < RECV_QUEUE_SLOT_LENGTH; i++)
     {
@@ -233,18 +233,16 @@ bool8 RfuRecvQueue_Dequeue(struct RfuRecvQueue *queue, u8 *dest)
     queue->send_slot %= RECV_QUEUE_NUM_SLOTS;
     queue->count--;
     REG_IME = imeBak;
-    return TRUE;
 }
 
-bool8 RfuSendQueue_Dequeue(struct RfuSendQueue *queue, u8 *dest)
+void RfuSendQueue_Dequeue(struct RfuSendQueue *queue, u8 *dest)
 {
     s32 i;
     u16 imeBak;
 
     if (queue->recv_slot == queue->send_slot || queue->full)
-    {
-        return FALSE;
-    }
+        return;
+
     imeBak = REG_IME;
     REG_IME = 0;
     for (i = 0; i < SEND_QUEUE_SLOT_LENGTH; i++)
@@ -255,7 +253,6 @@ bool8 RfuSendQueue_Dequeue(struct RfuSendQueue *queue, u8 *dest)
     queue->send_slot %= SEND_QUEUE_NUM_SLOTS;
     queue->count--;
     REG_IME = imeBak;
-    return TRUE;
 }
 
 void RfuBackupQueue_Enqueue(struct RfuBackupQueue *queue, const u8 *dest)
@@ -285,7 +282,7 @@ void RfuBackupQueue_Enqueue(struct RfuBackupQueue *queue, const u8 *dest)
     }
 }
 
-bool8 RfuBackupQueue_Dequeue(struct RfuBackupQueue *queue, u8 *dest)
+bool32 RfuBackupQueue_Dequeue(struct RfuBackupQueue *queue, u8 *dest)
 {
     s32 i;
 
@@ -368,14 +365,14 @@ void InitHostRFUtgtGname(struct GFtgtGname *data, u8 activity, bool32 started, s
 
 /*
  * ==========================================================
- * Returns 1 if parent, 0 if child or neutral.
+ * Returns TRUE if parent, FALSE if child or neutral.
  * If partner serial number is valid, copies gname and uname.
  * Otherwise, blanks these.
  * ==========================================================
  */
-bool8 LinkRfu_GetNameIfCompatible(struct GFtgtGname *gname, u8 *uname, u8 idx)
+bool32 LinkRfu_GetNameIfCompatible(struct GFtgtGname *gname, u8 *uname, u8 idx)
 {
-    bool8 retVal;
+    bool32 retVal;
 
     if (lman.parent_child == MODE_PARENT)
     {
@@ -425,7 +422,7 @@ void LinkRfu3_SetGnameUnameFromStaticBuffers(struct GFtgtGname *gname, u8 *uname
 
 void CreateWirelessStatusIndicatorSprite(u8 x, u8 y)
 {
-    u8 sprId;
+    u32 sprId;
 
     if (x == 0 && y == 0)
     {
@@ -577,8 +574,10 @@ void UpdateWirelessStatusIndicatorSprite(void)
 
 static void CopyTrainerRecord(struct TrainerNameRecord *dest, u32 trainerId, const u8 *name)
 {
-    int i;
+    u32 i;
+    
     dest->trainerId = trainerId;
+    
     for (i = 0; i < 7; i++)
     {
         if (name[i] == EOS)
@@ -590,24 +589,20 @@ static void CopyTrainerRecord(struct TrainerNameRecord *dest, u32 trainerId, con
 
 static void ZeroName(u8 *name)
 {
-    s32 i;
+    u32 i;
 
     for (i = 0; i < PLAYER_NAME_LENGTH + 1; i++)
-    {
         *name++ = 0;
-    }
 }
 
 static bool32 NameIsEmpty(const u8 *name)
 {
-    s32 i;
+    u32 i;
 
     for (i = 0; i < PLAYER_NAME_LENGTH + 1; i++)
     {
         if (*name++ != 0)
-        {
             return FALSE;
-        }
     }
     return TRUE;
 }

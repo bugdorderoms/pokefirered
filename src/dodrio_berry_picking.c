@@ -1584,7 +1584,7 @@ static void Task_CommunicateMonInfo(u32 taskId)
     switch (tState)
     {
         case 0:
-            SendBlock(0, &sGame->members[sGame->multiplayerId].monInfo.isShiny, sizeof(sGame->members[sGame->multiplayerId].monInfo.isShiny));
+            SendBlock(&sGame->members[sGame->multiplayerId].monInfo.isShiny, sizeof(sGame->members[sGame->multiplayerId].monInfo.isShiny));
             sGame->playersReceived = 0;
             tState++;
             break;
@@ -2111,7 +2111,7 @@ static void InitResults_Leader(void)
     switch (sGame->state)
     {
         case 0:
-            SendBlock(0, sGame->berryResults, sizeof(sGame->berryResults));
+            SendBlock(sGame->berryResults, sizeof(sGame->berryResults));
             sGame->playersReceived = 0;
             sGame->state++;
             break;
@@ -2155,7 +2155,7 @@ static void InitResults_Member(void)
     switch (sGame->state)
     {
         case 0:
-            SendBlock(0, sGame->berryResults[sGame->timer], sizeof(sGame->berryResults));
+            SendBlock(sGame->berryResults[sGame->timer], sizeof(sGame->berryResults));
             sGame->playersReceived = 0;
             sGame->state++;
             break;
@@ -2214,7 +2214,7 @@ static void DoResults(void)
                 playAgainState = PLAY_AGAIN_YES;
                 SetGfxFuncById(GFXFUNC_MSG_COMM_STANDBY);
                 playAgainState = sGame->gfx.playAgainState;
-                SendBlock(0, &playAgainState, sizeof(playAgainState));
+                SendBlock(&playAgainState, sizeof(playAgainState));
                 sGame->state++;
             }
             break;
@@ -2360,7 +2360,7 @@ static void AskPlayAgain(void)
             {
                 SetGfxFuncById(GFXFUNC_MSG_COMM_STANDBY);
                 playAgainState = sGame->gfx.playAgainState;
-                SendBlock(0, &playAgainState, sizeof(playAgainState));
+                SendBlock(&playAgainState, sizeof(playAgainState));
                 sGame->state++;
             }
             break;

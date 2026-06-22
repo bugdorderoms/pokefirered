@@ -187,7 +187,7 @@ void rfu_LMAN_setMSCCallback(void (*MSC_callback_p)(u16));
 void rfu_LMAN_REQ_sendData(bool8 clockChangeFlag);
 void rfu_LMAN_powerDownRFU(void);
 u8 rfu_LMAN_CHILD_connectParent(u16 parentId, u16 connect_period);
-u8 rfu_LMAN_setLinkRecovery(u8 enable_flag, u16 recovery_period);
+u32 rfu_LMAN_setLinkRecovery(bool32 enable_flag, u32 recovery_period);
 void rfu_LMAN_manager_entity(u32 rand);
 void rfu_LMAN_syncVBlank(void);
 u8 rfu_LMAN_initializeManager(void (*LMAN_callback_p)(u8, u8), void (*MSC_callback_p)(u16));

@@ -434,7 +434,7 @@ static void ChatEntryRoutine_Join(void)
     case 1:
         if (IsLinkTaskFinished() && !RfuHasFoundNewLeader())
         {
-            if (SendBlock(0, sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
+            if (SendBlock(sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
                 sWork->routineState++;
         }
         break;
@@ -642,7 +642,7 @@ static void ChatEntryRoutine_AskQuitChatting(void)
         }
         break;
     case 4:
-        if (IsLinkTaskFinished() && !RfuHasFoundNewLeader() && SendBlock(0, sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
+        if (IsLinkTaskFinished() && !RfuHasFoundNewLeader() && SendBlock(sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
         {
             if (sWork->multiplayerId == 0)
                 sWork->routineState = 6;
@@ -685,7 +685,7 @@ static void ChatEntryRoutine_ExitChat(void)
         }
         break;
     case 3:
-        if (IsLinkTaskFinished() && !RfuHasFoundNewLeader() && SendBlock(0, sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
+        if (IsLinkTaskFinished() && !RfuHasFoundNewLeader() && SendBlock(sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
             sWork->routineState++;
         break;
     case 4:
@@ -812,7 +812,7 @@ static void ChatEntryRoutine_SendMessage(void)
         sWork->routineState++;
         // fall through
     case 1:
-        if (IsLinkTaskFinished() == TRUE && !RfuHasFoundNewLeader() && SendBlock(0, sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
+        if (IsLinkTaskFinished() == TRUE && !RfuHasFoundNewLeader() && SendBlock(sWork->sendMessageBuffer, sizeof(sWork->sendMessageBuffer)))
             sWork->routineState++;
         break;
     case 2:

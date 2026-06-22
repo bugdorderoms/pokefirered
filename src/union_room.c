@@ -1552,7 +1552,7 @@ static void AskToJoinRfuGroup(struct UnkStruct_Group * data, s32 id)
     CreateTask_RfuReconnectWithParent(data->field_0->arr[data->leaderId].gname_uname.uname, ReadAsU16(data->field_0->arr[data->leaderId].gname_uname.gname.unk_00.playerTrainerId));
 }
 
-u8 CreateTask_ListenToWireless(void)
+u32 CreateTask_ListenToWireless(void)
 {
     u32 taskId;
     struct UnkStruct_Group * dataPtr;
@@ -1738,7 +1738,7 @@ static void Task_StartUnionRoomTrade(u32 taskId)
     {
     case 0:
         gTasks[taskId].data[0]++;
-        SendBlock(0, &gPlayerParty[monId], sizeof(struct Pokemon));
+        SendBlock(&gPlayerParty[monId], sizeof(struct Pokemon));
         break;
     case 1:
         if (GetBlockReceivedStatus() == 3)
@@ -1751,7 +1751,7 @@ static void Task_StartUnionRoomTrade(u32 taskId)
         break;
     case 2:
         memcpy(gBlockSendBuffer, gSaveBlock1Ptr->mail, sizeof(struct Mail) * PARTY_SIZE + 4);
-        if (SendBlock(0, gBlockSendBuffer, sizeof(struct Mail) * PARTY_SIZE + 4))
+        if (SendBlock(gBlockSendBuffer, sizeof(struct Mail) * PARTY_SIZE + 4))
             gTasks[taskId].data[0]++;
         break;
     case 3:

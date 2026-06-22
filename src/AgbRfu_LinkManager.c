@@ -1253,11 +1253,11 @@ void rfu_LMAN_setMSCCallback(void (*MSC_callback_p)(u16))
     rfu_setMSCCallback(rfu_LMAN_MSC_callback);
 }
 
-u8 rfu_LMAN_setLinkRecovery(u8 enable_flag, u16 recovery_period)
+u32 rfu_LMAN_setLinkRecovery(bool32 enable_flag, u32 recovery_period)
 {
     u16 imeBak;
     
-    if (lman.linkRecovery_enable && enable_flag == 0 && lman.linkRecoveryTimer.active)
+    if (lman.linkRecovery_enable && !enable_flag && lman.linkRecoveryTimer.active)
         return LMAN_ERROR_NOW_LINK_RECOVERY;
 
     imeBak = REG_IME;

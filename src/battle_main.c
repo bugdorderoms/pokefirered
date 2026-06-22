@@ -716,7 +716,7 @@ static void CB2_HandleStartBattle(void)
                     *(&gBattleStruct->multiBuffer.linkPartnerHeader.versionSignatureLo) = 1;
                     *(&gBattleStruct->multiBuffer.linkPartnerHeader.versionSignatureHi) = 2;
                     BufferPartyVsScreenHealth_AtStart();
-                    SendBlock(bitmask_all_link_players_but_self(), &gBattleStruct->multiBuffer.linkPartnerHeader, sizeof(gBattleStruct->multiBuffer.linkPartnerHeader));
+                    SendBlock(&gBattleStruct->multiBuffer.linkPartnerHeader, sizeof(gBattleStruct->multiBuffer.linkPartnerHeader));
                     gBattleCommunication[MULTIUSE_STATE] = 2;
                 }
                 if (gWirelessCommType != 0)
@@ -750,7 +750,7 @@ static void CB2_HandleStartBattle(void)
     case 3:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gPlayerParty, sizeof(struct Pokemon) * 2);
+            SendBlock(gPlayerParty, sizeof(struct Pokemon) * 2);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -765,7 +765,7 @@ static void CB2_HandleStartBattle(void)
     case 7:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gPlayerParty + 2, sizeof(struct Pokemon) * 2);
+            SendBlock(gPlayerParty + 2, sizeof(struct Pokemon) * 2);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -780,7 +780,7 @@ static void CB2_HandleStartBattle(void)
     case 11:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gPlayerParty + 4, sizeof(struct Pokemon) * 2);
+            SendBlock(gPlayerParty + 4, sizeof(struct Pokemon) * 2);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -876,7 +876,7 @@ static void CB2_PreInitMultiBattle(void)
         if (gReceivedRemoteLinkPlayers && IsLinkTaskFinished())
         {
             PrepareOwnMultiPartnerBuffer(0);
-            SendBlock(bitmask_all_link_players_but_self(), gBattleStruct->multiBuffer.multiBattleMons, sizeof(gBattleStruct->multiBuffer.multiBattleMons));
+            SendBlock(gBattleStruct->multiBuffer.multiBattleMons, sizeof(gBattleStruct->multiBuffer.multiBattleMons));
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -1003,7 +1003,7 @@ static void CB2_HandleStartMultiBattle(void)
                 *(&gBattleStruct->multiBuffer.linkPartnerHeader.versionSignatureLo) = 1;
                 *(&gBattleStruct->multiBuffer.linkPartnerHeader.versionSignatureHi) = 2;
                 BufferPartyVsScreenHealth_AtStart();
-                SendBlock(bitmask_all_link_players_but_self(), &gBattleStruct->multiBuffer.linkPartnerHeader, sizeof(gBattleStruct->multiBuffer.linkPartnerHeader));
+                SendBlock(&gBattleStruct->multiBuffer.linkPartnerHeader, sizeof(gBattleStruct->multiBuffer.linkPartnerHeader));
                 ++gBattleCommunication[MULTIUSE_STATE];
             }
             if (gWirelessCommType)
@@ -1052,7 +1052,7 @@ static void CB2_HandleStartMultiBattle(void)
     case 3:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gDecompressionBuffer, sizeof(struct Pokemon) * 2);
+            SendBlock(gDecompressionBuffer, sizeof(struct Pokemon) * 2);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -1116,7 +1116,7 @@ static void CB2_HandleStartMultiBattle(void)
     case 7:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gDecompressionBuffer + sizeof(struct Pokemon) * 2, sizeof(struct Pokemon));
+            SendBlock(gDecompressionBuffer + sizeof(struct Pokemon) * 2, sizeof(struct Pokemon));
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -1242,7 +1242,7 @@ static void CB2_HandleStartMultiRaidBattle(void)
                 *(&gBattleStruct->multiBuffer.linkPartnerHeader.versionSignatureLo) = 1;
                 *(&gBattleStruct->multiBuffer.linkPartnerHeader.versionSignatureHi) = 2;
                 BufferPartyVsScreenHealth_AtStart();
-                SendBlock(bitmask_all_link_players_but_self(), &gBattleStruct->multiBuffer.linkPartnerHeader, sizeof(gBattleStruct->multiBuffer.linkPartnerHeader));
+                SendBlock(&gBattleStruct->multiBuffer.linkPartnerHeader, sizeof(gBattleStruct->multiBuffer.linkPartnerHeader));
                 ++gBattleCommunication[MULTIUSE_STATE];
             }
 
@@ -1265,7 +1265,7 @@ static void CB2_HandleStartMultiRaidBattle(void)
     case 3:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gDecompressionBuffer, sizeof(struct Pokemon) * 2);
+            SendBlock(gDecompressionBuffer, sizeof(struct Pokemon) * 2);
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -1311,7 +1311,7 @@ static void CB2_HandleStartMultiRaidBattle(void)
     case 7:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gDecompressionBuffer + sizeof(struct Pokemon) * 2, sizeof(struct Pokemon));
+            SendBlock(gDecompressionBuffer + sizeof(struct Pokemon) * 2, sizeof(struct Pokemon));
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;
@@ -1362,7 +1362,7 @@ static void CB2_HandleStartMultiRaidBattle(void)
     case 9:
         if (IsLinkTaskFinished())
         {
-            SendBlock(bitmask_all_link_players_but_self(), gDecompressionBuffer, sizeof(struct Pokemon));
+            SendBlock(gDecompressionBuffer, sizeof(struct Pokemon));
             ++gBattleCommunication[MULTIUSE_STATE];
         }
         break;

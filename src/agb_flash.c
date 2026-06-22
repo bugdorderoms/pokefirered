@@ -222,42 +222,6 @@ u32 VerifyFlashSector(u16 sectorNum, u8 *src)
     return verifyFlashSector_Core(src, tgt, size); // return 0 if verified.
 }
 
-u32 VerifyFlashSectorNBytes(u16 sectorNum, u8 *src, u32 n)
-{
-    u16 i;
-    vu16 verifyFlashSector_Core_Buffer[0x80];
-    vu16 *funcSrc;
-    vu16 *funcDest;
-    u8 *tgt;
-    u32 (*verifyFlashSector_Core)(u8 *, u8 *, u32);
-
-    if (gFlash->romSize == FLASH_ROM_SIZE_1M)
-    {
-        SwitchFlashBank(sectorNum / SECTORS_PER_BANK);
-        sectorNum %= SECTORS_PER_BANK;
-    }
-
-    REG_WAITCNT = (REG_WAITCNT & ~(WAITCNT_SRAM_MASK)) | WAITCNT_SRAM_8;
-
-    funcSrc = (vu16 *)VerifyFlashSector_Core;
-    funcSrc = (vu16 *)((s32)funcSrc ^ 1);
-    funcDest = verifyFlashSector_Core_Buffer;
-
-    i = ((s32)VerifyFlashSector - (s32)VerifyFlashSector_Core) >> 1;
-
-    while (i != 0)
-    {
-        *funcDest++ = *funcSrc++;
-        i--;
-    }
-
-    verifyFlashSector_Core = (u32 (*)(u8 *, u8 *, u32))((s32)verifyFlashSector_Core_Buffer + 1);
-
-    tgt = FLASH_BASE + (sectorNum << gFlash->sector.shift);
-
-    return verifyFlashSector_Core(src, tgt, n);
-}
-
 u32 ProgramFlashSectorAndVerify(u16 sectorNum, u8 *src)
 {
     u8 i;
@@ -275,23 +239,4 @@ u32 ProgramFlashSectorAndVerify(u16 sectorNum, u8 *src)
     }
 
     return result; // return 0 if verified and programmed.
-}
-
-u32 ProgramFlashSectorAndVerifyNBytes(u16 sectorNum, void *dataSrc, u32 n)
-{
-    u8 i;
-    u32 result;
-
-    for (i = 0; i < 3; i++)
-    {
-        result = ProgramFlashSector(sectorNum, dataSrc);
-        if (result != 0)
-            continue;
-
-        result = VerifyFlashSectorNBytes(sectorNum, dataSrc, n);
-        if (result == 0)
-            break;
-    }
-
-    return result;
 }

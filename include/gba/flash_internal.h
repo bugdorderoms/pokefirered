@@ -68,7 +68,6 @@ void StopFlashTimer(void);
 u16 SetFlashTimerIntr(u8 timerNum, void (**intrFunc)(void));
 u32 ProgramFlashSectorAndVerify(u16 sectorNum, u8 *src);
 void ReadFlash(u16 sectorNum, u32 offset, void *dest, u32 size);
-u32 ProgramFlashSectorAndVerifyNBytes(u16 sectorNum, void *dataSrc, u32 n);
 
 u16 WaitForFlashWrite_Common(u8 phase, u8 *addr, u8 lastData);
 
