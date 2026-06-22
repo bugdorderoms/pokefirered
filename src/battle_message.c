@@ -1334,6 +1334,143 @@ const u8 *const gBattleStringsTable[] =
 };
 
 // String buffer helpers
+void PrepareFlavorBuffer(u8 *textVar, u32 flavorId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_NEGATIVE_FLAVOR;
+    textVar[2] = flavorId;
+    textVar[3] = B_BUFF_EOS;
+}
+
+void PrepareStatBuffer(u8 *textVar, u32 statId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_STAT;
+    textVar[2] = statId;
+    textVar[3] = B_BUFF_EOS;
+}
+
+void PrepareAbilityBuffer(u8 *textVar, u32 abilityId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_ABILITY;
+    textVar[2] = (abilityId);
+    textVar[3] = (abilityId & 0x0000FF00) >> 8;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareTypeBuffer(u8 *textVar, u32 typeId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_TYPE;
+    textVar[2] = typeId;
+    textVar[3] = B_BUFF_EOS;
+}
+
+void PrepareByteNumberBuffer(u8 *textVar, u32 maxDigits, u32 number)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_NUMBER;
+    textVar[2] = 1;
+    textVar[3] = maxDigits;
+    textVar[4] = (number);
+    textVar[5] = B_BUFF_EOS;
+}
+
+void PrepareHWordNumberBuffer(u8 *textVar, u32 maxDigits, u32 number)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_NUMBER;
+    textVar[2] = 2;
+    textVar[3] = maxDigits;
+    textVar[4] = (number);
+    textVar[5] = (number & 0x0000FF00) >> 8;
+    textVar[6] = B_BUFF_EOS;
+}
+
+void PrepareWordNumberBuffer(u8 *textVar, u32 maxDigits, u32 number)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_NUMBER;
+    textVar[2] = 4;
+    textVar[3] = maxDigits;
+    textVar[4] = (number);
+    textVar[5] = (number & 0x0000FF00) >> 8;
+    textVar[6] = (number & 0x00FF0000) >> 16;
+    textVar[7] = (number & 0xFF000000) >> 24;
+    textVar[8] = B_BUFF_EOS;
+}
+
+void PrepareStringBuffer(u8 *textVar, u32 stringId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_STRING;
+    textVar[2] = (stringId);
+    textVar[3] = (stringId & 0x0000FF00) >> 8;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareMoveBuffer(u8 *textVar, u32 move)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_MOVE;
+    textVar[2] = (move);
+    textVar[3] = (move & 0x0000FF00) >> 8;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareItemBuffer(u8 *textVar, u32 item)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_ITEM;
+    textVar[2] = (item);
+    textVar[3] = (item & 0x0000FF00) >> 8;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareSpeciesBuffer(u8 *textVar, u32 species)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_SPECIES;
+    textVar[2] = (species);
+    textVar[3] = (species & 0x0000FF00) >> 8;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareMonNickWithPrefixBuffer(u8 *textVar, u32 battlerId, u32 partyId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_MON_NICK_WITH_PREFIX;
+    textVar[2] = battlerId;
+    textVar[3] = partyId;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareMonNickBuffer(u8 *textVar, u32 battlerId, u32 partyId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_MON_NICK;
+    textVar[2] = battlerId;
+    textVar[3] = partyId;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareMonNickNoIllusionBuffer(u8 *textVar, u32 battlerId, u32 partyId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_MON_NICK_NO_ILLUSION;
+    textVar[2] = battlerId;
+    textVar[3] = partyId;
+    textVar[4] = B_BUFF_EOS;
+}
+
+void PrepareMonTeamPrefixBuffer(u8 *textVar, u32 battlerId)
+{
+    textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;
+    textVar[1] = B_BUFF_MON_TEAM_PREFIX;
+    textVar[2] = battlerId;
+    textVar[3] = B_BUFF_EOS;
+}
 
 // Get nickname, checking for Illusion
 static inline void GetBattlerNick(u32 battlerId, u8 *dst)
