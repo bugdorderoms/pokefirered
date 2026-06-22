@@ -78,9 +78,10 @@
 	.2byte \stringId
 	.endm
 	
-	.macro printselectionstringfromtable ptr:req
+	.macro printselectionstringfromtable ptr:req, waitstate:req
 	.byte 0x11
 	.4byte \ptr
+	.byte \waitstate
 	.endm
 	
 	.macro waitmessage numFrames:req
@@ -117,9 +118,10 @@
 	.4byte \ptr
 	.endm
 	
-	.macro doeffectsonfaint battler:req
+	.macro doeffectsonfaint battler:req, lastcase:req
 	.byte 0x18
 	.byte \battler
+	.byte \lastcase
 	.endm
 
 	.macro tryfaintmon battler:req
@@ -482,10 +484,10 @@
 	.byte \battler
 	.endm
 
-	.macro switchinanim battler:req, dontclearsubstitutebit:req
+	.macro switchinanim battler:req, flags:req
 	.byte 0x4e
 	.byte \battler
-	.byte \dontclearsubstitutebit
+	.byte \flags
 	.endm
 
 	.macro jumpifcantswitch battler:req, ptr:req
@@ -527,15 +529,9 @@
 	.2byte \songId
 	.endm
 
-	.macro formchange battler:req, basespecies:req, targetspecies:req, reloadtypes:req, reloadstats:req, reloadability:req, failPtr:req
+	.macro formchange battler:req
 	.byte 0x56
 	.byte \battler
-	.2byte \basespecies
-	.2byte \targetspecies
-	.byte \reloadtypes
-	.byte \reloadstats
-	.byte \reloadability
-	.4byte \failPtr
 	.endm
 
 	.macro playanimation battler:req, animId:req, animParamPtr=NULL
@@ -564,9 +560,8 @@
 	.4byte \learnedMovePtr
 	.endm
 
-	.macro yesnoboxstoplearningmove ptr:req
+	.macro nop5b
 	.byte 0x5b
-	.4byte \ptr
 	.endm
 
 	.macro drawlvlupbox
@@ -637,8 +632,10 @@
 	.4byte \boostscript
 	.endm
 
-	.macro yesnobox
+	.macro yesnobox battler:req, stringId=STRINGID_EMPTYSTRING
 	.byte 0x69
+	.byte \battler
+	.2byte \stringId
 	.endm
 
 	.macro consumeitem battler:req, flags=0
@@ -713,8 +710,10 @@
 	.byte 0x78
 	.endm
 
-	.macro setatkhptozero
+	.macro sethptovalue battler:req, value:req
 	.byte 0x79
+	.byte \battler
+	.byte \value
 	.endm
 
 	.macro lunardancepprestore battler:req
@@ -791,12 +790,16 @@
 	.byte 0x88
 	.endm
 
-	.macro nop89
+	.macro updatehealthboxattribute battler:req, attributeId:req
 	.byte 0x89
+	.byte \battler
+	.byte \attributeId
 	.endm
 
-	.macro nop8a
+	.macro handleactivegimmick battler:req, removegimmickstate:req
 	.byte 0x8a
+	.byte \battler
+	.byte \removegimmickstate
 	.endm
 
 	.macro assistattackselect ptr:req
@@ -841,13 +844,14 @@
 	.4byte \failPtr
 	.endm
 
-	.macro tryKO failPtr:req
+	.macro tryKO successPtr:req
 	.byte 0x93
-	.4byte \failPtr
+	.4byte \successPtr
 	.endm
 
-	.macro nop94
+	.macro trysetauroraveil failPtr:req
 	.byte 0x94
+	.4byte \failPtr
 	.endm
 
 	.macro setweather
@@ -863,8 +867,10 @@
 	.byte \battler
 	.endm
 
-	.macro nop98
+	.macro trygmaxfinalehpheal battler:req, failPtr:req
 	.byte 0x98
+	.byte \battler
+	.4byte \failPtr
 	.endm
 
 	.macro nop99
@@ -952,8 +958,10 @@
 	.byte 0xab
 	.endm
 
-	.macro nopac
+	.macro trysetgmaxsteelsurge battler:req, ptr:req
 	.byte 0xac
+	.byte \battler
+	.4byte \ptr
 	.endm
 
 	.macro tryspiteppreduce ptr:req
@@ -977,8 +985,9 @@
 	.4byte \ptr
 	.endm
 
-	.macro trysetstealthrock ptr:req
+	.macro trysetstealthrock battler:req, ptr:req
 	.byte 0xb1
+	.byte \battler
 	.4byte \ptr
 	.endm
 
@@ -1039,9 +1048,10 @@
 	.byte \battler
 	.endm
 
-	.macro trydefogclear failPtr:req
+	.macro trydefogclear failPtr:req, clearBothFieldHazards:req
 	.byte 0xbf
 	.4byte \failPtr
+	.byte \clearBothFieldHazards
 	.endm
 
 	.macro recoverbasedonweather failPtr:req
@@ -1111,9 +1121,8 @@
 	.byte 0xcf
 	.endm
 
-	.macro settaunt failPtr:req
+	.macro nopd0
 	.byte 0xd0
-	.4byte \failPtr
 	.endm
 
 	.macro nopd1
@@ -1238,7 +1247,7 @@
 	.byte 0xed
 	.endm
 
-	.macro nopee
+	.macro catchraidboss
 	.byte 0xee
 	.endm
 
@@ -1264,7 +1273,7 @@
 	.4byte \ptr
 	.endm
 
-	.macro nopf4
+	.macro domoncaughteffects
 	.byte 0xf4
 	.endm
 
@@ -1308,6 +1317,10 @@
 	.byte 0xfe
 	.endm
 	
+	.macro handleendbattlefunctions
+	.byte 0xff
+	.endm
+	
 @ various command changed to more readable macros
 	.macro resetintimidatetracebits battler:req
 	various \battler, VARIOUS_RESET_INTIMIDATE_TRACE_BITS
@@ -1328,11 +1341,6 @@
 	.macro trydotrainerslide battler:req, caseId:req
 	various \battler, VARIOUS_TRY_TRAINER_SLIDE
 	.byte \caseId
-	.endm
-
-	.macro updatehealthboxattribute battler:req, attributeId:req
-	various \battler, VARIOUS_UPDATE_HEALTHBOX_ATTRIBUTE
-	.byte \attributeId
 	.endm
 	
 	.macro tryremoveillusion battler:req
@@ -1385,8 +1393,9 @@
 	various \battler, VARIOUS_TRY_TELEPORT
 	.endm
 	
-	.macro setteleportoutcome battler:req
+	.macro setteleportoutcome battler:req, endActionScriptInstr:req
 	various \battler, VARIOUS_SET_TELEPORT_OUTCOME
+	.4byte \endActionScriptInstr
 	.endm
 	
 	.macro tryfaintonspikesdamage battler:req, ptr:req
@@ -1496,10 +1505,6 @@
 	.4byte \ptr
 	.endm
 	
-	.macro resetgimmickinprogress battler:req
-	various \battler, VARIOUS_RESET_GIMMICK_IN_PROGRESS
-	.endm
-	
 	.macro jumpifactivegimmick battler:req, gimmick:req, ptr:req
 	various \battler, VARIOUS_JUMP_IF_ACTIVE_GIMMICK
 	.byte \gimmick
@@ -1511,8 +1516,57 @@
 	.4byte \ptr
 	.endm
 	
-	.macro tryterastallizationformchange battler:req
+	.macro tryterastallizationformchange battler:req, failInstr:req
 	various \battler, VARIOUS_TRY_TERASTALLIZATION_FORM_CHANGE
+	.4byte \failInstr
+	.endm
+	
+	.macro updatedynamaxhp battler:req, dynamaxends:req
+	various \battler, VARIOUS_UPDATE_DYNAMAX_HP
+	.byte \dynamaxends
+	.endm
+	
+	.macro setgimmickinprogress battler:req
+	various \battler, VARIOUS_SET_GIMMICK_IN_PROGRESS
+	.endm
+	
+	.macro settargetally battler:req
+	various \battler, VARIOUS_SET_TARGET_ALLY
+	.endm
+	
+	.macro tryincreasegmaxchistrikeboost battler:req, failPtr:req
+	various \battler, VARIOUS_TRY_INCREASE_GMAX_CHISTRIKE_BOOST
+	.4byte \failPtr
+	.endm
+	
+	.macro trysetescapeprevention battler:req, failPtr:req
+	various \battler, VARIOUS_TRY_SET_ESCAPE_PREVENTION
+	.4byte \failPtr
+	.endm
+	
+	.macro hideallhealthboxes
+	various BS_ATTACKER, VARIOUS_HIDE_ALL_HEALTHBOXES
+	.endm
+	
+	.macro tryrevertshaymin battler:req, jumpPtr:req
+	various \battler, VARIOUS_TRY_REVERT_SHAYMIN_SKY
+	.4byte \jumpPtr
+	.endm
+	
+	.macro tryrevertcramorantondynamax battler:req, jumpPtr:req
+	various \battler, VARIOUS_TRY_REVERT_CRAMORANT
+	.4byte \jumpPtr
+	.endm
+	
+	.macro jumpbasedchosenselection battler:req, selection:req, jumpPtr:req
+	various \battler, VARIOUS_JUMP_BASED_CHOSEN_SELECTION
+	.byte \selection
+	.4byte \jumpPtr
+	.endm
+	
+	.macro tryraidshockwavenullification battler:req, abilityNotSuppressedInstr:req
+	various \battler, VARIOUS_TRY_RAID_SHOCKWAVE_NULLIFICATION
+	.4byte \abilityNotSuppressedInstr
 	.endm
 	
 @ callfunction macros
@@ -1531,10 +1585,6 @@
 	.macro incrementgamestat gameStatId:req
 	callfunction BS_IncrementGameStat
 	.byte \gameStatId
-	.endm
-	
-	.macro spriteignore0hp
-	callfunction BS_SwitchSpriteIgnore0HpBit
 	.endm
 	
 	.macro atknameinbuff1
@@ -1567,10 +1617,6 @@
 	
 	.macro clearchargingturn
 	callfunction BS_ClearChargingTurn
-	.endm
-	
-	.macro setescapeprevention
-	callfunction BS_SetEscapePrevention
 	.endm
 	
 	.macro setforcedtarget
@@ -1644,11 +1690,7 @@
 	callfunction BS_SetStatChangerFromMultiuseState
 	.byte \buff
 	.endm
-	
-	.macro settargetally
-	callfunction BS_SetTargetAlly
-	.endm
-	
+
 	.macro sethelpinghand
 	callfunction BS_SetHelpingHand
 	.endm
@@ -1833,8 +1875,42 @@
 	.4byte \failPtr
 	.endm
 	
+	.macro jumpifgmaxsnoozefails ptr:req
+	callfunction BS_JumpIfGMaxSnoozeFails
+	.4byte \ptr
+	.endm
+	
 	.macro setfocusenergy
 	callfunction BS_SetFocusEnergy
+	.endm
+
+	.macro settaunt ptr:req
+	callfunction BS_SetTaunt
+	.4byte \ptr
+	.endm
+	
+	.macro settorment fromgmaxmeltdown:req, ptr:req
+	callfunction BS_SetTorment
+	.byte \fromgmaxmeltdown
+	.4byte \ptr
+	.endm
+	
+	.macro raidcheerhealfullhealth battler, failPtr:req
+	callfunction BS_RaidCheerHealFullHealth
+	.byte \battler
+	.4byte \failPtr
+	.endm
+	
+	.macro raidcheerselectstattoincrease critBoostPtr:req, boostByOnePtr:req, failPtr:req
+	callfunction BS_RaidCheerSelectStatToIncrease
+	.4byte \critBoostPtr
+	.4byte \boostByOnePtr
+	.4byte \failPtr
+	.endm
+	
+	.macro raidcheerdestroyshield failPtr:req
+	callfunction BS_RaidCheerDestroyShield
+	.4byte \failPtr
 	.endm
 	
 @ helpful macros
@@ -1968,7 +2044,7 @@
 	
 	.macro instantfaintattacker
 	instanthpdrop
-	setatkhptozero
+	sethptovalue BS_ATTACKER, 0
 	.endm
 	
 	.macro tryendeffectonabilitychange battler:req
@@ -2021,15 +2097,24 @@
 	restoretarget
 	.endm
 	
-	.macro updategimmickindicator battler:req
-	resetgimmickinprogress \battler
-	updatehealthboxattribute \battler, HEALTHBOX_ALL
-	.endm
-	
 	.macro tryfiretwoturnmovewithoutcharging battler:req, jumpPtr:req
 	jumpifcanfiretwoturnmovenow \battler, TRUE, \jumpPtr
 	.endm
 	
 	.macro tryfiretwoturnmoveaftercharging battler:req, jumpPtr:req
 	jumpifcanfiretwoturnmovenow \battler, FALSE, \jumpPtr
+	.endm
+	
+	.macro setactivegimmick battler:req
+	handleactivegimmick \battler, 0
+	.endm
+	
+	.macro removeactivegimmick battler:req, state:req
+	handleactivegimmick \battler, \state + 1
+	.endm
+	
+	.macro teleportbattler battler:req
+	sethptovalue \battler, 0
+	updatehealthboxattribute \battler, HEALTHBOX_VISIBILITY
+	removeactivegimmick \battler, REMOVE_GIMMICK_ON_FAINT
 	.endm

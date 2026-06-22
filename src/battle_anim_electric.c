@@ -286,6 +286,15 @@ static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_4[] =
     AFFINEANIMCMD_END,
 };
 
+static const union AffineAnimCmd sAffineAnim_GrowingElectricOrb_5[] =
+{
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0),
+    AFFINEANIMCMD_FRAME(32, 32, 0, 15),
+    AFFINEANIMCMD_FRAME(0, 0, 0, 48),
+    AFFINEANIMCMD_FRAME(-32, -32, 0, 15),
+    AFFINEANIMCMD_END,
+};
+
 static const union AffineAnimCmd *const sAffineAnims_GrowingElectricOrb[] =
 {
     sAffineAnim_GrowingElectricOrb_0,
@@ -293,13 +302,14 @@ static const union AffineAnimCmd *const sAffineAnims_GrowingElectricOrb[] =
     sAffineAnim_GrowingElectricOrb_2,
     sAffineAnim_GrowingElectricOrb_3,
     sAffineAnim_GrowingElectricOrb_4,
+    sAffineAnim_GrowingElectricOrb_5,
 };
 
 const struct SpriteTemplate gGrowingChargeOrbSpriteTemplate =
 {
     .tileTag = ANIM_TAG_CIRCLE_OF_LIGHT,
     .paletteTag = ANIM_TAG_CIRCLE_OF_LIGHT,
-    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x64,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = sAffineAnims_GrowingElectricOrb,
@@ -310,7 +320,7 @@ const struct SpriteTemplate gZenHeadbuttCircleSpriteTemplate =
 {
     .tileTag = ANIM_TAG_CIRCLE_OF_LIGHT,
     .paletteTag = ANIM_TAG_WATER_IMPACT,
-    .oam = &gOamData_AffineNormal_ObjBlend_64x64,
+    .oam = &gOamData_AffineDouble_ObjBlend_64x64,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = sAffineAnims_GrowingElectricOrb,
@@ -484,6 +494,17 @@ const struct SpriteTemplate gElectroBallSpriteTemplate =
     .callback = AnimShadowBall,
 };
 
+const struct SpriteTemplate gLightning2SpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LIGHTNING_2,
+    .paletteTag = ANIM_TAG_LIGHTNING_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_Lightning,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimLightning,
+};
+
 // Animates the lightning sprite falling into the target.
 // arg 0: x pos
 // arg 1: y pos
@@ -609,21 +630,22 @@ static void AnimThunderboltOrb(struct Sprite *sprite)
 
 // Animates the Thunderbolt/Spark electricity flashing around the target's mon location.
 // arg 0: anim battler
-// arg 1: visibility change delay
+// arg 1: y pixel offset
 // arg 2: wave amplitude
 // arg 3: duration
 // arg 4: sin/cos index
 // arg 5: sin/cos adder
 // arg 6: sprite tile num
+// arg 7: visibility change delay
 static void AnimSparkElectricityFlashing(struct Sprite *sprite)
 {
     u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
     
     sprite->x = GetBattlerSpriteCoord(battler, BATTLER_COORD_X);
-    sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->y = GetBattlerSpriteCoord(battler, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[1];
     
     sprite->data[0] = gBattleAnimArgs[3];
-    sprite->data[4] = gBattleAnimArgs[1];
+    sprite->data[4] = gBattleAnimArgs[7];
     sprite->data[5] = gBattleAnimArgs[2];
     sprite->data[6] = gBattleAnimArgs[5];
     sprite->data[7] = gBattleAnimArgs[4];

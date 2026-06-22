@@ -4,6 +4,7 @@
 #include "battle_gfx_sfx_util.h"
 #include "battle_interface.h"
 #include "battle_message.h"
+#include "battle_raid.h"
 #include "decompress.h"
 #include "field_specials.h"
 #include "graphics.h"
@@ -11,6 +12,7 @@
 #include "item_menu_icons.h"
 #include "math_util.h"
 #include "menu.h"
+#include "m4a.h"
 #include "strings.h"
 #include "pokedex.h"
 #include "pokemon_icon.h"
@@ -52,6 +54,9 @@ static void SpriteCB_HealthboxSlideIn(struct Sprite *sprite);
 static void SpriteCB_InterfaceTrigger(struct Sprite *sprite);
 static void SpriteCB_LastUsedBall(struct Sprite *sprite);
 static void ShowOrHideLastUsedBallBallSprite(bool32 hide);
+static void RaidShield_SetVisibilities(bool32 invisible);
+static void SpriteCB_RaidShield(struct Sprite *sprite);
+static void SpriteCB_DestroyRaidShieldSprite(struct Sprite *sprite);
 
 static const u8 sMoveInfoTriggerGfx[] = INCBIN_U8("graphics/battle_interface/move_info_trigger.4bpp");
 static const u8 sTeamPreviewTriggerGfx[] = INCBIN_U8("graphics/battle_interface/team_preview_trigger.4bpp");
@@ -380,6 +385,53 @@ static const struct SpriteTemplate sLastUsedBallThrowSpriteTemplate =
     .callback = SpriteCB_InterfaceTrigger
 };
 
+static const struct SpriteSheet sSpriteSheet_RaidShield =
+{
+    gBattleInterfaceGfx_RaidShield, 0x0080, GFX_TAG_RAID_SHIELD
+};
+
+static const struct OamData sOam_RaidShield =
+{
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(16x16),
+    .size = SPRITE_SIZE(16x16),
+    .priority = 0,
+};
+
+static const union AffineAnimCmd sAffineAnim_RaidShieldCreate[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 0, 1),
+    AFFINEANIMCMD_FRAME(32, 32, 0, 4), // Double in size
+    AFFINEANIMCMD_FRAME(-8, -8, 0, 16), // Shrink into place
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnim_RaidShieldDestroy[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 0, 1),
+    AFFINEANIMCMD_FRAME(32, 32, 0, 4), // Double in size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sAffineAnimTable_RaidShield[] =
+{
+    sAffineAnim_RaidShieldCreate,
+    sAffineAnim_RaidShieldDestroy
+};
+
+static const struct SpriteTemplate sSpriteTemplate_RaidShield =
+{
+    .tileTag = GFX_TAG_RAID_SHIELD,
+    .paletteTag = TAG_GIMMICK_INDICATOR_GFX, // Same palette as gimmick indicator
+    .oam = &sOam_RaidShield,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_RaidShield,
+    .callback = SpriteCB_RaidShield
+};
+
 enum
 {
     HEALTHBAR_TYPE_PLAYER_SINGLE,
@@ -445,14 +497,16 @@ u32 CreateBattlerHealthboxSprites(u32 a)
     sprite->hBar_HealthBoxSpriteId = healthboxLeftSpriteId;
     sprite->hBar_Type = healthbarType;
     sprite->invisible = TRUE;
-    CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_1), OBJ_VRAM0 + sprite->oam.tileNum * 32, 64);
-    
+
     // Set healthbox left params
     gSprites[healthboxLeftSpriteId].hMain_HealthBoxOtherSpriteId = healthboxRightSpriteId;
     gSprites[healthboxLeftSpriteId].hMain_HealthBarSpriteId = healthbarSpriteId;
     gSprites[healthboxLeftSpriteId].hMain_IndicatorSpriteId = CreateGimmickIndicatorSprite(a);
     gSprites[healthboxLeftSpriteId].hMain_Battler = a;
     gSprites[healthboxLeftSpriteId].invisible = TRUE;
+    
+    if (IsRaidBoss(a))
+        CreateRaidShieldSprites(a, gBattleStruct->raid.numShieldsUp, FALSE);
     
     // Set healthbox right params
     gSprites[healthboxRightSpriteId].hOther_HealthBoxSpriteId = healthboxLeftSpriteId;
@@ -566,20 +620,18 @@ void SetBattleBarStruct(u32 battlerId, s32 maxVal, s32 oldVal, s32 receivedValue
     gBattleSpritesDataPtr->battleBars[battlerId].currValue = -32768;
 }
 
-void SetHealthboxSpriteInvisible(u32 healthboxSpriteId)
+void SetHealthboxSpriteVisibility(u32 healthboxSpriteId, bool32 invisible)
 {
-    gSprites[healthboxSpriteId].invisible = TRUE;
-    gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId].invisible = TRUE;
-    gSprites[gSprites[healthboxSpriteId].hMain_HealthBoxOtherSpriteId].invisible = TRUE;
-    SetGimmickIndicatorSpriteVisibility(gSprites[healthboxSpriteId].hMain_IndicatorSpriteId, TRUE);
-}
-
-void SetHealthboxSpriteVisible(u32 healthboxSpriteId)
-{
-    gSprites[healthboxSpriteId].invisible = FALSE;
-    gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId].invisible = FALSE;
-    gSprites[gSprites[healthboxSpriteId].hMain_HealthBoxOtherSpriteId].invisible = FALSE;
-    SetGimmickIndicatorSpriteVisibility(gSprites[healthboxSpriteId].hMain_IndicatorSpriteId, FALSE);
+    if (gBattleStruct->raid.keepHealthboxesHidden)
+        invisible = TRUE;
+    
+    gSprites[healthboxSpriteId].invisible = invisible;
+    gSprites[gSprites[healthboxSpriteId].hMain_HealthBarSpriteId].invisible = invisible;
+    gSprites[gSprites[healthboxSpriteId].hMain_HealthBoxOtherSpriteId].invisible = invisible;
+    SetGimmickIndicatorSpriteVisibility(gSprites[healthboxSpriteId].hMain_IndicatorSpriteId, invisible);
+    
+    if (IsRaidBoss(gSprites[healthboxSpriteId].hMain_Battler))
+        RaidShield_SetVisibilities(invisible);
 }
 
 void DestoryHealthboxSprite(u32 healthboxSpriteId)
@@ -604,12 +656,7 @@ void UpdateOamPriorityInAllHealthboxes(u32 priority, bool32 hideHpBoxes)
         gSprites[gSprites[healthboxLeftSpriteId].hMain_IndicatorSpriteId].oam.priority = priority;
 
         if (IsBattlerAlive(i))
-        {
-            if (hideHpBoxes)
-                SetHealthboxSpriteInvisible(healthboxLeftSpriteId);
-            else
-                SetHealthboxSpriteVisible(healthboxLeftSpriteId);
-        }
+            SetHealthboxSpriteVisibility(healthboxLeftSpriteId, hideHpBoxes);
     }
 }
 
@@ -649,16 +696,15 @@ void InitBattlerHealthboxCoords(u32 battler)
 static void UpdateLvlInHealthbox(u32 healthboxSpriteId, u32 lvl)
 {
     u32 windowId, spriteTileNum, xPos, battlerId = gSprites[healthboxSpriteId].hMain_Battler;
-    u32 indicatorSpriteId = gSprites[healthboxSpriteId].hMain_IndicatorSpriteId;
     u8 text[16];
     u8 *windowTileData, *objVram;
     
     // Don't print Lv char if mon has a gimmick with an indicator active.
-    if (GetGimmickIndicatorId(battlerId) != GIMMICK_INDICATOR_NONE)
+    if (!gBattleSpritesDataPtr->battlerData[battlerId].gimmickInProgress && GetGimmickIndicatorId(battlerId) != GIMMICK_INDICATOR_NONE)
     {
         objVram = ConvertIntToDecimalStringN(text, lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
         xPos = 5 * (3 - (objVram - (text + 2))) - 1;
-        UpdateIndicatorLevelData(indicatorSpriteId, lvl);
+        UpdateIndicatorLevelData(gSprites[healthboxSpriteId].hMain_IndicatorSpriteId, lvl);
     }
     else
     {
@@ -720,7 +766,9 @@ static void PrintHpOnHealthbox(u32 healthboxSpriteId, s16 currHP, s16 maxHP, u32
 
 void UpdateHpTextInHealthbox(u32 healthboxSpriteId, s16 currHP, s16 maxHP)
 {
-    if (!IsDoubleBattleForBattler(gSprites[healthboxSpriteId].hMain_Battler))
+    u32 battlerId = gSprites[healthboxSpriteId].hMain_Battler;
+    
+    if (GetBattlerSide(battlerId) == B_SIDE_PLAYER && !IsDoubleBattleForBattler(battlerId))
         PrintHpOnHealthbox(healthboxSpriteId, currHP, maxHP, 0xB00, 0x3A0);
     else
         UpdateHpTextInHealthboxInDoubles(healthboxSpriteId, currHP, maxHP);
@@ -1204,9 +1252,8 @@ void TryAddPokeballIconToHealthbox(u32 healthboxSpriteId, bool32 noStatus)
 
 static void UpdateStatusIconInHealthbox(u32 healthboxSpriteId)
 {
-    u32 i, pltAdder, status, battlerId = gSprites[healthboxSpriteId].hMain_Battler, healthBarSpriteId = gSprites[healthboxSpriteId].hMain_HealthBarSpriteId;
+    u32 i, pltAdder, status, tileNumAdder, battlerId = gSprites[healthboxSpriteId].hMain_Battler, healthBarSpriteId = gSprites[healthboxSpriteId].hMain_HealthBarSpriteId;
     const u8 *statusGfxPtr;
-    s16 tileNumAdder;
 
     if (GetBattlerSide(battlerId) != B_SIDE_PLAYER)
         tileNumAdder = 0x11;
@@ -1221,6 +1268,8 @@ static void UpdateStatusIconInHealthbox(u32 healthboxSpriteId)
     
     if (status)
     {
+        CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_1), (void *)(OBJ_VRAM0 + gSprites[healthBarSpriteId].oam.tileNum * TILE_SIZE_4BPP), 64);
+        
         statusGfxPtr = GetHealthboxElementGfxPtr(GetStatusIconForBattlerId(gNonVolatileStatusConditions[status - 1].healthboxStatusGfx, battlerId));
         
         pltAdder = gSprites[healthboxSpriteId].oam.paletteNum * 16;
@@ -1229,7 +1278,7 @@ static void UpdateStatusIconInHealthbox(u32 healthboxSpriteId)
         FillPalette(gNonVolatileStatusConditions[status - 1].healthboxStatusPal, pltAdder + 0x100, 2);
         CpuCopy16(gPlttBufferUnfaded + 0x100 + pltAdder, (void*)(OBJ_PLTT + pltAdder * 2), 2);
         CpuCopy32(statusGfxPtr, (void*)(OBJ_VRAM0 + (gSprites[healthboxSpriteId].oam.tileNum + tileNumAdder) * TILE_SIZE_4BPP), 96);
-        
+
         if ((IsDoubleBattleForBattler(battlerId) || GetBattlerSide(battlerId) == B_SIDE_OPPONENT) && !gBattleSpritesDataPtr->battlerData[battlerId].hpNumbersNoBars)
         {
             CpuCopy32(GetHealthboxElementGfxPtr(HEALTHBOX_GFX_0), (void*)(OBJ_VRAM0 + gSprites[healthBarSpriteId].oam.tileNum * TILE_SIZE_4BPP), 32);
@@ -1429,6 +1478,17 @@ void UpdateHealthboxAttribute(u32 battlerId, u32 elementId)
     u32 hp = GetMonData(mon, MON_DATA_HP), maxHP = GetMonData(mon, MON_DATA_MAX_HP);
     
     // Update for all battlers
+    // Visibility
+    if (elementId == HEALTHBOX_VISIBILITY)
+        SetHealthboxSpriteVisibility(healthboxSpriteId, (hp == 0));
+    
+    // Gimmick indicator
+    if (elementId == HEALTHBOX_GIMMICK_INDICATOR)
+    {
+        elementId = HEALTHBOX_ALL;
+        gBattleSpritesDataPtr->battlerData[battlerId].gimmickInProgress = FALSE;
+    }
+
     // Lv
     if (elementId == HEALTHBOX_LEVEL || elementId == HEALTHBOX_ALL)
         UpdateLvlInHealthbox(healthboxSpriteId, GetMonData(mon, MON_DATA_LEVEL));
@@ -1538,12 +1598,17 @@ static void MoveBattleBarGraphically(u32 battlerId, u32 whichBar)
                                                 &gBattleSpritesDataPtr->battleBars[battlerId].currValue,
                                                 array, B_HEALTHBAR_PIXELS / 8);
 
-        if (filledPixelsCount > (B_HEALTHBAR_PIXELS * 50 / 100)) // more than 50 % hp
-            barElementId = HEALTHBOX_GFX_HP_BAR_GREEN;
-        else if (filledPixelsCount > (B_HEALTHBAR_PIXELS * 20 / 100)) // more than 20% hp
-            barElementId = HEALTHBOX_GFX_HP_BAR_YELLOW;
+        if (IsRaidBoss(battlerId))
+            barElementId = HEALTHBOX_GFX_HP_BAR_RED;
         else
-            barElementId = HEALTHBOX_GFX_HP_BAR_RED; // 20 % or less
+        {
+            if (filledPixelsCount > (B_HEALTHBAR_PIXELS * 50 / 100)) // more than 50 % hp
+                barElementId = HEALTHBOX_GFX_HP_BAR_GREEN;
+            else if (filledPixelsCount > (B_HEALTHBAR_PIXELS * 20 / 100)) // more than 20% hp
+                barElementId = HEALTHBOX_GFX_HP_BAR_YELLOW;
+            else
+                barElementId = HEALTHBOX_GFX_HP_BAR_RED; // 20 % or less
+        }
 
         for (i = 0; i < 6; i++)
         {
@@ -1809,24 +1874,28 @@ static void SafariTextIntoHealthboxObject(void *dest, u8 *windowTileData, u32 wi
 
 void TryCreateWeatherAnimIcon(void)
 {
-    u32 currWeatherEnumId = GetCurrentWeatherEnumId(gBattleWeather);
-    
-    if (currWeatherEnumId != ENUM_WEATHER_COUNT)
+    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {
-        if (GetSpriteTileStartByTag(TAG_WEATHER_ICON_GFX) == 0xFFFF)
+        u32 currWeatherEnumId = GetCurrentWeatherEnumId(gBattleWeather);
+        
+        if (currWeatherEnumId != ENUM_WEATHER_COUNT)
         {
-            LoadWeatherIconSpriteAndPalette(currWeatherEnumId);
-
-            gBattleStruct->weatherIconSpriteId = CreateSprite(&sSpriteTemplate_WeatherIcon, WEATHER_ICON_X_POS, WEATHER_ICON_Y_POS, 0);
-            gSprites[gBattleStruct->weatherIconSpriteId].sInitialX = WEATHER_ICON_X_POS;
-            gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - TRIGGER_X_SLIDE;
-            gSprites[gBattleStruct->weatherIconSpriteId].sSlideSpeedAndDir = 1; // Move 1px per frame
-            gSprites[gBattleStruct->weatherIconSpriteId].sFreePalette = TRUE;
+            if (GetSpriteTileStartByTag(TAG_WEATHER_ICON_GFX) == 0xFFFF)
+            {
+                LoadSpriteSheet(&gBattleWeatherInfo[currWeatherEnumId].iconGfx);
+                LoadSpritePalette(&gBattleWeatherInfo[currWeatherEnumId].iconPalette);
+                
+                gBattleStruct->weatherIconSpriteId = CreateSprite(&sSpriteTemplate_WeatherIcon, WEATHER_ICON_X_POS, WEATHER_ICON_Y_POS, 0);
+                gSprites[gBattleStruct->weatherIconSpriteId].sInitialX = WEATHER_ICON_X_POS;
+                gSprites[gBattleStruct->weatherIconSpriteId].sFinalX = WEATHER_ICON_X_POS - TRIGGER_X_SLIDE;
+                gSprites[gBattleStruct->weatherIconSpriteId].sSlideSpeedAndDir = 1; // Move 1px per frame
+                gSprites[gBattleStruct->weatherIconSpriteId].sFreePalette = TRUE;
+            }
+            ShowOrHideWeatherAnimIcon(FALSE); // show icon
+            return;
         }
-        ShowOrHideWeatherAnimIcon(FALSE); // show icon
     }
-    else
-        gBattleStruct->weatherIconSpriteId = MAX_SPRITES;
+    gBattleStruct->weatherIconSpriteId = MAX_SPRITES;
 }
 
 void ShowOrHideWeatherAnimIcon(bool32 hide)
@@ -1889,22 +1958,17 @@ static void SpriteCB_InterfaceTrigger(struct Sprite *sprite)
 
 void CreateMoveInfoTriggerSprite(void)
 {
-    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
+    if (GetSpriteTileStartByTag(TAG_MOVEINFO_TRIGGER_GFX) == 0xFFFF)
     {
-        if (GetSpriteTileStartByTag(TAG_MOVEINFO_TRIGGER_GFX) == 0xFFFF)
-        {
-            LoadSpriteSheet(&sSpriteSheet_MoveInfoTrigger);
-            
-            gBattleStruct->moveInfo.triggerSpriteId = CreateSprite(&sSpriteTemplate_MoveInfoTrigger, MOVEINFO_TRIGGER_X_POS, MOVEINFO_TRIGGER_Y_POS, 0);
-            gSprites[gBattleStruct->moveInfo.triggerSpriteId].oam.priority = 1;
-            gSprites[gBattleStruct->moveInfo.triggerSpriteId].sInitialX = MOVEINFO_TRIGGER_X_POS;
-            gSprites[gBattleStruct->moveInfo.triggerSpriteId].sFinalX = MOVEINFO_TRIGGER_X_POS + TRIGGER_X_SLIDE;
-            gSprites[gBattleStruct->moveInfo.triggerSpriteId].sSlideSpeedAndDir = -2; // Move 2px per frame
-        }
-        ShowOrHideMoveInfoTriggerSprite(FALSE); // show trigger
+        LoadSpriteSheet(&sSpriteSheet_MoveInfoTrigger);
+        
+        gBattleStruct->moveInfo.triggerSpriteId = CreateSprite(&sSpriteTemplate_MoveInfoTrigger, MOVEINFO_TRIGGER_X_POS, MOVEINFO_TRIGGER_Y_POS, 0);
+        gSprites[gBattleStruct->moveInfo.triggerSpriteId].oam.priority = 1;
+        gSprites[gBattleStruct->moveInfo.triggerSpriteId].sInitialX = MOVEINFO_TRIGGER_X_POS;
+        gSprites[gBattleStruct->moveInfo.triggerSpriteId].sFinalX = MOVEINFO_TRIGGER_X_POS + TRIGGER_X_SLIDE;
+        gSprites[gBattleStruct->moveInfo.triggerSpriteId].sSlideSpeedAndDir = -2; // Move 2px per frame
     }
-    else
-        gBattleStruct->moveInfo.triggerSpriteId = MAX_SPRITES;
+    ShowOrHideMoveInfoTriggerSprite(FALSE); // show trigger
 }
 
 void ShowOrHideMoveInfoTriggerSprite(bool32 hide)
@@ -1950,11 +2014,10 @@ void ShowOrHideTeamPreviewTrigger(bool32 hide)
 
 void TryAddLastUsedBallTrigger(void)
 {
-    u32 ballId;
-    
     // we're out of the last used ball, so just set it to the first ball in the bag
     if (gLastThrownBall && !CheckBagHasItem(gLastThrownBall, 1))
     {
+        u32 ballId;
         struct BagPocket *pocket = &gBagPockets[POCKET_POKE_BALLS - 1];
         
         BagPocketCompaction(pocket);
@@ -2077,7 +2140,7 @@ static void Task_DisplayTeamPreview(u32 taskId)
         for (i = 0; i < PARTY_SIZE; i++)
         {
             u32 species, status;
-            bool32 isDead;
+            bool32 isFainted;
             s16 x, y;
             struct Pokemon *mon = &gEnemyParty[i];
             
@@ -2099,9 +2162,9 @@ static void Task_DisplayTeamPreview(u32 taskId)
                 
                 x = 80 + (40 * (i % (PARTY_SIZE / 2)));
                 y = 36 + (40 * (i / (PARTY_SIZE / 2)));
-                isDead = (GetMonData(mon, MON_DATA_HP) == 0);
+                isFainted = (GetMonData(mon, MON_DATA_HP) == 0);
                 
-                tMonIconSpriteIds(i) = CreateMonIcon(species, isDead ? SpriteCallbackDummy : SpriteCB_MonIcon, x, y, 1);
+                tMonIconSpriteIds(i) = CreateMonIcon(species, isFainted ? SpriteCallbackDummy : SpriteCB_MonIcon, x, y, 1);
                 if (tMonIconSpriteIds(i) != MAX_SPRITES)
                 {
                     struct Sprite *sprite = &gSprites[tMonIconSpriteIds(i)];
@@ -2112,7 +2175,7 @@ static void Task_DisplayTeamPreview(u32 taskId)
                     
                     if (species)
                     {
-                        if (isDead)
+                        if (isFainted)
                             sprite->oam.paletteNum = faintedIconPalId;
                         else
                         {
@@ -2194,7 +2257,7 @@ bool32 CanThrowLastUsedBall(void)
 {
     if (!CanThrowBall())
         return FALSE;
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    else if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_RAID)))
         return FALSE;
     else if (!CheckBagHasItem(gBallToDisplay, 1))
         return FALSE;
@@ -2354,3 +2417,100 @@ void ChangeLastBallCycleArrowsColor(bool32 showArrows)
         }
     }
 }
+
+#define sBattler    data[0]
+#define sPosX       data[1]
+#define sIndex      data[2]
+#define sLastShield data[3]
+
+void CreateRaidShieldSprites(u32 battlerId, u32 numShields, bool32 animate)
+{
+    u32 i, spriteId;
+    
+    for (i = 0; i < MAX_RAID_SHIELDS; i++)
+        gBattleStruct->raid.shieldSpriteIds[i] = MAX_SPRITES;
+    
+    if (numShields > 0)
+    {
+        LoadSpriteSheet(&sSpriteSheet_RaidShield);
+        
+        for (i = 0; i < numShields; i++)
+        {
+            gBattleStruct->raid.shieldSpriteIds[i] = spriteId = CreateSpriteAtEnd(&sSpriteTemplate_RaidShield, 0, 0, 0xFF);
+            gSprites[spriteId].sBattler = battlerId;
+            gSprites[spriteId].sPosX = -9 * i;
+            gSprites[spriteId].sIndex = i;
+            
+            if (!animate)
+                gSprites[spriteId].affineAnimPaused = TRUE;
+        }
+        gSprites[gBattleStruct->raid.shieldSpriteIds[0]].sLastShield = TRUE;
+    }
+    gBattleStruct->raid.numShieldsUp = numShields;
+}
+
+bool32 DestroyRaidShieldSprites(u32 numShields)
+{
+    s32 i;
+    struct Sprite *sprite;
+    u32 nShieldsBefore = gBattleStruct->raid.numShieldsUp;
+    
+    if (numShields > gBattleStruct->raid.numShieldsUp)
+        gBattleStruct->raid.numShieldsUp = 0;
+    else
+        gBattleStruct->raid.numShieldsUp -= numShields;
+    
+    for (i = MAX_RAID_SHIELDS - 1; i >= gBattleStruct->raid.numShieldsUp; i--)
+    {
+        if (i < nShieldsBefore && gBattleStruct->raid.shieldSpriteIds[i] != MAX_SPRITES)
+        {
+            sprite = &gSprites[gBattleStruct->raid.shieldSpriteIds[i]];
+            sprite->affineAnimPaused = FALSE;
+            StartSpriteAffineAnim(sprite, 1);
+            sprite->callback = SpriteCB_DestroyRaidShieldSprite;
+        }
+    }
+    return (gBattleStruct->raid.numShieldsUp == 0);
+}
+
+static void RaidShield_SetVisibilities(bool32 invisible)
+{
+    u32 i;
+    
+    for (i = 0; i < gBattleStruct->raid.numShieldsUp; i++)
+        gSprites[gBattleStruct->raid.shieldSpriteIds[i]].invisible = invisible;
+}
+
+static void SpriteCB_RaidShield(struct Sprite *sprite)
+{
+    struct Sprite *healthboxSprite = &gSprites[gHealthboxSpriteIds[sprite->sBattler]];
+    
+    sprite->x = healthboxSprite->x + 50;
+    sprite->y = healthboxSprite->y + 12;
+    
+    sprite->x2 = sprite->sPosX;
+    sprite->y2 = healthboxSprite->y2;
+    sprite->subpriority = healthboxSprite->subpriority;
+}
+
+static void SpriteCB_DestroyRaidShieldSprite(struct Sprite *sprite)
+{
+    if (sprite->affineAnimEnded)
+    {
+        gBattleStruct->raid.shieldSpriteIds[sprite->sIndex] = MAX_SPRITES;
+        
+        m4aMPlayStop(&gMPlayInfo_SE1);
+        m4aMPlayStop(&gMPlayInfo_SE2);
+        PlaySE(SE_M_BRICK_BREAK);
+        
+        if (sprite->sLastShield)
+            FreeSpriteTiles(sprite);
+        
+        DestroySpriteAndFreeMatrix(sprite);
+    }
+}
+
+#undef sBattler
+#undef sPosX
+#undef sId
+#undef sLastShield

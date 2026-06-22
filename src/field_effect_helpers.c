@@ -459,6 +459,12 @@ static const struct SpriteTemplate sSpriteTemplate_ReflectionDistortion =
     .callback = SpriteCallbackDummy,
 };
 
+static const u8 sBridgeReflectionVerticalOffsets[] = {
+    [BRIDGE_TYPE_POND_LOW - 1] = 12,
+    [BRIDGE_TYPE_POND_MED - 1] = 28,
+    [BRIDGE_TYPE_POND_HIGH - 1] = 44
+};
+
 static void CreateReflectionSprite(u32 affineAnimNum)
 {
     u32 spriteId = CreateSpriteAtEnd(&sSpriteTemplate_ReflectionDistortion, 0, 0, 31);
@@ -474,6 +480,11 @@ void CreateReflectionEffectSprites(void)
     CreateReflectionSprite(1);
 }
 
+#define sReflectionObjEventId      data[0]
+#define sReflectionObjEventLocalId data[1]
+#define sReflectionVerticalOffset  data[2]
+#define sIsStillReflection         data[7]
+
 void SetUpReflection(struct ObjectEvent * objectEvent, struct Sprite * sprite, bool32 stillReflection)
 {
     struct Sprite * reflectionSprite = &gSprites[CreateCopySpriteAt(sprite, sprite->x, sprite->y, 0x98)];
@@ -486,37 +497,34 @@ void SetUpReflection(struct ObjectEvent * objectEvent, struct Sprite * sprite, b
     reflectionSprite->affineAnims = gDummySpriteAffineAnimTable;
     reflectionSprite->affineAnimBeginning = TRUE;
     reflectionSprite->subspriteMode = SUBSPRITES_OFF;
-    reflectionSprite->data[0] = sprite->data[0];
-    reflectionSprite->data[1] = objectEvent->localId;
-    reflectionSprite->data[7] = stillReflection;
+    reflectionSprite->sReflectionObjEventId = sprite->data[0];
+    reflectionSprite->sReflectionObjEventLocalId = objectEvent->localId;
+    reflectionSprite->sIsStillReflection = stillReflection;
     LoadObjectReflectionPalette(objectEvent, reflectionSprite);
 
     if (!stillReflection)
         reflectionSprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
 }
 
-#define OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION 0x1102
-
 static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct Sprite * sprite)
 {
     u32 bridgeType;
     
-    sprite->data[2] = 0;
-    
     if (!GetObjectEventGraphicsInfo(objectEvent->graphicsId)->disableReflectionPaletteLoad && ((bridgeType = MetatileBehavior_GetBridgeType(objectEvent->previousMetatileBehavior))
     || (bridgeType = MetatileBehavior_GetBridgeType(objectEvent->currentMetatileBehavior))))
     {
-        u16 bridgeReflectionVerticalOffsets[] = { 12, 28, 44 };
-        
         // When walking on a bridge high above water (Route 120), the reflection is a solid dark blue color.
         // This is so the sprite blends in with the dark water metatile underneath the bridge.
-        sprite->data[2] = bridgeReflectionVerticalOffsets[bridgeType - 1];
+        sprite->sReflectionVerticalOffset = sBridgeReflectionVerticalOffsets[bridgeType - 1];
         LoadObjectEventPalette(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
         sprite->oam.paletteNum = IndexOfSpritePaletteTag(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION);
         UpdateSpritePaletteWithWeather(sprite->oam.paletteNum);
     }
     else
+    {
+        sprite->sReflectionVerticalOffset = 0;
         LoadSpecialReflectionPalette(sprite);
+    }
 }
 
 static void LoadSpecialReflectionPalette(struct Sprite *sprite)
@@ -536,9 +544,9 @@ static void LoadSpecialReflectionPalette(struct Sprite *sprite)
 
 static void SpriteCB_UpdateObjectReflectionSprite(struct Sprite * reflectionSprite)
 {
-    struct ObjectEvent * objectEvent = &gObjectEvents[reflectionSprite->data[0]];
+    struct ObjectEvent * objectEvent = &gObjectEvents[reflectionSprite->sReflectionObjEventId];
 
-    if (!objectEvent->active || !objectEvent->hasReflection || objectEvent->localId != reflectionSprite->data[1])
+    if (!objectEvent->active || !objectEvent->hasReflection || objectEvent->localId != reflectionSprite->sReflectionObjEventLocalId)
         reflectionSprite->inUse = FALSE;
     else
     {
@@ -552,7 +560,7 @@ static void SpriteCB_UpdateObjectReflectionSprite(struct Sprite * reflectionSpri
         reflectionSprite->subspriteTableNum = mainSprite->subspriteTableNum;
         reflectionSprite->invisible = mainSprite->invisible;
         reflectionSprite->x = mainSprite->x;
-        reflectionSprite->y = mainSprite->y + (GetObjectEventGraphicsInfo(objectEvent->graphicsId)->height - 2) + reflectionSprite->data[2];
+        reflectionSprite->y = mainSprite->y + (GetObjectEventGraphicsInfo(objectEvent->graphicsId)->height - 2) + reflectionSprite->sReflectionVerticalOffset;
         reflectionSprite->centerToCornerVecX = mainSprite->centerToCornerVecX;
         reflectionSprite->centerToCornerVecY = mainSprite->centerToCornerVecY;
         reflectionSprite->x2 = mainSprite->x2;
@@ -560,7 +568,7 @@ static void SpriteCB_UpdateObjectReflectionSprite(struct Sprite * reflectionSpri
         reflectionSprite->coordOffsetEnabled = mainSprite->coordOffsetEnabled;
 
         // Check if the reflection is not still.
-        if (!reflectionSprite->data[7])
+        if (!reflectionSprite->sIsStillReflection)
         {
             // Sets the reflection sprite's rot/scale matrix to the appropriate
             // matrix based on whether or not the main sprite is horizontally flipped.
@@ -571,6 +579,11 @@ static void SpriteCB_UpdateObjectReflectionSprite(struct Sprite * reflectionSpri
         }
     }
 }
+
+#undef sReflectionObjEventId
+#undef sReflectionObjEventLocalId
+#undef sReflectionVerticalOffset
+#undef sIsStillReflection
 
 ///////////////////////////////
 // TELEPORT/ESCAPE ROPE SPIN //

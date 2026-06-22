@@ -102,16 +102,15 @@ u32 GetRoamerSpecies(void)
 static void CreateInitialRoamerMon(void)
 {
     u32 level = 50;
-    struct Pokemon *mon = &gEnemyParty[0];
     
-    ROAMER->species = GenerateWildMon(GetRoamerSpecies(), level, FALSE);
+    ROAMER->species = GenerateWildMon(GetRoamerSpecies(), level, FALSE, 0);
     ROAMER->level = level;
     ROAMER->status.id = 0;
     ROAMER->status.counter = 0;
     ROAMER->active = TRUE;
-    ROAMER->ivs = GetMonData(mon, MON_DATA_IVS);
-    ROAMER->personality = GetMonData(mon, MON_DATA_PERSONALITY);
-    ROAMER->hp = GetMonData(mon, MON_DATA_MAX_HP);
+    ROAMER->ivs = GetMonData(&gEnemyParty[0], MON_DATA_IVS);
+    ROAMER->personality = GetMonData(&gEnemyParty[0], MON_DATA_PERSONALITY);
+    ROAMER->hp = GetMonData(&gEnemyParty[0], MON_DATA_MAX_HP);
     
     sRoamerLocation[MAP_GRP] = ROAMER_MAP_GROUP;
     sRoamerLocation[MAP_NUM] = sRoamerLocations[RandomUniform(RNG_ROAMER_MAP_NUM, 0, NUM_LOCATION_SETS - 1)][0];

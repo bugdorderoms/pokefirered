@@ -942,4 +942,6 @@ extern const u8 PokedexRating_Text_LessThan140[];
 extern const u8 PokedexRating_Text_LessThan150[];
 extern const u8 PokedexRating_Text_Complete[];
 
+extern const u8 EventScript_WishingPiece[];
+
 #endif //GUARD_EVENT_SCRIPTS_H

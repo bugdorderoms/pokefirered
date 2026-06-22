@@ -13,6 +13,7 @@ gSpecials:: @ 815FD60
 	def_special SetHiddenItemFlag
 	def_special LoadPlayerBag
 	def_special Field_AskSaveTheGame
+	def_special Field_SaveTheGame
 	def_special DrawWholeMapView
 	def_special BufferBigGuyOrBigGirlString
 	def_special ShowTownMap
@@ -112,6 +113,17 @@ gSpecials:: @ 815FD60
 	def_special BufferUnionRoomPlayerName
 	def_special ChooseMonForWirelessMinigame
 	def_special Script_ResetUnionRoomTrade
+	
+	@ Raid specials
+	def_special IsRaidBattleAvailable
+	def_special SetRaidClearedFlag
+	def_special ClearRaidClearedFlag
+	def_special RaidDenInitIntro
+	def_special GiveRaidBattleRewards
+	def_special RollWishingPieceRandomValue
+	def_special WasRaidBossDefeated
+	def_special WasRaidBossCaught
+	def_special GiveRaidBattleBoss
 	
 	@ Trainer specials
 	def_special GetTrainerBattleMode

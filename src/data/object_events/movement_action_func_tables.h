@@ -286,6 +286,7 @@ static bool32 MovementAction_SetFixedPriority_Step0(struct ObjectEvent *, struct
 static bool32 MovementAction_ClearFixedPriority_Step0(struct ObjectEvent *, struct Sprite *);
 static bool32 MovementAction_InitAffineAnim_Step0(struct ObjectEvent *, struct Sprite *);
 static bool32 MovementAction_ClearAffineAnim_Step0(struct ObjectEvent *, struct Sprite *);
+static bool32 MovementAction_ChangeRaidDenState_Step0(struct ObjectEvent *, struct Sprite *);
 
 static bool32 (*const sMovementActionFuncs_x00[])(struct ObjectEvent *, struct Sprite *);
 static bool32 (*const sMovementActionFuncs_x01[])(struct ObjectEvent *, struct Sprite *);
@@ -457,6 +458,7 @@ static bool32 (*const sMovementActionFuncs_xA6[])(struct ObjectEvent *, struct S
 static bool32 (*const sMovementActionFuncs_xA7[])(struct ObjectEvent *, struct Sprite *);
 static bool32 (*const sMovementActionFuncs_xA8[])(struct ObjectEvent *, struct Sprite *);
 static bool32 (*const sMovementActionFuncs_xA9[])(struct ObjectEvent *, struct Sprite *);
+static bool32 (*const sMovementActionFuncs_xAA[])(struct ObjectEvent *, struct Sprite *);
 
 static u32 GetMoveDirectionFastAnimNum(u32 direction);
 static u32 GetMoveDirectionFasterAnimNum(u32 direction);
@@ -633,6 +635,7 @@ bool32 (*const *const gMovementActionFuncs[])(struct ObjectEvent *, struct Sprit
     [MOVEMENT_ACTION_0xA7]                               = sMovementActionFuncs_xA7,
     [MOVEMENT_ACTION_0xA8]                               = sMovementActionFuncs_xA8,
     [MOVEMENT_ACTION_0xA9]                               = sMovementActionFuncs_xA9,
+    [MOVEMENT_ACTION_RAID_DEN_STATE_CHANGE]              = sMovementActionFuncs_xAA,
 };
 
 static bool32 (*const sMovementActionFuncs_x00[])(struct ObjectEvent *, struct Sprite *) = {
@@ -1642,4 +1645,9 @@ static bool32 (*const sMovementActionFuncs_xA5[])(struct ObjectEvent *, struct S
     MovementActionFunc_xA5_0,
     MovementActionFunc_xA5_1,
     MovementActionFunc_xA4_2,
+};
+
+static bool32 (*const sMovementActionFuncs_xAA[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementAction_ChangeRaidDenState_Step0,
+    MovementAction_Finish,
 };

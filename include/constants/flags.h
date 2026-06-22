@@ -200,8 +200,8 @@
 #define FLAG_0x0BB               0x0BB
 #define FLAG_TERA_ORB_NO_COST    0x0BC // If set, tera orb will aways be charged
 #define FLAG_TERA_ORB_CHARGED    0x0BD
-#define FLAG_0x0BE               0x0BE
-#define FLAG_0x0BF               0x0BF
+#define FLAG_DYNAMAX_ENABLED     0x0BE
+#define FLAG_START_RAID_SHIELDS  0x0BF // if set, the raid battle will start with shields set up
 #define FLAG_0x0C0               0x0C0
 #define FLAG_0x0C1               0x0C1
 #define FLAG_0x0C2               0x0C2

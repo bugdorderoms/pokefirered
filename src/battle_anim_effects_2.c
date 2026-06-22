@@ -441,6 +441,17 @@ const struct SpriteTemplate gBlueExplosionSpriteTemplate =
     .callback = AnimSpriteOnMonPos,
 };
 
+const struct SpriteTemplate gExplosion2SpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_EXPLOSION_2,
+    .paletteTag = ANIM_TAG_EXPLOSION_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sExplosionAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
 static const union AffineAnimCmd sSoftBoiledEggAffineAnimCmds1[] =
 {
     AFFINEANIMCMD_FRAME(0, 0, -8, 2),
@@ -1113,6 +1124,50 @@ const struct SpriteTemplate gBlueThinRingSpriteTemplate =
     .images = NULL,
     .affineAnims = sThinRingExpandingAffineAnimTable,
     .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gLightBurnExplosionSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_EXPLOSION_2,
+    .paletteTag = ANIM_TAG_EXPLOSION_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32_HiPrio,
+    .anims = sExplosionAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gMaxPhantasmExplosionSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_EXPLOSION_2,
+    .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sExplosionAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSpriteOnMonPos,
+};
+
+const struct SpriteTemplate gRolloutExplosionSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_EXPLOSION_2,
+    .paletteTag = ANIM_TAG_EXPLOSION_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sExplosionAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimRolloutParticle,
+};
+
+const struct SpriteTemplate gCoinGeyserSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_COIN,
+    .paletteTag = ANIM_TAG_COIN,
+    .oam = &gOamData_AffineNormal_ObjNormal_16x16,
+    .anims = sCoinAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
 };
 
 // Animates a sword that rises into the air after a brief pause. And then do the given affine anim.

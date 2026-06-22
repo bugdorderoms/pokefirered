@@ -35,6 +35,7 @@ void ItemMenu_SetExitCallback(void (*)(void));
 void DisplayItemMessageInBag(u32 taskId, u32 fontId, const u8 * string, TaskFunc followUpFunc);
 void Task_ReturnToBagFromContextMenu(u32 taskId);
 void CB2_BagMenuFromBattle(void);
+void CB2_ChooseBall(void);
 void InitOldManBag(void);
 void Pocket_CalculateNItemsAndMaxShowed(u32 pocketId);
 void PocketCalculateInitialCursorPosAndItemsAbove(u32 pocketId);

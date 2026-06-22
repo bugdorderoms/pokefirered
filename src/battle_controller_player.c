@@ -5,6 +5,7 @@
 #include "item.h"
 #include "item_menu.h"
 #include "link.h"
+#include "form_change.h"
 #include "battle_move_effects.h"
 #include "m4a.h"
 #include "party_menu.h"
@@ -42,6 +43,7 @@ static void PlayerHandleOneReturnValue(u32 battlerId);
 static void PlayerHandleIntroTrainerBallThrow(u32 battlerId);
 static void PlayerHandleResetActionMoveSelection(u32 battlerId);
 static void HandleInputChooseAction(u32 battlerId);
+static void BuildPlayerChooseMoveStruct(u32 battlerId);
 static void SetPlayerChooseMoveInput(u32 battlerId);
 static void HandleInputChooseMove(u32 battlerId);
 static void HandleInputChooseTarget(u32 battlerId);
@@ -51,19 +53,20 @@ static void HandleInputShowTargets(u32 battlerId);
 static void HandleInputShowEntireFieldTargets(u32 battlerId);
 static void MoveInfoPrintMoveNameAndDescription(u32 battlerId);
 static void MoveInfoPrintSubmenuString(u32 battlerId, u32 stateId);
-static void MoveInfoPrintPowerAndAccuracy(u32 battlerId, u32 move);
-static void MoveInfoPrintPriorityAndCategory(u32 battlerId, u32 move);
-static void MoveInfoPrintMoveTarget(u32 battlerId, u32 move);
+static void MoveInfoPrintPowerAndAccuracy(u32 moveSlot);
+static void MoveInfoPrintPriorityAndCategory(u32 moveSlot);
+static void MoveInfoPrintMoveTarget(u32 moveSlot);
 static void ChangeBattlerSpritesInvisibilities(bool32 invisible);
 static void HandleInputTeamPreview(u32 battlerId);
 static u32 GetPrevBall(u32 ballId);
 static u32 GetNextBall(u32 ballId);
 
+static EWRAM_DATA struct ChooseMoveStruct sChooseMoveStructOverride = {0};
+
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = PlayerHandleLoadMonSprite,
     [CONTROLLER_SWITCHINANIM]             = PlayerHandleSwitchInAnim,
     [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
@@ -100,6 +103,14 @@ static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_LINKSTANDBYMSG]           = PlayerHandleLinkStandbyMsg,
     [CONTROLLER_RESETACTIONMOVESELECTION] = PlayerHandleResetActionMoveSelection,
     [CONTROLLER_ENDLINKBATTLE]            = PlayerHandleEndLinkBattle,
+    [CONTROLLER_GIMMICKSTATE]             = PlayerHandleGimmickState,
+    [CONTROLLER_HEALTHBOXUPDATE]          = BtlController_HandleHealthboxUpdate,
+    [CONTROLLER_HIDEALLHEALTHBOXES]       = BtlController_HandleHideAllHealthboxes,
+    [CONTROLLER_BATTLEFORMCHANGE]         = BtlController_HandleBattleFormChange,
+    [CONTROLLER_PARTYFORMCHANGE]          = BtlController_HandlePartyFormChange,
+    [CONTROLLER_ISPOCKETNOTEMPTY]         = BtlController_HandleIsPocketNotEmpty,
+    [CONTROLLER_YESNOBOX]                 = BtlController_HandleYesNoBox,
+    [CONTROLLER_MONCAUGHTEFFECTS]         = PlayerHandleMonCaughtEffects,
     [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
@@ -150,7 +161,9 @@ void PlayerHandleSwitchInAnim(u32 battlerId)
 {
     BtlController_HandleSwitchInAnim(battlerId, SwitchIn_TryShinyAnimShowHealthbox);
     gActionSelectionCursor[battlerId] = 0;
-    gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
+    
+    if (!(gBattleBufferA[battlerId][2] & SWITCHIN_ANIM_DONT_RESET_MOVE_CURSOR))
+        gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
 }
 
 u32 GetPlayerTrainerPicId(u32 multiplayerId)
@@ -218,12 +231,23 @@ static void HandleChooseActionAfterDma3(u32 battlerId)
 
 void PlayerHandleChooseAction(u32 battlerId)
 {
+    const u8 *actionsText;
+    
     if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
         StringCopy(gBattleTextBuff1, gText_TheOldMan);
     else
         PrepareMonNickNoIllusionBuffer(gBattleTextBuff1, battlerId, gBattlerPartyIndexes[battlerId]);
     
-    BtlController_HandleChooseAction(battlerId, IsPlayerBagDisabled() ? gText_BattleMenuBagDisabled : gText_BattleMenu, gText_WhatWillBufferDo, HandleChooseActionAfterDma3);
+    if (gBattleTypeFlags & BATTLE_TYPE_RAID)
+        actionsText = gText_RaidMenu;
+    else
+    {
+        if (IsPlayerBagDisabled())
+            actionsText = gText_BattleMenuBagDisabled;
+        else
+            actionsText = gText_BattleMenu;
+    }
+    BtlController_HandleChooseAction(battlerId, actionsText, gText_WhatWillBufferDo, HandleChooseActionAfterDma3);
 }
 
 static void HandleChooseMoveAfterDma3(u32 battlerId)
@@ -239,6 +263,8 @@ static void HandleChooseMoveAfterDma3(u32 battlerId)
 
 void PlayerHandleChooseMove(u32 battlerId)
 {
+    BuildPlayerChooseMoveStruct(battlerId);
+    
     InitMoveSelectionsVarsAndStrings(battlerId);
     gBattleStruct->playerSelectedGimmick = FALSE;
     
@@ -246,7 +272,7 @@ void PlayerHandleChooseMove(u32 battlerId)
         gBattleStruct->gimmickTriggerSpriteId = 0xFF;
     
     CreateGimmickTriggerSprite(battlerId);
-    
+
     gBattlerControllersData[battlerId].func = HandleChooseMoveAfterDma3;
 }
 
@@ -276,6 +302,8 @@ static void OpenBagAndChooseItem(u32 battlerId)
         
         if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
             InitOldManBag();
+        else if (gBattleTypeFlags & BATTLE_TYPE_RAID)
+            CB2_ChooseBall();
         else
             CB2_BagMenuFromBattle();
     }
@@ -386,7 +414,7 @@ static void PlayerHandleResetActionMoveSelection(u32 battlerId)
         gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
         break;
     case RESET_ACTION_SELECTION:
-        gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
+        gActionSelectionCursor[battlerId] = 0;
         break;
     case RESET_MOVE_SELECTION:
         gBattleStruct->battlers[battlerId].moveSelectionCursor = 0;
@@ -398,6 +426,36 @@ static void PlayerHandleResetActionMoveSelection(u32 battlerId)
 void PlayerHandleEndLinkBattle(u32 battlerId)
 {
     BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1], SetBattleEndCallbacks);
+}
+
+void PlayerHandleGimmickState(u32 battlerId)
+{
+    BtlController_HandleGimmickState(battlerId, TRUE);
+}
+
+void PlayerHandleMonCaughtEffects(u32 battlerId)
+{
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(gBattleBufferA[battlerId][1]);
+    u32 data, pokeball = READ_16(&gBattleBufferA[battlerId][2]);
+    
+    SetMonData(mon, MON_DATA_POKEBALL, &pokeball);
+    
+    switch (pokeball)
+    {
+        case ITEM_HEAL_BALL:
+            MonRestorePP(mon);
+            HealStatusConditions(mon, STATUS1_NONE, MAX_BATTLERS_COUNT);
+            
+            data = GetMonData(mon, MON_DATA_MAX_HP);
+            SetMonData(mon, MON_DATA_HP, &data);
+            break;
+        case ITEM_FRIEND_BALL:
+            data = 150;
+            SetMonData(mon, MON_DATA_FRIENDSHIP, &data);
+            break;
+    }
+    gCapturedWildMon = TRUE;
+    BattleControllerComplete(battlerId);
 }
 
 ////////////////////////////
@@ -522,7 +580,7 @@ static void HandleInputChooseAction(u32 battlerId)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_MOVE, 0);
             break;
         case 1:
-            BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_USE_ITEM, 0);
+            BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, (gBattleTypeFlags & BATTLE_TYPE_RAID) ? B_ACTION_CHEER : B_ACTION_USE_ITEM, 0);
             break;
         case 2:
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_SWITCH, 0);
@@ -576,7 +634,7 @@ static void HandleInputChooseAction(u32 battlerId)
     else if (JOY_NEW(B_BUTTON))
     {
         if (IsDoubleBattleForBattler(battlerId) && GetBattlerPosition(battlerId) == B_POSITION_PLAYER_RIGHT && IsPartnerMonFromSameTrainer(battlerId)
-        && !(gAbsentBattlerFlags & Bit(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))))
+        && IsBattlerAlive(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
         {
             // Return item to bag if partner had selected one.
             if (gBattleBufferA[battlerId][1] == B_ACTION_USE_ITEM)
@@ -608,6 +666,33 @@ static void HandleInputChooseAction(u32 battlerId)
 // MOVE SELECTION DISPLAYERS //
 ///////////////////////////////
 
+// Builds the player choose move struct, some gimmicks changes the move visuals like name.
+static void BuildPlayerChooseMoveStruct(u32 battlerId)
+{
+    u32 i;
+
+    memcpy(&sChooseMoveStructOverride, &gBattleBufferA[battlerId][4], sizeof(struct ChooseMoveStruct));
+    
+    if (IsGimmickActiveOrSelected(battlerId, GIMMICK_DYNAMAX))
+    {
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            u16 *move = &sChooseMoveStructOverride.moves[i].move;
+            u32 baseMove = *move;
+            
+            *move = GetMaxMove(battlerId, sChooseMoveStructOverride.species, *move, gBattleMoves[*move].type, sChooseMoveStructOverride.moves[i].split);
+            
+            // Max Guard is always a Normal type move
+            if (*move == MOVE_MAX_GUARD)
+                sChooseMoveStructOverride.moves[i].type = gBattleMoves[*move].type;
+            else
+                sChooseMoveStructOverride.moves[i].power = GetMaxMovePower(baseMove, *move, sChooseMoveStructOverride.moves[i].type);
+            
+            sChooseMoveStructOverride.moves[i].target = gBattleMoves[*move].target;
+        }
+    }
+}
+
 #if EFFECTIVENESS_ON_MENU
 static const u16 sEffectivenessColours[] =
 {
@@ -623,49 +708,46 @@ static const u16 sEffectivenessColours[] =
     // not very effect colors + stab
     RGB(31, 29, 14),
     RGB(31, 18, 0),
-    // not affect colors
-    RGB(30, 27, 19),
-    RGB(28, 8, 8),
-    // not affect colors + stab (unused)
-    RGB(30, 27, 14),
-    RGB(29, 0, 0),
     // normal colors
     RGB(24, 24, 23),
     RGB(9, 9, 9),
     // normal colors + stab
     RGB(15, 15, 15),
     RGB_BLACK,
+    // not affect colors
+    RGB(30, 27, 19),
+    RGB(28, 8, 8)
 };
 #endif
 
 static void MoveSelectionDisplayMoveNames(u32 battlerId)
 {
-    u32 i;
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    
+    u32 i, move;
+
     gNumberOfMovesToChoose = 0;
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
     {
+        move = sChooseMoveStructOverride.moves[i].move;
+        
         MoveSelectionDestroyCursorAt(i);
         StringCopy(gDisplayedStringBattle, gText_MoveInterfaceMoveNamesColor);
-        StringAppend(gDisplayedStringBattle, gBattleMoves[moveInfo->moves[i]].name);
+        StringAppend(gDisplayedStringBattle, gBattleMoves[move].name);
         BattlePutTextOnWindow(gDisplayedStringBattle, i + B_WIN_MOVE_NAME_1);
         
-        if (moveInfo->moves[i])
+        if (move)
             ++gNumberOfMovesToChoose;
     }
 }
 
 static void MoveSelectionDisplayPpString(u32 battlerId)
 {
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
     u32 moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
     u8 *txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfacePP);
     
     // Stellar boost indicator
-    if (GetActiveGimmick(battlerId) == GIMMICK_TERA && GetBattlerTeraType(battlerId) == TYPE_STELLAR && GetBattleMoveSplit(moveInfo->moves[moveSlot]) != SPLIT_STATUS
-    && IsTypeStellarBoosted(battlerId, moveInfo->moveTypes[moveSlot]))
+    if (GetActiveGimmick(battlerId) == GIMMICK_TERA && GetBattlerTeraType(battlerId) == TYPE_STELLAR && sChooseMoveStructOverride.moves[moveSlot].split != SPLIT_STATUS
+    && sChooseMoveStructOverride.moves[moveSlot].isStellarBoosted)
         StringCopy(txtPtr, COMPOUND_STRING("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}{UP_ARROW}"));
     
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP);
@@ -674,40 +756,52 @@ static void MoveSelectionDisplayPpString(u32 battlerId)
 static void MoveSelectionDisplayPpNumber(u32 battlerId)
 {
     u8 *txtPtr;
-    u32 moveSlot;
-    struct ChooseMoveStruct *moveInfo;
+    u32 moveSlot, currentPp, maxPp;
     
     if (!gBattleBufferA[battlerId][2]) // check if we didn't want to display pp number
     {
-        moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
         moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+        currentPp = sChooseMoveStructOverride.moves[moveSlot].currentPp;
+        maxPp = sChooseMoveStructOverride.moves[moveSlot].maxPp;
         
-        SetPpNumbersPaletteInMoveSelection(battlerId);
-        txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPp[moveSlot], STR_CONV_MODE_RIGHT_ALIGN, 2);
+        SetPpNumbersPaletteInMoveSelection(currentPp, maxPp);
+        txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, currentPp, STR_CONV_MODE_RIGHT_ALIGN, 2);
         *txtPtr = CHAR_SLASH;
-        ConvertIntToDecimalStringN(++txtPtr, moveInfo->maxPp[moveSlot], STR_CONV_MODE_RIGHT_ALIGN, 2);
+        ConvertIntToDecimalStringN(++txtPtr, maxPp, STR_CONV_MODE_RIGHT_ALIGN, 2);
         BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
     }
 }
 
+#undef IsBattlerOfType
+
+// Use this instead of directly acessing the battler's data
+#define _IS_BATTLER_ANY_TYPE_CHOOSING_MOVE(battlerId, ...)                                                                                    \
+    ({                                                                                                                                        \
+        u32 types[3] = {sChooseMoveStructOverride.monTypes[0], sChooseMoveStructOverride.monTypes[1], sChooseMoveStructOverride.monTypes[2]}; \
+        RECURSIVELY(R_FOR_EACH(IS_BATTLER_ANY_TYPE_HELPER, __VA_ARGS__)) FALSE;                                                               \
+    })
+
+#define IsBattlerOfType(battler, ...) _IS_BATTLER_ANY_TYPE_CHOOSING_MOVE(battler, __VA_ARGS__)
+
 static void MoveSelectionDisplayMoveType(u32 battlerId)
 {
     u8 *txtPtr;
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    u32 moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
-    u32 target, effect, move = moveInfo->moves[moveSlot];
-    u32 type = moveInfo->moveTypes[moveSlot];
-    u16 flags;
-    
+    u32 target, flags, effect;
+    u32 type, moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+
+#if BATTLE_MENU_REAL_MOVE_TYPE
+    // Dynamax displays the original move's type
+    if (!IsGimmickActiveOrSelected(battlerId, GIMMICK_DYNAMAX))
+        type = sChooseMoveStructOverride.moves[moveSlot].type;
+    else
+#endif
+    {
+        type = gBattleMoves[sChooseMoveStructOverride.moves[moveSlot].move].type;
+    }
+
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
     
 #if EFFECTIVENESS_ON_MENU
-    effect = flags = 0;
-    
-    // check if move is stab
-    if (GetBattleMoveSplit(move) != SPLIT_STATUS && IsBattlerOfType(battlerId, type))
-        effect = 2;
-    
     // Choose move target
     if (gBattlerControllersData[battlerId].func == HandleInputChooseTarget)
         target = gMultiUsePlayerCursor;
@@ -717,28 +811,37 @@ static void MoveSelectionDisplayMoveType(u32 battlerId)
     if (IsDoubleBattleForBattler(target) && !IsBattlerAlive(target))
         target = BATTLE_PARTNER(target);
 
-    TypeCalc(move, type, battlerId, target, FALSE, FALSE, &flags);
-    
     // set respective colours
-    if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
+    flags = sChooseMoveStructOverride.moves[moveSlot].effectivenessFlags[target];
+    
+    if (flags & MOVE_RESULT_NO_EFFECT)
     {
-        gPlttBufferUnfaded[88] = sEffectivenessColours[effect];
-        gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 1];
-    }
-    else if (flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
-    {
-        gPlttBufferUnfaded[88] = sEffectivenessColours[effect + 4];
-        gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 5];
-    }
-    else if (!(flags & MOVE_RESULT_NO_EFFECT))
-    {
-        gPlttBufferUnfaded[88] = sEffectivenessColours[effect + 12];
-        gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 13];
+        gPlttBufferUnfaded[88] = sEffectivenessColours[12];
+        gPlttBufferUnfaded[89] = sEffectivenessColours[13];
     }
     else
     {
-        gPlttBufferUnfaded[88] = sEffectivenessColours[8];
-        gPlttBufferUnfaded[89] = sEffectivenessColours[9];
+        // check if move is stab
+        if (sChooseMoveStructOverride.moves[moveSlot].split != SPLIT_STATUS && IsBattlerOfType(battlerId, type))
+            effect = 2;
+        else
+            effect = 0;
+        
+        if (flags & MOVE_RESULT_SUPER_EFFECTIVE)
+        {
+            gPlttBufferUnfaded[88] = sEffectivenessColours[effect];
+            gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 1];
+        }
+        else if (flags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+        {
+            gPlttBufferUnfaded[88] = sEffectivenessColours[effect + 4];
+            gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 5];
+        }
+        else
+        {
+            gPlttBufferUnfaded[88] = sEffectivenessColours[effect + 8];
+            gPlttBufferUnfaded[89] = sEffectivenessColours[effect + 9];
+        }
     }
     CpuCopy16(&gPlttBufferUnfaded[88], &gPlttBufferFaded[88], sizeof(u16));
     CpuCopy16(&gPlttBufferUnfaded[89], &gPlttBufferFaded[89], sizeof(u16));
@@ -764,6 +867,13 @@ void InitMoveSelectionsVarsAndStrings(u32 battlerId)
     gMultiUsePlayerCursor = 0xFF;
     MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
     MoveSelectionDisplayMoveMenu(battlerId);
+}
+
+static void MoveSelectionReloadMoveNames(u32 battlerId)
+{
+    MoveSelectionDisplayMoveNames(battlerId);
+    MoveSelectionCreateCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor, 0);
+    MoveSelectionDisplayMoveType(battlerId);
 }
 
 //////////////////////////
@@ -792,12 +902,12 @@ void MoveSelectionDestroyCursorAt(u32 cursorPosition)
     CopyBgTilemapBufferToVram(0);
 }
 
-static u32 PreviewDeterminativeMoveTargets(u32 battlerId, struct ChooseMoveStruct *moveInfo)
+static u32 PreviewDeterminativeMoveTargets(u32 battlerId)
 {
-    u32 bitMask;
-    u32 move = moveInfo->moves[gBattleStruct->battlers[battlerId].moveSelectionCursor];
-    u32 startY, moveTarget = GetBattlerMoveTargetType(battlerId, move);
-    
+    u32 startY, bitMask;
+    u32 moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+    u32 moveTarget = sChooseMoveStructOverride.moves[moveSlot].target;
+
     if (IsDoubleBattleForBattler(BATTLE_OPPOSITE(battlerId)))
     {
         bitMask = 0;
@@ -819,7 +929,7 @@ static u32 PreviewDeterminativeMoveTargets(u32 battlerId, struct ChooseMoveStruc
                 startY = 8;
                 break;
             case MOVE_TARGET_USER:
-                if (!GET_MOVE_MOVEEFFECT_TABLE(move).affectsUserSide)
+                if (!GET_MOVE_MOVEEFFECT_TABLE(sChooseMoveStructOverride.moves[moveSlot].move).affectsUserSide)
                 {
                     bitMask = (Bit(battlerId)) << 16;
                     startY = 8;
@@ -836,7 +946,7 @@ static u32 PreviewDeterminativeMoveTargets(u32 battlerId, struct ChooseMoveStruc
                 break;
             case MOVE_TARGET_FOES_AND_ALLY:
                 bitMask = (Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) | Bit(GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(battlerId))))
-                | Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))) << 16;
+                          | Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))) << 16;
                 startY = 8;
                 break;
         }
@@ -858,8 +968,7 @@ static void PlayerEmitMoveUsed(u32 battlerId)
 static void HandleInputChooseMove(u32 battlerId)
 {
     u32 canSelectTarget = 0;
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    u32 i, moveTarget = PreviewDeterminativeMoveTargets(battlerId, moveInfo);
+    u32 i, moveTarget = PreviewDeterminativeMoveTargets(battlerId);
     
     if (JOY_NEW(A_BUTTON))
     {
@@ -871,7 +980,7 @@ static void HandleInputChooseMove(u32 battlerId)
         else
             gMultiUsePlayerCursor = GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerPosition(battlerId) & BIT_SIDE));
 
-        if (gBattleBufferA[battlerId][1]) // double battle for opposite side
+        if (gBattleBufferA[battlerId][1]) // double battle
         {
             if (moveTarget == MOVE_TARGET_SELECTED || moveTarget == MOVE_TARGET_SELECTED_OPPONENT)
                 canSelectTarget = 1; // either selected or user
@@ -879,7 +988,7 @@ static void HandleInputChooseMove(u32 battlerId)
             if (moveTarget == MOVE_TARGET_USER_OR_ALLY && IsBattlerAlive(BATTLE_PARTNER(battlerId)))
                 canSelectTarget = 1;
             
-            if (!moveInfo->currentPp[gBattleStruct->battlers[battlerId].moveSelectionCursor])
+            if (!sChooseMoveStructOverride.moves[gBattleStruct->battlers[battlerId].moveSelectionCursor].currentPp)
                 canSelectTarget = 0;
             else if (moveTarget != MOVE_TARGET_USER && moveTarget != MOVE_TARGET_ALL_BATTLERS && moveTarget != MOVE_TARGET_USER_OR_ALLY
             && CountAliveMonsInBattle(battlerId, BATTLE_ALIVE_EXCEPT_BATTLER) <= 1)
@@ -916,7 +1025,7 @@ static void HandleInputChooseMove(u32 battlerId)
                 
                 if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS || moveTarget == MOVE_TARGET_USER_OR_ALLY)
                     gMultiUsePlayerCursor = battlerId;
-                else if (gAbsentBattlerFlags & Bit(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+                else if (!IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
                     gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
                 else
                     gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
@@ -1001,21 +1110,20 @@ static void HandleInputChooseMove(u32 battlerId)
             gBattleStruct->playerSelectedGimmick ^= TRUE;
             PlaySE(gBattleStruct->playerSelectedGimmick ? SE_PC_LOGIN : SE_PC_OFF);
             ChangeGimmickTriggerSprite(gBattleStruct->gimmickTriggerSpriteId, gBattleStruct->playerSelectedGimmick);
+            BuildPlayerChooseMoveStruct(battlerId);
+            MoveSelectionReloadMoveNames(battlerId);
         }
     }
 #if BATTLE_MOVE_INFO
     else if (JOY_NEW(L_BUTTON))
     {
-        if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
-        {
-            PlaySE(SE_SELECT);
-            MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
-            ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger sprite
-            gBattleStruct->moveInfo.submenuState = 0; // Always initialize on first submenu
-            MoveInfoPrintMoveNameAndDescription(battlerId);
-            MoveInfoPrintSubmenuString(battlerId, gBattleStruct->moveInfo.submenuState);
-            gBattlerControllersData[battlerId].func = HandleInputMoveInfo;
-        }
+        PlaySE(SE_SELECT);
+        MoveSelectionDestroyCursorAt(gBattleStruct->battlers[battlerId].moveSelectionCursor);
+        ShowOrHideMoveInfoTriggerSprite(TRUE); // Hide trigger sprite
+        gBattleStruct->moveInfo.submenuState = 0; // Always initialize on first submenu
+        MoveInfoPrintMoveNameAndDescription(battlerId);
+        MoveInfoPrintSubmenuString(battlerId, gBattleStruct->moveInfo.submenuState);
+        gBattlerControllersData[battlerId].func = HandleInputMoveInfo;
     }
 #endif
 }
@@ -1090,13 +1198,24 @@ static void HandleInputShowEntireFieldTargets(u32 battlerId)
     }
 }
 
+bool32 CanTargetBattler(u32 attacker, u32 defender, u32 move, u32 moveTarget, bool32 isDefenderHealBlocked)
+{
+    if (IsBattlerAlly(attacker, defender))
+    {
+        if (moveTarget == MOVE_TARGET_SELECTED_OPPONENT)
+            return FALSE; // Can only target opponents, not allies
+        else if (gBattleMoves[move].effect == EFFECT_HIT_ENEMY_HEAL_ALLY && isDefenderHealBlocked)
+            return FALSE; // Pokémon affected by Heal Block cannot target allies with Pollen Puff
+    }
+    return TRUE;
+}
+
 static void HandleInputChooseTarget(u32 battlerId)
 {
     u32 currSelIdentity;
     u8 identities[MAX_BATTLERS_COUNT] = {B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, B_POSITION_OPPONENT_LEFT};
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    u32 move = moveInfo->moves[gBattleStruct->battlers[battlerId].moveSelectionCursor];
-    u32 moveTarget = GetBattlerMoveTargetType(battlerId, move);
+    u32 moveSlot = gBattleStruct->battlers[battlerId].moveSelectionCursor;
+    u32 move = sChooseMoveStructOverride.moves[moveSlot].move, moveTarget = sChooseMoveStructOverride.moves[moveSlot].target;
     s32 i;
 
     DoBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX, 15, 1);
@@ -1165,7 +1284,7 @@ static void HandleInputChooseTarget(u32 battlerId)
                         ++i;
                         break;
                 }
-                if ((gAbsentBattlerFlags & Bit(gMultiUsePlayerCursor)) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget))
+                if (!IsBattlerAlive(gMultiUsePlayerCursor) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget, sChooseMoveStructOverride.isHealBlocked[gMultiUsePlayerCursor]))
                     i = 0;
                 
             } while (i == 0);
@@ -1213,7 +1332,7 @@ static void HandleInputChooseTarget(u32 battlerId)
                         ++i;
                         break;
                 }
-                if ((gAbsentBattlerFlags & Bit(gMultiUsePlayerCursor)) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget))
+                if (!IsBattlerAlive(gMultiUsePlayerCursor) || !CanTargetBattler(battlerId, gMultiUsePlayerCursor, move, moveTarget, sChooseMoveStructOverride.isHealBlocked[gMultiUsePlayerCursor]))
                     i = 0;
                 
             } while (i == 0);
@@ -1227,63 +1346,64 @@ static void HandleInputChooseTarget(u32 battlerId)
 // MOVE INFO INPUT //
 /////////////////////
 
-static void (*const sMoveInfoSubmenuFuncs[NUM_MOVEINFO_SUBMENUS])(u32, u32) =
+struct
 {
-    MoveInfoPrintPowerAndAccuracy,
-    MoveInfoPrintPriorityAndCategory,
-    MoveInfoPrintMoveTarget,
+    void(*func)(u32);
+    const u8 *msg;
+} static const sMoveInfoSubmenuFuncs[NUM_MOVEINFO_SUBMENUS] =
+{
+    {MoveInfoPrintPowerAndAccuracy,    gText_MoveInfoPowerAndAccuracy},
+    {MoveInfoPrintPriorityAndCategory, gText_MoveInfoPriorityAndCategory},
+    {MoveInfoPrintMoveTarget,          gText_MoveInfoTarget}
 };
 
 static void MoveInfoPrintMoveNameAndDescription(u32 battlerId)
 {
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    u32 move = moveInfo->moves[gBattleStruct->battlers[battlerId].moveSelectionCursor];
+    u32 move = sChooseMoveStructOverride.moves[gBattleStruct->battlers[battlerId].moveSelectionCursor].move;
     
     // Move's name and description
     ReformatStringToMaxChars(gBattleMoves[move].description, 0, 30, FALSE);
     CreateBattleMoveInfoWindowsAndArrows(move);
 }
 
-static void MoveInfoPrintPowerAndAccuracy(u32 battlerId, u32 move)
+static void MoveInfoPrintPowerAndAccuracy(u32 moveSlot)
 {
+    u32 move;
+    
     // Move's power
-    if (gBattleMoves[move].power <= 1)
+    if (sChooseMoveStructOverride.moves[moveSlot].power <= 1)
         StringCopy(gBattleTextBuff1, gText_ThreeHyphens);
     else
-        ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].power, STR_CONV_MODE_LEFT_ALIGN, 3);
+        ConvertIntToDecimalStringN(gBattleTextBuff1, sChooseMoveStructOverride.moves[moveSlot].power, STR_CONV_MODE_LEFT_ALIGN, 3);
     
     // Move's accuracy
+    move = sChooseMoveStructOverride.moves[moveSlot].move;
+    
     if (gBattleMoves[move].accuracy == 0)
         StringCopy(gBattleTextBuff2, gText_ThreeHyphens);
     else
         ConvertIntToDecimalStringN(gBattleTextBuff2, gBattleMoves[move].accuracy, STR_CONV_MODE_LEFT_ALIGN, 3);
-    
-    BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPowerAndAccuracy);
 }
 
-static void MoveInfoPrintPriorityAndCategory(u32 battlerId, u32 move)
+static void MoveInfoPrintPriorityAndCategory(u32 moveSlot)
 {
     // Move's priority
-    ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[move].priority, STR_CONV_MODE_LEFT_ALIGN, 2);
+    ConvertIntToDecimalStringN(gBattleTextBuff1, gBattleMoves[sChooseMoveStructOverride.moves[moveSlot].move].priority, STR_CONV_MODE_LEFT_ALIGN, 2);
     
     // Move's category
-    PrependFontIdToFit(gBattleTextBuff2, StringCopy(gBattleTextBuff2, gCategoryNames[gBattleMoves[move].split]), 1, WindowWidthPx(B_WIN_MOVE_INFO) - 33);
-    
-    BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoPriorityAndCategory);
+    StringCopy(gBattleTextBuff2, gCategoryNames[sChooseMoveStructOverride.moves[moveSlot].split]);
 }
 
-static void MoveInfoPrintMoveTarget(u32 battlerId, u32 move)
+static void MoveInfoPrintMoveTarget(u32 moveSlot)
 {
     // Move's target
-    CopyMoveTargetName(battlerId, move, gBattleTextBuff1);
-    
-    BattleStringExpandPlaceholdersToDisplayedString(gText_MoveInfoTarget);
+    CopyMoveTargetName(sChooseMoveStructOverride.moves[moveSlot].target, gBattleTextBuff1);
 }
 
 static void MoveInfoPrintSubmenuString(u32 battlerId, u32 stateId)
 {
-    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleBufferA[battlerId][4]);
-    sMoveInfoSubmenuFuncs[stateId](battlerId, moveInfo->moves[gBattleStruct->battlers[battlerId].moveSelectionCursor]);
+    sMoveInfoSubmenuFuncs[stateId].func(gBattleStruct->battlers[battlerId].moveSelectionCursor);
+    BattleStringExpandPlaceholdersToDisplayedString(sMoveInfoSubmenuFuncs[stateId].msg);
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_INFO);
 }
 

@@ -9,6 +9,7 @@
 #include "battle_queued_effects.h"
 #include "battle_script_commands.h"
 #include "battle_main.h"
+#include "battle_raid.h"
 #include "battle_util2.h"
 #include "battle_bg.h"
 #include "constants/battle_script_commands.h"
@@ -39,6 +40,7 @@
 #define B_ACTION_CANCEL_PARTNER            12 // when choosing an action
 #define B_ACTION_NOTHING_FAINTED           13 // when choosing an action
 #define B_ACTION_THROW_BALL                14 // throw last used ball
+#define B_ACTION_CHEER                     15
 #define B_ACTION_NONE                      0xFF
 
 #define MOVE_TARGET_SELECTED          0
@@ -161,9 +163,9 @@ struct DisableStruct
     /*0x12*/ u8 battlerPreventingEscape;
     /*0x13*/ u8 leechSeedBattler;
     /*0x14*/ u8 unburdenBoost:1;
-             u8 startedNeutralizingGas:1;
              u8 supremeOverlordBoost:3;
              u8 wrapTurns:3;
+             u8 wrappedByGMaxEffect:1;
     /*0x15*/ u8 wrappedBy;
     /*0x16*/ u16 wrappedMove;
     /*0x18*/ u8 roostActive:1;
@@ -171,7 +173,9 @@ struct DisableStruct
              u8 magnetRiseTimer:3;
     /*0x19*/ u8 commanderActivated:1;
              u8 telekinesisTimer:2;
-             u8 unused:5;
+             u8 startedNeutralizingGas:1;
+             u8 tormentTimer:2;
+             u8 unused:2;
     /*0x1A*/ u8 autotomizeCount;
 };
 
@@ -206,7 +210,8 @@ struct ProtectStruct
              u8 helpingHandUses:3;
              u8 usedAllySwitch:1;
     /*0x0D*/ u8 opportunistState:2; // 2 - to copy stats. 1 - stats copied (do not repeat). 0 - no stats to copy
-             u8 unused:6;
+             u8 maxGuarded:1;
+             u8 unused:5;
 };
 
 extern struct ProtectStruct gProtectStructs[MAX_BATTLERS_COUNT];
@@ -258,8 +263,15 @@ struct SideTimer
     /*0x08*/ u8 tailwindBattlerId;
     /*0x09*/ u8 followmeSet:1;
              u8 followmePowder:1;
-             u8 unused:6;
+             u8 gMaxWildfireTimer:3;
+             u8 gMaxVolcalithTimer:3;
     /*0x0A*/ u8 followmeTarget;
+    /*0x0B*/ u8 auroraVeilTimer:4;
+             u8 gMaxVineLashTimer:3;
+             u8 unused:1;
+    /*0x0C*/ u8 auroraVeilBattlerId;
+    /*0x0D*/ u8 gMaxCannonadeTimer:3;
+             u8 unused2:5;
 };
 
 extern struct SideTimer gSideTimers[B_SIDE_COUNT];
@@ -355,6 +367,16 @@ struct QueuedEffect
     u8 done:1;
 };
 
+struct BattleFormChange
+{
+    u16 species;
+    u8 state:2;
+    u8 reloadTypes:1;
+    u8 reloadStats:1;
+    u8 reloadAbility:1;
+    u8 unused:3;
+};
+
 enum
 {
     ILLUSION_STATE_NOT_SET,
@@ -370,17 +392,22 @@ struct BattlerState
     /*0x03*/ u8 chosenMovePosition;
     /*0x04*/ u8 monToSwitchIntoId;
     /*0x05*/ u8 AI_monToSwitchIntoId;
-    /*0x06*/ u8 targetsDone; // For moves hiting multiples pokemon, bit flags
-    /*0x07*/ u8 payDayLevel; // To store player mon's levels when using pay day, this is unused for opponents
-    /*0x08*/ u8 aiMoveOrAction;
-    /*0x09*/ u8 aiChosenTarget;
-    /*0x0A*/ u16 lastTakenMove;
+    /*0x06*/ u8 itemPartyIndex; // For item use
+    /*0x07*/ u8 moveSelectionCursor;
+    /*0x08*/ u16 timesUsedPayDay:15;
+             u16 selectionScriptFinished:1;
+    /*0x0A*/ u8 timesUsedGMaxGoldRush:2;
+             u8 focusPunchDone:1;
+             u8 noMoreMovingThisTurn:1;
+             u8 illusionState:2;
+             u8 dynamaxTurns:2;
+    /*0x0B*/ u8 aiChosenTarget;
     /*0x0C*/ u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT];
     /*0x14*/ u16 choicedMove;
     /*0x16*/ u16 hpBefore; // Hp before use move, for Berserk and Emergency Exit
     /*0x18*/ u16 abilityOverride; // Used to override the ability on pop up by this value
     /*0x1A*/ u16 chosenItem; // AI related
-    /*0x1C*/ u8 selectionScriptFinished:1;
+    /*0x1C*/ u8 toActivateGimmick:1; // Stores whether it should activate a gimmick at start of turn
              u8 usedReviveItem:1; // For revive battle usage
              u8 storedHealingWish:1;
              u8 storedLunarDance:1;
@@ -392,8 +419,7 @@ struct BattlerState
     /*0x21*/ u8 savedSpriteId; // Used for trainer slides
     /*0x22*/ u16 chosenMove;
     /*0x24*/ u16 lockedMove;
-    /*0x26*/ u8 queuedEffectsCount:7;
-             u8 toActivateGimmick:1; // Stores whether it should activate a gimmick at start of turn
+    /*0x26*/ u8 targetsDone; // For moves hiting multiples pokemon, bit flags
     /*0x27*/ u8 usableGimmick; // First usable gimmick that can be selected
     /*0x28*/ s32 bideTakenDamage;
     /*0x2C*/ u16 lastPrintedMove;
@@ -407,15 +433,16 @@ struct BattlerState
     /*0x38*/ u8 lastUsedMoveType;
     /*0x39*/ u8 skyDropAttacker; // The battler that's holding it on the air
     /*0x3A*/ u8 skyDropTarget; // The battler that's being hold on the air
-    /*0x3B*/ u8 focusPunchDone:1;
-             u8 gimmickInProgress:1;
-             u8 noMoreMovingThisTurn:1;
-             u8 illusionState:2;
-             u8 unused:3;
+    /*0x3B*/ u8 aiMoveOrAction;
     /*0x3C*/ struct Pokemon *illusionMon;
-    /*0x40*/ u8 moveSelectionCursor;
-    /*0x41*/ u8 itemPartyIndex; // For item use
-             bool8 activatedGimmick[ROUND_BITS_TO_BYTES(GIMMICKS_COUNT)]; // Stores whether a trainer has used gimmick
+    /*0x40*/ u16 baseUsedMove; // Base used move, for Max Moves
+    /*0x42*/ u16 lastTakenMove;
+    /*0x44*/ u16 queuedEffectsCount:7;
+             u16 gMaxChiStrikeBoost:2;
+             u16 cheerCritBoost:1;
+             u16 unused:6;
+             bool8 activatedGimmick[NUM_GIMMICK_BITS]; // Stores whether a trainer has used gimmick
+             bool8 hasGimmickKeyItem[NUM_GIMMICK_BITS]; // Stores whether a trainer has the key item for activate this gimmick
              struct QueuedEffect queuedEffectsList[B_BATTLER_QUEUED_COUNT + 1];
 };
 
@@ -469,7 +496,7 @@ struct BattleStruct
     /*0x00C*/ u8 throwingPokeBall:1;
     /*0x00C*/ u8 turnSideTracker:3;
     /*0x00C*/ u8 meFirstBoost:1;
-    /*0x00C*/ u8 spriteIgnore0Hp:1; // For Illusion
+    /*0x00C*/ u8 playerSelectedGimmick:1; // Used to toggle trigger and update battle UI
     /*0x00D*/ u8 savedTurnActionNumber;
     /*0x00E*/ u8 runTries;
     /*0x00F*/ u8 sentInPokes;
@@ -497,16 +524,7 @@ struct BattleStruct
     /*0x03D*/ u8 givenExpMons;
     /*0x03E*/ u8 magnitudeBasePower;
     /*0x03F*/ u8 presentBasePower;
-    /*0x040*/ u16 savedBattleTypeFlags;
-    /*0x042*/ u16 poisonPuppeteerConfusion:1;
-    /*0x042*/ u16 strongWindsMessageState:2;
-    /*0x042*/ u16 pursuitSwitchDmg:1;
-    /*0x042*/ u16 roundUsed:1;
-    /*0x042*/ u16 attackAnimPlayed:1; // For Dancer
-    /*0x042*/ u16 playerSelectedGimmick:1; // Used to toggle trigger and update battle UI
-    /*0x042*/ u16 effectsBeforeUsingMoveDone:1;
-    /*0x042*/ u16 savedAttackerStackCount:4;
-    /*0x042*/ u16 savedTargetStackCount:4;
+    /*0x040*/ u32 savedBattleTypeFlags;
     /*0x044*/ u8 savedAttackerStack[10];
     /*0x054*/ u8 savedTargetStack[10];
     /*0x064*/ u8 weatherIconSpriteId;
@@ -524,8 +542,20 @@ struct BattleStruct
     /*0x076*/ u8 echoedVoiceCounter:2;
     /*0x076*/ u8 echoedVoiceDmgScale:4;
     /*0x076*/ u8 bypassMoldBreakerChecks:1; // For ABILITYEFFECT_IMMUNITY
-    /*0x076*/ u8 unused:1; // unused
-    /*0x077*/ struct {
+    /*0x076*/ u8 poisonPuppeteerConfusion:1;
+    /*0x077*/ u16 strongWindsMessageState:2;
+    /*0x077*/ u16 pursuitSwitchDmg:1;
+    /*0x077*/ u16 roundUsed:1;
+    /*0x077*/ u16 attackAnimPlayed:1; // For Dancer
+    /*0x077*/ u16 effectsBeforeUsingMoveDone:1;
+    /*0x077*/ u16 savedAttackerStackCount:4;
+    /*0x077*/ u16 savedTargetStackCount:4;
+    /*0x077*/ u16 categoryOverride:2; // For Z-Moves and Max Moves
+    /*0x079*/ u8 switchoutAbilitiesState;
+    /*0x07A*/ u8 endBattleBattlerIdOrSide;
+    /*0x07B*/ u8 endBattlePartyId:3;
+    /*0x07B*/ u8 unused:5;
+    /*0x07C*/ struct {
                   u8 calls:5;
                   u8 usedAdrenalineOrb:1;
                   u8 lastCallFailed:1;
@@ -533,6 +563,15 @@ struct BattleStruct
                   u8 lastCallBattler;
                   u8 totemBattlerId; // If the Totem slot was swaped, e.g by Ally Switch
               } sos;
+              struct {
+                  u16 turnStartHP;
+                  u8 dynamaxEnergy;
+                  u8 gimmickActivated:1;
+                  u8 numShieldsUp:3;
+                  u8 keepHealthboxesHidden:1;
+                  u8 unused:3;
+                  u8 shieldSpriteIds[MAX_RAID_SHIELDS];
+              } raid;
               struct {
                   u8 triggerSpriteId;
                   u8 windowIds[2]; // 0 - move's name, 1 - move's desc
@@ -644,13 +683,12 @@ struct BattleScripting
     /*0x1E*/ u8 atk23_state; // give exp state
     /*0x1F*/ u8 battleStyle;
     /*0x20*/ u8 atk5C_state; // lvl up box state
-    /*0x21*/ u8 learnMoveState;
-    /*0x22*/ u8 reshowMainState; // for reshow battle screen after menu
-    /*0x23*/ u8 reshowHelperState; // for reshow battle screen after menu
-    /*0x24*/ u8 field_23; // does something with hp calc
-    /*0x25*/ u8 switchinEffectState;
-    /*0x26*/ bool8 expOnCatch;
-    /*0x27*/ u8 beatUpHitCounter;
+    /*0x21*/ u8 reshowMainState; // for reshow battle screen after menu
+    /*0x22*/ u8 reshowHelperState; // for reshow battle screen after menu
+    /*0x23*/ u8 field_23; // does something with hp calc
+    /*0x24*/ u8 switchinEffectState;
+    /*0x25*/ bool8 expOnCatch;
+    /*0x26*/ u8 beatUpHitCounter;
 };
 
 struct BattleSpriteInfo
@@ -663,7 +701,8 @@ struct BattleSpriteInfo
             u8 flag_x8:1;
             u8 hpNumbersNoBars:1;
             u8 keepInvisible:1;
-            u8 unused:2;
+            u8 gimmickInProgress:1;
+            u8 ignore0Hp:1;
 };
 
 struct BattleAnimationInfo
@@ -766,6 +805,7 @@ struct QuickClawRandom
 {
     bool8 quickClawActivates:1;
     bool8 quickDrawActivates:1;
+    bool8 raidBossUsingRegularMove:1;
 };
 
 extern u16 gBattle_BG0_X;
@@ -824,6 +864,7 @@ extern u32 gStatuses3[MAX_BATTLERS_COUNT];
 extern u8 gSentPokesToOpponent[2];
 extern const u8 *gBattlescriptCurrInstr;
 extern u16 gLastUsedMove;
+extern u16 gLastUsedBaseMove;
 extern u8 gBattlerByTurnOrder[MAX_BATTLERS_COUNT];
 extern u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT];
 extern u16 gSideStatuses[B_SIDE_COUNT];
@@ -837,7 +878,6 @@ extern u8 gMultiUsePlayerCursor;
 extern u8 gNumberOfMovesToChoose;
 extern s32 gHpDealt;
 extern u16 gPauseCounterBattle;
-extern u16 gPaydayMoney;
 extern u8 gCurrentTurnActionNumber;
 extern u8 gCurrentTurnActionBattlerId;
 extern u16 gExpShareExp;
@@ -854,5 +894,8 @@ extern struct QueuedStatBoost gQueuedStatBoosts[MAX_BATTLERS_COUNT];
 extern u16 gBallToDisplay;
 extern u16 gLastThrownBall;
 extern struct QuickClawRandom gQuickClawTurnRandom[MAX_BATTLERS_COUNT];
+extern u8 gNumRaidBattleStars;
+extern bool8 gCapturedWildMon;
+extern struct BattleFormChange gBattleFormChangeData;
 
 #endif // GUARD_BATTLE_H

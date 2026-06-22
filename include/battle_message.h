@@ -84,7 +84,7 @@ struct BattleMsgData
 // String buffers
 void BufferStringBattle(u32 battlerId, u32 stringId);
 void BattleStringExpandPlaceholdersToDisplayedString(const u8* src);
-void SetPpNumbersPaletteInMoveSelection(u32 battlerId);
+void SetPpNumbersPaletteInMoveSelection(u32 currentPp, u32 maxPp);
 void BattlePutTextOnWindow(const u8* text, u8 windowId_flags);
 bool32 BattleStringShouldBeColored(u32);
 

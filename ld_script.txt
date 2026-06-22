@@ -294,6 +294,9 @@ SECTIONS {
 		src/battle_controller_recorded_player.o(.text);
 		src/battle_controller_recorded_opponent.o(.text);
 		src/battle_controller_player_partner.o(.text);
+		src/raid_intro.o(.text);
+		src/raid_clear_screen.o(.text);
+		src/battle_raid.o(.text);
     } =0
 
     script_data :
@@ -588,6 +591,9 @@ SECTIONS {
 		src/battle_controller_recorded_player.o(.rodata);
 		src/battle_controller_recorded_opponent.o(.rodata);
 		src/battle_controller_player_partner.o(.rodata);
+		src/raid_intro.o(.rodata);
+		src/raid_clear_screen.o(.rodata);
+		src/battle_raid.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

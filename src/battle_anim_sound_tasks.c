@@ -140,7 +140,7 @@ void SoundTask_PlayCryHighPitch(u32 taskId)
         DestroyAnimVisualTask(taskId);
         return;
     }
-    species = GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES);
+    species = GetBattlerVisualSpecies(battlerId);
     
     if (species)
         PlayCry_ByMode(species, BattleAnimAdjustPanning(SOUND_PAN_ATTACKER), CRY_MODE_HIGH_PITCH);
@@ -163,7 +163,7 @@ void SoundTask_PlayDoubleCry(u32 taskId)
         DestroyAnimVisualTask(taskId);
         return;
     }
-    species = GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_SPECIES);
+    species = GetBattlerVisualSpecies(battlerId);
     
     if (species)
     {
@@ -290,4 +290,12 @@ static void SoundTask_AdjustPanningVar_Step(u32 taskId)
     
     if (gTasks[taskId].data[11] == gTasks[taskId].data[2])
         DestroyAnimVisualTask(taskId);
+}
+
+// Plays the given battler's cry for Dynamax.
+// arg 0: anim battler
+void SoundTask_PlayDynamaxCry(u32 taskId)
+{
+    PlayCry_ByMode(GetBattlerVisualSpecies(GetBattlerForAnimScript(gBattleAnimArgs[0])), BattleAnimAdjustPanning(gBattleAnimArgs[0]), CRY_MODE_DYNAMAX);
+    DestroyAnimVisualTask(taskId);
 }

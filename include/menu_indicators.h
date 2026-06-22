@@ -32,6 +32,7 @@ struct CursorStruct
 u32 AddScrollIndicatorArrowPairParameterized(u32 arrowType, s32 commonPos, s32 firstPos, s32 secondPos, s32 fullyDownThreshold, s32 tileTag, s32 palTag, u16 *scrollOffset);
 u32 AddScrollIndicatorArrowPair(const struct ScrollArrowsTemplate * template, u16 * a1);
 void RemoveScrollIndicatorArrowPair(u32);
+void SetScrollIndicatorArrowPairSpritePriority(u32 taskId, u32 priority);
 u32 ListMenuAddCursorObjectInternal(const struct CursorStruct *cursor, u32 cursorKind);
 u32 ListMenuAddRedOutlineCursorObject(const struct CursorStruct *cursor);
 void ListMenuUpdateRedOutlineCursorObject(u32 taskId, u32 x, u32 y);

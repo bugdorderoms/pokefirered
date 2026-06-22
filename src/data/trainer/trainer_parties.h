@@ -10544,3 +10544,247 @@ static const struct TrainerMon sParty_CueBallPaxton[] = {
         .species = SPECIES_MUK,
     },
 };
+
+static const struct TrainerMon sParty_RaidYoungsterNoah[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_QWILFISH,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_BRINE, MOVE_WATERFALL, MOVE_POISON_JAB, MOVE_PIN_MISSILE},
+        .abilityNum = TRAINER_MON_ABILITY(2),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_THROH,
+        .moves = {MOVE_MEGA_PUNCH, MOVE_REVENGE, MOVE_BIND, MOVE_BRICK_BREAK},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_SOLROCK,
+        .moves = {MOVE_COSMIC_POWER, MOVE_ROCK_THROW, MOVE_PSYCHIC, MOVE_ROCK_POLISH},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+    }
+};
+
+static const struct TrainerMon sParty_RaidPkmnBreederKit[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_DHELMISE,
+        .moves = {MOVE_GYRO_BALL, MOVE_SLAM, MOVE_SHADOW_BALL, MOVE_GIGA_DRAIN},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_HEATMOR,
+        .moves = {MOVE_FIRE_LASH, MOVE_BIND, MOVE_THUNDER_PUNCH, MOVE_SLASH},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_MARACTUS,
+        .moves = {MOVE_SUCKER_PUNCH, MOVE_GIGA_DRAIN, MOVE_SOLAR_BEAM, MOVE_PIN_MISSILE},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_FEMALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidGentlemanMartin[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_TOGEPI,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_LIFE_DEW, MOVE_ANCIENT_POWER, MOVE_DRAINING_KISS, MOVE_SWIFT},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_SNORLAX,
+        .moves = {MOVE_GIGA_IMPACT, MOVE_BODY_SLAM, MOVE_CRUNCH, MOVE_STOMPING_TANTRUM},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_TORKOAL,
+        .moves = {MOVE_RAPID_SPIN, MOVE_FLAME_WHEEL, MOVE_FLAMETHROWER, MOVE_CLEAR_SMOG},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+        .gender = TRAINER_MON_MALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidBlackBeltOscar[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_WISHIWASHI,
+        .moves = {MOVE_LIQUIDATION, MOVE_AQUA_TAIL, MOVE_WHIRLPOOL, MOVE_BRINE},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_MUDBRAY,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_STRENGTH, MOVE_ROCK_TOMB, MOVE_HIGH_HORSEPOWER, MOVE_SUPERPOWER},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_MAGIKARP,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_FLAIL, MOVE_TACKLE, MOVE_HYDRO_PUMP},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidPkmnBreederPoppy[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_JOLTEON,
+        .moves = {MOVE_DOUBLE_KICK, MOVE_QUICK_ATTACK, MOVE_ELECTRO_BALL, MOVE_SWIFT},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_WOBBUFFET,
+        .moves = {MOVE_COUNTER, MOVE_MIRROR_COAT, MOVE_SAFEGUARD, MOVE_AMNESIA},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_HAWLUCHA,
+        .moves = {MOVE_WING_ATTACK, MOVE_FEATHER_DANCE, MOVE_FLYING_PRESS, MOVE_THUNDER_PUNCH},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidGentlemanAlfie[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_CLEFAIRY,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_LIFE_DEW, MOVE_FOLLOW_ME, MOVE_DAZZLING_GLEAM, MOVE_DISARMING_VOICE},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_PIKACHU,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_THUNDERBOLT, MOVE_QUICK_ATTACK, MOVE_IRON_TAIL, MOVE_ELECTROWEB},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_WEAVILE,
+        .moves = {MOVE_METAL_CLAW, MOVE_SLASH, MOVE_ASSURANCE, MOVE_ICE_SHARD},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_FEMALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidYoungsterAustin[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_EEVEE,
+        .heldItem = ITEM_FOCUS_SASH,
+        .moves = {MOVE_HELPING_HAND, MOVE_ROUND, MOVE_QUICK_ATTACK, MOVE_BITE},
+        .abilityNum = TRAINER_MON_ABILITY(1),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_SALAZZLE,
+        .moves = {MOVE_FLAMETHROWER, MOVE_FIRE_LASH, MOVE_SLUDGE_BOMB},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_POLIWHIRL,
+        .moves = {MOVE_WATERFALL, MOVE_BODY_SLAM, MOVE_ICE_PUNCH, MOVE_BRICK_BREAK},
+        .abilityNum = TRAINER_MON_ABILITY(2),
+        .gender = TRAINER_MON_MALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidBlackBeltArthur[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_KROKOROK,
+        .moves = {MOVE_STOMPING_TANTRUM, MOVE_CRUNCH, MOVE_THUNDER_FANG, MOVE_FIRE_FANG},
+        .abilityNum = TRAINER_MON_ABILITY(2),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_GROWLITHE,
+        .moves = {MOVE_EMBER, MOVE_LEER, MOVE_BITE},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_FEMALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_BUIZEL,
+        .moves = {MOVE_AQUA_JET, MOVE_BITE, MOVE_WATER_GUN},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidYoungsterLogan[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_SKIDDO,
+        .moves = {MOVE_TACKLE, MOVE_VINE_WHIP, MOVE_GROWTH},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_MAGNEMITE,
+        .moves = {MOVE_THUNDER_SHOCK, MOVE_THUNDER_WAVE, MOVE_SWIFT},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_SKWOVET,
+        .moves = {MOVE_TACKLE, MOVE_DEFENSE_CURL, MOVE_ROLLOUT},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    }
+};
+
+static const struct TrainerMon sParty_RaidYoungsterEvan[] = {
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_STARAVIA,
+        .moves = {MOVE_WING_ATTACK, MOVE_QUICK_ATTACK, MOVE_GROWL},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_CRABRAWLER,
+        .moves = {MOVE_ROCK_SMASH, MOVE_BUBBLE_BEAM, MOVE_WORK_UP},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    },
+    {
+        .iv = TRAINER_MON_IVS(18, 1, 0, 0, 0, 0),
+        .species = SPECIES_DRIFLOON,
+        .moves = {MOVE_GUST, MOVE_HEX, MOVE_PAYBACK},
+        .abilityNum = TRAINER_MON_ABILITY(0),
+        .gender = TRAINER_MON_MALE,
+    }
+};

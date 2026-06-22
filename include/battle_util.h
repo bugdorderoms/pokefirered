@@ -33,6 +33,16 @@ enum
     STAT_CHANGE_FAIL_FLOWER_VEIL,
 };
 
+struct BattleWeatherInfo
+{
+    const struct SpriteSheet iconGfx;
+    const struct SpritePalette iconPalette;
+    u16 flag;
+    u8 continueMessage;
+    u8 endMessage;
+    u8 animation;
+};
+
 // Flags for CheckMoveLimitations
 #define MOVE_LIMITATION_IGNORE_NO_PP    Bit(0)
 #define MOVE_LIMITATION_IGNORE_IMPRISON Bit(1)
@@ -111,7 +121,7 @@ u32 SetRandomTarget(u32 battlerId);
 u32 GetRandomTarget(u32 battlerId);
 u32 GetBattlerMoveTargetType(u32 battlerId, u32 move);
 u32 GetMoveTarget(u32 move, u32 setTarget, bool32 useBaseType);
-void CopyMoveTargetName(u32 battlerId, u32 move, u8 *dest);
+void CopyMoveTargetName(u32 moveTarget, u8 *dest);
 u32 IsMonDisobedient(void);
 bool32 SubsBlockMove(u32 attacker, u32 defender, u32 move);
 u32 GetHiddenPowerType(struct Pokemon *mon);
@@ -143,10 +153,9 @@ bool32 IsBattlerAlive(u32 battlerId);
 bool32 IsBattlerWeatherAffected(u32 battlerId, u32 weatherFlags);
 bool32 TryChangeBattleWeather(u32 battlerId, u32 weatherEnumId);
 u32 GetCurrentWeatherEnumId(u32 weatherFlags);
-void LoadWeatherIconSpriteAndPalette(u32 weatherEnumId);
 bool32 CalcMoveIsCritical(u32 battlerAtk, u32 battlerDef, u32 move);
 bool32 IsMoveMakingContact(u32 battler, u32 move);
-bool32 IsBattlerProtected(u32 attacker, u32 defender, u32 move);
+bool32 IsBattlerProtected(u32 attacker, u32 defender, u32 move, bool32 ignoreZMoveCheck);
 u32 CountBattlerStatIncreases(u32 battlerId, bool32 countEvasionAccuracy);
 bool32 IsBattlerGrounded(u32 battlerId);
 bool32 IsBattlerGroundedInternal(u32 battlerId, bool32 ignoreGravity, bool32 checkInverseBattle);
@@ -185,7 +194,7 @@ struct Pokemon *GetBattlerParty(u32 battlerId);
 struct Pokemon *GetBattlerPartyIndexPtr(u32 battlerId);
 struct Pokemon *GetBattlerIllusionPartyIndexPtr(u32 battlerId);
 u32 CountAliveMonsInBattle(u32 battlerId, u32 caseId);
-void CalculatePayDayMoney(void);
+u32 CalculatePayDayMoney(void);
 s32 GetDrainedBigRootHp(u32 battlerId, s32 hp);
 u32 GetBattlerMoveType(u32 battlerId, u32 move);
 bool32 TryTransformIntoBattler(u32 battler1, u32 battler2);
@@ -196,7 +205,6 @@ void GetBattlerTypes(u32 battlerId, bool32 ignoreTera, u32 *types);
 void SetBattlerType(u32 battlerId, u32 type);
 void SetBattlerInitialTypes(u32 battlerId);
 bool32 DoBattlersShareType(u32 battler1, u32 battler2);
-bool32 CopyBattlerCritModifier(u32 attacker, u32 defender);
 bool32 TryRemoveScreens(u32 battler, bool32 clear, bool32 fromBothSides);
 bool32 DoesSpreadMoveStrikesOnlyOnce(u32 attacker, u32 defender, u32 move, bool32 checkTargetsDone);
 bool32 TryRemoveEntryHazards(u32 battler, bool32 clear, bool32 fromBothSides);
@@ -210,10 +218,8 @@ void RestoreTargetFromStack(void);
 u32 FindMoveSlotInBattlerMoveset(u32 battlerId, u32 move);
 bool32 CanUseLastResort(u32 battlerId);
 void TryUpdateEvolutionTracker(u32 evoMode, u32 upAmount, u32 data);
-bool32 IsMultiBattle(void);
 bool32 IsDoubleBattleForBattler(u32 battler);
 bool32 IsPlayerBagDisabled(void);
-bool32 CanTargetBattler(u32 attacker, u32 defender, u32 move, u32 moveTarget);
 u32 GetNumBeatUpHits(u32 battler);
 s8 GetItemStatChangeStages(u32 item);
 bool32 CanReceiveBadgeBoost(u32 battlerId, u32 flagId);
@@ -231,12 +237,13 @@ u32 GetBattlerIdFromPartySlot(u32 slot, u32 partyId);
 u32 CanAbilityAbsorbMove(u32 ability, u32 move, u32 moveType, u32 attacker, u32 target, bool32 onlyChecking);
 bool32 CanAbilityBlockMove(u32 move, u32 attacker, u32 target, bool32 onlyChecking);
 bool32 BattlerTurnDamaged(u32 battlerId);
-bool32 IsRaidBoss(u32 battlerId);
 
 static inline bool32 CanBattlerSwitch(u32 battlerId)
 {
     u8 viableMons[PARTY_SIZE];
     return (CountUsablePartyMons(battlerId, viableMons, NULL) > 0);
 }
+
+extern const struct BattleWeatherInfo gBattleWeatherInfo[];
 
 #endif // GUARD_BATTLE_UTIL_H

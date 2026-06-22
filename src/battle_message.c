@@ -176,11 +176,11 @@ static const struct BattleWindowText sTextOnWindowsInfo_Normal[] =
     },
     [B_WIN_MOVE_INFO] = {
         .fillValue = PIXEL_FILL(0xe),
-        .fontId = 1,
+        .fontId = 8,
         .x = 0,
-        .y = 2,
+        .y = 1,
         .letterSpacing = 0,
-        .lineSpacing = 2,
+        .lineSpacing = 1,
         .speed = 0,
         .fgColor = 13,
         .bgColor = 14,
@@ -364,8 +364,8 @@ const u8 gText_MoveInterfacePP[] = _("PP ");
 const u8 gText_MoveInterfaceType[] = _("Type: ");
 const u8 gText_MoveInterfaceEffectiveness[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 9 14 8}");
 const u8 gText_MoveInterfaceMoveNamesColor[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}");
-const u8 gText_MoveInfoPowerAndAccuracy[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Power: {B_BUFF1}\nAcc.: {B_BUFF2}");
-const u8 gText_MoveInfoPriorityAndCategory[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Prio.: {B_BUFF1}\nCat.: {B_BUFF2}");
+const u8 gText_MoveInfoPowerAndAccuracy[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Power: {B_BUFF1}\nAccuracy: {B_BUFF2}");
+const u8 gText_MoveInfoPriorityAndCategory[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Priority: {B_BUFF1}\nCat.: {B_BUFF2}");
 const u8 gText_MoveInfoTarget[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Target:\n{B_BUFF1}");
 const u8 gText_BattleYesNoChoice[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Yes\nNo");
 const u8 gText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");
@@ -378,6 +378,7 @@ const u8 gText_TheOldMan[] = _("the old man");
 const u8 gText_LinkStandby[] = _("{PAUSE 16}Link standby…");
 const u8 gText_BattleMenu[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Fight{CLEAR_TO 56}Bag\nPokémon{CLEAR_TO 56}Run");
 const u8 gText_BattleMenuBagDisabled[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Fight{CLEAR_TO 56}{COLOR_HIGHLIGHT_SHADOW 2 14 15}Bag{COLOR_HIGHLIGHT_SHADOW 13 14 15}\nPokémon{CLEAR_TO 56}Run");
+const u8 gText_RaidMenu[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Fight{CLEAR_TO 56}Cheer\nPokémon{CLEAR_TO 56}{COLOR_HIGHLIGHT_SHADOW 2 14 15}Run");
 const u8 gText_SafariMenu[] = _("{PALETTE 5}{COLOR_HIGHLIGHT_SHADOW 13 14 15}Ball{CLEAR_TO 56}Bait\nRock{CLEAR_TO 56}Run");
 static const u8 sText_Trainer1WantsToBattle[] = _("{B_TRAINER1_CLASS} {B_TRAINER1_NAME} would like to battle!\p");
 static const u8 sText_GoPkmn[] = _("Go! {B_BUFF1}!");
@@ -448,7 +449,8 @@ const u16 gStatusHealStringIds[] =
 const u16 gReflectLightScreenSafeguardStringIds[] =
 {
     [B_MSG_REFLECT_RAISED]      = STRINGID_BUFF1RAISEDATKTEAMBUFF2,
-    [B_MSG_SAFEGUARD_COVERED]   = STRINGID_ATKTEAMCLOAKEDINMYSTICALVEIL
+    [B_MSG_SAFEGUARD_COVERED]   = STRINGID_ATKTEAMCLOAKEDINMYSTICALVEIL,
+    [B_MSG_AURORA_VEIL_PROTECT] = STRINGID_BUFF1MADEATKTEAMSTRONG
 };
 
 const u16 gRestUsedStringIds[] =
@@ -478,7 +480,7 @@ const u16 gWrappedStringIds[] =
     [TRAP_ID_FIRE_SPIN]   = STRINGID_EFFTRAPPEDINVORTEX,
     [TRAP_ID_WHIRLPOOL]   = STRINGID_EFFTRAPPEDINVORTEX,
     [TRAP_ID_CLAMP]       = STRINGID_PKMNCLAMPEDEFF,
-    [TRAP_ID_SAND_TOMB]   = STRINGID_EFFTRAPPEDBYCURRMOVE,
+    [TRAP_ID_SAND_TOMB]   = STRINGID_EFFTRAPPEDBYBUFF1,
     [TRAP_ID_MAGMA_STORM] = STRINGID_EFFTRAPPEDBYSWIRLINGMAGMA
 };
 
@@ -668,7 +670,8 @@ const u16 gEntryHazardsDmgStringIds[] =
 {
     [B_MSG_HURT_BY_SPIKES]           = STRINGID_PKMNHURTBYSPIKES,
     [B_MSG_ABSORBED_TOXIC_SPIKES]    = STRINGID_POISONSPIKESDISAPPEARED,
-    [B_MSG_POINTED_STONES_DUG]       = STRINGID_POINTEDSTONESDUGINTOPKMN
+    [B_MSG_POINTED_STONES_DUG]       = STRINGID_POINTEDSTONESDUGINTOPKMN,
+    [B_MSG_SHARP_STEEL_BITE]         = STRINGID_THESHARPSTEELBITEPKMN
 };
 
 const u16 gFormChangeAbilitiesStringIds[] =
@@ -734,7 +737,6 @@ const u16 gSetStatusFromArgumentStringIds[] =
     [B_MSG_BEGAN_NIGHTMARE]             = STRINGID_DEFBEGANHAVINGNIGHTMARE,
     [B_MSG_LAID_CURSE]                  = STRINGID_ATKCUTHPANDLAIDCURSEONDEF,
     [B_MSG_IDENTIFIED]                  = STRINGID_DEFWASIDENTIFIED,
-    [B_MSG_SUBJECTED_TO_TORMENT]        = STRINGID_DEFSUBJECTEDTOTORMENT,
     [B_MSG_PLANTED_ROOTS]               = STRINGID_ATKPLANTEDROOTS,
     [B_MSG_SEALED_MOVE]                 = STRINGID_ATKSEALEDOPPONENTSMOVE,
     [B_MSG_TARGET_BEAR_GRUDGE]          = STRINGID_ATKWANTSTARGETTOBEARGRUDGE,
@@ -752,6 +754,18 @@ const u16 gMegaEvolutionStringIds[] =
 {
     [B_MSG_REACTING_TO_KEY_STONE] = STRINGID_ATKLASTITEMREACTTOKEYSTONE,
     [B_MSG_FERVENT_WISH_REACHED]  = STRINGID_TRAINERFERVENTWISHREACHEDATK
+};
+
+const u16 gDynamaxTimeStringIds[] =
+{
+    [B_MSG_DYNAMAX]    = STRINGID_TIMETODYNAMAX,
+    [B_MSG_GIGANTAMAX] = STRINGID_TIMETOGIGANTAMAX
+};
+
+const u16 gDynamaxedStringIds[] =
+{
+    [B_MSG_DYNAMAX]    = STRINGID_ATKGREWHUGEINTODYNAMAXFORM,
+    [B_MSG_GIGANTAMAX] = STRINGID_ATKGREWHUGEINTOGIGANTAMAXFORM
 };
 
 const u16 gEndTurnEffectsEndStringIds[] =
@@ -774,6 +788,26 @@ const u16 gEndTurnEffectsEndStringIds[] =
     [B_MSG_MAGIC_ROOM_WORE_OFF]           = STRINGID_BUFF1OFFNORMALISEDITEMEFFECTS,
     [B_MSG_MAKING_UPROAR]                 = STRINGID_ATKISMAKINGANUPROAR,
     [B_MSG_CALMED_DOWN]                   = STRINGID_ATKCALMEDDOWN
+};
+
+const u16 gRaidStormStringIds[] =
+{
+    [B_MSG_RAID_STORM_STARTED]    = STRINGID_STORMSTARTEDBREWING,
+    [B_MSG_GETTING_STRONGER]      = STRINGID_STORMISGETTINGSTRONGER,
+    [B_MSG_GETTING_EVEN_STRONGER] = STRINGID_STORMISGETTINGEVENSTRONGER,
+    [B_MSG_GETTING_TOO_STRONG]    = STRINGID_STORMISGETTINGTOOSTRONG
+};
+
+const u16 gDamageNonTypesStringIds[] =
+{
+    [B_MSG_TEAM_SURROUNDED_BY_FIRE]     = STRINGID_DEFTEAMSURROUNDEDBYFIRE,
+    [B_MSG_BURNING_WITHIN_FLAMES]       = STRINGID_ATKBURNINGWITHINBUFF1FLAMES,
+    [B_MSG_TEAM_SURROUNDED_BY_ROCKS]    = STRINGID_DEFTEAMSURROUNDEDBYROCKS,
+    [B_MSG_ROCKS_CONTINUE_TO_ATTACK]    = STRINGID_ROCKSOFBUFF1ATTACKATK,
+    [B_MSG_TEAM_TRAPPED_WITH_VINES]     = STRINGID_DEFTEAMGOTTRAPPEDWITHVINES,
+    [B_MSG_HURT_BY_FEROCIOUS_BEATING]   = STRINGID_ATKHURTBYBUFF1BEATING,
+    [B_MSG_TEAM_CAUGHT_IN_WATER_VORTEX] = STRINGID_DEFTEAMCAUGHTINVORTEXOFWATER,
+    [B_MSG_HURT_BY_VORTEX]              = STRINGID_ATKHURTBYBUFF1VORTEX
 };
 
 // String tables
@@ -845,7 +879,7 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_ATKSNAPPEDOUTOFCONFUSION - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} snapped out of confusion!"),
     [STRINGID_EFFBECAMECONFUSED - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} became confused!"),
     [STRINGID_DEFALREADYCONFUSED - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} is already confused!"),
-    [STRINGID_DEFFELLINLOVE - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} fell in love!"),
+    [STRINGID_EFFFELLINLOVE - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} fell in love!"),
     [STRINGID_ATKISINLOVEWITHPKMN - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is in love with {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
     [STRINGID_ATKIMMOBILIZEDBYLOVE - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is immobilized by love!"),
     [STRINGID_PKMNTYPECHANGEDTOBUFF1 - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX}'s type changed to {B_BUFF1}!"),
@@ -872,7 +906,7 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_EFFWRAPPEDBYPKMN - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} was wrapped by {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
     [STRINGID_EFFTRAPPEDINVORTEX - BATTLESTRINGS_ID_ADDER]            = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} became trapped in the vortex!"),
     [STRINGID_PKMNCLAMPEDEFF - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} clamped {B_EFF_NAME_WITH_PREFIX}!"),
-    [STRINGID_EFFTRAPPEDBYCURRMOVE - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} became trapped by {B_CURRENT_MOVE}!"),
+    [STRINGID_EFFTRAPPEDBYBUFF1 - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_EFF_NAME_WITH_PREFIX} became trapped by {B_BUFF1}!"),
     [STRINGID_ATKHURTBYBUFF1 - BATTLESTRINGS_ID_ADDER]                = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is hurt by {B_BUFF1}!"),
     [STRINGID_ATKFREEDFROMBUFF1 - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} was freed from {B_BUFF1}!"),
     [STRINGID_ATKKEPTANDCRASHED - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} kept going and crashed!"),
@@ -1236,6 +1270,43 @@ const u8 *const gBattleStringsTable[] =
     [STRINGID_SLEEPCLAUSEPREVENTSSLEEP - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("The sleep clause prevents more Pokémon from being put to sleep!"),
     [STRINGID_LASTITEMSHONEANDBUFF1ROSE - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("The {B_LAST_ITEM} worn by {B_EFF_NAME_WITH_PREFIX} shone brilliantly, and {B_EFF_NAME_WITH_PREFIX}'s {B_BUFF1} rose!"),
     [STRINGID_ATKTERASTALLIZEDINTOBUFF1TYPE - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} terastallized into the {B_BUFF1} type!"),
+    [STRINGID_STORMISGETTINGSTRONGER - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("The storm above you is getting stronger!"),
+    [STRINGID_STORMISGETTINGEVENSTRONGER - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("The storm is growing even stronger!"),
+    [STRINGID_STORMISGETTINGTOOSTRONG - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("The storm is getting too strong to withstand!"),
+    [STRINGID_PLAYERWASBLOWNOUTOFTHEDEN - BATTLESTRINGS_ID_ADDER]     = COMPOUND_STRING("{B_PLAYER_NAME} was blown out of the den!"),
+    [STRINGID_RAIDPKMNDISAPPEARED - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("{B_OPPONENT_MON1_NAME} disappeared somewhere into the den…"),
+    [STRINGID_CATCHRAIDMON - BATTLESTRINGS_ID_ADDER]                  = COMPOUND_STRING("{B_OPPONENT_MON1_NAME} is weak!\nThrow a Ball?"),
+    [STRINGID_STORMSTARTEDBREWING - BATTLESTRINGS_ID_ADDER]           = COMPOUND_STRING("A storm started brewing above you."),
+    [STRINGID_PKMNAPPEARSTOBEMASSIVE - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} appears to be massive!"),
+    [STRINGID_BARRIERAPPEAREDINFRONTOFPKMN - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("A mysterious barrier appeared in front of {B_SCR_ACTIVE_NAME_WITH_PREFIX} and is protecting it from attacks!"),
+    [STRINGID_TIMETODYNAMAX - BATTLESTRINGS_ID_ADDER]                 = COMPOUND_STRING("Time to Dynamax!"),
+    [STRINGID_TIMETOGIGANTAMAX - BATTLESTRINGS_ID_ADDER]              = COMPOUND_STRING("Time to Gigantamax!"),
+    [STRINGID_ATKGREWHUGEINTODYNAMAXFORM - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} grew huge into its Dynamax form!"),
+    [STRINGID_ATKGREWHUGEINTOGIGANTAMAXFORM - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} grew huge into its Gigantamax form!"),
+    [STRINGID_ATKISNOLONGERDYNAMAXED - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is no longer Dynamaxed!"),
+    [STRINGID_DYNAMAXENERGYGATHERED - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("Dynamax Energy gathered around you!"),
+    [STRINGID_MYSTERIOUSBARRIERDISAPPEARED - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("The mysterious barrier that was protecting {B_DEF_NAME_WITH_PREFIX} disappeared!"),
+    [STRINGID_DEFTEAMSURROUNDEDBYFIRE - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("{B_DEF_TEAM_PREFIX} where surrounded by fire!"),
+    [STRINGID_ATKBURNINGWITHINBUFF1FLAMES - BATTLESTRINGS_ID_ADDER]   = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is burning up within {B_BUFF1}'s flames!"),
+    [STRINGID_BUFF1MADEATKTEAMSTRONG - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_BUFF1} made {B_ATK_TEAM_PREFIX} stronger against physical and special moves!"),
+    [STRINGID_DEFTEAMSURROUNDEDBYROCKS - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_DEF_TEAM_PREFIX} became surrounded by rocks!"),
+    [STRINGID_ROCKSOFBUFF1ATTACKATK - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("The rocks of {B_BUFF1} continue to attack {B_ATK_NAME_WITH_PREFIX}!"),
+    [STRINGID_POINTEDSTEELPIECESFLOAT - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("Sharp-pointed pieces of steel started floating around the foe's team!"),
+    [STRINGID_THESHARPSTEELBITEPKMN - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("The sharp steel bites into {B_SCR_ACTIVE_NAME_WITH_PREFIX}!"),
+    [STRINGID_DEFTEAMGOTTRAPPEDWITHVINES - BATTLESTRINGS_ID_ADDER]    = COMPOUND_STRING("{B_DEF_TEAM_PREFIX} got trapped with vines!"),
+    [STRINGID_ATKHURTBYBUFF1BEATING - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is hurt by {B_BUFF1}'s ferocious beating!"),
+    [STRINGID_DEFTEAMCAUGHTINVORTEXOFWATER - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("{B_DEF_TEAM_PREFIX} got caught in the vortex of water!"),
+    [STRINGID_ATKHURTBYBUFF1VORTEX - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} is hurt by {B_BUFF1}'s vortex!"),
+    [STRINGID_DEFCOULDNTFULLYPROTECT - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_DEF_NAME_WITH_PREFIX} couldn't fully protect itself and got hurt!"),
+    [STRINGID_PKMNISGETTINGDESPERATE - BATTLESTRINGS_ID_ADDER]        = COMPOUND_STRING("{B_SCR_ACTIVE_NAME_WITH_PREFIX} is getting desperate!"),
+    [STRINGID_ATKNULLIFIEDSTATSANDABILITIES - BATTLESTRINGS_ID_ADDER] = COMPOUND_STRING("{B_ATK_NAME_WITH_PREFIX} nullified the stat changes and Abilities of other Pokémon!"),
+    [STRINGID_TRAINERCHEEREDEVERYONEON - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("{B_CURRENT_TRAINER_NAME} cheered everyone on!"),
+    [STRINGID_BUTITECHOEDFEEBLY - BATTLESTRINGS_ID_ADDER]             = COMPOUND_STRING("But it echoed feebly…"),
+    [STRINGID_EVERYONEHPWASRESTORED - BATTLESTRINGS_ID_ADDER]         = COMPOUND_STRING("Everyone's HP was restored!"),
+    [STRINGID_EVERYONESTATUSWEREHEALED - BATTLESTRINGS_ID_ADDER]      = COMPOUND_STRING("Everyone's status conditions were healed!"),
+    [STRINGID_BUFF1ROSEFOREVERYONE - BATTLESTRINGS_ID_ADDER]          = COMPOUND_STRING("{B_BUFF1} rose for everyone!"),
+    [STRINGID_EVERYONEISGETTINGPUMPED - BATTLESTRINGS_ID_ADDER]       = COMPOUND_STRING("Everyone is getting pumped!"),
+    [STRINGID_POKEMONMYSTERIOUSBARRIERFELL - BATTLESTRINGS_ID_ADDER]  = COMPOUND_STRING("The Pokémon's mysterious barrier fell!"),
     
     /*
     [STRINGID_PKMNFLEDUSINGITS - BATTLESTRINGS_ID_ADDER]              = sText_PkmnFledUsingIts,
@@ -1277,6 +1348,8 @@ static const u8 *GetEnemyPokemonPrefix(u32 battlerId)
         return sText_FoePkmnPrefix;
     else if (IsBattlerTotemPokemon(battlerId))
         return sText_TotemPkmnPrefix;
+    else if (IsRaidBoss(battlerId))
+        return gText_EmptyString;
     else
         return sText_WildPkmnPrefix;
 }
@@ -1376,10 +1449,12 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
                 stringPtr = (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED) ? COMPOUND_STRING("The Ghost appeared!\p") : COMPOUND_STRING("The Ghost appeared!\pDarn!\nThe Ghost can't be ID'd!\p");
             else if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME} appeared!\p");
-            else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
-                stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} appeared!{PAUSE 127}"); // Same as bellow, but with a pausse
             else if (gBattleTypeFlags & BATTLE_TYPE_TOTEM)
                 stringPtr = COMPOUND_STRING("You are challenged by Totem {B_OPPONENT_MON1_NAME}!\p");
+            else if (gBattleTypeFlags & BATTLE_TYPE_RAID)
+                stringPtr = COMPOUND_STRING("{B_OPPONENT_MON1_NAME} appeared!");
+            else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
+                stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} appeared!{PAUSE 127}"); // Same as bellow, but with a pausse
             else
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} appeared!\p");
         }
@@ -1723,6 +1798,7 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                     toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_PARTNER(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id)))].name;
                     break;
                 case B_TXT_LINK_SCR_TRAINER_NAME:
+                COPY_LINK_PLAYER_NAME:
                     toCpy = gLinkPlayers[GetBattlerMultiplayerId(gBattleScripting.battler)].name;
                     break;
                 case B_TXT_PLAYER_NAME:
@@ -1761,6 +1837,8 @@ void BattleStringExpandPlaceholdersToDisplayedString(const u8* src)
                             toCpy = COMPOUND_STRING("The Poké Dude");
                         else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
                             toCpy = COMPOUND_STRING("The old man");
+                        else if ((gBattleTypeFlags & BATTLE_TYPE_MULTI) && (gBattleTypeFlags & BATTLE_TYPE_LINK))
+                            goto COPY_LINK_PLAYER_NAME;
                         else
                             toCpy = COMPOUND_STRING("You");
                     }
@@ -2022,11 +2100,9 @@ static u32 GetCurrentPpToMaxPpState(u32 currentPp, u32 maxPp)
     return 0;
 }
 
-void SetPpNumbersPaletteInMoveSelection(u32 battlerId)
+void SetPpNumbersPaletteInMoveSelection(u32 currentPp, u32 maxPp)
 {
-    struct ChooseMoveStruct *chooseMoveStruct = (struct ChooseMoveStruct*)(&gBattleBufferA[battlerId][4]);
-    u32 moveSelectionCursor = gBattleStruct->battlers[battlerId].moveSelectionCursor;
-    u32 var = GetCurrentPpToMaxPpState(chooseMoveStruct->currentPp[moveSelectionCursor], chooseMoveStruct->maxPp[moveSelectionCursor]);
+    u32 var = GetCurrentPpToMaxPpState(currentPp, maxPp);
 
     gPlttBufferUnfaded[92] = gUnknown_8D2FBB4[(var * 2) + 0];
     gPlttBufferUnfaded[91] = gUnknown_8D2FBB4[(var * 2) + 1];

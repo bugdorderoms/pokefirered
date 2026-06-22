@@ -353,6 +353,7 @@ static void SetFlyWarpDestination(u32);
 
 #include "data/region_map/region_map_entry_strings.h"
 #include "data/map_previews.h"
+#include "data/raids.h"
 #include "data/map_sections_info.h"
 
 static const u16 sTopBar_Pal[] = INCBIN_U16("graphics/region_map/top_bar.gbapal"); // Palette for the top bar and dynamic text color

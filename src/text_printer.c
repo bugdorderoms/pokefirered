@@ -187,7 +187,7 @@ bool32 AddTextPrinter(struct TextPrinterTemplate *textSubPrinter, u8 speed, void
         }
 
         if (speed != TEXT_SPEED_FF)
-          CopyWindowToVram(sTempTextPrinter.printerTemplate.windowId, COPYWIN_GFX);
+            CopyWindowToVram(sTempTextPrinter.printerTemplate.windowId, COPYWIN_GFX);
 
         sTextPrinters[textSubPrinter->windowId].active = 0;
     }

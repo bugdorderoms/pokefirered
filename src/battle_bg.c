@@ -431,6 +431,7 @@ void LoadBattleMenuWindowGfx(void)
     gPlttBufferUnfaded[0x5E] = RGB(31, 31, 31);
     gPlttBufferUnfaded[0x5F] = RGB( 26,  26,  25);
     CpuCopy16(&gPlttBufferUnfaded[0x5C], &gPlttBufferFaded[0x5C], 8);
+    
     if (gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE))
     {
         Menu_LoadStdPalAt(0x70, 0x14);
@@ -659,7 +660,7 @@ void InitLinkBattleVsScreen(u32 taskId)
         break;
     case 1:
         palId = AllocSpritePalette(TAG_VS_LETTERS);
-        gPlttBufferUnfaded[palId * 16 + 0x10F] = gPlttBufferFaded[palId * 16 + 0x10F] = RGB(31, 31, 31);
+        gPlttBufferUnfaded[palId * 16 + 0x10F] = gPlttBufferFaded[palId * 16 + 0x10F] = RGB_WHITE;
         gBattleStruct->linkBattleVsSpriteId_V = CreateSprite(&sVsLetter_V_SpriteTemplate, 108, 80, 0);
         gBattleStruct->linkBattleVsSpriteId_S = CreateSprite(&sVsLetter_S_SpriteTemplate, 132, 80, 0);
         gSprites[gBattleStruct->linkBattleVsSpriteId_V].invisible = TRUE;
@@ -710,7 +711,9 @@ void InitLinkBattleVsScreen(u32 taskId)
 
 void DrawBattleEntryBackground(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if (gBattleTypeFlags & BATTLE_TYPE_RAID)
+        LoadBattleTerrainEntryGfx(BATTLE_TERRAIN_CAVE);
+    else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
         LZDecompressVram(gFile_graphics_battle_transitions_vs_frame_sheet, (void*)(BG_CHAR_ADDR(1)));
         LZDecompressVram(gVsLettersGfx, (void*)(VRAM + 0x10000));
@@ -754,7 +757,12 @@ static u32 GetBattleTerrainOverride(void)
 {
     u32 battleScene;
     
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    if (gBattleTypeFlags & BATTLE_TYPE_RAID)
+    {
+        gBattleTerrain = BATTLE_TERRAIN_CAVE;
+        return BATTLE_TERRAIN_CAVE;
+    }
+    else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         return BATTLE_TERRAIN_LINK;
     else if (gBattleTypeFlags & BATTLE_TYPE_POKEDUDE)
     {
@@ -775,12 +783,12 @@ static u32 GetBattleTerrainOverride(void)
 
 #define NUM_TOPBAR_REMOVE_LINES 5 // Num lines to remove on top bar
 
-static void DrawMoveInfoWindowBorder(u32 windowId)
+static void DrawMoveInfoWindowBorder(u32 windowId, u32 windowWidth)
 {
     u32 i, pixelsCount;
     
     // Remove some pixels on top
-    FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, WindowWidthPx(windowId), NUM_TOPBAR_REMOVE_LINES);
+    FillWindowPixelRect(windowId, PIXEL_FILL(0), 0, 0, windowWidth, NUM_TOPBAR_REMOVE_LINES);
     
     // Draw left circle border
     for (i = 0, pixelsCount = 1; i < 2; i++, pixelsCount++)
@@ -793,24 +801,27 @@ static void DrawMoveInfoWindowBorder(u32 windowId)
 
 void CreateBattleMoveInfoWindowsAndArrows(u32 move)
 {
-    u32 i;
+    u32 i, windowId, windowWidth;
     u8 colors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY};
-    bool32 isNameWindow;
     
     // Create windows
     for (i = 0; i < 2; i++)
     {
-        gBattleStruct->moveInfo.windowIds[i] = AddWindow(&sMoveInfoWindowTemplates[i]);
-        FillWindowPixelBuffer(gBattleStruct->moveInfo.windowIds[i], PIXEL_FILL(15));
+        gBattleStruct->moveInfo.windowIds[i] = windowId = AddWindow(&sMoveInfoWindowTemplates[i]);
+        FillWindowPixelBuffer(windowId, PIXEL_FILL(15));
+
+        if (i == 0) // Move name window
+        {
+            windowWidth = WindowWidthPx(windowId);
+            
+            DrawMoveInfoWindowBorder(windowId, windowWidth);
+            AddTextPrinterParameterized3(windowId, GetFontIdToFit(gBattleMoves[move].name, FONT_SMALL, 0, windowWidth - 10), 4, 3, colors, 0xFF, gBattleMoves[move].name);
+        }
+        else
+            AddTextPrinterParameterized3(windowId, FONT_SMALL, 4, 3, colors, 0xFF, gStringVar4);
         
-        isNameWindow = (i == 0);
-        
-        if (isNameWindow)
-            DrawMoveInfoWindowBorder(gBattleStruct->moveInfo.windowIds[i]);
-        
-        AddTextPrinterParameterized3(gBattleStruct->moveInfo.windowIds[i], 0, 4, 3, colors, 0xFF, isNameWindow ? gBattleMoves[move].name : gStringVar4);
-        PutWindowTilemap(gBattleStruct->moveInfo.windowIds[i]);
-        CopyWindowToVram(gBattleStruct->moveInfo.windowIds[i], COPYWIN_BOTH);
+        PutWindowTilemap(windowId);
+        CopyWindowToVram(windowId, COPYWIN_BOTH);
     }
     
     // Create arrows

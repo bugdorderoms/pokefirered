@@ -46,9 +46,9 @@
 // no param is necessary
 #define FORM_CHANGE_START_BATTLE  0x0009
 
-// form change used internaly in battle when it ends.
-// no param or target species is necessary
-#define FORM_CHANGE_END_BATTLE    0x000A
+// form change when the pokemon switches in into battle.
+// no param is necessary
+#define FORM_CHANGE_SWITCH_IN     0x000A
 
 // form change based on the pokemon's nature.
 // param = NATURE_FORM_AMPED or NATURE_FORM_LOW_KEY
@@ -93,10 +93,6 @@
 // form change based on the current region the player is in.
 // param = region (REGIONS_COUNT is used to determine that this form is applied to all other regions that are not listed below)
 #define FORM_CHANGE_REGION        0x0014
-
-// form change when the pokemon switches in into battle.
-// no param is necessary
-#define FORM_CHANGE_SWITCH_IN     0x0015
 
 // battle mechanic forms.
 

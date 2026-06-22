@@ -10,4 +10,9 @@
 #define GIMMICK_TERA        5
 #define GIMMICKS_COUNT      6
 
+// Arguments for ShouldRemoveActiveGimmick
+#define REMOVE_GIMMICK_ON_FAINT       0
+#define REMOVE_GIMMICK_ON_SWITCHOUT   1
+#define REMOVE_GIMMICK_ON_DYNAMAX_END 2
+
 #endif // GUARD_CONSTANTS_BATTLE_GIMMICKS_H

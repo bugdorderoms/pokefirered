@@ -33,10 +33,10 @@ void PlayTrainerEncounterMusic(void);
 const u8 *GetTrainerALoseText(void);
 const u8 *GetTrainerWonSpeech(void);
 
-static inline u32 GetTrainerPartyMonLevel(const struct TrainerMon partyIdx)
+static inline u32 GetTrainerPartyMonLevel(const struct TrainerMon *partyIdx)
 {
 #if TRAINER_LEVEL_TYPE == 0
-    return partyIdx.lvl;
+    return partyIdx->lvl;
 #elif TRAINER_LEVEL_TYPE == 1
     return GetPlayerPartyHighestLevel();
 #else

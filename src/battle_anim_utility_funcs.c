@@ -2,6 +2,7 @@
 #include "gflib.h"
 #include "battle.h"
 #include "battle_anim.h"
+#include "battle_interface.h"
 #include "graphics.h"
 #include "task.h"
 #include "util.h"
@@ -33,6 +34,22 @@ static EWRAM_DATA struct AnimStatsChangeData *sAnimStatsChangeData = NULL;
 
 const u8 gBattleAnimRegOffsBgCnt[] = { REG_OFFSET_BG0CNT, REG_OFFSET_BG1CNT, REG_OFFSET_BG2CNT, REG_OFFSET_BG3CNT };
 const u8 gBattleIntroRegOffsBgCnt[] = { REG_OFFSET_BG0CNT, REG_OFFSET_BG1CNT, REG_OFFSET_BG2CNT, REG_OFFSET_BG3CNT };
+
+static const union AffineAnimCmd sAffineAnim_DynamaxGrowth[] =
+{
+    AFFINEANIMCMD_FRAME(-2, -2, 0, 64), // Double in size over 1 second
+    AFFINEANIMCMD_FRAME(0, 0, 0, 64), // Pause for 1 second
+    AFFINEANIMCMD_FRAME(16, 16, 0, 8), // Shrink back down in 1/8 of a second
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnim_DynamaxGrowthAttackAnim[] =
+{
+    AFFINEANIMCMD_FRAME(-4, -4, 0, 32), // Double in size quicker
+    AFFINEANIMCMD_FRAME(0, 0, 0, 32), // Pause for 1/2 of a second
+    AFFINEANIMCMD_FRAME(16, 16, 0, 8), // Shrink back down in 1/8 of a second
+    AFFINEANIMCMD_END,
+};
 
 // arg 0 is a bitfield.
 // Bits 0-10 result in the following palettes being selected:
@@ -788,6 +805,12 @@ void AnimTask_SetAnimTargetFromArg(u32 taskId)
     DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_SetAnimArgRetFromArg(u32 taskId)
+{
+    gBattleAnimArgs[ARG_RET_ID] = gBattleSpritesDataPtr->animationData->animArg;
+    DestroyAnimVisualTask(taskId);
+}
+
 void AnimTask_SetAttackerInvisibleWaitForSignal(u32 taskId)
 {
     gTasks[taskId].data[0] = gBattleSpritesDataPtr->battlerData[gBattleAnimAttacker].invisible;
@@ -808,5 +831,29 @@ static void AnimTask_SetAttackerInvisibleWaitForSignal_Step(u32 taskId)
 void AnimTask_GetBattleTerrain(u32 taskId)
 {
     gBattleAnimArgs[ARG_RET_ID] = gBattleTerrain;
+    DestroyAnimVisualTask(taskId);
+}
+
+// Animates the attacker's sprite growth during dynamax animations.
+// arg 0: for move anims (boolean)
+void AnimTask_DynamaxGrowth(u32 taskId)
+{
+    PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_ATTACKER), gBattleAnimArgs[0] ? sAffineAnim_DynamaxGrowthAttackAnim : sAffineAnim_DynamaxGrowth);
+    gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
+}
+
+// Creates the N. of raid shields sprites on healthbox.
+// No args.
+void AnimTask_CreateRaidShieldSprites(u32 taskId)
+{
+    CreateRaidShieldSprites(gBattleAnimAttacker, gBattleSpritesDataPtr->animationData->animArg, TRUE);
+    DestroyAnimVisualTask(taskId);
+}
+
+// Destroy the N. of raid shields sprites on healthbox. Sets ARG_RET_ID to TRUE if all shields are destroyed.
+// No args.
+void AnimTask_DestroyRaidShieldSprites(u32 taskId)
+{
+    gBattleAnimArgs[ARG_RET_ID] = DestroyRaidShieldSprites(gBattleSpritesDataPtr->animationData->animArg);
     DestroyAnimVisualTask(taskId);
 }

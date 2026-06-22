@@ -5,6 +5,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Normal"),
         .tmPalette = sItemIconPalette_TmNormal,
         .teraBlendColor = RGB_WHITE,
+        .maxMove = MOVE_MAX_STRIKE,
     },
     
     [TYPE_FIGHTING] =
@@ -12,6 +13,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Fighting"),
         .tmPalette = sItemIconPalette_TmFighting,
         .teraBlendColor = RGB(26, 8, 14),
+        .maxMove = MOVE_MAX_KNUCKLE,
     },
     
     [TYPE_FLYING] =
@@ -19,6 +21,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Flying"),
         .tmPalette = sItemIconPalette_TmFlying,
         .teraBlendColor = RGB(31, 26, 7),
+        .maxMove = MOVE_MAX_AIRSTREAM,
     },
     
     [TYPE_POISON] =
@@ -26,6 +29,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Poison"),
         .tmPalette = sItemIconPalette_TmPoison,
         .teraBlendColor = RGB(26, 10, 25),
+        .maxMove = MOVE_MAX_OOZE,
     },
     
     [TYPE_GROUND] =
@@ -33,6 +37,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Ground"),
         .tmPalette = sItemIconPalette_TmGround,
         .teraBlendColor = RGB(25, 23, 18),
+        .maxMove = MOVE_MAX_QUAKE,
     },
     
     [TYPE_ROCK] =
@@ -40,6 +45,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Rock"),
         .tmPalette = sItemIconPalette_TmRock,
         .teraBlendColor = RGB(18, 16, 8),
+        .maxMove = MOVE_MAX_ROCKFALL,
     },
     
     [TYPE_BUG] =
@@ -47,6 +53,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Bug"),
         .tmPalette = sItemIconPalette_TmBug,
         .teraBlendColor = RGB(18, 24, 6),
+        .maxMove = MOVE_MAX_FLUTTERBY,
     },
     
     [TYPE_GHOST] =
@@ -54,6 +61,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Ghost"),
         .tmPalette = sItemIconPalette_TmGhost,
         .teraBlendColor = RGB(12, 10, 16),
+        .maxMove = MOVE_MAX_PHANTASM,
     },
     
     [TYPE_STEEL] =
@@ -61,6 +69,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Steel"),
         .tmPalette = sItemIconPalette_TmSteel,
         .teraBlendColor = RGB(19, 19, 20),
+        .maxMove = MOVE_MAX_STEELSPIKE,
     },
 
     [TYPE_MYSTERY] =
@@ -68,6 +77,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("???"),
         .tmPalette = NULL,
         .teraBlendColor = RGB_WHITE,
+        .maxMove = MOVE_MAX_STRIKE,
     },
     
     [TYPE_FIRE] =
@@ -75,6 +85,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Fire"),
         .tmPalette = sItemIconPalette_TmFire,
         .teraBlendColor = RGB(31, 20, 11),
+        .maxMove = MOVE_MAX_FLARE,
     },
     
     [TYPE_WATER] =
@@ -82,6 +93,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Water"),
         .tmPalette = sItemIconPalette_TmWater,
         .teraBlendColor = RGB(10, 18, 27),
+        .maxMove = MOVE_MAX_GEYSER,
     },
     
     [TYPE_GRASS] =
@@ -89,6 +101,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Grass"),
         .tmPalette = sItemIconPalette_TmGrass,
         .teraBlendColor = RGB(12, 24, 11),
+        .maxMove = MOVE_MAX_OVERGROWTH,
     },
     
     [TYPE_ELECTRIC] =
@@ -96,6 +109,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Electric"),
         .tmPalette = sItemIconPalette_TmElectric,
         .teraBlendColor = RGB(30, 26, 7),
+        .maxMove = MOVE_MAX_LIGHTNING,
     },
     
     [TYPE_PSYCHIC] =
@@ -103,6 +117,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Psychic"),
         .tmPalette = sItemIconPalette_TmPsychic,
         .teraBlendColor = RGB(31, 14, 15),
+        .maxMove = MOVE_MAX_MINDSTORM,
     },
     
     [TYPE_ICE] =
@@ -110,6 +125,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Ice"),
         .tmPalette = sItemIconPalette_TmIce,
         .teraBlendColor = RGB(14, 26, 25),
+        .maxMove = MOVE_MAX_HAILSTORM,
     },
     
     [TYPE_DRAGON] =
@@ -117,6 +133,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Dragon"),
         .tmPalette = sItemIconPalette_TmDragon,
         .teraBlendColor = RGB(10, 18, 27),
+        .maxMove = MOVE_MAX_WYRMWIND,
     },
 
     [TYPE_DARK] =
@@ -124,6 +141,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Dark"),
         .tmPalette = sItemIconPalette_TmDark,
         .teraBlendColor = RGB(6, 5, 8),
+        .maxMove = MOVE_MAX_DARKNESS,
     },
     
     [TYPE_FAIRY] =
@@ -131,6 +149,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Fairy"),
         .tmPalette = sItemIconPalette_TmFairy,
         .teraBlendColor = RGB(31, 15, 21),
+        .maxMove = MOVE_MAX_STARFALL,
     },
 
     [TYPE_STELLAR] =
@@ -138,6 +157,7 @@ const struct TypeInfo gTypesInfo[NUMBER_OF_MON_TYPES] =
         .name = _("Stellar"),
         .tmPalette = NULL, // No one move has this type
         .teraBlendColor = RGB(10, 18, 27),
+        .maxMove = MOVE_MAX_STRIKE,
     },
 };
 

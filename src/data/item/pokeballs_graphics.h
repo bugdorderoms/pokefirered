@@ -15,6 +15,9 @@ static const u32 sInterfacePal_DreamBall[] = INCBIN_U32("graphics/interface/ball
 static const u32 sInterfaceGfx_DuskBall[] = INCBIN_U32("graphics/interface/ball/dusk.4bpp.lz");
 static const u32 sInterfacePal_DuskBall[] = INCBIN_U32("graphics/interface/ball/dusk.gbapal.lz");
 
+static const u32 sInterfaceGfx_DynamaxBall[] = INCBIN_U32("graphics/interface/ball/dynamax.4bpp.lz");
+static const u32 sInterfacePal_DynamaxBall[] = INCBIN_U32("graphics/interface/ball/dynamax.gbapal.lz");
+
 static const u32 sInterfaceGfx_FastBall[] = INCBIN_U32("graphics/interface/ball/fast.4bpp.lz");
 static const u32 sInterfacePal_FastBall[] = INCBIN_U32("graphics/interface/ball/fast.gbapal.lz");
 

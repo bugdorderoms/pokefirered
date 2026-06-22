@@ -6,9 +6,13 @@
 #define POKEBALL_PLAYER_SENDOUT     0xFF
 #define POKEBALL_OPPONENT_SENDOUT   0xFE
 
+// Special pokeballs
+#define DYNAMAX_BALL (POKE_BALL_ITEMS_END + 1)
+
+#define NUM_POKE_BALL_GRAPHICS DYNAMAX_BALL
+
 #define ITEM_TO_BALL(itemId) (itemId - 1)
 
-u32 ItemIdToBallId(u32 itemId);
 void LoadBallGfx(u32 ballId);
 void FreeBallGfx(u32 ballId);
 u32 CreateBallSprite(u32 ballId, s16 x, s16 y, u32 subpriority);

@@ -48,6 +48,8 @@ static void AnimDiveBall_Step2(struct Sprite *sprite);
 static void AnimDiveWaterSplash(struct Sprite *sprite);
 static void AnimSprayWaterDroplet(struct Sprite *sprite);
 static void AnimSprayWaterDroplet_Step(struct Sprite *sprite);
+static void AnimMaxCannonadeShot(struct Sprite *sprite);
+static void AnimImpactInArc(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_RainDrop[] =
 {
@@ -232,14 +234,31 @@ const struct SpriteTemplate gWaterGunOrbSpriteTemplate =
     .callback = AnimBulletSeed,
 };
 
+static const union AffineAnimCmd sAffineAnimCmds_SmallBubblePairSmall[] =
+{
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_SmallBubblePairBig[] =
+{
+    AFFINEANIMCMD_FRAME(256, 256, 0, 1), // Double sprite size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sAffineAnimTable_SmallBubblePair[] =
+{
+    sAffineAnimCmds_SmallBubblePairSmall,
+    sAffineAnimCmds_SmallBubblePairBig
+};
+
 const struct SpriteTemplate gSmallBubblePairSpriteTemplate =
 {
     .tileTag = ANIM_TAG_ICE_CRYSTALS, // ice_crystals_4, which are bubbles
     .paletteTag = ANIM_TAG_ICE_CRYSTALS,
-    .oam = &gOamData_AffineOff_ObjNormal_8x8,
+    .oam = &gOamData_AffineDouble_ObjNormal_8x8,
     .anims = gAnims_SmallBubblePair,
     .images = NULL,
-    .affineAnims = gDummySpriteAffineAnimTable,
+    .affineAnims = sAffineAnimTable_SmallBubblePair,
     .callback = AnimSmallBubblePair,
 };
 
@@ -569,6 +588,63 @@ const struct SpriteTemplate gWaterOrbProjectileSpriteTemplate =
     .callback = AnimThrowProjectile,
 };
 
+const struct SpriteTemplate gWaterBubbleShotSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_BUBBLES,
+    .paletteTag = ANIM_TAG_SMALL_BUBBLES,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimShadowBall,
+};
+
+const struct SpriteTemplate gWaterOrbShotSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WATER_ORB,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HydroCannonBeam,
+    .callback = AnimShadowBall,
+};
+
+const struct SpriteTemplate gMaxCannonadeWaterOrbShotSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_WATER_ORB,
+    .paletteTag = ANIM_TAG_WATER_ORB,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_HydroCannonBeam,
+    .callback = AnimMaxCannonadeShot,
+};
+
+static const union AnimCmd sSurgingStrikesImpactAnimCmds[] =
+{
+    ANIMCMD_FRAME(64, 4),
+    ANIMCMD_FRAME(48, 4),
+    ANIMCMD_FRAME(32, 4),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sSurgingStrikesImpactAnimTable[] =
+{
+    sSurgingStrikesImpactAnimCmds,
+};
+
+const struct SpriteTemplate gSurgingStrikesImpactSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_IMPACT_2,
+    .paletteTag = ANIM_TAG_IMPACT_2,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = sSurgingStrikesImpactAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimImpactInArc,
+};
+
 // Creates the Rain Dance's water drop sprites or the ion sprite in Ion Deluge's anim.
 // arg 0: which sprite to create
 // arg 1: creation delay
@@ -783,8 +859,8 @@ void AnimToTargetInSinWave(struct Sprite *sprite)
     sprite->data[5] = 0xD200 / sprite->data[0];
     sprite->data[7] = gBattleAnimArgs[2];
     
-    retArg = gBattleAnimArgs[7];
-    if (gBattleAnimArgs[7] > 127)
+    retArg = gBattleAnimArgs[ARG_RET_ID];
+    if (gBattleAnimArgs[ARG_RET_ID] > 127)
     {
         sprite->data[6] = (retArg - 127) * 256;
         sprite->data[7] = -sprite->data[7];
@@ -834,9 +910,11 @@ static void AnimTask_RunSinAnimTimer(u32 taskId)
 // arg 1: y pixel offset
 // arg 2: duration
 // arg 3: anim battler
+// arg 4: affine anim num
 static void AnimSmallBubblePair(struct Sprite *sprite)
 {
     InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[3], TRUE);
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[4]);
     sprite->data[7] = gBattleAnimArgs[2];
     sprite->callback = AnimSmallBubblePair_Step;
 }
@@ -1860,4 +1938,86 @@ static void AnimSprayWaterDroplet_Step(struct Sprite *sprite)
     
     if (++sprite->data[3] == 31)
         DestroyAnimSprite(sprite);
+}
+
+// Launches a projectile from the attacker's cannons to the target.
+// arg 0: which position on attacker
+static void AnimMaxCannonadeShot(struct Sprite *sprite)
+{
+    bool32 isTargetPlayerSide = (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER);
+    s16 x, y, waveAmplitude;
+
+    // The shots are positioned to come out of the G-Max Blastoise sprite's cannons
+    switch (gBattleAnimArgs[0])
+    {
+        case 0:
+            if (!isTargetPlayerSide)
+            {
+                x = -10;
+                y = -10;
+                waveAmplitude = -20;
+            }
+            else
+            {
+                x = -18;
+                y = -20;
+                waveAmplitude = 20;
+            }
+            break;
+        case 1:
+            if (!isTargetPlayerSide)
+            {
+                x = 15;
+                y = -2;
+            }
+            else
+            {
+                x = 9;
+                y = -10;
+            }
+            waveAmplitude = -20;
+            break;
+        case 2:
+            if (!isTargetPlayerSide)
+            {
+                x = 17;
+                y = 5;
+                waveAmplitude = 10;
+            }
+            else
+            {
+                x = 12;
+                y = 9;
+                waveAmplitude = 5;
+            }
+            break;
+    }
+    gBattleAnimArgs[0] = x;
+    gBattleAnimArgs[1] = y;
+    InitSpritePosToAnimAttacker(sprite, FALSE);
+    
+    sprite->data[0] = 14;
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->data[5] = waveAmplitude;
+    sprite->callback = DestroyAnimSpriteAfterHorizontalTranslation;
+    InitAnimArcTranslation(sprite);
+}
+
+// Animates the arc impact in Surging Strikes's anim.
+// arg 0: initial x pixel offset (from target)
+// arg 1: initial y pixel offset (from target)
+// arg 2: target x pixel offset (from target)
+// arg 3: target y pixel offset (from target)
+// arg 4: duration
+// arg 5: wave amplitude
+static void AnimImpactInArc(struct Sprite *sprite)
+{
+    InitSpritePosToAnimTarget(sprite, TRUE);
+    sprite->data[0] = gBattleAnimArgs[4];
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+    sprite->data[5] = gBattleAnimArgs[5];
+    sprite->callback = AnimMissileArcStep;
+    InitAnimArcTranslation(sprite);
 }

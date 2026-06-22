@@ -486,7 +486,7 @@ static u32 GetNumLevelsGainedForDaycareMon(struct DaycareMon *daycareMon)
 u32 GetNumLevelsGainedFromDaycare(void)
 {
     struct DaycareMon *daycareMon = &gSaveBlock1Ptr->daycare.mons[gSpecialVar_0x8004];
-    return GetBoxMonData(daycareMon, MON_DATA_SPECIES) ? GetNumLevelsGainedForDaycareMon(daycareMon) : 0;
+    return GetBoxMonData(&daycareMon->mon, MON_DATA_SPECIES) ? GetNumLevelsGainedForDaycareMon(daycareMon) : 0;
 }
 
 #define tMenuListTaskId     data[0]
@@ -1498,12 +1498,11 @@ static u32 CorrectPokeballForBreeding(u32 pokeball)
 {
     switch (pokeball)
     {
-        case ITEM_MASTER_BALL:
-        case ITEM_CHERISH_BALL:
-            return ITEM_POKE_BALL;
-        default:
-            return pokeball;
+        case ITEM_TO_BALL(ITEM_MASTER_BALL):
+        case ITEM_TO_BALL(ITEM_CHERISH_BALL):
+            return ITEM_TO_BALL(ITEM_POKE_BALL);
     }
+    return pokeball;
 }
 
 static void InheritPokeball(struct Pokemon *egg, struct BoxPokemon *father, struct BoxPokemon *mother)

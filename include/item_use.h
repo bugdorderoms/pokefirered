@@ -32,6 +32,7 @@ void FieldUseFunc_FormChangeItemListMenu(u32 taskId);
 void FieldUseFunc_FusionItem(u32 taskId);
 void FieldUseFunc_ChangeAbility(u32 taskId);
 void FieldUseFunc_Mint(u32 taskId);
+void FieldUseFunc_WishingPiece(u32 taskId);
 void BattleUseFunc_BerryPouch(u32 taskId);
 void ItemUseInBattle_BagMenu(u32 taskId);
 void ItemUseInBattle_PartyMenu(u32 taskId);

@@ -40,8 +40,6 @@ ALIGNED(8) static struct BlockTransfer sBlockRecv[MAX_LINK_PLAYERS];
 static u32 sBlockSendDelayCounter;
 static u32 sPlayerDataExchangeStatus;
 static u8 sLinkTestLastBlockSendPos;
-ALIGNED(8) static u8 sLinkTestLastBlockRecvPos[MAX_LINK_PLAYERS];
-// File break?
 static u8 sNumVBlanksWithoutSerialIntr;
 static bool8 sSendBufferEmpty;
 static u16 sSendNonzeroCheck;
@@ -579,19 +577,14 @@ void OpenLinkTimed(void)
     OpenLink();
 }
 
-u8 GetLinkPlayerDataExchangeStatusTimed(int lower, int upper)
+u32 GetLinkPlayerDataExchangeStatusTimed(u32 lower, u32 upper)
 {
-    int i;
-    int count;
-    u32 index;
-    u8 cmpVal;
-    u32 linkType1;
-    u32 linkType2;
+    u32 i, index, count = 0;
 
-    count = 0;
-    if (gReceivedRemoteLinkPlayers == TRUE)
+    if (gReceivedRemoteLinkPlayers)
     {
-        cmpVal = GetLinkPlayerCount_2();
+        u32 cmpVal = GetLinkPlayerCount_2();
+        
         if (lower > cmpVal || cmpVal > upper)
         {
             sPlayerDataExchangeStatus = EXCHANGE_STAT_6;
@@ -604,16 +597,16 @@ u8 GetLinkPlayerDataExchangeStatusTimed(int lower, int upper)
                 gLinkErrorOccurred = TRUE;
                 CloseLink();
             }
+            
             for (i = 0, index = 0; i < GetLinkPlayerCount(); index++, i++)
             {
                 if (gLinkPlayers[index].linkType == gLinkPlayers[0].linkType)
-                {
                     count++;
-                }
             }
+            
             if (count == GetLinkPlayerCount())
             {
-                if (gLinkPlayers[0].linkType == 0x1133)
+                if (gLinkPlayers[0].linkType == LINKTYPE_TRADE_SETUP)
                 {
                     switch (Trade_CalcLinkPlayerCompatibilityParam())
                     {
@@ -629,20 +622,15 @@ u8 GetLinkPlayerDataExchangeStatusTimed(int lower, int upper)
                     }
                 }
                 else
-                {
                     sPlayerDataExchangeStatus = EXCHANGE_COMPLETE;
-                }
             }
             else
-            {
                 sPlayerDataExchangeStatus = EXCHANGE_IN_PROGRESS;
-            }
         }
     }
     else if (++gLinkTimeOutCounter > 600)
-    {
         sPlayerDataExchangeStatus = EXCHANGE_TIMED_OUT;
-    }
+
     return sPlayerDataExchangeStatus;
 }
 

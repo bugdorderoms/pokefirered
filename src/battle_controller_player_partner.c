@@ -13,7 +13,6 @@ static void (*const sPlayerPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = BtlController_HandleLoadMonSprite,
     [CONTROLLER_SWITCHINANIM]             = LinkOpponentHandleSwitchInAnim,
     [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
@@ -50,6 +49,14 @@ static void (*const sPlayerPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
     [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
     [CONTROLLER_ENDLINKBATTLE]            = PlayerHandleEndLinkBattle,
+    [CONTROLLER_GIMMICKSTATE]             = PlayerPartnerHandleGimmickState,
+    [CONTROLLER_HEALTHBOXUPDATE]          = BtlController_HandleHealthboxUpdate,
+    [CONTROLLER_HIDEALLHEALTHBOXES]       = BtlController_HandleHideAllHealthboxes,
+    [CONTROLLER_BATTLEFORMCHANGE]         = BtlController_HandleBattleFormChange,
+    [CONTROLLER_PARTYFORMCHANGE]          = BtlController_HandlePartyFormChange,
+    [CONTROLLER_ISPOCKETNOTEMPTY]         = BattleControllerComplete,
+    [CONTROLLER_YESNOBOX]                 = BattleControllerComplete,
+    [CONTROLLER_MONCAUGHTEFFECTS]         = BattleControllerComplete,
     [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
@@ -149,5 +156,29 @@ static void Intro_ShowHealthbox(u32 battlerId)
 
 void PlayerPartnerHandleIntroTrainerBallThrow(u32 battlerId)
 {
-    BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F9, GetPlayerPartnerTrainerPicId(battlerId), StartAnimLinearTranslation, 24, Intro_TryShinyAnimShowHealthbox);
+    BtlController_HandleIntroTrainerBallThrow(battlerId, 0xD6F9, GetPlayerPartnerTrainerPicId(battlerId), StartAnimLinearTranslation, 24, Intro_ShowHealthbox);
+}
+
+void PlayerPartnerHandleGimmickState(u32 battlerId)
+{
+    switch (gBattleBufferA[battlerId][1])
+    {
+        case STATE_CHECK_GIMMICK_KEY_ITEMS:
+        {
+            u8 data[NUM_GIMMICK_BITS + 1];
+            memset(data, 0xFF, sizeof(data)); // Can always use gimmick regardless of item limitations
+            BtlController_EmitDataTransfer(battlerId, BUFFER_B, NUM_GIMMICK_BITS, data);
+            break;
+        }
+        case STATE_USABLE_GIMMICK:
+            gBattleStruct->battlers[battlerId].usableGimmick = gBattleBufferA[battlerId][2];
+            break;
+        case STATE_GIMMICK_IN_PROGRESS:
+            gBattleSpritesDataPtr->battlerData[battlerId].gimmickInProgress = TRUE;
+            break;
+        case STATE_ACTIVE_GIMMICK:
+            SetActiveGimmick(battlerId, gBattleBufferA[battlerId][2]);
+            break;
+    }
+    BattleControllerComplete(battlerId);
 }

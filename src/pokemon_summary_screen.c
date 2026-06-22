@@ -3028,7 +3028,7 @@ void SetPokemonSummaryScreenMode(u32 mode)
 
 static bool32 IsMultiBattlePartner(void)
 {
-    if (!IsUpdateLinkStateCBActive() && IsMultiBattle() && gReceivedRemoteLinkPlayers == 1 && (sLastViewedMonIndex >= 4 || sLastViewedMonIndex == 1))
+    if (!IsUpdateLinkStateCBActive() && (gBattleTypeFlags & BATTLE_TYPE_MULTI) && gReceivedRemoteLinkPlayers == 1 && (sLastViewedMonIndex >= 4 || sLastViewedMonIndex == 1))
         return TRUE;
     return FALSE;
 }
@@ -3582,8 +3582,8 @@ static void PokeSum_DestroyMonPicSprite(void)
 
 static void CreateBallIconObj(void)
 {
-    u32 ballId = ItemIdToBallId(sMonSummaryScreen->isEgg ? ITEM_POKE_BALL : GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_POKEBALL));
-    
+    u32 ballId = sMonSummaryScreen->isEgg ? ITEM_TO_BALL(ITEM_POKE_BALL) : GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_POKEBALL);
+
     LoadBallGfx(ballId);
 
     sMonSummaryScreen->ballIconSpriteId = CreateBallSprite(ballId, 106, 88, 0);
@@ -4314,7 +4314,7 @@ static void PokeSum_SeekToNextMon(s8 direction)
     }
     else
     {
-        if (!IsUpdateLinkStateCBActive() && gReceivedRemoteLinkPlayers == 1 && IsMultiBattle())
+        if (!IsUpdateLinkStateCBActive() && gReceivedRemoteLinkPlayers == 1 && (gBattleTypeFlags & BATTLE_TYPE_MULTI))
             scrollResult = SeekToNextMonInMultiParty(direction);
         else
             scrollResult = SeekToNextMonInSingleParty(direction);

@@ -257,10 +257,11 @@ static const union AnimCmd *const sAnims_BallParticles[] =
 static const void *const sBallParticlesTable[][2] =
 {
     { gBattleAnimSpriteGfx_Particles, gBattleAnimSpritePal_CircleImpact },
-    { gBattleAnimSpriteGfx_Particles2, gBattleAnimSpritePal_Particles2 }
+    { gBattleAnimSpriteGfx_Particles2, gBattleAnimSpritePal_Particles2 },
+    { gBattleAnimSpriteGfx_DynamaxBallParticles, gBattleAnimSpritePal_DynamaxBallParticles}
 };
 
-static const struct Pokeball sPokeballs[POKE_BALL_ITEMS_END] =
+static const struct Pokeball sPokeballs[NUM_POKE_BALL_GRAPHICS + 1] =
 {
     [ITEM_TO_BALL(ITEM_MASTER_BALL)] =
     {
@@ -546,16 +547,21 @@ static const struct Pokeball sPokeballs[POKE_BALL_ITEMS_END] =
         .particleAnimNum = 5,
         .fadeColor = RGB(31, 31, 15),
     },
+    
+    [ITEM_TO_BALL(DYNAMAX_BALL)] =
+    {
+        .interfaceIcon = sInterfaceGfx_DynamaxBall,
+        .interfacePalette = sInterfacePal_DynamaxBall,
+        .animationFunc = MasterBallOpenParticleAnimation,
+        .particleId = 2,
+        .particleAnimNum = 0,
+        .fadeColor = RGB(27, 12, 23),
+    },
 };
 
 /////////////////////////
 // BALL ULTILITY FUNCS //
 /////////////////////////
-
-u32 ItemIdToBallId(u32 itemId)
-{
-    return itemId > POKE_BALL_ITEMS_END ? ITEM_TO_BALL(ITEM_POKE_BALL) : ITEM_TO_BALL(itemId);
-}
 
 static void LoadBallSpriteSheetAndPalette(u32 ballId)
 {
@@ -646,6 +652,9 @@ static u32 CreateBallParticleSprite(u32 ballId, s16 x, s16 y, u32 subpriority)
 
 u32 GetBattlerPokeballItemId(u32 battlerId)
 {
+    if (GetActiveGimmick(battlerId) == GIMMICK_DYNAMAX)
+        return ITEM_TO_BALL(DYNAMAX_BALL);
+        
     return GetMonData(GetBattlerIllusionPartyIndexPtr(battlerId), MON_DATA_POKEBALL);
 }
 
@@ -683,7 +692,7 @@ static void Task_DoPokeballSendOutAnim(u32 taskId)
         return;
     }
     battlerId = gTasks[taskId].tBattler;
-    ballId = ItemIdToBallId(GetBattlerPokeballItemId(battlerId));
+    ballId = GetBattlerPokeballItemId(battlerId);
     
     LoadBallGfx(ballId);
     
@@ -799,7 +808,7 @@ static void Task_PlayCryWhenReleasedFromBall(u32 taskId)
 
 static void SpriteCB_ReleaseMonFromBall(struct Sprite *sprite)
 {
-    u32 battlerId = sprite->sBattler, ballId = ItemIdToBallId(GetBattlerPokeballItemId(battlerId));
+    u32 battlerId = sprite->sBattler, ballId = GetBattlerPokeballItemId(battlerId);
 
     StartSpriteAnim(sprite, 1);
     LaunchBallStarsTask(sprite->x, sprite->y - 5, 1, 0x1C, ballId);
@@ -891,7 +900,7 @@ static void HandleBallAnimEnd(struct Sprite *sprite)
         
         if (doneBattlers == MAX_BATTLERS_COUNT)
         {
-            for (i = 0; i < ITEM_TO_BALL(POKE_BALL_ITEMS_END); i++)
+            for (i = 0; i < ITEM_TO_BALL(NUM_POKE_BALL_GRAPHICS); i++)
                 FreeBallGfx(i);
         }
     }
@@ -1193,7 +1202,7 @@ static void DestroyBallOpenAnimationParticle(struct Sprite *sprite)
     {
         if (--gBattleSpritesDataPtr->animationData->particleCounter == 0)
         {
-            for (i = 0; i < ITEM_TO_BALL(POKE_BALL_ITEMS_END); i++)
+            for (i = 0; i < ITEM_TO_BALL(NUM_POKE_BALL_GRAPHICS); i++)
             {
                 u32 tag = GET_BALL_PARTICLE_TAG(i);
                 FreeSpriteTilesByTag(tag);
@@ -1440,7 +1449,7 @@ static void RepeatBallOpenParticleAnimation(u32 taskId)
     u32 priority = gTasks[taskId].data[3], subpriority = gTasks[taskId].data[4];
     u8 x = gTasks[taskId].data[1], y = gTasks[taskId].data[2];
 
-    for (i = 0; i < ITEM_TO_BALL(POKE_BALL_ITEMS_END); i++)
+    for (i = 0; i < ITEM_TO_BALL(NUM_POKE_BALL_GRAPHICS); i++)
     {
         spriteId = CreateBallParticleSprite(ballId, x, y, subpriority);
         

@@ -98,6 +98,8 @@ void CB2_TestRunner(void)
             MgbaPrintf_(":N%s", gTestRunnerState.test->name);
             gTestRunnerState.result = TEST_RESULT_PASS;
             gTestRunnerState.expectedResult = TEST_RESULT_PASS;
+            gTestRunnerState.expectedFailLine = 0;
+            gTestRunnerState.expectedFailState = NO_EXPECT_FAIL;
             if (gTestRunnerHeadless)
                 gTestRunnerState.timeoutSeconds = TIMEOUT_SECONDS;
             else
@@ -179,10 +181,24 @@ void CB2_TestRunner(void)
             {
                 const char *color;
                 const char *result;
+                bool32 expectedFailOnCorrectLine = FALSE;
     
                 gTestRunnerState.tests++;
-    
-                if (gTestRunnerState.result == gTestRunnerState.expectedResult)
+                
+                if (gTestRunnerState.expectedFailState == EXPECT_FAIL_SUCCESS)
+                {
+                    // Failed within expected block; pass
+                    expectedFailOnCorrectLine = TRUE;
+                    color = "\e[32m";
+                    MgbaPrintf_(":N%s", gTestRunnerState.test->name);
+                }
+                else if (gTestRunnerState.expectedFailState == EXPECT_FAIL_CLOSED && gTestRunnerState.result == TEST_RESULT_FAIL)
+                {
+                    // Failed outside expected block; fail
+                    gTestRunnerState.exitCode = 1;
+                    color = "\e[31m";
+                }
+                else if (gTestRunnerState.result == gTestRunnerState.expectedResult)
                 {
                     gTestRunnerState.passes++;
                     color = "\e[32m";
@@ -198,7 +214,8 @@ void CB2_TestRunner(void)
                     color = "";
                 }
     
-                if (gTestRunnerState.result == TEST_RESULT_PASS && gTestRunnerState.result != gTestRunnerState.expectedResult)
+                if (gTestRunnerState.result == TEST_RESULT_PASS && gTestRunnerState.result != gTestRunnerState.expectedResult
+                && gTestRunnerState.expectedFailLine == 0)
                 {
                     MgbaPuts_("\e[31mPlease remove KNOWN_FAILING if this test intentionally PASSes\e[0m");
                 }
@@ -206,7 +223,17 @@ void CB2_TestRunner(void)
                 switch (gTestRunnerState.result)
                 {
                 case TEST_RESULT_FAIL:
-                    if (gTestRunnerState.expectedResult == TEST_RESULT_FAIL)
+                    if (expectedFailOnCorrectLine)
+                    {
+                        result = "EXPECTED_FAIL";
+                        color = "\e[32m";
+                    }
+                    else if (gTestRunnerState.expectedResult == TEST_RESULT_FAIL && gTestRunnerState.expectedFailState != EXPECT_FAIL_SUCCESS)
+                    {
+                        // Failed on wrong line
+                        result = "UNEXPECTED_FAIL_LINE";
+                    }
+                    else if (gTestRunnerState.expectedResult == TEST_RESULT_FAIL)
                     {
                         result = "KNOWN_FAILING";
                         color = "\e[33m";
@@ -220,7 +247,12 @@ void CB2_TestRunner(void)
                     result = "TO_DO";
                     color = "\e[33m";
                     break;
-                case TEST_RESULT_PASS: result = "PASS"; break;
+                case TEST_RESULT_PASS:
+                    if (gTestRunnerState.expectedResult != TEST_RESULT_PASS && gTestRunnerState.expectedFailLine != 0)
+                        result = "EXPECTED_FAIL_PASS";
+                    else
+                        result = "PASS";
+                    break;
                 case TEST_RESULT_SKIP: result = "SKIP"; break;
                 case TEST_RESULT_INVALID: result = "INVALID"; break;
                 case TEST_RESULT_ERROR: result = "ERROR"; break;
@@ -230,7 +262,8 @@ void CB2_TestRunner(void)
     
                 MgbaPrintf_(":R%s%s\e[0m", color, result);
             }
-    
+            gTestRunnerState.expectedFailLine = 0;
+            gTestRunnerState.expectedFailState = NO_EXPECT_FAIL;
             break;
     
         case STATE_EXIT:
@@ -242,6 +275,26 @@ void CB2_TestRunner(void)
 void Test_ExpectedResult(enum TestResult result)
 {
     gTestRunnerState.expectedResult = result;
+}
+
+void Test_ExpectFail(u32 failLine)
+{
+    // If expecting a fail and fail has not already been encountered
+    if ((gTestRunnerState.expectedFailState != EXPECT_FAIL_SUCCESS)
+    && (gTestRunnerState.expectedFailState != EXPECT_FAIL_TURN_OPEN)
+    && (gTestRunnerState.expectedFailState != EXPECT_FAIL_SCENE_OPEN))
+    {
+        if (failLine == -1)
+        {
+            Test_ExpectedResult(TEST_RESULT_FAIL);
+            gTestRunnerState.expectedFailState = EXPECT_FAIL_OPEN;
+        }
+        else
+        {
+            gTestRunnerState.expectedFailLine = failLine;
+            gTestRunnerState.expectedFailState = EXPECT_FAIL_CLOSED;
+        }
+    }
 }
 
 static void FunctionTest_SetUp(void *data)
@@ -333,9 +386,29 @@ static void Intr_Timer2(void)
     }
 }
 
-void Test_ExitWithResult(enum TestResult result, const char *fmt, ...)
+void Test_ExitWithResult(enum TestResult result, u32 stopLine, const char *fmt, ...)
 {
     gTestRunnerState.result = result;
+    
+    if (result == TEST_RESULT_FAIL)
+    {
+        switch (gTestRunnerState.expectedFailState)
+        {
+            case EXPECT_FAIL_OPEN:
+            case EXPECT_FAIL_TURN_OPEN:
+                gTestRunnerState.expectedFailState = EXPECT_FAIL_SUCCESS;
+                break;
+            case EXPECT_FAIL_SCENE_OPEN: // EXPECT_FAIL_SUCCESS set in individual Queue functions
+                gTestRunnerState.expectedFailState = EXPECT_FAIL_CLOSED;
+                break;
+        }
+    }
+
+    if (gTestRunnerState.expectedFailState == EXPECT_FAIL_CLOSED && gTestRunnerState.expectedResult == TEST_RESULT_FAIL && result == TEST_RESULT_FAIL)
+    {
+        MgbaPrintf_(":L%s:%d: Expected failure in block from line %d, but failed on line %d", gTestRunnerState.test->filename, stopLine, gTestRunnerState.expectedFailLine, stopLine);
+    }
+    
     ReinitCallbacks();
     
     if (gTestRunnerState.state == STATE_REPORT_RESULT && gTestRunnerState.result != gTestRunnerState.expectedResult)

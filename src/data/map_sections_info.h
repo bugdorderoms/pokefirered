@@ -12,12 +12,29 @@
         .name = sMapsecName_##mapSecName,                                            \
     }
 
+#define RAID(_data)                   \
+    {                                 \
+        .data = _data,                \
+        .amount = ARRAY_COUNT(_data), \
+    }
+
 const struct MapSectionInfo gMapSectionsInfo[MAPSEC_COUNT] =
 {
     // Hoenn (Unused)
     [MAPSEC_LITTLEROOT_TOWN] =
     {
         .region = REGION_HOENN,
+        /* Example of how to add raids
+        
+        .raidClearedFlagId = FLAG_LITTLEROOT_TOWN_RAID_CLEARED,
+        .raids =
+        {
+            [ONE_STAR_RAID - 1] = RAID(sLittlerootTown_OneStarRaids),
+            [TWO_STAR_RAID - 1] = RAID(sLittlerootTown_TwoStarRaids),
+            // and so on...
+        },
+        
+        */
     },
     [MAPSEC_OLDALE_TOWN] =
     {

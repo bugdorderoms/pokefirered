@@ -1121,6 +1121,124 @@ const struct BattleMoveEffect gBattleMoveEffects[EFFECTS_COUNT] =
         .battleScript = BattleScript_EffectHit,
     },
     
+    
+    
+    
+    [EFFECT_EERIE_SPELL] =
+    {
+        .battleScript = BattleScript_EffectEerieSpell,
+    },
+    
+    [EFFECT_MAX_GUARD] =
+    {
+        .battleScript = BattleScript_EffectProtect,
+    },
+    
+    [EFFECT_FOES_SP_ATK_DOWN_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesSpAttackDownHit,
+    },
+    
+    [EFFECT_FOES_SPEED_DOWN_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesSpeedDownHit,
+    },
+    
+    [EFFECT_ALLIES_ATTACK_UP_HIT] =
+    {
+        .battleScript = BattleScript_EffectAlliesAttackUpHit,
+    },
+    
+    [EFFECT_FOES_DEFENSE_DOWN_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesDefenseDownHit,
+    },
+    
+    [EFFECT_ALLIES_SP_ATK_UP_HIT] =
+    {
+        .battleScript = BattleScript_EffectAlliesSpAttackUpHit,
+    },
+    
+    [EFFECT_ALLIES_SPEED_UP_HIT] =
+    {
+        .battleScript = BattleScript_EffectAlliesSpeedUpHit,
+    },
+    
+    [EFFECT_FOES_ATTACK_DOWN_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesAttackDownHit,
+    },
+    
+    [EFFECT_ALLIES_SP_DEF_UP_HIT] =
+    {
+        .battleScript = BattleScript_EffectAlliesSpDefUpHit,
+    },
+    
+    [EFFECT_FOES_SP_DEF_DOWN_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesSpDefDownHit,
+    },
+    
+    [EFFECT_ALLIES_DEFENSE_UP_HIT] =
+    {
+        .battleScript = BattleScript_EffectAlliesDefenseUpHit,
+    },
+    
+    [EFFECT_GMAX_BEFUDDLE] =
+    {
+        .battleScript = BattleScript_EffectGMaxBefuddle,
+    },
+    
+    [EFFECT_GMAX_CHI_STRIKE] =
+    {
+        .battleScript = BattleScript_EffectGMaxChiStrike,
+    },
+    
+    [EFFECT_GMAX_TERROR] =
+    {
+        .battleScript = BattleScript_EffectGMaxTerror,
+    },
+    
+    [EFFECT_GMAX_RESONANCE] =
+    {
+        .battleScript = BattleScript_EffectGMaxResonance,
+    },
+    
+    [EFFECT_GMAX_WIND_RAGE] =
+    {
+        .battleScript = BattleScript_EffectGMaxWindRage,
+    },
+    
+    [EFFECT_GMAX_FINALE] =
+    {
+        .battleScript = BattleScript_EffectGMaxFinale,
+    },
+    
+    [EFFECT_GMAX_SNOOZE] =
+    {
+        .battleScript = BattleScript_EffectGMaxSnooze,
+    },
+    
+    [EFFECT_FOES_EVASION_DOWN_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesEvasionDownHit,
+    },
+    
+    [EFFECT_ALLIES_STATUS_HEAL_HIT] =
+    {
+        .battleScript = BattleScript_EffectAlliesStatusHealHit,
+    },
+    
+    [EFFECT_GMAX_MELTDOWN] =
+    {
+        .battleScript = BattleScript_EffectGMaxMeltdown,
+    },
+    
+    [EFFECT_FOES_SPEED_DOWN_2_HIT] =
+    {
+        .battleScript = BattleScript_EffectFoesSpeedDown2Hit,
+    },
+
     /*
     [EFFECT_TERRAIN_PULSE] =
     {

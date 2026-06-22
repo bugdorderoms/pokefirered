@@ -102,7 +102,7 @@ static void UpdateLinkPlayerCountDisplay(u32 taskId, u32 num)
     }
 }
 
-static u32 sub_8080844(u32 lower, u32 higher)
+u32 sub_8080844(u32 lower, u32 higher)
 {
     switch (GetLinkPlayerDataExchangeStatusTimed(lower, higher))
     {
@@ -124,7 +124,7 @@ static u32 sub_8080844(u32 lower, u32 higher)
 
 static bool32 sub_80808BC(u32 taskId)
 {
-    if (HasLinkErrorOccurred() == TRUE)
+    if (HasLinkErrorOccurred())
     {
         gTasks[taskId].func = Task_Linkup_ErroredOut;
         return TRUE;
@@ -280,24 +280,23 @@ static void Task_LinkupMaster_5(u32 taskId)
 
 static void Task_LinkupSlave_2(u32 taskId)
 {
+    u32 res;
     u32 lower = gTasks[taskId].data[1];
     u32 higher = gTasks[taskId].data[2];
-    u16 *res;
     
     if (sub_80808F0(taskId) != TRUE && sub_80808BC(taskId) != TRUE)
     {
-        res = &gSpecialVar_Result;
-        *res = sub_8080844(lower, higher);
+        gSpecialVar_Result = res = sub_8080844(lower, higher);
         
-        if (*res)
+        if (res)
         {
-            if (*res == 3 || *res == 4)
+            if (res == 3 || res == 4)
             {
                 SetCloseLinkCallback();
                 HideFieldMessageBox();
                 gTasks[taskId].func = Task_Linkup_7;
             }
-            else if (*res == 7 || *res == 9)
+            else if (res == 7 || res == 9)
             {
                 CloseLink();
                 HideFieldMessageBox();
@@ -315,7 +314,7 @@ static void Task_LinkupSlave_2(u32 taskId)
     }
 }
 
-static bool32 AnyConnectedPartnersPlayingRS(void)
+bool32 AnyConnectedPartnersPlayingRS(void)
 {
     u32 i, version;
 
@@ -469,7 +468,7 @@ void TryBattleLinkup(void)
 
 void TryTradeLinkup(void)
 {
-    gLinkType = LINKTYPE_0x1133;
+    gLinkType = LINKTYPE_TRADE_SETUP;
     gBattleTypeFlags = 0;
     CreateLinkupTask(2, 2);
 }
@@ -558,8 +557,7 @@ static void Task_StartWiredCableClubBattle(u32 taskId)
             task->data[0]++;
         break;
     case 2:
-        task->data[1]++;
-        if (task->data[1] > 20)
+        if (++task->data[1] > 20)
             task->data[0]++;
         break;
     case 3:
@@ -690,7 +688,7 @@ static void sub_8081624(void)
 
 void CB2_ReturnFromCableClubBattle(void)
 {
-    gBattleTypeFlags &= (u16)~(BATTLE_TYPE_LINK_ESTABLISHED);
+    gBattleTypeFlags &= ~(BATTLE_TYPE_LINK_ESTABLISHED);
     ResetMapMusic();
     LoadPlayerParty();
     SavePlayerBag();

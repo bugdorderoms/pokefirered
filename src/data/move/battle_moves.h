@@ -152,6 +152,7 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
         {
             .kingsRockAffected = TRUE,
         },
+        .argument = { .generic = 0 },
         .split = SPLIT_PHYSICAL,
         .additionalEffects = ADDITIONAL_EFFECTS({
             .moveEffect = MOVE_EFFECT_PAYDAY,
@@ -6240,13 +6241,6 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .magicCoatAffected = TRUE,
         },
         .split = SPLIT_STATUS,
-        .argument = {
-            .setStatus = {
-                .statusId = ID_STATUS2,
-                .status = COMPRESS_BITS(STATUS2_TORMENT),
-                .stringId = B_MSG_SUBJECTED_TO_TORMENT
-            }
-        },
         .zMoveEffect = Z_EFFECT_DEF_UP_1,
     },
 
@@ -18040,5 +18034,1224 @@ const struct BattleMove gBattleMoves[MOVES_COUNT] =
             .forbiddenMirrorMove = TRUE,
         },
         .split = SPLIT_PHYSICAL,
+    },
+    [MOVE_MAX_GUARD] =
+    {
+        .name = COMPOUND_STRING("Max Guard"),
+        .description = COMPOUND_STRING("Enables the user to\n"
+                                       "evade all attacks.\n"
+                                       "It may fail if used\n"
+                                       "in succession."),
+        .animScript = gMoveAnim_MAX_GUARD,
+        .effect = EFFECT_MAX_GUARD,
+        .type = TYPE_NORMAL,
+        .pp = 10,
+        .target = MOVE_TARGET_USER,
+        .priority = 4,
+        .flags =
+        {
+            .usesProtectCounter = TRUE,
+            .forbiddenProtect = TRUE,
+            .forbiddenMirrorMove = TRUE,
+        },
+        .split = SPLIT_STATUS,
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_FLARE] =
+    {
+        .name = COMPOUND_STRING("Max Flare"),
+        .description = COMPOUND_STRING("A Fire-type\n"
+                                       "Max Move. The user\n"
+                                       "intensifies the sun\n"
+                                       "for five turns."),
+        .animScript = gMoveAnim_MAX_FLARE,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_FIRE,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = {
+            .setWeather = {
+                .weatherId = ENUM_WEATHER_SUN,
+                .stringId = B_MSG_SUN_TURN_HARSH
+            }
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_SET_WEATHER,
+            .chance = 0,
+            .self = TRUE,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_FLUTTERBY] =
+    {
+        .name = COMPOUND_STRING("Max Flutterby"),
+        .description = COMPOUND_STRING("A Bug-type\n"
+                                       "Max Move. This\n"
+                                       "lowers the target's\n"
+                                       "Sp. Atk."),
+        .animScript = gMoveAnim_MAX_FLUTTERBY,
+        .effect = EFFECT_FOES_SP_ATK_DOWN_HIT,
+        .power = 1,
+        .type = TYPE_BUG,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_LIGHTNING] =
+    {
+        .name = COMPOUND_STRING("Max Lightning"),
+        .description = COMPOUND_STRING("A Electric-type\n"
+                                       "Max Move. Turns the\n"
+                                       "field into Electric\n"
+                                       "Terrain for 5 turns."),
+        .animScript = gMoveAnim_MAX_LIGHTNING,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_ELECTRIC,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_STRIKE] =
+    {
+        .name = COMPOUND_STRING("Max Strike"),
+        .description = COMPOUND_STRING("A Normal-type\n"
+                                       "Max Move. This\n"
+                                       "lowers the target's\n"
+                                       "Speed."),
+        .animScript = gMoveAnim_MAX_STRIKE,
+        .effect = EFFECT_FOES_SPEED_DOWN_HIT,
+        .power = 1,
+        .type = TYPE_NORMAL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_KNUCKLE] =
+    {
+        .name = COMPOUND_STRING("Max Knuckle"),
+        .description = COMPOUND_STRING("A Fighting-type\n"
+                                       "Max Move. It raises\n"
+                                       "ally Pokémon's\n"
+                                       "Attack stats."),
+        .animScript = gMoveAnim_MAX_KNUCKLE,
+        .effect = EFFECT_ALLIES_ATTACK_UP_HIT,
+        .power = 1,
+        .type = TYPE_FIGHTING,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_PHANTASM] =
+    {
+        .name = COMPOUND_STRING("Max Phantasm"),
+        .description = COMPOUND_STRING("A Ghost-type\n"
+                                       "Max Move. This\n"
+                                       "lowers the target's\n"
+                                       "Defense stat."),
+        .animScript = gMoveAnim_MAX_PHANTASM,
+        .effect = EFFECT_FOES_DEFENSE_DOWN_HIT,
+        .power = 1,
+        .type = TYPE_GHOST,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_HAILSTORM] =
+    {
+        .name = COMPOUND_STRING("Max Hailstorm"),
+        .description = COMPOUND_STRING("A Ice-type\n"
+                                       "Max Move. The user\n"
+                                       "summons a hailstorm\n"
+                                       "lasting five turns."),
+        .animScript = gMoveAnim_MAX_HAILSTORM,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_ICE,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = {
+            .setWeather = {
+                .weatherId = ENUM_WEATHER_HAIL,
+                .stringId = B_MSG_STARTED_HAIL
+            }
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_SET_WEATHER,
+            .chance = 0,
+            .self = TRUE,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_OOZE] =
+    {
+        .name = COMPOUND_STRING("Max Ooze"),
+        .description = COMPOUND_STRING("A Poison-type\n"
+                                       "Max Move. It raises\n"
+                                       "ally Pokémon's\n"
+                                       "Sp. Atk stats."),
+        .animScript = gMoveAnim_MAX_OOZE,
+        .effect = EFFECT_ALLIES_SP_ATK_UP_HIT,
+        .power = 1,
+        .type = TYPE_POISON,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_GEYSER] =
+    {
+        .name = COMPOUND_STRING("Max Geyser"),
+        .description = COMPOUND_STRING("A Water-type\n"
+                                       "Max Move. It\n"
+                                       "summons a heavy\n"
+                                       "rain for five turns."),
+        .animScript = gMoveAnim_MAX_GEYSER,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_WATER,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = {
+            .setWeather = {
+                .weatherId = ENUM_WEATHER_RAIN,
+                .stringId = B_MSG_STARTED_RAIN
+            }
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_SET_WEATHER,
+            .chance = 0,
+            .self = TRUE,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_AIRSTREAM] =
+    {
+        .name = COMPOUND_STRING("Max Airstream"),
+        .description = COMPOUND_STRING("A Flying-type\n"
+                                       "Max Move. It raises\n"
+                                       "ally Pokémon's\n"
+                                       "Speed stats."),
+        .animScript = gMoveAnim_MAX_AIRSTREAM,
+        .effect = EFFECT_ALLIES_SPEED_UP_HIT,
+        .power = 1,
+        .type = TYPE_FLYING,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_STARFALL] =
+    {
+        .name = COMPOUND_STRING("Max Starfall"),
+        .description = COMPOUND_STRING("A Fairy-type\n"
+                                       "Max Move. Turns the\n"
+                                       "field into Misty\n"
+                                       "Terrain for 5 turns."),
+        .animScript = gMoveAnim_MAX_STARFALL,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_FAIRY,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_WYRMWIND] =
+    {
+        .name = COMPOUND_STRING("Max Wyrmwind"),
+        .description = COMPOUND_STRING("A Dragon-type\n"
+                                       "Max Move. This\n"
+                                       "lowers the target's\n"
+                                       "Attack stat."),
+        .animScript = gMoveAnim_MAX_WYRMWIND,
+        .effect = EFFECT_FOES_ATTACK_DOWN_HIT,
+        .power = 1,
+        .type = TYPE_DRAGON,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_MINDSTORM] =
+    {
+        .name = COMPOUND_STRING("Max Mindstorm"),
+        .description = COMPOUND_STRING("A Psychic-type\n"
+                                       "Max Move. Turns the\n"
+                                       "field into Psychic\n"
+                                       "Terrain for 5 turns."),
+        .animScript = gMoveAnim_MAX_MINDSTORM,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_PSYCHIC,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_ROCKFALL] =
+    {
+        .name = COMPOUND_STRING("Max Rockfall"),
+        .description = COMPOUND_STRING("A Rock-type\n"
+                                       "Max Move. The user\n"
+                                       "summons a sandstorm\n"
+                                       "lasting five turns."),
+        .animScript = gMoveAnim_MAX_ROCKFALL,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_ROCK,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = {
+            .setWeather = {
+                .weatherId = ENUM_WEATHER_SANDSTORM,
+                .stringId = B_MSG_SANDSTORM_UP
+            }
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_SET_WEATHER,
+            .chance = 0,
+            .self = TRUE,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_QUAKE] =
+    {
+        .name = COMPOUND_STRING("Max Quake"),
+        .description = COMPOUND_STRING("A Ground-type\n"
+                                       "Max Move. It raises\n"
+                                       "ally Pokémon's\n"
+                                       "Sp. Def stats."),
+        .animScript = gMoveAnim_MAX_QUAKE,
+        .effect = EFFECT_ALLIES_SP_DEF_UP_HIT,
+        .power = 1,
+        .type = TYPE_GROUND,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_DARKNESS] =
+    {
+        .name = COMPOUND_STRING("Max Darkness"),
+        .description = COMPOUND_STRING("A Dark-type\n"
+                                       "Max Move. This\n"
+                                       "lowers the target's\n"
+                                       "Sp. Def stat."),
+        .animScript = gMoveAnim_MAX_DARKNESS,
+        .effect = EFFECT_FOES_SP_DEF_DOWN_HIT,
+        .power = 1,
+        .type = TYPE_DARK,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_OVERGROWTH] =
+    {
+        .name = COMPOUND_STRING("Max Overgrowth"),
+        .description = COMPOUND_STRING("A Grass-type\n"
+                                       "Max Move. Turns the\n"
+                                       "field into Grassy\n"
+                                       "Terrain for 5 turns."),
+        .animScript = gMoveAnim_MAX_OVERGROWTH,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_GRASS,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_MAX_STEELSPIKE] =
+    {
+        .name = COMPOUND_STRING("Max Steelspike"),
+        .description = COMPOUND_STRING("A Steel-type\n"
+                                       "Max Move. It raises\n"
+                                       "ally Pokémon's\n"
+                                       "Defense stats."),
+        .animScript = gMoveAnim_MAX_STEELSPIKE,
+        .effect = EFFECT_ALLIES_DEFENSE_UP_HIT,
+        .power = 1,
+        .type = TYPE_STEEL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_WILDFIRE] =
+    {
+        .name = COMPOUND_STRING("G-Max Wildfire"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Charizard's move.\n"
+                                       "It deals damage for\n"
+                                       "four turns."),
+        .animScript = gMoveAnim_GMAX_WILDFIRE,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_FIRE,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = B_SIDE_QUEUED_GMAX_WILDFIRE },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_DAMAGE_NON_TYPES,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_BEFUDDLE] =
+    {
+        .name = COMPOUND_STRING("G-Max Befuddle"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Butterfree's move.\n"
+                                       "It inflicts poison,\n"
+                                       "paralyze or sleep."),
+        .animScript = gMoveAnim_GMAX_BEFUDDLE,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_BUG,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_GMAX_BEFUDDLE,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_VOLT_CRASH] =
+    {
+        .name = COMPOUND_STRING("G-Max Volt Crash"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Pikachu's move.\n"
+                                       "This move paralyzes\n"
+                                       "opponents."),
+        .animScript = gMoveAnim_GMAX_VOLT_CRASH,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_ELECTRIC,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_PARALYSIS,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_GOLD_RUSH] =
+    {
+        .name = COMPOUND_STRING("G-Max Gold Rush"),
+        .description = COMPOUND_STRING("Gigantamax Meowth's\n"
+                                       "move. It confuses\n"
+                                       "opponents and also\n"
+                                       "earns extra money."),
+        .animScript = gMoveAnim_GMAX_GOLD_RUSH,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_NORMAL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = 1 },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_CONFUSION,
+            .chance = 0,
+        },{
+            .moveEffect = MOVE_EFFECT_PAYDAY,
+            .chance = 0,
+            .onMoveEndOnly = TRUE,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_CHI_STRIKE] =
+    {
+        .name = COMPOUND_STRING("G-Max Chi Strike"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Machamp's move. It\n"
+                                       "raises the chance\n"
+                                       "of critical hits."),
+        .animScript = gMoveAnim_GMAX_CHI_STRIKE,
+        .effect = EFFECT_GMAX_CHI_STRIKE,
+        .power = 1,
+        .type = TYPE_FIGHTING,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_TERROR] =
+    {
+        .name = COMPOUND_STRING("G-Max Terror"),
+        .description = COMPOUND_STRING("Gigantamax Gengar's\n"
+                                       "move. It prevent\n"
+                                       "opposing Pokémon\n"
+                                       "from escaping."),
+        .animScript = gMoveAnim_GMAX_TERROR,
+        .effect = EFFECT_GMAX_TERROR,
+        .power = 1,
+        .type = TYPE_GHOST,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_RESONANCE] =
+    {
+        .name = COMPOUND_STRING("G-Max Resonance"),
+        .description = COMPOUND_STRING("Gigantamax Lapras's\n"
+                                       "move. It reduces\n"
+                                       "the damage received\n"
+                                       "for five turns."),
+        .animScript = gMoveAnim_GMAX_RESONANCE,
+        .effect = EFFECT_GMAX_RESONANCE,
+        .power = 1,
+        .type = TYPE_ICE,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_CUDDLE] =
+    {
+        .name = COMPOUND_STRING("G-Max Cuddle"),
+        .description = COMPOUND_STRING("Gigantamax Eevee's\n"
+                                       "move. This move\n"
+                                       "infatuates\n"
+                                       "opponents."),
+        .animScript = gMoveAnim_GMAX_CUDDLE,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_NORMAL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_INFATUATION,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_REPLENISH] =
+    {
+        .name = COMPOUND_STRING("G-Max Replenish"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Snorlax's move.\n"
+                                       "This move restores\n"
+                                       "Berries eaten."),
+        .animScript = gMoveAnim_GMAX_REPLENISH,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_NORMAL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_MALODOR] =
+    {
+        .name = COMPOUND_STRING("G-Max Malodor"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Garbodor's move.\n"
+                                       "This move poisons\n"
+                                       "opponents."),
+        .animScript = gMoveAnim_GMAX_MALODOR,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_POISON,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_POISON,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_STONESURGE] =
+    {
+        .name = COMPOUND_STRING("G-Max Stonesurge"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Drednaw's move. It\n"
+                                       "scatters sharp\n"
+                                       "rocks on the field."),
+        .animScript = gMoveAnim_GMAX_STONESURGE,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_WATER,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_STEALTH_ROCK,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_WIND_RAGE] =
+    {
+        .name = COMPOUND_STRING("G-Max Wind Rage"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Corviknight's move.\n"
+                                       "It removes spikes,\n"
+                                       "reflect, etc."),
+        .animScript = gMoveAnim_GMAX_WIND_RAGE,
+        .effect = EFFECT_GMAX_WIND_RAGE,
+        .power = 1,
+        .type = TYPE_FLYING,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_STUN_SHOCK] =
+    {
+        .name = COMPOUND_STRING("G-Max Stun Shock"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Toxtricity's move.\n"
+                                       "It poisons or\n"
+                                       "paralyzes opponents."),
+        .animScript = gMoveAnim_GMAX_STUN_SHOCK,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_ELECTRIC,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_GMAX_STUN_SHOCK,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_FINALE] =
+    {
+        .name = COMPOUND_STRING("G-Max Finale"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Alcremie's move.\n"
+                                       "This move heals the\n"
+                                       "HP of allies."),
+        .animScript = gMoveAnim_GMAX_FINALE,
+        .effect = EFFECT_GMAX_FINALE,
+        .power = 1,
+        .type = TYPE_FAIRY,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_DEPLETION] =
+    {
+        .name = COMPOUND_STRING("G-Max Depletion"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Duraludon's move.\n"
+                                       "Reduces the PP of\n"
+                                       "the last move used."),
+        .animScript = gMoveAnim_GMAX_DEPLETION,
+        .effect = EFFECT_EERIE_SPELL,
+        .power = 1,
+        .type = TYPE_DRAGON,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = 2 },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_GRAVITAS] =
+    {
+        .name = COMPOUND_STRING("G-Max Gravitas"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Orbeetle's move. It\n"
+                                       "changes gravity for\n"
+                                       "five turns."),
+        .animScript = gMoveAnim_GMAX_GRAVITAS,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_PSYCHIC,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_SET_GRAVITY,
+            .chance = 0,
+            .self = TRUE,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_VOLCALITH] =
+    {
+        .name = COMPOUND_STRING("G-Max Volcalith"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Coalossal's move.\n"
+                                       "It deals damage for\n"
+                                       "four turns."),
+        .animScript = gMoveAnim_GMAX_VOLCALITH,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_ROCK,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = B_SIDE_QUEUED_GMAX_VOLCALITH },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_DAMAGE_NON_TYPES,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_SANDBLAST] =
+    {
+        .name = COMPOUND_STRING("G-Max Sandblast"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Sandaconda's move.\n"
+                                       "It traps the foes\n"
+                                       "for 4-5 turns."),
+        .animScript = gMoveAnim_GMAX_SANDBLAST,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_GROUND,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = MOVE_SAND_TOMB },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_WRAP,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_SNOOZE] =
+    {
+        .name = COMPOUND_STRING("G-Max Snooze"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Grimmsnarl's move.\n"
+                                       "Lulls the foe into\n"
+                                       "sleep next turn."),
+        .animScript = gMoveAnim_GMAX_SNOOZE,
+        .effect = EFFECT_GMAX_SNOOZE,
+        .power = 1,
+        .type = TYPE_DARK,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_TARTNESS] =
+    {
+        .name = COMPOUND_STRING("G-Max Tartness"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Flapple's move. It\n"
+                                       "reduces opponents'\n"
+                                       "evasiveness."),
+        .animScript = gMoveAnim_GMAX_TARTNESS,
+        .effect = EFFECT_FOES_EVASION_DOWN_HIT,
+        .power = 1,
+        .type = TYPE_GRASS,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_SWEETNESS] =
+    {
+        .name = COMPOUND_STRING("G-Max Sweetness"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Appletun's move.\n"
+                                       "This move heals the\n"
+                                       "status of allies."),
+        .animScript = gMoveAnim_GMAX_SWEETNESS,
+        .effect = EFFECT_ALLIES_STATUS_HEAL_HIT,
+        .power = 1,
+        .type = TYPE_GRASS,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_SMITE] =
+    {
+        .name = COMPOUND_STRING("G-Max Smite"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Hatterene's move.\n"
+                                       "This move confuses\n"
+                                       "opponents."),
+        .animScript = gMoveAnim_GMAX_SMITE,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_FAIRY,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_CONFUSION,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_STEELSURGE] =
+    {
+        .name = COMPOUND_STRING("G-Max Steelsurge"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Copperajah's move.\n"
+                                       "It scatters sharp\n"
+                                       "spikes on the field."),
+        .animScript = gMoveAnim_GMAX_STEELSURGE,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_STEEL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_STEELSURGE,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_MELTDOWN] =
+    {
+        .name = COMPOUND_STRING("G-Max Meltdown"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Melmetal's move.\n"
+                                       "Foes can't use the\n"
+                                       "same move in a row."),
+        .animScript = gMoveAnim_GMAX_MELTDOWN,
+        .effect = EFFECT_GMAX_MELTDOWN,
+        .power = 1,
+        .type = TYPE_STEEL,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_FOAM_BURST] =
+    {
+        .name = COMPOUND_STRING("G-Max Foam Burst"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Kingler's move. It\n"
+                                       "harshly lowers the\n"
+                                       "Speed of opponents."),
+        .animScript = gMoveAnim_GMAX_FOAM_BURST,
+        .effect = EFFECT_FOES_SPEED_DOWN_2_HIT,
+        .power = 1,
+        .type = TYPE_WATER,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_CENTIFERNO] =
+    {
+        .name = COMPOUND_STRING("G-Max Centiferno"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Centiskorch's move.\n"
+                                       "It traps the foes\n"
+                                       "for 4-5 turns."),
+        .animScript = gMoveAnim_GMAX_CENTIFERNO,
+        .effect = EFFECT_GMAX_BEFUDDLE,
+        .power = 1,
+        .type = TYPE_FIRE,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = MOVE_FIRE_SPIN },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_WRAP,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_VINE_LASH] =
+    {
+        .name = COMPOUND_STRING("G-Max Vine Lash"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Venusaur's move. It\n"
+                                       "deals damage for\n"
+                                       "four turns."),
+        .animScript = gMoveAnim_GMAX_VINE_LASH,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_GRASS,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = B_SIDE_QUEUED_GMAX_VINE_LASH },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_DAMAGE_NON_TYPES,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_CANNONADE] =
+    {
+        .name = COMPOUND_STRING("G-Max Cannonade"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Blastoise's move.\n"
+                                       "It deals damage for\n"
+                                       "four turns."),
+        .animScript = gMoveAnim_GMAX_CANNONADE,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_WATER,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .argument = { .generic = B_SIDE_QUEUED_GMAX_CANNONADE },
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_DAMAGE_NON_TYPES,
+            .chance = 0,
+        }),
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_DRUM_SOLO] =
+    {
+        .name = COMPOUND_STRING("G-Max Drum Solo"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Rillaboom's move.\n"
+                                       "This move ignores\n"
+                                       "all Abilities."),
+        .animScript = gMoveAnim_GMAX_DRUM_SOLO,
+        .effect = EFFECT_HIT,
+        .power = 160,
+        .type = TYPE_GRASS,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .ignoreAbilities = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_FIREBALL] =
+    {
+        .name = COMPOUND_STRING("G-Max Fireball"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Cinderace's move.\n"
+                                       "This move ignores\n"
+                                       "all Abilities."),
+        .animScript = gMoveAnim_GMAX_FIREBALL,
+        .effect = EFFECT_HIT,
+        .power = 160,
+        .type = TYPE_FIRE,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .ignoreAbilities = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_HYDROSNIPE] =
+    {
+        .name = COMPOUND_STRING("G-Max Hydrosnipe"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Inteleon's move.\n"
+                                       "This move ignores\n"
+                                       "all Abilities."),
+        .animScript = gMoveAnim_GMAX_HYDROSNIPE,
+        .effect = EFFECT_HIT,
+        .power = 160,
+        .type = TYPE_WATER,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .ignoreAbilities = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_ONE_BLOW] =
+    {
+        .name = COMPOUND_STRING("G-Max One Blow"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Urshifu's move.\n"
+                                       "This move can\n"
+                                       "ignore Max Guard."),
+        .animScript = gMoveAnim_GMAX_ONE_BLOW,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_DARK,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenProtect = TRUE,
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
+    },
+    [MOVE_GMAX_RAPID_FLOW] =
+    {
+        .name = COMPOUND_STRING("G-Max Rapid Flow"),
+        .description = COMPOUND_STRING("Gigantamax\n"
+                                       "Urshifu's move.\n"
+                                       "This move can\n"
+                                       "ignore Max Guard."),
+        .animScript = gMoveAnim_GMAX_RAPID_FLOW,
+        .effect = EFFECT_HIT,
+        .power = 1,
+        .type = TYPE_WATER,
+        .pp = 10,
+        .target = MOVE_TARGET_SELECTED_OPPONENT,
+        .flags =
+        {
+            .forbiddenProtect = TRUE,
+            .forbiddenMirrorMove = TRUE,
+            .kingsRockAffected = TRUE,
+            .forbiddenParentalBond = TRUE,
+        },
+        .zMoveEffect = Z_EFFECT_NONE,
     },
 };

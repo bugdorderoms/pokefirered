@@ -536,7 +536,7 @@ bool32 IsBattlerSpritePresent(u32 battlerId)
     if (gBattlerPositions[battlerId] == 0xFF)
         return FALSE;
     
-    if (!gBattleStruct->spriteIgnore0Hp)
+    if (!gBattleSpritesDataPtr->battlerData[battlerId].ignore0Hp)
     {
         if (!GetMonData(GetBattlerPartyIndexPtr(battlerId), MON_DATA_HP))
             return FALSE;
@@ -1570,16 +1570,28 @@ u32 CreateCloneOfSpriteInWindowMode(u32 spriteId)
 // Used by Detect/Disable for the spinnig sparkle.
 // arg 0: x offset
 // arg 1: y offset
-void SpriteCB_TrackOffsetFromAttackerAndWaitAnim(struct Sprite *sprite)
+void AnimDisableSparkle(struct Sprite *sprite)
 {
     SetSpriteCoordsToAnimAttackerCoords(sprite);
-    
+
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
         sprite->x -= gBattleAnimArgs[0];
     else
         sprite->x += gBattleAnimArgs[0];
     
     sprite->y += gBattleAnimArgs[1];
+    sprite->callback = RunStoredCallbackWhenAnimEnds;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+// Animates the twinkle at the location the target was knocked too in Twinkle Tackle's anim.
+// No args.
+void AnimTwinkleSparkle(struct Sprite *sprite)
+{
+    u32 monSpriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+    
+    sprite->x = gSprites[monSpriteId].x;
+    sprite->y = gSprites[monSpriteId].y;
     sprite->callback = RunStoredCallbackWhenAnimEnds;
     StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }

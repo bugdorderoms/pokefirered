@@ -69,7 +69,7 @@ void TransferPlttBuffer(void)
         void *dest = (void *)PLTT;
         DNSTransferPlttBuffer(src, dest);
         
-        sPlttBufferTransferPending = 0;
+        sPlttBufferTransferPending = FALSE;
         
         if (gPaletteFade.mode == HARDWARE_FADE && gPaletteFade.active)
             UpdateBlendRegisters();
@@ -141,10 +141,6 @@ bool32 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u32 startY, u32 ta
         gPaletteFade.bufferTransferDisabled = FALSE;
         
         TransferPlttBuffer();
-        sPlttBufferTransferPending = 0;
-        
-        if (gPaletteFade.mode == HARDWARE_FADE && gPaletteFade.active)
-            UpdateBlendRegisters();
         
         gPaletteFade.bufferTransferDisabled = temp;
         

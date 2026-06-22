@@ -57,6 +57,9 @@ bool32 BattleAI_ShouldSwitch(u32 battlerId)
         {
             u32 opposingBattler = BATTLE_OPPOSITE(battlerId);
             
+            if (IsDoubleBattleForBattler(opposingBattler) && !IsBattlerAlive(opposingBattler))
+                opposingBattler = BATTLE_PARTNER(opposingBattler);
+            
             for (i = 0; i < ARRAY_COUNT(sAIShouldSwitchFuncs); i++)
             {
                 u32 id = sAIShouldSwitchFuncs[i](battlerId, viableMons, availableToSwitch, opposingBattler);
@@ -117,11 +120,9 @@ u32 GetMostSuitableMonToSwitchInto(u32 battlerId)
     {
         u32 opposingBattler = BATTLE_OPPOSITE(battlerId);
         
-        if (IsDoubleBattleForBattler(opposingBattler))
-        {
-            if (!IsBattlerAlive(opposingBattler))
-                opposingBattler = BATTLE_PARTNER(opposingBattler);
-        }
+        if (IsDoubleBattleForBattler(opposingBattler) && !IsBattlerAlive(opposingBattler))
+            opposingBattler = BATTLE_PARTNER(opposingBattler);
+        
         return GetMostSuitableMonWithTypeMatchup(battlerId, opposingBattler);
     }
 }

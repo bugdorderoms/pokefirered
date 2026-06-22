@@ -1,0 +1,15 @@
+#ifndef GUARD_CONSTANTS_RAID_H
+#define GUARD_CONSTANTS_RAID_H
+
+#define ONE_STAR_RAID   1
+#define TWO_STAR_RAID   2
+#define THREE_STAR_RAID 3
+#define FOUR_STAR_RAID  4
+#define FIVE_STAR_RAID  5
+#define SIX_STAR_RAID   6
+#define RAID_STAR_COUNT 7
+
+#define MAX_RAID_PARTNERS 3
+#define MAX_RAID_DROPS    12
+
+#endif // GUARD_CONSTANTS_RAID_H

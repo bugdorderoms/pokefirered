@@ -13,6 +13,8 @@ void TestRunner_Battle_RecordMessage(const u8 *message);
 void TestRunner_Battle_RecordStatus1(u32 battlerId, u32 status1);
 void TestRunner_Battle_AfterLastTurn(void);
 
+u32 TestRunner_Battle_GetChosenGimmick(u32 battlerId, u32 partyIndex);
+
 void BattleTest_CheckBattleRecordActionType(u32 battlerId, u32 recordIndex, u32 actionType);
 
 #endif // GUARD_TEST_RUNNER_H

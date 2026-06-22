@@ -6,15 +6,16 @@
 #include "constants/form_change.h"
 #include "constants/pokemon.h"
 #include "constants/moves.h"
+#include "pokeball.h"
 #include "pokemon_storage_system.h"
 
 // Num bits necessary to compress Pokemon's data.
 #define NUM_SPECIES_BITS BITS_REQUIRED(NUM_SPECIES) // 11 bits currently
 #define NUM_NATURE_BITS BITS_REQUIRED(NUM_NATURES - 1) // 5 bits currently
 #define NUM_TYPES_BITS BITS_REQUIRED(NUMBER_OF_MON_TYPES - 1) // 5 bits currently
-#define NUM_POKEBALL_BITS BITS_REQUIRED(POKE_BALL_ITEMS_END) // 5 bits currently
+#define NUM_POKEBALL_BITS BITS_REQUIRED(ITEM_TO_BALL(POKE_BALL_ITEMS_END)) // 5 bits currently
 #define NUM_ITEM_BITS BITS_REQUIRED(ITEMS_COUNT - 1) // 10 bits currently
-#define NUM_MOVES_BITS BITS_REQUIRED(MOVES_COUNT - 1) // 10 bits currently
+#define NUM_MOVES_BITS BITS_REQUIRED(NORMAL_MOVES_END) // 10 bits currently
 
 struct BoxPokemon
 {
@@ -337,6 +338,7 @@ struct TypeInfo
 {
     const u32 *tmPalette;
     u16 teraBlendColor;
+    u16 maxMove;
     u8 name[TYPE_NAME_LENGTH + 1];
 };
 
@@ -544,6 +546,10 @@ void TryTransformZacianAndZamazentaIronHead(struct Pokemon *mon, bool32 transfor
 void TriggerSpecialOverworldEvo(void);
 u32 GetSpeciesFixedTeraType(u32 species);
 u32 GetMonTeraType(struct Pokemon *mon);
+u32 GetDynamaxLevelHPMultiplier(u32 dynamaxLevel, bool32 inverseMultiplier);
+bool32 IsGigantamaxSpecies(u32 species);
+bool32 IsBannedSpeciesForDynamaxing(u32 species);
+u32 GetSpeciesBaseStatsTotal(u32 species);
 
 static inline u32 GetNatureFromPersonality(u32 personality)
 {

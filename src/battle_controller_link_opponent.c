@@ -12,12 +12,12 @@
 
 static void LinkOpponentBufferRunCommand(u32 battlerId);
 static void LinkOpponentBufferExecCompleted(u32 battlerId);
+static void LinkOpponentHandleHealthbarUpdate(u32 battlerId);
 
 static void (*const sLinkOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = BtlController_HandleLoadMonSprite,
     [CONTROLLER_SWITCHINANIM]             = LinkOpponentHandleSwitchInAnim,
     [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
@@ -33,7 +33,7 @@ static void (*const sLinkOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_CHOOSEMOVE]               = BattleControllerComplete,
     [CONTROLLER_OPENBAG]                  = BattleControllerComplete,
     [CONTROLLER_CHOOSEPOKEMON]            = BattleControllerComplete,
-    [CONTROLLER_HEALTHBARUPDATE]          = BtlController_HandleHealthbarUpdateNoHpText,
+    [CONTROLLER_HEALTHBARUPDATE]          = LinkOpponentHandleHealthbarUpdate,
     [CONTROLLER_EXPUPDATE]                = BattleControllerComplete,
     [CONTROLLER_STATUSICONUPDATE]         = BtlController_HandleStatusIconUpdate,
     [CONTROLLER_STATUSANIMATION]          = BtlController_HandleStatusAnimation,
@@ -54,6 +54,14 @@ static void (*const sLinkOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
     [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
     [CONTROLLER_ENDLINKBATTLE]            = LinkOpponentHandleEndLinkBattle,
+    [CONTROLLER_GIMMICKSTATE]             = LinkOpponentHandleGimmickState,
+    [CONTROLLER_HEALTHBOXUPDATE]          = BtlController_HandleHealthboxUpdate,
+    [CONTROLLER_HIDEALLHEALTHBOXES]       = BtlController_HandleHideAllHealthboxes,
+    [CONTROLLER_BATTLEFORMCHANGE]         = BtlController_HandleBattleFormChange,
+    [CONTROLLER_PARTYFORMCHANGE]          = BtlController_HandlePartyFormChange,
+    [CONTROLLER_ISPOCKETNOTEMPTY]         = BattleControllerComplete,
+    [CONTROLLER_YESNOBOX]                 = BattleControllerComplete,
+    [CONTROLLER_MONCAUGHTEFFECTS]         = BattleControllerComplete,
     [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
@@ -106,9 +114,9 @@ void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
         playerId = GetBattlerMultiplayerId(battlerId);
         
         if (IsLinkPlayerFromHoenn(playerId))
-            trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_PKMN_TRAINER_MAY : FACILITY_CLASS_PKMN_TRAINER_BRENDAN];
+            trainerPicId = FacilityClassToPicIndex(gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_PKMN_TRAINER_MAY : FACILITY_CLASS_PKMN_TRAINER_BRENDAN);
         else
-            trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED];
+            trainerPicId = FacilityClassToPicIndex(gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED);
     }
     else
     {
@@ -119,12 +127,17 @@ void LinkOpponentHandleDrawTrainerPic(u32 battlerId)
             playerId = BATTLE_OPPOSITE(GetMultiplayerId());
             
             if (IsLinkPlayerFromHoenn(playerId))
-                trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_PKMN_TRAINER_MAY : FACILITY_CLASS_PKMN_TRAINER_BRENDAN];
+                trainerPicId = FacilityClassToPicIndex(gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_PKMN_TRAINER_MAY : FACILITY_CLASS_PKMN_TRAINER_BRENDAN);
             else
-                trainerPicId = gFacilityClassToPicIndex[gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED];
+                trainerPicId = FacilityClassToPicIndex(gLinkPlayers[playerId].gender != MALE ? FACILITY_CLASS_LEAF : FACILITY_CLASS_RED);
         }
     }
     BtlController_HandleDrawTrainerPic(battlerId, trainerPicId);
+}
+
+static void LinkOpponentHandleHealthbarUpdate(u32 battlerId)
+{
+    BtlController_HandleHealthbarUpdate(battlerId, FALSE, TRUE);
 }
 
 static void Intro_WaitForHealthbox(u32 battlerId)
@@ -206,4 +219,9 @@ void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId)
 void LinkOpponentHandleEndLinkBattle(u32 battlerId)
 {
     BtlController_HandleEndLinkBattle(battlerId, gBattleBufferA[battlerId][1] == B_OUTCOME_DREW ? gBattleBufferA[battlerId][1] : gBattleBufferA[battlerId][1] ^ B_OUTCOME_DREW, SetBattleEndCallbacks);
+}
+
+void LinkOpponentHandleGimmickState(u32 battlerId)
+{
+    BtlController_HandleGimmickState(battlerId, FALSE);
 }

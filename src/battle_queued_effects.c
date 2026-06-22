@@ -35,6 +35,7 @@ const u8 gEntryHazardsQueuedEffectIds[] =
     B_SIDE_QUEUED_TOXIC_SPIKES,
     B_SIDE_QUEUED_STEALTH_ROCK,
     B_SIDE_QUEUED_STICKY_WEB,
+    B_SIDE_QUEUED_GMAX_STEELSURGE,
     B_SIDE_QUEUED_COUNT
 };
 
@@ -106,7 +107,7 @@ bool32 TryDoQueuedBattleEffectsInSideList(u32 battlerId, const u8 *list, bool32(
 
 bool32 AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id)
 {
-    const u8 list[] = {id, B_BATTLER_QUEUED_COUNT};
+    const u8 list[2] = {id, B_BATTLER_QUEUED_COUNT};
     
     if (FindQueuedEffectsInBattlerList(battlerId, list) == B_BATTLER_QUEUED_COUNT)
     {
@@ -120,7 +121,7 @@ bool32 AddBattleEffectToBattlerQueueList(u32 battlerId, u32 id)
 
 bool32 AddBattleEffectToSideQueueList(u32 side, u32 id)
 {
-    const u8 list[] = {id, B_SIDE_QUEUED_COUNT};
+    const u8 list[2] = {id, B_SIDE_QUEUED_COUNT};
     
     if (FindQueuedEffectsInSideList(side, list) == B_SIDE_QUEUED_COUNT)
     {
@@ -134,7 +135,7 @@ bool32 AddBattleEffectToSideQueueList(u32 side, u32 id)
 
 void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id)
 {
-    const u8 list[] = {id, B_BATTLER_QUEUED_COUNT};
+    const u8 list[2] = {id, B_BATTLER_QUEUED_COUNT};
     u32 i, temp, pos = FindQueuedEffectsInBattlerList(battlerId, list);
     bool32 temp2;
     
@@ -154,7 +155,7 @@ void RemoveBattleEffectFromBattlerQueueList(u32 battlerId, u32 id)
 
 void RemoveBattleEffectFromSideQueueList(u32 side, u32 id)
 {
-    const u8 list[] = {id, B_SIDE_QUEUED_COUNT};
+    const u8 list[2] = {id, B_SIDE_QUEUED_COUNT};
     u32 i, temp, pos = FindQueuedEffectsInSideList(side, list);
     bool32 temp2;
     
@@ -227,7 +228,77 @@ bool32 QueuedEffects_DoWishFutureSight(u32 battlerId, u32 id)
 
 bool32 QueuedEffects_DoSeaOfFireAndGMaxEffects(u32 battlerId, u32 side, u32 id)
 {
-    return FALSE;
+    bool32 effect = FALSE;
+    u32 ability = GetBattlerAbility(battlerId);
+    
+    switch (id)
+    {
+        case B_SIDE_QUEUED_GMAX_WILDFIRE:
+            if (gSideTimers[side].gMaxWildfireTimer > 0)
+            {
+                if (--gSideTimers[side].gMaxWildfireTimer == 0)
+                    RemoveBattleEffectFromSideQueueList(side, id);
+                
+                if (!IsBattlerOfType(battlerId, TYPE_FIRE) && ability != ABILITY_MAGIC_GUARD)
+                {
+                    PrepareMoveBuffer(gBattleTextBuff1, MOVE_GMAX_WILDFIRE);
+                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_BURNING_WITHIN_FLAMES;
+                    
+                    DAMAGE_NON_TYPES:
+                    gBattleMoveDamage = GetNonDynamaxMaxHP(battlerId) / 6;
+                    if (gBattleMoveDamage == 0)
+                        gBattleMoveDamage = 1;
+                    
+                    gBattleScripting.animArg1 = id;
+                    BattleScriptExecute(BattleScript_DamageNonTypesTurnDmg);
+                    effect = TRUE;
+                }
+            }
+            break;
+        case B_SIDE_QUEUED_GMAX_VOLCALITH:
+            if (gSideTimers[side].gMaxVolcalithTimer > 0)
+            {
+                if (--gSideTimers[side].gMaxVolcalithTimer == 0)
+                    RemoveBattleEffectFromSideQueueList(side, id);
+                
+                if (!IsBattlerOfType(battlerId, TYPE_ROCK) && ability != ABILITY_MAGIC_GUARD)
+                {
+                    PrepareMoveBuffer(gBattleTextBuff1, MOVE_GMAX_VOLCALITH);
+                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ROCKS_CONTINUE_TO_ATTACK;
+                    goto DAMAGE_NON_TYPES;
+                }
+            }
+            break;
+        case B_SIDE_QUEUED_GMAX_VINE_LASH:
+            if (gSideTimers[side].gMaxVineLashTimer > 0)
+            {
+                if (--gSideTimers[side].gMaxVineLashTimer == 0)
+                    RemoveBattleEffectFromSideQueueList(side, id);
+                
+                if (!IsBattlerOfType(battlerId, TYPE_GRASS) && ability != ABILITY_MAGIC_GUARD)
+                {
+                    PrepareMoveBuffer(gBattleTextBuff1, MOVE_GMAX_VINE_LASH);
+                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HURT_BY_FEROCIOUS_BEATING;
+                    goto DAMAGE_NON_TYPES;
+                }
+            }
+            break;
+        case B_SIDE_QUEUED_GMAX_CANNONADE:
+            if (gSideTimers[side].gMaxCannonadeTimer > 0)
+            {
+                if (--gSideTimers[side].gMaxCannonadeTimer == 0)
+                    RemoveBattleEffectFromSideQueueList(side, id);
+                
+                if (!IsBattlerOfType(battlerId, TYPE_WATER) && ability != ABILITY_MAGIC_GUARD)
+                {
+                    PrepareMoveBuffer(gBattleTextBuff1, MOVE_GMAX_CANNONADE);
+                    gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_HURT_BY_VORTEX;
+                    goto DAMAGE_NON_TYPES;
+                }
+            }
+            break;
+    }
+    return effect;
 }
 
 static void SetDmgHazardsBattleScript(u32 multistringId)
@@ -305,7 +376,7 @@ bool32 QueuedEffects_DoEntryHazardsEffects(u32 battlerId, u32 side, u32 id)
             case B_SIDE_QUEUED_TOXIC_SPIKES:
                 if (IsBattlerOfType(battlerId, TYPE_POISON)) // Absorb the Toxic Spikes
                 {
-                    RemoveBattleEffectFromSideQueueList(side, B_SIDE_QUEUED_TOXIC_SPIKES);
+                    RemoveBattleEffectFromSideQueueList(side, id);
                     gSideTimers[side].toxicSpikesAmount = 0;
                     
                     gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_ABSORBED_TOXIC_SPIKES;
@@ -336,14 +407,23 @@ bool32 QueuedEffects_DoEntryHazardsEffects(u32 battlerId, u32 side, u32 id)
                 break;
             case B_SIDE_QUEUED_STEALTH_ROCK:
                 gBattleMoveDamage = GetDmgBasedOnHazardType(battlerId, TYPE_ROCK);
-                if (gBattleMoveDamage)
-                    SetDmgHazardsBattleScript(B_MSG_POINTED_STONES_DUG);
                 
-                effect = TRUE;
+                if (gBattleMoveDamage)
+                {
+                    SetDmgHazardsBattleScript(B_MSG_POINTED_STONES_DUG);
+                    effect = TRUE;
+                }
                 break;
             case B_SIDE_QUEUED_STICKY_WEB:
                 break;
             case B_SIDE_QUEUED_GMAX_STEELSURGE:
+                gBattleMoveDamage = GetDmgBasedOnHazardType(battlerId, TYPE_STEEL);
+                
+                if (gBattleMoveDamage)
+                {
+                    SetDmgHazardsBattleScript(B_MSG_SHARP_STEEL_BITE);
+                    effect = TRUE;
+                }
                 break;
         }
     }

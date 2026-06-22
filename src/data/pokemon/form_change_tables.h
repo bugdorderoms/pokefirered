@@ -1790,7 +1790,7 @@ static const struct FormChange sZamazentaFormChangeTable[] =
 
 static const struct FormChange sEternatusFormChangeTable[] =
 {
-    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_ETERNATUS_ETERNAMAX),
+    FORM_CHANGE(FORM_CHANGE_GIGANTAMAX, SPECIES_ETERNATUS_ETERNAMAX), // Only acessible in raid battles
     FORM_CHANGE_END,
 };
 

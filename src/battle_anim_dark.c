@@ -301,6 +301,28 @@ const struct SpriteTemplate gQuashHandSpriteTemplate =
     .callback = AnimStompFoot,
 };
 
+const struct SpriteTemplate gBlackHoleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SHADOW_BALL,
+    .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gMaxSnoozeHoleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SHADOW_BALL,
+    .paletteTag = ANIM_TAG_ICE_CHUNK,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
 // Fade the attacker's sprite from visible to invisible.
 // arg 0: fade delay
 // arg 1: initial blendA value

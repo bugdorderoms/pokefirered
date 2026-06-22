@@ -4,6 +4,7 @@
 #include "global.h"
 #include "bg.h"
 #include "map_preview_screen.h"
+#include "raid_intro.h"
 
 enum
 {
@@ -19,6 +20,8 @@ struct MapSectionInfo
     u8 region; // Region the Map is in
     const u8 *name; // The Map name
     const u8 *desc; // For some dungeons in the Town Map
+    const struct RaidData raids[RAID_STAR_COUNT - 1];
+    u16 raidClearedFlagId;
 };
 
 u8 *GetMapName(u8 *dest, u32 mapsec);

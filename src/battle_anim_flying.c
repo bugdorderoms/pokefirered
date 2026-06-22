@@ -29,6 +29,10 @@ static void AnimAirWaveProjectile(struct Sprite *sprite);
 static void AnimAirWaveProjectile_Step1(struct Sprite *sprite);
 static void AnimAirWaveProjectile_Step2(struct Sprite *sprite);
 static void AnimAirSlashBlade(struct Sprite *sprite);
+static void AnimMaxWyrmwindTornado(struct Sprite *sprite);
+static void AnimMaxWyrmwindTornado_Step1(struct Sprite *sprite);
+static void AnimMaxWyrmwindTornado_Step2(struct Sprite *sprite);
+static void AnimMaxWyrmwindTornado_Step3(struct Sprite *sprite);
 
 const struct SpriteTemplate gEllipticalGustSpriteTemplate =
 {
@@ -394,6 +398,102 @@ const struct SpriteTemplate gAirWaveSpreadSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimFireSpread,
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_SunsteelStrikeBlastOnOpponentSide[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, -64, 1), // 90 degree turn
+    AFFINEANIMCMD_FRAME(0, 0, 0, 7), // Pause
+    AFFINEANIMCMD_FRAME(16, 16, 0, 15), // Double in size
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_SunsteelStrikeBlastOnPlayerSide[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 128, 1), // 180 degree turn
+    AFFINEANIMCMD_FRAME(0, 0, 0, 7), // Pause
+    AFFINEANIMCMD_FRAME(16, 16, 0, 15), // Double in size
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd* const sAffineAnims_SunsteelStrikeBlast[] =
+{
+    sAffineAnimCmds_SunsteelStrikeBlastOnOpponentSide,
+    sAffineAnimCmds_SunsteelStrikeBlastOnPlayerSide
+};
+
+const struct SpriteTemplate gMaxKnuckleFlyingFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PUNCH_IMPACT,
+    .paletteTag = ANIM_TAG_PUNCH_IMPACT,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_SunsteelStrikeBlast,
+    .callback = AnimFlyBallAttack,
+};
+
+const struct SpriteTemplate gAirWaveSpiralOutwardSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_AIR_WAVE_2,
+    .paletteTag = ANIM_TAG_AIR_WAVE_2,
+    .oam = &gOamData_AffineOff_ObjNormal_32x16,
+    .anims = sAnims_AirWaveCrescent,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimFireSpiralOutward,
+};
+
+const struct SpriteTemplate gMaxAirstreamWaveSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_METAL_SOUND_WAVES,
+    .paletteTag = ANIM_TAG_METAL_SOUND_WAVES,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
+static const union AnimCmd sAnim_Tornado[] =
+{
+    ANIMCMD_FRAME(0, 3),
+    ANIMCMD_FRAME(64, 3),
+    ANIMCMD_FRAME(0, 3),
+    ANIMCMD_FRAME(128, 3),
+    ANIMCMD_JUMP(0)
+};
+
+static const union AnimCmd *const sAnims_Tornado[] =
+{
+    sAnim_Tornado
+};
+
+static const union AffineAnimCmd* const sAffineAnims_Tornado[] =
+{
+    sAirSlashBladeOnPlayerSideAffineAnimCmds
+};
+
+const struct SpriteTemplate gTornadoSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_TORNADO,
+    .paletteTag = ANIM_TAG_TORNADO,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = sAnims_Tornado,
+    .images = NULL,
+    .affineAnims = sAffineAnims_Tornado,
+    .callback = AnimMaxWyrmwindTornado,
+};
+
+const struct SpriteTemplate gMaxOneBlowSlidingFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PUNCH_IMPACT,
+    .paletteTag = ANIM_TAG_PUNCH_IMPACT,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAirSlashBladeAffineAnimTable,
+    .callback = AnimAirSlashBlade,
 };
 
 // Animates the elliptical gust sprite on the target. Used by MOVE_GUST.
@@ -1205,4 +1305,44 @@ static void AnimAirSlashBlade(struct Sprite *sprite)
     StartSpriteAffineAnim(sprite, GetSpriteOrientationBasedOnBattlers());
     sprite->callback = AnimShadowBall;
     sprite->callback(sprite);
+}
+
+// Animates a Tornado on the attacker and launches it at the target;
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: dest x pixel offset
+// arg 3: dest y pixel offset
+// arg 4: move speed
+static void AnimMaxWyrmwindTornado(struct Sprite *sprite)
+{
+    InitSpritePosToAnimAttacker(sprite, FALSE);
+    sprite->data[0] = gBattleAnimArgs[4];
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+    sprite->callback = AnimMaxWyrmwindTornado_Step1;
+}
+
+static void AnimMaxWyrmwindTornado_Step1(struct Sprite *sprite)
+{
+    // Wait until dynamax growth anim ends
+    if (!FuncIsActiveTask(AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds))
+    {
+        sprite->callback = StartAnimLinearTranslation;
+        StoreSpriteCallbackInData6(sprite, AnimMaxWyrmwindTornado_Step2);
+    }
+    
+    if (!sprite->affineAnimEnded && (sprite->data[6]++ & 1) == 0)
+        sprite->y--;
+}
+
+static void AnimMaxWyrmwindTornado_Step2(struct Sprite *sprite)
+{
+    sprite->data[6] = 0;
+    sprite->callback = AnimMaxWyrmwindTornado_Step3;
+}
+
+static void AnimMaxWyrmwindTornado_Step3(struct Sprite *sprite)
+{
+    if (sprite->data[6]++ >= 142)
+        DestroyAnimSprite(sprite);
 }

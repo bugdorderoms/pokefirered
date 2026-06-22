@@ -51,7 +51,7 @@ struct BattleAnimTable
     bool8 substituteRecede:1; // Substitute will be removed before doing the anim, being restored at the end
     bool8 changeForm:1; // Animation will change the Pokémon's form, necessary for the substitute out and in animation
     bool8 resumeIfAnimsOff:1; // Animation will be resumed to B_ANIM_FORM_CHANGE if battle scenes off, only if changeForm is also set
-    bool8 unused:1;
+    bool8 ignore0HpCheck:1; // Animation should be played regardless battler is fainted
 };
 
 #define ANIM_ARGS_COUNT 8
@@ -74,6 +74,7 @@ extern u16 gAnimMovePower;
 extern u16 gAnimMoveIndex;
 extern u8 gAnimFriendship;
 extern u16 gWeatherMoveAnim;
+extern u16 gAnimLastUsedItem;
 extern s16 gBattleAnimArgs[ANIM_ARGS_COUNT];
 extern u8 gAnimMoveTurn;
 extern u8 gBattleAnimAttacker;
@@ -86,7 +87,9 @@ extern u8 gActiveAbilityPopUps;
 // battle_anim.c
 extern const struct OamData gOamData_AffineOff_ObjNormal_8x8;
 extern const struct OamData gOamData_AffineOff_ObjNormal_16x16;
+extern const struct OamData gOamData_AffineOff_ObjNormal_16x16_HiPrio;
 extern const struct OamData gOamData_AffineOff_ObjNormal_32x32;
+extern const struct OamData gOamData_AffineOff_ObjNormal_32x32_HiPrio;
 extern const struct OamData gOamData_AffineOff_ObjNormal_64x64;
 extern const struct OamData gOamData_AffineOff_ObjNormal_16x8;
 extern const struct OamData gOamData_AffineOff_ObjNormal_32x8;
@@ -99,6 +102,7 @@ extern const struct OamData gOamData_AffineOff_ObjNormal_32x64;
 extern const struct OamData gOamData_AffineNormal_ObjNormal_8x8;
 extern const struct OamData gOamData_AffineNormal_ObjNormal_16x16;
 extern const struct OamData gOamData_AffineNormal_ObjNormal_32x32;
+extern const struct OamData gOamData_AffineNormal_ObjNormal_32x32_HiPrio;
 extern const struct OamData gOamData_AffineNormal_ObjNormal_64x64;
 extern const struct OamData gOamData_AffineNormal_ObjNormal_16x8;
 extern const struct OamData gOamData_AffineNormal_ObjNormal_32x8;
@@ -111,6 +115,7 @@ extern const struct OamData gOamData_AffineNormal_ObjNormal_32x64;
 extern const struct OamData gOamData_AffineDouble_ObjNormal_8x8;
 extern const struct OamData gOamData_AffineDouble_ObjNormal_16x16;
 extern const struct OamData gOamData_AffineDouble_ObjNormal_32x32;
+extern const struct OamData gOamData_AffineDouble_ObjNormal_32x32_HiPrio;
 extern const struct OamData gOamData_AffineDouble_ObjNormal_64x64;
 extern const struct OamData gOamData_AffineDouble_ObjNormal_16x8;
 extern const struct OamData gOamData_AffineDouble_ObjNormal_32x8;
@@ -147,6 +152,7 @@ extern const struct OamData gOamData_AffineNormal_ObjBlend_32x64;
 extern const struct OamData gOamData_AffineDouble_ObjBlend_8x8;
 extern const struct OamData gOamData_AffineDouble_ObjBlend_16x16;
 extern const struct OamData gOamData_AffineDouble_ObjBlend_32x32;
+extern const struct OamData gOamData_AffineDouble_ObjBlend_32x32_HiPrio;
 extern const struct OamData gOamData_AffineDouble_ObjBlend_64x64;
 extern const struct OamData gOamData_AffineDouble_ObjBlend_16x8;
 extern const struct OamData gOamData_AffineDouble_ObjBlend_32x8;
@@ -174,6 +180,7 @@ s8 BattleAnimAdjustPanning(s8 pan);
 s8 BattleAnimAdjustPanning2(s8 pan);
 s16 CalculatePanIncrement(s16 sourcePan, s16 targetPan, s16 incrementPan);
 bool32 IsBattlerSpriteVisible(u32 battlerId);
+bool32 BattleTypeDisplaysSpriteInPosition(u32 battlerPosition);
 s16 KeepPanInRange(s16 panArg);
 void RelocateBattleBgPal(u32 paletteNum, u16 *dest, s32 offset, bool32 largeScreen);
 void CreateItemBagSprite(const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority);
@@ -242,6 +249,7 @@ void SetSpriteNextToMonHead(u32 battler, struct Sprite* sprite);
 // battle_anim_effects_2.c
 extern const union AffineAnimCmd *const gGrowingRingAffineAnimTable[];
 extern const union AffineAnimCmd* const gAffineAnimTable_MaxFlutterby[];
+extern const struct SpriteTemplate gRolloutExplosionSpriteTemplate;
 
 void Anim_SwordsDanceBlade(struct Sprite *);
 void AnimSonicBoomProjectile(struct Sprite *);
@@ -433,7 +441,8 @@ u32 CreateAdditionalMonSpriteForMoveAnim(u32 species, bool32 isBackpic, s16 x, s
 s16 GetBattlerSpriteCoordAttr(u32 battlerId, u32 attr);
 void SetAverageBattlerPositions(u32 battlerId, bool32 respectMonPicOffsets, s16 *x, s16 *y);
 u32 CreateCloneOfSpriteInWindowMode(u32 spriteId);
-void SpriteCB_TrackOffsetFromAttackerAndWaitAnim(struct Sprite *sprite);
+void AnimDisableSparkle(struct Sprite *sprite);
+void AnimTwinkleSparkle(struct Sprite *sprite);
 
 // battle_anim_mon_movement.c
 void AnimTask_ShakeMon(u32 taskId);
@@ -476,6 +485,7 @@ void AnimTask_PositionFissureBgOnBattler(u32 taskId);
 void AnimSpikes(struct Sprite *);
 void AnimDirtScatter(struct Sprite *sprite);
 void AnimGeyserSprite(struct Sprite *sprite);
+void AnimLaunchSpriteUpwards(struct Sprite *sprite);
 
 // dragon.c
 void AnimOutrageFlame(struct Sprite *sprite);
@@ -503,6 +513,7 @@ void AnimTask_SeismicTossBgAccelerateDownAtEnd(u32 taskId);
 void AnimParticleInVortex(struct Sprite *sprite);
 void AnimFallingRock(struct Sprite *sprite);
 void AnimRockFragment(struct Sprite *sprite);
+void AnimRolloutParticle(struct Sprite *sprite);
 
 // psychic.c
 extern const union AffineAnimCmd *const gAffineAnims_LusterPurgeCircle[];

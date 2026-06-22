@@ -123,6 +123,37 @@ SINGLE_BATTLE_TEST("Flower Gift transforms Cherrim back when its suppressed")
     }
 }
 
+SINGLE_BATTLE_TEST("Flower Gift doesn't transforms Cherrim back if dynamaxed, even when it ends")
+{
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_GASTRO_ACID].effect == EFFECT_GASTRO_ACID);
+        
+        PLAYER(SPECIES_CHERRIM) { Ability(ABILITY_FLOWER_GIFT); }
+        OPPONENT(SPECIES_WOBBUFFET);
+    } WHEN {
+        TURN { MOVE(player, MOVE_SCRATCH, gimmick: GIMMICK_DYNAMAX); MOVE(opponent, MOVE_SUNNY_DAY); }
+        TURN { MOVE(player, MOVE_SCRATCH); MOVE(opponent, MOVE_GASTRO_ACID); }
+        TURN { MOVE(player, MOVE_SCRATCH); }
+        TURN { }
+        TURN { }
+    } SCENE {
+        // transforms
+        ABILITY_POPUP(player, ABILITY_FLOWER_GIFT);
+        ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_FORM_CHANGE, player);
+        MESSAGE("Cherrim transformed!");
+        
+        // doesn't transforms back
+        MESSAGE("Cherrim is no longer Dynamaxed!");
+
+        NONE_OF {
+            ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_FORM_CHANGE, player);
+            MESSAGE("Cherrim transformed!");
+        }
+    } THEN {
+        EXPECT_EQ(player->species, SPECIES_CHERRIM_SUNSHINE);
+    }
+}
+
 DOUBLE_BATTLE_TEST("Flower Gift increases the attack of Cherrim and its allies by 1.5x", s16 damageL, s16 damageR)
 {
     bool32 sunny;
@@ -200,5 +231,3 @@ DOUBLE_BATTLE_TEST("Flower Gift increases the Sp. Def of Cherrim and its allies 
         EXPECT_MUL_EQ(results[1].damageR, UQ_4_12(1.5), results[0].damageR);
     }
 }
-
-TO_DO_BATTLE_TEST("Flower Gift doesn't transforms Cherrim back if dynamaxed");

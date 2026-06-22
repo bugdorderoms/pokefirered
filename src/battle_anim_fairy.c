@@ -19,6 +19,35 @@ static void AnimTask_AlphaFadeIn_Step(u32 taskId);
 static void AnimMoonlightSparkle(struct Sprite *);
 static void AnimMoonlightSparkleStep(struct Sprite *);
 static void AnimTask_FadeScreenBlueStep(u32 taskId);
+static void AnimStraightBeam(struct Sprite *sprite);
+static void AnimStraightBeamStep(struct Sprite *sprite);
+static void AnimTask_TwinkleTackleLaunchTarget_Step(u32 taskId);
+
+static const s8 sHomerunEnemyHorizontalMovement[] =
+{
+    3, 3, 3, 3,
+    3, 3, 2, 2,
+    1, 1, 1, 1,
+    1, 1, 1, 1,
+    0, 1, 0, 1,
+    0, 1, 0, 0,
+    1, 0, 0, 1,
+    0, 0, 0, 1,
+    0, 0, 0, 1,
+};
+
+static const s8 sHomerunEnemyVerticalMovement[] =
+{
+    -4, -4, -4, -4,
+    -4, -3, -3, -2,
+    -2, -1, -1, -1,
+    -1, -1, -1, -1,
+     0, -1,  0, -1,
+     0, -1,  0,  0,
+     0,  0, -1,  0,
+     0, -1,  0,  0,
+    -1,  0,  0,  0,
+};
 
 static const union AnimCmd sDevilAnimCmds1[] =
 {
@@ -149,6 +178,82 @@ const struct SpriteTemplate gMoonlightSparkleSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimMoonlightSparkle,
+};
+
+static const union AnimCmd sStraightBeamAnimCmds_0[] =
+{
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd sStraightBeamAnimCmds_1[] =
+{
+    ANIMCMD_FRAME(4, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd sStraightBeamAnimCmds_2[] =
+{
+    ANIMCMD_FRAME(8, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd sStraightBeamAnimCmds_3[] =
+{
+    ANIMCMD_FRAME(12, 1),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sStraightBeamAnimTable[] =
+{
+    sStraightBeamAnimCmds_0,
+    sStraightBeamAnimCmds_1,
+    sStraightBeamAnimCmds_2,
+    sStraightBeamAnimCmds_3
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_StraightBeamDoNothing[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 0, 1),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_StraightBeam[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 0, 16), // Delay
+    AFFINEANIMCMD_FRAME(64, 64, 0, 4), // Double in size
+    // Pulsate
+    AFFINEANIMCMD_FRAME(-128, -128, 0, 1),
+    AFFINEANIMCMD_FRAME(128, 128, 0, 1),
+    AFFINEANIMCMD_JUMP(2),
+};
+
+static const union AffineAnimCmd* const sSpriteAffineAnimTable_StraightBeam[] =
+{
+    sSpriteAffineAnim_StraightBeamDoNothing,
+    sSpriteAffineAnim_StraightBeam,
+};
+
+const struct SpriteTemplate gStraightBeamSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_STRAIGHT_BEAM,
+    .paletteTag = ANIM_TAG_STRAIGHT_BEAM,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = sStraightBeamAnimTable,
+    .images = NULL,
+    .affineAnims = sSpriteAffineAnimTable_StraightBeam,
+    .callback = AnimStraightBeam,
+};
+
+const struct SpriteTemplate gHeartGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_RED_HEART,
+    .paletteTag = ANIM_TAG_RED_HEART,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
 };
 
 // Animates the devil sprite fluctuating beyond the target in Lovely Kiss's anim.
@@ -318,7 +423,7 @@ static void AnimMagentaHeart(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
 }
 
-// Fades to the hearts background. Unsed by MOVE_ATTRACT.
+// Fades to the hearts background. Used by MOVE_ATTRACT.
 // No args.
 void AnimTask_HeartsBackground(u32 taskId)
 {
@@ -622,4 +727,102 @@ static void AnimTask_FadeScreenBlueStep(u32 taskId)
             DestroyAnimVisualTask(taskId);
         break;
     }
+}
+
+// Imitates launching a beam of light towards the sky.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: anim battler
+// arg 3: duration
+// arg 4: sprite anim num
+// arg 5: affine anim start delay
+static void AnimStraightBeam(struct Sprite *sprite)
+{
+    InitSpritePosToAnimBattler(sprite, gBattleAnimArgs[2], FALSE);
+    StartSpriteAnim(sprite, gBattleAnimArgs[4]);
+    sprite->data[0] = gBattleAnimArgs[3];
+    sprite->data[1] = gBattleAnimArgs[5];
+    sprite->callback = AnimStraightBeamStep;
+}
+
+static void AnimStraightBeamStep(struct Sprite *sprite)
+{
+    if (sprite->data[1]-- == 0)
+        StartSpriteAffineAnim(sprite, 1);
+    
+    if (sprite->data[0]-- <= 0)
+        DestroyAnimSprite(sprite);
+}
+
+// Launches the target in Twinkle Tackle's anim.
+// arg 0: duration
+void AnimTask_TwinkleTackleLaunchTarget(u32 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    u32 spriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+    
+    PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_NORMAL);
+    
+    task->data[0] = spriteId;
+    task->data[1] = (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER);
+    task->data[2] = gBattleAnimArgs[0];
+    task->data[3] = gSprites[spriteId].x;
+    task->data[4] = gSprites[spriteId].y;
+    task->data[5] = 0;
+    task->func = AnimTask_TwinkleTackleLaunchTarget_Step;
+}
+
+static void AnimTask_TwinkleTackleLaunchTarget_Step(u32 taskId)
+{
+    s8 movement;
+    u16 rotation;
+    s16 xScale, yScale;
+    struct Task *task = &gTasks[taskId];
+    struct Sprite *sprite = &gSprites[task->data[0]];
+    
+    if (task->data[5] > task->data[2])
+    {
+        // Wait an extra few frames so the glint can be placed on the target
+        if (task->data[5] > task->data[2] + 5)
+        {
+            sprite->x = task->data[3];
+            sprite->y = task->data[4];
+            ResetSpriteRotScale(task->data[0]);
+            DestroyAnimVisualTask(taskId);
+        }
+        else
+            task->data[5]++;
+        
+        return;
+    }
+    
+    if (task->data[5] < ARRAY_COUNT(sHomerunEnemyHorizontalMovement))
+    {
+        // Horizontal movement
+        movement = sHomerunEnemyHorizontalMovement[task->data[5]];
+        if (task->data[1])
+            movement = -movement;
+        
+        sprite->x += movement;
+        
+        // Vertical movement
+        movement = sHomerunEnemyVerticalMovement[task->data[5]];
+        if (task->data[1])
+            movement = -movement;
+        
+        sprite->y += movement;
+    }
+    rotation = (task->data[5] << 4) + (task->data[5] << 3);
+    
+    xScale = 0x180 + rotation;
+    yScale = 0x180 + rotation;
+    
+    rotation <<= 7;
+    if (!task->data[1])
+        rotation = -rotation;
+    
+    SetSpriteRotScale(task->data[0], xScale, yScale, rotation);
+    
+    if (++task->data[5] > task->data[2])
+        sprite->invisible = TRUE;
 }

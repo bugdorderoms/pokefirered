@@ -240,7 +240,6 @@ static void CreateBattlerSprite(u32 battler)
             
             SetMultiuseSpriteTemplateToPokemon(GetMonData(mon, MON_DATA_SPECIES), battlerPosition);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, GetBattlerSpriteCoord(battler, BATTLER_COORD_X), posY, subpriority);
-            gSprites[gBattlerSpriteIds[battler]].data[2] = GetMonData(mon, MON_DATA_SPECIES);
             StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
         }
         else if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && battlerPosition == B_POSITION_PLAYER_LEFT)
@@ -255,15 +254,12 @@ static void CreateBattlerSprite(u32 battler)
             SetMultiuseSpriteTemplateToTrainerBack(TRAINER_BACK_PIC_OLD_MAN, battler, battlerPosition);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50, (8 - gTrainerBackPicTable[TRAINER_BACK_PIC_OLD_MAN].coords.size) * 4 + 80, subpriority);
         }
-        else if (!GetMonData(mon, MON_DATA_HP)
-        || ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && battlerPosition == B_POSITION_PLAYER_RIGHT)
-        || ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && battlerPosition == B_POSITION_OPPONENT_RIGHT))
+        else if (!GetMonData(mon, MON_DATA_HP) || !BattleTypeDisplaysSpriteInPosition(battlerPosition))
             return;
         else
         {
             SetMultiuseSpriteTemplateToPokemon(GetMonData(mon, MON_DATA_SPECIES), battlerPosition);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, GetBattlerSpriteCoord(battler, BATTLER_COORD_X), posY, subpriority);
-            gSprites[gBattlerSpriteIds[battler]].data[2] = GetMonData(mon, MON_DATA_SPECIES);
             StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
         }
         gSprites[gBattlerSpriteIds[battler]].invisible = gBattleSpritesDataPtr->battlerData[battler].invisible;
@@ -288,20 +284,22 @@ static void CreateHealthboxSprite(u32 battler)
         
         gHealthboxSpriteIds[battler] = healthboxSpriteId;
         
-        if (((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && battlerPosition == B_POSITION_PLAYER_RIGHT)
-        || ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && battlerPosition == B_POSITION_OPPONENT_RIGHT))
+        if (!BattleTypeDisplaysSpriteInPosition(battlerPosition))
             return;
         
         InitBattlerHealthboxCoords(battler);
-        SetHealthboxSpriteVisible(healthboxSpriteId);
+        SetHealthboxSpriteVisibility(healthboxSpriteId, FALSE);
         UpdateHealthboxAttribute(battler, (gBattleTypeFlags & BATTLE_TYPE_SAFARI) ? HEALTHBOX_SAFARI_ALL_TEXT : HEALTHBOX_ALL);
-        
+
         if (GetBattlerSide(battler) != B_SIDE_PLAYER)
         {
             if (!GetMonData(&gEnemyParty[gBattlerPartyIndexes[battler]], MON_DATA_HP))
-                SetHealthboxSpriteInvisible(healthboxSpriteId);
+                SetHealthboxSpriteVisibility(healthboxSpriteId, TRUE);
         }
-        else if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI) && !GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_HP))
-            SetHealthboxSpriteInvisible(healthboxSpriteId);
+        else
+        {
+            if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI) && !GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_HP))
+                SetHealthboxSpriteVisibility(healthboxSpriteId, TRUE);
+        }
     }
 }

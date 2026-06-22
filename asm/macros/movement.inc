@@ -1,124 +1,117 @@
-	.macro create_movement name
-	enum _\name
-	.macro \name
-	.byte _\name
+	.macro create_movement constant:req, alias:req
+	.macro \alias
+	.byte \constant
 	.endm
 	.endm
 
-	enum_start 0
-	create_movement face_down
-	create_movement face_up
-	create_movement face_left
-	create_movement face_right
-	create_movement face_down_fast
-	create_movement face_up_fast
-	create_movement face_left_fast
-	create_movement face_right_fast
-	create_movement walk_slowest_down
-	create_movement walk_slowest_up
-	create_movement walk_slowest_left
-	create_movement walk_slowest_right
-	create_movement walk_slow_down
-	create_movement walk_slow_up
-	create_movement walk_slow_left
-	create_movement walk_slow_right
-	create_movement walk_down
-	create_movement walk_up
-	create_movement walk_left
-	create_movement walk_right
-	create_movement jump_2_down
-	create_movement jump_2_up
-	create_movement jump_2_left
-	create_movement jump_2_right
-	create_movement delay_1
-	create_movement delay_2
-	create_movement delay_4
-	create_movement delay_8
-	create_movement delay_16
-	create_movement walk_fast_down
-	create_movement walk_fast_up
-	create_movement walk_fast_left
-	create_movement walk_fast_right
-	create_movement walk_in_place_slow_down
-	create_movement walk_in_place_slow_up
-	create_movement walk_in_place_slow_left
-	create_movement walk_in_place_slow_right
-	create_movement walk_in_place_down
-	create_movement walk_in_place_up
-	create_movement walk_in_place_left
-	create_movement walk_in_place_right
-	create_movement walk_in_place_fast_down
-	create_movement walk_in_place_fast_up
-	create_movement walk_in_place_fast_left
-	create_movement walk_in_place_fast_right
-	create_movement walk_in_place_fastest_down
-	create_movement walk_in_place_fastest_up
-	create_movement walk_in_place_fastest_left
-	create_movement walk_in_place_fastest_right
-	create_movement face_down_slow
-	create_movement face_up_slow
-	create_movement face_left_slow
-	create_movement face_right_slow
-	create_movement walk_fastest_down
-	create_movement walk_fastest_up
-	create_movement walk_fastest_left
-	create_movement walk_fastest_right
-	create_movement slide_down
-	create_movement slide_up
-	create_movement slide_left
-	create_movement slide_right
-	create_movement player_run_down
-	create_movement player_run_up
-	create_movement player_run_left
-	create_movement player_run_right
-	create_movement player_run_down_slow
-	create_movement player_run_up_slow
-	create_movement player_run_left_slow
-	create_movement player_run_right_slow
-	create_movement step_45
-	create_movement jump_down_run
-	create_movement jump_up_run
-	create_movement jump_left_run
-	create_movement jump_right_run
-	create_movement face_player
-	create_movement face_away_player
-	create_movement lock_facing_direction
-	create_movement unlock_facing_direction
-	create_movement jump_down
-	create_movement jump_up
-	create_movement jump_left
-	create_movement jump_right
-	create_movement jump_in_place_down
-	create_movement jump_in_place_up
-	create_movement jump_in_place_left
-	create_movement jump_in_place_right
-	create_movement jump_in_place_down_up
-	create_movement jump_in_place_up_down
-	create_movement jump_in_place_left_right
-	create_movement jump_in_place_right_left
-	create_movement face_original_direction
-	create_movement nurse_joy_bow
-	create_movement enable_jump_landing_ground_effect
-	create_movement disable_jump_landing_ground_effect
-	create_movement disable_anim
-	create_movement restore_anim
-	create_movement set_invisible
-	create_movement set_visible
-	create_movement emote_exclamation_mark
-	create_movement emote_question_mark
-	create_movement emote_x
-	create_movement emote_double_exclamation_mark
-	create_movement emote_smile
-	create_movement reveal_trainer
-	create_movement rock_smash_break
-	create_movement cut_tree
-
-	enum_start 0x91
-	create_movement step_91
-	create_movement step_92
-
-	enum_start 0x96
-	create_movement step_96
-
-	enum_start 0xfe
-	create_movement step_end
+	create_movement MOVEMENT_ACTION_FACE_DOWN, face_down
+	create_movement MOVEMENT_ACTION_FACE_UP, face_up
+	create_movement MOVEMENT_ACTION_FACE_LEFT, face_left
+	create_movement MOVEMENT_ACTION_FACE_RIGHT, face_right
+	create_movement MOVEMENT_ACTION_FACE_DOWN_FAST, face_down_fast
+	create_movement MOVEMENT_ACTION_FACE_UP_FAST, face_up_fast
+	create_movement MOVEMENT_ACTION_FACE_LEFT_FAST, face_left_fast
+	create_movement MOVEMENT_ACTION_FACE_RIGHT_FAST, face_right_fast
+	create_movement MOVEMENT_ACTION_WALK_SLOWEST_DOWN, walk_slowest_down
+	create_movement MOVEMENT_ACTION_WALK_SLOWEST_UP, walk_slowest_up
+	create_movement MOVEMENT_ACTION_WALK_SLOWEST_LEFT, walk_slowest_left
+	create_movement MOVEMENT_ACTION_WALK_SLOWEST_RIGHT, walk_slowest_right
+	create_movement MOVEMENT_ACTION_WALK_SLOW_DOWN, walk_slow_down
+	create_movement MOVEMENT_ACTION_WALK_SLOW_UP, walk_slow_up
+	create_movement MOVEMENT_ACTION_WALK_SLOW_LEFT, walk_slow_left
+	create_movement MOVEMENT_ACTION_WALK_SLOW_RIGHT, walk_slow_right
+	create_movement MOVEMENT_ACTION_WALK_NORMAL_DOWN, walk_down
+	create_movement MOVEMENT_ACTION_WALK_NORMAL_UP, walk_up
+	create_movement MOVEMENT_ACTION_WALK_NORMAL_LEFT, walk_left
+	create_movement MOVEMENT_ACTION_WALK_NORMAL_RIGHT, walk_right
+	create_movement MOVEMENT_ACTION_JUMP_2_DOWN, jump_2_down
+	create_movement MOVEMENT_ACTION_JUMP_2_UP, jump_2_up
+	create_movement MOVEMENT_ACTION_JUMP_2_LEFT, jump_2_left
+	create_movement MOVEMENT_ACTION_JUMP_2_RIGHT, jump_2_right
+	create_movement MOVEMENT_ACTION_DELAY_1, delay_1
+	create_movement MOVEMENT_ACTION_DELAY_2, delay_2
+	create_movement MOVEMENT_ACTION_DELAY_4, delay_4
+	create_movement MOVEMENT_ACTION_DELAY_8, delay_8
+	create_movement MOVEMENT_ACTION_DELAY_16, delay_16
+	create_movement MOVEMENT_ACTION_WALK_FAST_DOWN, walk_fast_down
+	create_movement MOVEMENT_ACTION_WALK_FAST_UP, walk_fast_up
+	create_movement MOVEMENT_ACTION_WALK_FAST_LEFT, walk_fast_left
+	create_movement MOVEMENT_ACTION_WALK_FAST_RIGHT, walk_fast_right
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_SLOW_DOWN, walk_in_place_slow_down
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_SLOW_UP, walk_in_place_slow_up
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_SLOW_LEFT, walk_in_place_slow_left
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_SLOW_RIGHT, walk_in_place_slow_right
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_NORMAL_DOWN, walk_in_place_down
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_NORMAL_UP, walk_in_place_up
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_NORMAL_LEFT, walk_in_place_left
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_NORMAL_RIGHT, walk_in_place_right
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FAST_DOWN, walk_in_place_fast_down
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FAST_UP, walk_in_place_fast_up
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FAST_LEFT, walk_in_place_fast_left
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FAST_RIGHT, walk_in_place_fast_right
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FASTEST_DOWN, walk_in_place_fastest_down
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FASTEST_UP, walk_in_place_fastest_up
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FASTEST_LEFT, walk_in_place_fastest_left
+	create_movement MOVEMENT_ACTION_WALK_IN_PLACE_FASTEST_RIGHT, walk_in_place_fastest_right
+	create_movement MOVEMENT_ACTION_FACE_DOWN_SLOW, face_down_slow
+	create_movement MOVEMENT_ACTION_FACE_UP_SLOW, face_up_slow
+	create_movement MOVEMENT_ACTION_FACE_LEFT_SLOW, face_left_slow
+	create_movement MOVEMENT_ACTION_FACE_RIGHT_SLOW, face_right_slow
+	create_movement MOVEMENT_ACTION_WALK_FASTEST_DOWN, walk_fastest_down
+	create_movement MOVEMENT_ACTION_WALK_FASTEST_UP, walk_fastest_up
+	create_movement MOVEMENT_ACTION_WALK_FASTEST_LEFT, walk_fastest_left
+	create_movement MOVEMENT_ACTION_WALK_FASTEST_RIGHT, walk_fastest_right
+	create_movement MOVEMENT_ACTION_SLIDE_DOWN, slide_down
+	create_movement MOVEMENT_ACTION_SLIDE_UP, slide_up
+	create_movement MOVEMENT_ACTION_SLIDE_LEFT, slide_left
+	create_movement MOVEMENT_ACTION_SLIDE_RIGHT, slide_right
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_DOWN, player_run_down
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_UP, player_run_up
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_LEFT, player_run_left
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_RIGHT, player_run_right
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_DOWN_SLOW, player_run_down_slow
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_UP_SLOW, player_run_up_slow
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_LEFT_SLOW, player_run_left_slow
+	create_movement MOVEMENT_ACTION_PLAYER_RUN_RIGHT_SLOW, player_run_right_slow
+	create_movement MOVEMENT_ACTION_START_ANIM_IN_DIRECTION, start_anim_in_direction
+	create_movement MOVEMENT_ACTION_JUMP_SPECIAL_DOWN, jump_down_run
+	create_movement MOVEMENT_ACTION_JUMP_SPECIAL_UP, jump_up_run
+	create_movement MOVEMENT_ACTION_JUMP_SPECIAL_LEFT, jump_left_run
+	create_movement MOVEMENT_ACTION_JUMP_SPECIAL_RIGHT, jump_right_run
+	create_movement MOVEMENT_ACTION_FACE_PLAYER, face_player
+	create_movement MOVEMENT_ACTION_FACE_AWAY_PLAYER, face_away_player
+	create_movement MOVEMENT_ACTION_LOCK_FACING_DIRECTION, lock_facing_direction
+	create_movement MOVEMENT_ACTION_UNLOCK_FACING_DIRECTION, unlock_facing_direction
+	create_movement MOVEMENT_ACTION_JUMP_DOWN, jump_down
+	create_movement MOVEMENT_ACTION_JUMP_UP, jump_up
+	create_movement MOVEMENT_ACTION_JUMP_LEFT, jump_left
+	create_movement MOVEMENT_ACTION_JUMP_RIGHT, jump_right
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_DOWN, jump_in_place_down
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_UP, jump_in_place_up
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_LEFT, jump_in_place_left
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_RIGHT, jump_in_place_right
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_DOWN_UP, jump_in_place_down_up
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_UP_DOWN, jump_in_place_up_down
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_LEFT_RIGHT, jump_in_place_left_right
+	create_movement MOVEMENT_ACTION_JUMP_IN_PLACE_RIGHT_LEFT, jump_in_place_right_left
+	create_movement MOVEMENT_ACTION_FACE_ORIGINAL_DIRECTION, face_original_direction
+	create_movement MOVEMENT_ACTION_NURSE_JOY_BOW_DOWN, nurse_joy_bow
+	create_movement MOVEMENT_ACTION_ENABLE_JUMP_LANDING_GROUND_EFFECT, enable_jump_landing_ground_effect
+	create_movement MOVEMENT_ACTION_DISABLE_JUMP_LANDING_GROUND_EFFECT, disable_jump_landing_ground_effect
+	create_movement MOVEMENT_ACTION_DISABLE_ANIMATION, disable_anim
+	create_movement MOVEMENT_ACTION_RESTORE_ANIMATION, restore_anim
+	create_movement MOVEMENT_ACTION_SET_INVISIBLE, set_invisible
+	create_movement MOVEMENT_ACTION_SET_VISIBLE, set_visible
+	create_movement MOVEMENT_ACTION_EMOTE_EXCLAMATION_MARK, emote_exclamation_mark
+	create_movement MOVEMENT_ACTION_EMOTE_QUESTION_MARK, emote_question_mark
+	create_movement MOVEMENT_ACTION_EMOTE_X, emote_x
+	create_movement MOVEMENT_ACTION_EMOTE_DOUBLE_EXCL_MARK, emote_double_exclamation_mark
+	create_movement MOVEMENT_ACTION_EMOTE_SMILE, emote_smile
+	create_movement MOVEMENT_ACTION_REVEAL_TRAINER, reveal_trainer
+	create_movement MOVEMENT_ACTION_ROCK_SMASH_BREAK, rock_smash_break
+	create_movement MOVEMENT_ACTION_CUT_TREE, cut_tree
+	create_movement MOVEMENT_ACTION_ACRO_WHEELIE_MOVE_UP, acro_wheelie_move_up
+	create_movement MOVEMENT_ACTION_ACRO_WHEELIE_MOVE_LEFT, acro_wheelie_move_left
+	create_movement MOVEMENT_ACTION_ACRO_END_WHEELIE_MOVE_LEFT, acro_end_wheelie_move_left
+	create_movement MOVEMENT_ACTION_RAID_DEN_STATE_CHANGE, change_raid_den
+	create_movement MOVEMENT_ACTION_STEP_END, step_end

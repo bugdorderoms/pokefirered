@@ -39,6 +39,10 @@ static void AnimTask_GhostGetOutAttackerEffect_Step2(u32 taskId);
 static void AnimTask_GhostGetOutAttackerEffect_Step3(u32 taskId);
 static void AnimTask_DrawFallingWhiteLinesOnAttacker_Step(u32 taskId);
 static void AnimTask_NightmareBgWaveEffectStep(u32 taskId);
+static void AnimMaxPhantasmObject(struct Sprite *sprite);
+static void AnimMaxPhantasmObject_Step1(struct Sprite *sprite);
+static void AnimMaxPhantasmObject_Step2(struct Sprite *sprite);
+static void AnimMaxPhantasmObject_Step3(struct Sprite *sprite);
 
 static const u16 sRgbWhite[] = { RGB_WHITE };
 
@@ -202,6 +206,84 @@ const struct SpriteTemplate gGrudgeFlameSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimGrudgeFlame,
+};
+
+static const union AffineAnimCmd sAffineAnim_MaxPhantasmObject[] =
+{
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0), // Start at 1px
+    AFFINEANIMCMD_FRAME(8, 8, 0, 30),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd *const sAffineAnims_MaxPhantasmObject[] =
+{
+    sAffineAnim_MaxPhantasmObject
+};
+
+const struct SpriteTemplate gMaxPhantasmRockSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROCKS,
+    .paletteTag = ANIM_TAG_ROCKS,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxPhantasmObject,
+    .callback = AnimMaxPhantasmObject,
+};
+
+const struct SpriteTemplate gMaxPhantasmHandSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ASSURANCE_HAND,
+    .paletteTag = ANIM_TAG_ASSURANCE_HAND,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxPhantasmObject,
+    .callback = AnimMaxPhantasmObject,
+};
+
+const struct SpriteTemplate gMaxPhantasmWoodSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_WOOD,
+    .paletteTag = ANIM_TAG_SMALL_WOOD,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxPhantasmObject,
+    .callback = AnimMaxPhantasmObject,
+};
+
+const struct SpriteTemplate gMaxPhantasmAnchorSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ANCHOR,
+    .paletteTag = ANIM_TAG_ANCHOR,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxPhantasmObject,
+    .callback = AnimMaxPhantasmObject,
+};
+
+const struct SpriteTemplate gMaxPhantasmShellSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_RAZOR_SHELL,
+    .paletteTag = ANIM_TAG_RAZOR_SHELL,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxPhantasmObject,
+    .callback = AnimMaxPhantasmObject,
+};
+
+const struct SpriteTemplate gHexGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_VERTICAL_HEX,
+    .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
 };
 
 // Animates the Confuse Ray ball bouncing from the attacker's position to the target's position.
@@ -1558,5 +1640,67 @@ static void AnimTask_DrawFallingWhiteLinesOnAttacker_Step(u32 taskId)
             
             DestroyAnimVisualTaskAndDisableBlend(taskId);
         }
+    }
+}
+
+// Moves the objects created in Max Phantasm's anim.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: dest x pixel offset
+// arg 3: dest y pixel offset
+// arg 4: wave amplitude
+static void AnimMaxPhantasmObject(struct Sprite *sprite)
+{
+    InitSpritePosToAnimAttacker(sprite, FALSE);
+    
+    if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+        gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+    
+    sprite->data[0] = 32;
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X) + gBattleAnimArgs[2];
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+    sprite->data[5] = gBattleAnimArgs[4];
+    sprite->callback = AnimMaxPhantasmObject_Step1;
+}
+
+// The objects prepare to move towards the target
+static void AnimMaxPhantasmObject_Step1(struct Sprite *sprite)
+{
+    // Wait until dynamax growth anim ends
+    if (!FuncIsActiveTask(AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds))
+    {
+        PlaySE(SE_M_SAND_ATTACK);
+        
+        InitAnimArcTranslation(sprite);
+        
+        sprite->data[7] = 0;
+        sprite->callback = AnimMaxPhantasmObject_Step2;
+    }
+}
+
+// The objects move towards the target in an arc
+static void AnimMaxPhantasmObject_Step2(struct Sprite *sprite)
+{
+    if (TranslateAnimHorizontalArc(sprite))
+    {
+        sprite->data[7] = 0;
+        sprite->callback = AnimMaxPhantasmObject_Step3;
+    }
+}
+
+// The objects count down, then converge on the target
+static void AnimMaxPhantasmObject_Step3(struct Sprite *sprite)
+{
+    if (sprite->data[7]++ >= 16)
+    {
+        PlaySE(SE_M_STRENGTH);
+        
+        SetSpritePrimaryCoordsFromSecondaryCoords(sprite);
+        
+        sprite->data[0] = 8;
+        sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+        sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+        sprite->callback = StartAnimLinearTranslation;
+        StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
     }
 }

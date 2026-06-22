@@ -50,7 +50,7 @@ endif
 
 CPPFLAGS := -iquote include -I. -D$(GAME_VERSION) -DREVISION=$(GAME_REVISION) -D$(GAME_LANGUAGE) -DMODERN=$(MODERN)
 ifeq ($(MODERN),0)
-CPPFLAGS += -I tools/agbcc -I tools/agbcc/include -nostdinc -undef
+CPPFLAGS += -I tools/agbcc -I tools/agbcc/include -nostdinc -undef -std=gnu89
 endif
 
 SHELL := /bin/bash -o pipefail

@@ -733,7 +733,7 @@ static void CB2_ReturnFromLinkTrade2(void)
 
         if (!gReceivedRemoteLinkPlayers)
         {
-            gLinkType = 0x1122;
+            gLinkType = LINKTYPE_TRADE_CONNECTING;
             sTradeMenuResourcesPtr->loadUISpritesState = 0;
 
             if (gWirelessCommType)
@@ -2523,13 +2523,10 @@ static u32 TestWhetherSelectedMonCanBeTraded(struct Pokemon * party, u32 partyCo
 
 s32 Trade_CalcLinkPlayerCompatibilityParam(void)
 {
-    s32 val;
-    u16 version;
-
     if (gReceivedRemoteLinkPlayers)
     {
-        val = 0;
-        version = (gLinkPlayers[GetMultiplayerId() ^ 1].version & 0xFF);
+        s32 val = 0;
+        u32 version = (gLinkPlayers[GetMultiplayerId() ^ 1].version & 0xFF);
 
         if (version == VERSION_FIRE_RED || version == VERSION_LEAF_GREEN)
         {

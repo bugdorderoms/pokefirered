@@ -8,7 +8,6 @@ enum
 {
     CONTROLLER_GETMONDATA,
     CONTROLLER_SETMONDATA,
-    CONTROLLER_SETRAWMONDATA,
     CONTROLLER_LOADMONSPRITE,
     CONTROLLER_SWITCHINANIM,
     CONTROLLER_RETURNMONTOBALL,
@@ -45,6 +44,14 @@ enum
     CONTROLLER_LINKSTANDBYMSG,
     CONTROLLER_RESETACTIONMOVESELECTION,
     CONTROLLER_ENDLINKBATTLE,
+    CONTROLLER_GIMMICKSTATE,
+    CONTROLLER_HEALTHBOXUPDATE,
+    CONTROLLER_HIDEALLHEALTHBOXES,
+    CONTROLLER_BATTLEFORMCHANGE,
+    CONTROLLER_PARTYFORMCHANGE,
+    CONTROLLER_ISPOCKETNOTEMPTY,
+    CONTROLLER_YESNOBOX,
+    CONTROLLER_MONCAUGHTEFFECTS,
     /*new controllers should go here*/
     CONTROLLER_TERMINATOR_NOP,
     CONTROLLER_CMDS_COUNT
@@ -124,7 +131,26 @@ enum
     RESET_MOVE_SELECTION,
 };
 
+enum
+{
+    STATE_CHECK_GIMMICK_KEY_ITEMS,
+    STATE_USABLE_GIMMICK,
+    STATE_GIMMICK_IN_PROGRESS,
+    STATE_ACTIVE_GIMMICK,
+};
+
+enum
+{
+    FORMCHANGE_SAVE_ORIGINAL_FORM,
+    FORMCHANGE_CHANGE_RAID_BOSS_FORM,
+    FORMCHANGE_RESTORE_ORIGINAL_FORM,
+    FORMCHANGE_REVERT_ON_FAINT,
+    FORMCHANGE_UPDATE_BURMY_FORM,
+};
+
 #define INSTANT_HP_BAR_DROP     0x7FFF
+
+#define PARTY_SUMM_SKIP_DRAW_DELAY (1 << 7)
 
 // Special return values in gBattleBufferB from Battle Controller functions.
 #define RET_VALUE_LEVELED_UP   11
@@ -146,16 +172,29 @@ struct HpAndStatus
 struct ChooseMoveStruct
 {
     u16 species;
-    u16 moves[MAX_MON_MOVES];
-    u8 currentPp[MAX_MON_MOVES];
-    u8 maxPp[MAX_MON_MOVES];
-    u8 moveTypes[MAX_MON_MOVES];
+    struct
+    {
+        u16 move;
+        u16 effectivenessFlags[MAX_BATTLERS_COUNT];
+        u8 currentPp;
+        u8 maxPp;
+        u8 type:NUM_TYPES_BITS;
+        u8 split:2;
+        u8 isStellarBoosted:1;
+        u8 target;
+        u8 power;
+    } moves[MAX_MON_MOVES];
+    u8 monTypes[3];
+    bool8 isHealBlocked[MAX_BATTLERS_COUNT]; // Can block target selection if affected by it
 };
 
 #define FIRST_BATTLE_MSG_FLAG_INFLICT_DMG Bit(0) // Inflicting damage is key
 #define FIRST_BATTLE_MSG_FLAG_STAT_CHG    Bit(1) // Lowering stats is advantageous
 #define FIRST_BATTLE_MSG_FLAG_HP_RESTORE  Bit(2) // Keep an eye on your HP
 #define FIRST_BATTLE_MSG_FLAG_PARTY_MENU  Bit(3)
+
+#define WINDOW_CLEAR            0x1
+#define WINDOW_x80              0x80
 
 // general functions
 void HandleLinkBattleSetup(void);
@@ -165,6 +204,9 @@ void InitSinglePlayerBtlControllers(bool32 fromBattleStart);
 void SetBattleEndCallbacks(u32 battlerId);
 void TryReceiveLinkBattleData(void);
 void PrepareBufferDataTransferLink(u32 battlerId, u32 bufferId, u16 size, u8 *data);
+void BattleCreateYesNoCursorAt(u32 pos);
+void BattleDestroyYesNoCursorAt(u32 pos);
+void HandleBattleWindow(u32 xStart, u32 yStart, u32 xEnd, u32 yEnd, u32 flags);
 void CompleteOnBattlerSpritePosX_0(u32 battlerId);
 void ShowHealthBox(u32 battlerId);
 void Intro_TryShinyAnimShowHealthbox(u32 battlerId);
@@ -176,15 +218,14 @@ void SwitchIn_TryShinyAnimShowHealthbox(u32 battlerId);
 // emitters
 void BtlController_EmitGetMonData(u32 battlerId, u32 bufferId, u32 requestId, u32 monToCheck);
 void BtlController_EmitSetMonData(u32 battlerId, u32 bufferId, u32 requestId, u32 monToCheck, u32 bytes, void *data);
-void BtlController_EmitSetRawMonData(u32 battlerId, u32 bufferId, u32 offset, u32 bytes, void *data);
 void BtlController_EmitLoadMonSprite(u32 battlerId, u32 bufferId);
-void BtlController_EmitSwitchInAnim(u32 battlerId, u32 bufferId, u32 partyId, bool32 dontClearSubstituteBit);
+void BtlController_EmitSwitchInAnim(u32 battlerId, u32 bufferId, u32 partyId, u32 flags);
 void BtlController_EmitReturnMonToBall(u32 battlerId, u32 bufferId, u32 arg1);
 void BtlController_EmitDrawTrainerPic(u32 battlerId, u32 bufferId);
 void BtlController_EmitTrainerSlide(u32 battlerId, u32 bufferId);
 void BtlController_EmitTrainerSlideBack(u32 battlerId, u32 bufferId);
 void BtlController_EmitFaintAnimation(u32 battlerId, u32 bufferId);
-void BtlController_EmitBallThrowAnim(u32 battlerId, u32 bufferId, u32 caseId);
+void BtlController_EmitBallThrowAnim(u32 battlerId, u32 bufferId, u32 caseId, bool32 isCriticalCapture, bool32 criticalCaptureSuccess);
 void BtlController_EmitMoveAnimation(u32 battlerId, u32 bufferId, u32 move, u32 turnOfMove, u32 movePower, s32 dmg, u32 friendship, struct DisableStruct *disableStructPtr);
 void BtlController_EmitPrintString(u32 battlerId, u32 bufferId, u32 stringId);
 void BtlController_EmitPrintSelectionString(u32 battlerId, u32 bufferId, u32 stringId);
@@ -213,13 +254,20 @@ void BtlController_EmitBattleAnimation(u32 battlerId, u32 bufferId, u32 animatio
 void BtlController_EmitLinkStandbyMsg(u32 battlerId, u32 bufferId, u32 arg1);
 void BtlController_EmitResetActionMoveSelection(u32 battlerId, u32 bufferId, u32 caseId);
 void BtlController_EmitEndLinkBattle(u32 battlerId, u32 bufferId, u32 battleOutcome);
+void BtlController_EmitGimmickState(u32 battlerId, u32 bufferId, u32 stateId, u32 data);
+void BtlController_EmitHealthBoxUpdate(u32 battlerId, u32 bufferId, u32 attributeId);
+void BtlController_EmitHideAllHealthboxes(u32 battlerId, u32 bufferId);
+void BtlController_EmitBattleFormChange(u32 battlerId, u32 bufferId, u32 newSpecies, bool32 reloadStats);
+void BtlController_EmitPartyFormChange(u32 battlerId, u32 bufferId, u32 partyId, u32 caseId);
+void BtlController_EmitIsPocketNotEmpty(u32 battlerId, u32 bufferId, u32 pocketId);
+void BtlController_EmitYesNoBox(u32 battlerId, u32 bufferId, u32 stringId);
+void BtlController_EmitMonCaughtEffects(u32 battlerId, u32 bufferId, u32 capturedBattlerId, u32 pokeballId);
 
 // general controllers functions
 void ControllerDummy(u32 battlerId);
 void BattleControllerComplete(u32 battlerId);
 void BtlController_HandleGetMonData(u32 battlerId);
 void BtlController_HandleSetMonData(u32 battlerId);
-void BtlController_HandleSetRawMonData(u32 battlerId);
 void BtlController_HandleLoadMonSprite(u32 battlerId);
 void BtlController_HandleSwitchInAnim(u32 battlerId, void(*controllerFunc)(u32));
 void BtlController_HandleReturnMonToBall(u32 battlerId);
@@ -235,6 +283,7 @@ void BtlController_HandlePrintSelectionString(u32 battlerId);
 void BtlController_HandleChooseAction(u32 battlerId, const u8 *actionsStr, const u8 *whatDoStr, void(*controllerFunc)(u32));
 void BtlController_HandleChooseItem(u32 battlerId, void(*controllerFunc)(u32));
 void BtlController_HandleChoosePokemon(u32 battlerId, void(*controllerFunc)(u32));
+void BtlController_HandleHealthbarUpdate(u32 battlerId, bool32 updateHpTextNow, bool32 updateHpTextAfter);
 void BtlController_HandleHealthbarUpdateWithHpText(u32 battlerId);
 void BtlController_HandleHealthbarUpdateNoHpText(u32 battlerId);
 void BtlController_HandleExpUpdate(u32 battlerId);
@@ -251,6 +300,13 @@ void BtlController_HandleEndBounceEffect(u32 battlerId);
 void BtlController_HandleSpriteInvisibility(u32 battlerId);
 void BtlController_HandleBattleAnimation(u32 battlerId);
 void BtlController_HandleEndLinkBattle(u32 battlerId, u32 battleOutcome, void(*controllerFunc)(u32));
+void BtlController_HandleGimmickState(u32 battlerId, bool32 canCheckKeyItems);
+void BtlController_HandleHealthboxUpdate(u32 battlerId);
+void BtlController_HandleHideAllHealthboxes(u32 battlerId);
+void BtlController_HandleBattleFormChange(u32 battlerId);
+void BtlController_HandlePartyFormChange(u32 battlerId);
+void BtlController_HandleIsPocketNotEmpty(u32 battlerId);
+void BtlController_HandleYesNoBox(u32 battlerId);
 
 // player controller
 void SetControllerToPlayer(u32 battlerId);
@@ -264,11 +320,14 @@ void PlayerHandleChooseItem(u32 battlerId);
 void PlayerHandleChoosePokemon(u32 battlerId);
 void PlayerHandleLinkStandbyMsg(u32 battlerId);
 void PlayerHandleEndLinkBattle(u32 battlerId);
+void PlayerHandleGimmickState(u32 battlerId);
+void PlayerHandleMonCaughtEffects(u32 battlerId);
 void ActionSelectionCreateCursorAt(u32 cursorPos);
 void ActionSelectionDestroyCursorAt(u32 cursorPos);
 void InitMoveSelectionsVarsAndStrings(u32 battlerId);
 void MoveSelectionCreateCursorAt(u32 cursorPos, u32 arg1);
 void MoveSelectionDestroyCursorAt(u32 cursorPos);
+bool32 CanTargetBattler(u32 attacker, u32 defender, u32 move, u32 moveTarget, bool32 isDefenderHealBlocked);
 
 // opponent controller
 void SetControllerToOpponent(u32 battlerId);
@@ -311,6 +370,7 @@ void LinkOpponentHandleSwitchInAnim(u32 battlerId);
 void LinkOpponentHandleDrawTrainerPic(u32 battlerId);
 void LinkOpponentHandleIntroTrainerBallThrow(u32 battlerId);
 void LinkOpponentHandleEndLinkBattle(u32 battlerId);
+void LinkOpponentHandleGimmickState(u32 battlerId);
 
 // recorded player controller
 void SetControllerToRecordedPlayer(u32 battlerId);
@@ -325,5 +385,6 @@ void SetControllerToRecordedOpponent(u32 battlerId);
 void SetControllerToPlayerPartner(u32 battlerId);
 void PlayerPartnerHandleDrawTrainerPic(u32 battlerId);
 void PlayerPartnerHandleIntroTrainerBallThrow(u32 battlerId);
+void PlayerPartnerHandleGimmickState(u32 battlerId);
 
 #endif // GUARD_BATTLE_CONTROLLERS_H

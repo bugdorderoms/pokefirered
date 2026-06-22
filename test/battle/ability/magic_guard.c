@@ -286,6 +286,24 @@ SINGLE_BATTLE_TEST("Magic Guard prevents damage from Iron Barbs, Aftermath, etc"
     }
 }
 
+SINGLE_BATTLE_TEST("Magic Guard prevents damage from G-Max Wildfire, Cannonade, etc")
+{
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_EMBER].type == TYPE_FIRE);
+        ASSUME(MoveHasMoveEffect(MOVE_GMAX_WILDFIRE, MOVE_EFFECT_DAMAGE_NON_TYPES, FALSE) == TRUE);
+        ASSUME(gBattleMoves[MOVE_GMAX_WILDFIRE].argument.generic == B_SIDE_QUEUED_GMAX_WILDFIRE);
+        ASSUME(gSpeciesInfo[SPECIES_ABRA].types[0] != TYPE_FIRE && gSpeciesInfo[SPECIES_ABRA].types[1] != TYPE_FIRE);
+        
+        PLAYER(SPECIES_CHARIZARD) { GigantamaxFactor(TRUE); }
+        OPPONENT(SPECIES_ABRA) { Ability(ABILITY_MAGIC_GUARD); }
+    } WHEN {
+        TURN { MOVE(player, MOVE_EMBER, gimmick: GIMMICK_DYNAMAX); }
+    } SCENE {
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_GMAX_WILDFIRE, player);
+        NOT ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_TURN_DAMAGE_NON_TYPES, opponent);
+    }
+}
+
 TO_DO_BATTLE_TEST("Magic Guard prevents Mind Blown and Steel Beam damage");
 TO_DO_BATTLE_TEST("Magic Guard prevents Life Orb damage");
 TO_DO_BATTLE_TEST("Magic Guard prevents Black Sludge damage");

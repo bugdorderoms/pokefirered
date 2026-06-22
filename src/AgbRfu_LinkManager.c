@@ -884,7 +884,7 @@ static void rfu_LMAN_REQ_callback(u16 reqCommandId, u16 reqResult)
         {
             lman.reserveDisconnectSlot_flag = 0;
             lman.acceptCount = 0;
-            lman.acceptSlot_flag = 0;;
+            lman.acceptSlot_flag = 0;
             lman.parent_child = MODE_NEUTRAL;
             rfu_LMAN_managerChangeAgbClockMaster();
             

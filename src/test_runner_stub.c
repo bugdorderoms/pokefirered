@@ -46,6 +46,11 @@ void TestRunner_Battle_AfterLastTurn(void)
 }
 
 __attribute__((weak))
+u32 TestRunner_Battle_GetChosenGimmick(u32 battlerId, u32 partyIndex)
+{
+}
+
+__attribute__((weak))
 void BattleTest_CheckBattleRecordActionType(u32 battlerId, u32 recordIndex, u32 actionType)
 {
 }

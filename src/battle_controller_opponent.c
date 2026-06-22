@@ -4,6 +4,7 @@
 #include "m4a.h"
 #include "task.h"
 #include "util.h"
+#include "link.h"
 #include "pokeball.h"
 #include "random.h"
 #include "battle.h"
@@ -28,12 +29,12 @@ static void OpponentHandleChooseAction(u32 battlerId);
 static void OpponentHandleChooseItem(u32 battlerId);
 static void OpponentHandleIntroTrainerBallThrow(u32 battlerId);
 static void OpponentHandleEndLinkBattle(u32 battlerId);
+static void OpponentHandleGimmickState(u32 battlerId);
 
 static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = BtlController_HandleLoadMonSprite,
     [CONTROLLER_SWITCHINANIM]             = OpponentHandleSwitchInAnim,
     [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
@@ -70,6 +71,14 @@ static void (*const sOpponentBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
     [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
     [CONTROLLER_ENDLINKBATTLE]            = OpponentHandleEndLinkBattle,
+    [CONTROLLER_GIMMICKSTATE]             = OpponentHandleGimmickState,
+    [CONTROLLER_HEALTHBOXUPDATE]          = BtlController_HandleHealthboxUpdate,
+    [CONTROLLER_HIDEALLHEALTHBOXES]       = BtlController_HandleHideAllHealthboxes,
+    [CONTROLLER_BATTLEFORMCHANGE]         = BtlController_HandleBattleFormChange,
+    [CONTROLLER_PARTYFORMCHANGE]          = BtlController_HandlePartyFormChange,
+    [CONTROLLER_ISPOCKETNOTEMPTY]         = BattleControllerComplete,
+    [CONTROLLER_YESNOBOX]                 = BattleControllerComplete,
+    [CONTROLLER_MONCAUGHTEFFECTS]         = BattleControllerComplete,
     [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
@@ -93,7 +102,15 @@ static void OpponentBufferRunCommand(u32 battlerId)
 static void OpponentBufferExecCompleted(u32 battlerId)
 {
     gBattlerControllersData[battlerId].func = OpponentBufferRunCommand;
-    gBattleControllerExecFlags &= ~(Bit(battlerId));
+    
+    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+    {
+        u8 playerId = GetMultiplayerId();
+        PrepareBufferDataTransferLink(battlerId, BUFFER_LINK, 4, &playerId);
+        gBattleBufferA[battlerId][0] = CONTROLLER_TERMINATOR_NOP;
+    }
+    else
+        gBattleControllerExecFlags &= ~(Bit(battlerId));
 }
 
 ////////////////////////
@@ -349,14 +366,14 @@ void OpponentHandleChooseMove(u32 battlerId)
         default:
             gBattlerTarget = gBattleStruct->battlers[battlerId].aiChosenTarget;
             
-            moveTarget = GetBattlerMoveTargetType(battlerId, moveInfo->moves[gBattleStruct->battlers[battlerId].aiMoveOrAction]);
+            moveTarget = moveInfo->moves[gBattleStruct->battlers[battlerId].aiMoveOrAction].target;
             
             if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS)
                 gBattlerTarget = battlerId;
             else if (moveTarget == MOVE_TARGET_BOTH)
             {
                 gBattlerTarget = BATTLE_OPPOSITE(battlerId);
-                if (gAbsentBattlerFlags & Bit(gBattlerTarget))
+                if (!IsBattlerAlive(gBattlerTarget))
                     gBattlerTarget = BATTLE_PARTNER(gBattlerTarget);
             }
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, (gBattleStruct->battlers[battlerId].aiMoveOrAction) | (gBattlerTarget << 8));
@@ -366,16 +383,15 @@ void OpponentHandleChooseMove(u32 battlerId)
     else // Wild
     {
         u32 target, chosenMoveId;
-        u32 move, speciesAttacker, speciesAttackerPartner;
+        u32 speciesAttacker, speciesAttackerPartner;
 
         do
         {
             chosenMoveId = Random() % MAX_MON_MOVES;
-            move = moveInfo->moves[chosenMoveId];
         }
-        while (!move);
+        while (!moveInfo->moves[chosenMoveId].move);
         
-        moveTarget = GetBattlerMoveTargetType(battlerId, move);
+        moveTarget = moveInfo->moves[chosenMoveId].target;
         
         if (moveTarget == MOVE_TARGET_USER || moveTarget == MOVE_TARGET_ALL_BATTLERS)
             BtlController_EmitTwoReturnValues(battlerId, BUFFER_B, B_ACTION_EXEC_SCRIPT, (chosenMoveId) | (battlerId << 8));
@@ -384,10 +400,11 @@ void OpponentHandleChooseMove(u32 battlerId)
             do
             {
                 target = GetBattlerAtPosition(Random() & 2);
-            } while (!CanTargetBattler(battlerId, target, move, moveTarget));
+            } while (!CanTargetBattler(battlerId, target, moveInfo->moves[chosenMoveId].move, moveTarget, moveInfo->isHealBlocked[target]));
             
 #if DOUBLE_WILD_ATTACK_NATURAL_ENEMY
-            if (moveTarget != MOVE_TARGET_BOTH && moveTarget != MOVE_TARGET_FOES_AND_ALLY && moveTarget != MOVE_TARGET_OPPONENTS && CanTargetBattler(battlerId, BATTLE_PARTNER(battlerId), move, moveTarget))
+            if (moveTarget != MOVE_TARGET_BOTH && moveTarget != MOVE_TARGET_FOES_AND_ALLY && moveTarget != MOVE_TARGET_OPPONENTS
+            && CanTargetBattler(battlerId, BATTLE_PARTNER(battlerId), moveInfo->moves[chosenMoveId].move, moveTarget, moveInfo->isHealBlocked[BATTLE_PARTNER(battlerId)]))
             {
                 speciesAttacker = gBattleMons[battlerId].species;
                 speciesAttackerPartner = gBattleMons[BATTLE_PARTNER(battlerId)].species;
@@ -467,4 +484,32 @@ static void OpponentHandleEndLinkBattle(u32 battlerId)
         SetMainCallback2(gMain.savedCallback);
     }
     BattleControllerComplete(battlerId);
+}
+
+static void OpponentHandleGimmickState(u32 battlerId)
+{
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+        PlayerPartnerHandleGimmickState(battlerId);
+    else
+    {
+        switch (gBattleBufferA[battlerId][1])
+        {
+            case STATE_CHECK_GIMMICK_KEY_ITEMS:
+            {
+                u8 data[NUM_GIMMICK_BITS + 1] = {0};
+                BtlController_EmitDataTransfer(battlerId, BUFFER_B, NUM_GIMMICK_BITS, data);
+                break;
+            }
+            case STATE_USABLE_GIMMICK:
+                gBattleStruct->battlers[battlerId].usableGimmick = gBattleBufferA[battlerId][2];
+                break;
+            case STATE_GIMMICK_IN_PROGRESS:
+                gBattleSpritesDataPtr->battlerData[battlerId].gimmickInProgress = TRUE;
+                break;
+            case STATE_ACTIVE_GIMMICK:
+                SetActiveGimmick(battlerId, gBattleBufferA[battlerId][2]);
+                break;
+        }
+        BattleControllerComplete(battlerId);
+    }
 }

@@ -13,7 +13,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_callstd
 	.4byte ScrCmd_gotostd_if
 	.4byte ScrCmd_callstd_if
-	.4byte ScrCmd_nop
+	.4byte ScrCmd_initfixedraidintro
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_jumpifcantgivenick
 	.4byte ScrCmd_loadword

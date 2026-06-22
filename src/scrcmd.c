@@ -28,6 +28,7 @@
 #include "coins.h"
 #include "battle_setup.h"
 #include "shop.h"
+#include "raid_intro.h"
 #include "slot_machine.h"
 #include "field_effect.h"
 #include "fieldmap.h"
@@ -336,6 +337,27 @@ bool32 ScrCmd_jumpifcantgivenick(struct ScriptContext * ctx)
 
     if (gSaveBlock2Ptr->optionsSkipPkmnNickname)
         ScriptJump(ctx, cmd->ptr);
+    
+    return FALSE;
+}
+
+bool32 ScrCmd_initfixedraidintro(struct ScriptContext * ctx)
+{
+    CMD_ARGS(u8 numStars, u16 species, u8 level, u16 item, const struct RaidPartner *partners, const u16 *drops, bool8 canCancel, bool8 canConnectInLink, bool8 tryGigantamax);
+    
+    struct RaidIntroData raidIntroData =
+    {
+        .species = VarGet(cmd->species),
+        .numStars = cmd->numStars,
+        .level = cmd->level,
+        .item = cmd->item,
+        .drops = cmd->drops,
+        .partners = (struct RaidPartner *)cmd->partners,
+        .canCancel = cmd->canCancel,
+        .canConnectInLink = cmd->canConnectInLink,
+        .tryGigantamax = cmd->tryGigantamax,
+    };
+    InitFixedRaidIntro(&raidIntroData);
     
     return FALSE;
 }

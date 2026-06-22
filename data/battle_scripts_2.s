@@ -29,6 +29,15 @@ gBattlescriptsForUsingItem::
 	.4byte BattleScript_ItemRestoreHP                @ EFFECT_ITEM_REVIVE
 	.4byte BattleScript_ItemDoubleSosCallRate        @ EFFECT_ITEM_ADRENALINE_ORB
 
+gRaidCheerEffectsTable::
+	.4byte BattleScript_RaidCheerHealHP              @ RAID_CHEER_HEAL_HP
+	.4byte BattleScript_RaidCheerCureStatus          @ RAID_CHEER_CURE_STATUS
+	.4byte BattleScript_RaidCheerIncreaseStat        @ RAID_CHEER_BOOST_STAT
+	.4byte BattleScript_RaidCheerSetReflect          @ RAID_CHEER_SET_REFLECT
+	.4byte BattleScript_RaidCheerSetLightscreen      @ RAID_CHEER_SET_LIGHTSCREEN
+	.4byte BattleScript_RaidCheerBreakShield         @ RAID_CHEER_BREAK_SHIELD
+	.4byte BattleScript_RaidCheerNothing             @ RAID_CHEER_NOTHING
+
 @@@@@@@@@@@@@@@@@@@@
 @ ITEM USE SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@
@@ -69,7 +78,7 @@ BattleScript_ItemRestoreHP::
 	end
 
 BattleScript_ItemRestoreHP_SendOutRevivedBattler::
-	switchinanim BS_SCRIPTING, FALSE
+	switchinanim BS_SCRIPTING, 0
 	waitstate
 	switchineffects BS_SCRIPTING
 	end
@@ -185,13 +194,20 @@ BattleScript_ItemDoubleSosCallRate::
 @ BALL THROW SCRIPTS @
 @@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_DoRaidBattleBallThrow::
+	flushmessagebox
+	pause B_WAIT_TIME_MED
+	goto BattleScript_DoBallThrow
+
 BattleScript_SuccessBallThrow::
+	domoncaughteffects
 	printstring STRINGID_GOTCHADEFCAUGHT
 	jumpifbyte CMP_EQUAL, sEXP_CATCH, FALSE, BattleScript_CaughtMonTrySetDexFlag
 	setbyte sGIVEEXP_STATE, 0
 	getexp BS_TARGET
 	sethword gBattle_BG2_X, 0
 BattleScript_CaughtMonTrySetDexFlag::
+	jumpifbattletype BATTLE_TYPE_RAID, BattleScript_CaughtPokemonDone
 	jumpifbattletype BATTLE_TYPE_RECORDED, BattleScript_CaughtPokemonSkipNickname
 	trysetcaughtmondexflags BattleScript_CaughtPokemonSkipNewDex
 	printstring STRINGID_DEFDATAADDEDTODEX
@@ -210,6 +226,11 @@ BattleScript_TryGiveCaughtNickPokemon::
 	waitmessage B_WAIT_TIME_LONG
 	goto BattleScript_CaughtPokemonDone
 
+BattleScript_GiveNicknameYesNoBox::
+	yesnobox BS_ATTACKER
+	waitstate
+	return
+
 BattleScript_CaughtPokemonSkipNickname::
 	givecaughtmon
 BattleScript_CaughtPokemonDone::
@@ -219,12 +240,12 @@ BattleScript_CaughtPokemonDone::
 BattleScript_OldMan_Pokedude_CaughtMessage::
 	printstring STRINGID_GOTCHADEFCAUGHT
 	setbyte gBattleOutcome, B_OUTCOME_CAUGHT
-	endlinkbattle
 	finishturn
 
 BattleScript_ShakeBallThrow::
 	printfromtable gBallEscapeStringIds
 	waitmessage B_WAIT_TIME_LONG
+	jumpifbattletype BATTLE_TYPE_RAID, BattleScript_FaintRaidBoss
 	jumpifnotbattletype BATTLE_TYPE_SAFARI, BattleScript_CatchFailEnd
 	jumpifbyte CMP_NOT_EQUAL, gNumSafariBalls, 0, BattleScript_CatchFailEnd
 	printstring STRINGID_OUTOFSAFARIBALLS
@@ -279,3 +300,129 @@ BattleScript_LeftoverWallyPrepToThrow::
 	printstring STRINGID_YOUTHROWABALLNOWRIGHT
 	waitmessage B_WAIT_TIME_LONG
 	end2
+
+@@@@@@@@@@@@@@@@@@@@@@
+@ RAID CHEER SCRIPTS @
+@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RaidCheerMessage::
+	flushmessagebox
+	playse SE_APPLAUSE
+	printstring STRINGID_TRAINERCHEEREDEVERYONEON
+	waitmessage B_WAIT_TIME_LONG
+	return
+
+@ RAID_CHEER_HEAL_HP @
+
+BattleScript_RaidCheerHealHP::
+	setbyte sMULTIUSE_STATE, FALSE
+	setbyte gBattlerTarget, 0
+BattleScript_RaidCheerHealHP_Loop::
+	jumpifabsent BS_TARGET, BattleScript_RaidCheerHealHP_NextBattler
+	jumpiftargetally BattleScript_RaidCheerHealHP_TryHeal
+	goto BattleScript_RaidCheerHealHP_NextBattler
+BattleScript_RaidCheerHealHP_TryHeal::
+	raidcheerhealfullhealth BS_TARGET, BattleScript_RaidCheerHealHP_NextBattler
+	orword gHitMarker, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_IGNORE_DISGUISE
+	healthbarupdate BS_TARGET
+	datahpupdate BS_TARGET
+	setbyte sMULTIUSE_STATE, TRUE
+BattleScript_RaidCheerHealHP_NextBattler::
+	addbyte gBattlerTarget, 1
+	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_RaidCheerHealHP_Loop
+	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, FALSE, BattleScript_RaidCheerNothing
+	printstring STRINGID_EVERYONEHPWASRESTORED
+	waitmessage B_WAIT_TIME_LONG
+	end
+
+@ RAID_CHEER_CURE_STATUS @
+
+BattleScript_RaidCheerCureStatus::
+	setbyte sMULTIUSE_STATE, FALSE
+	setbyte gBattlerTarget, 0
+BattleScript_RaidCheerCureStatus_Loop::
+	jumpifabsent BS_TARGET, BattleScript_RaidCheerCureStatus_NextBattler
+	jumpiftargetally BattleScript_RaidCheerCureStatus_TryStatusHeal
+	goto BattleScript_RaidCheerCureStatus_NextBattler
+BattleScript_RaidCheerCureStatus_TryStatusHeal::
+	cureprimarystatus BS_TARGET, BattleScript_RaidCheerCureStatus_NextBattler
+	updatestatusicon BS_TARGET
+	setbyte sMULTIUSE_STATE, TRUE
+BattleScript_RaidCheerCureStatus_NextBattler::
+	addbyte gBattlerTarget, 1
+	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_RaidCheerCureStatus_Loop
+	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, FALSE, BattleScript_RaidCheerNothing
+	printstring STRINGID_EVERYONESTATUSWEREHEALED
+	waitmessage B_WAIT_TIME_LONG
+	end
+
+@ RAID_CHEER_BOOST_STAT @
+
+BattleScript_RaidCheerIncreaseStat::
+	raidcheerselectstattoincrease BattleScript_RaidCheerIncreaseStat_BoostCritModifier, BattleScript_RaidCheerIncreaseStat_ByOne, BattleScript_RaidCheerNothing
+	setstatchangerfrommultiusestate +2
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	playstatchangeanimation
+	waitstate
+	settargetally BS_ATTACKER
+	swapattackerwithtarget
+	setstatchangerfrommultiusestate +2
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	playstatchangeanimation
+	waitstate
+	displaystatchangestring STRINGID_BUFF1ROSEFOREVERYONE
+	swapattackerwithtarget
+	end
+
+BattleScript_RaidCheerIncreaseStat_ByOne::
+	setstatchangerfrommultiusestate +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	playstatchangeanimation
+	waitstate
+	settargetally BS_ATTACKER
+	swapattackerwithtarget
+	setstatchangerfrommultiusestate +1
+	statbuffchange STAT_CHANGE_FLAG_SELF_INFLICT
+	playstatchangeanimation
+	waitstate
+	displaystatchangestring STRINGID_BUFF1ROSEFOREVERYONE
+	swapattackerwithtarget
+	end
+
+BattleScript_RaidCheerIncreaseStat_BoostCritModifier::
+	printstring STRINGID_EVERYONEISGETTINGPUMPED
+	waitmessage B_WAIT_TIME_LONG
+	end
+
+@ RAID_CHEER_SET_REFLECT @
+
+BattleScript_RaidCheerSetReflect::
+	trysetreflect BattleScript_RaidCheerNothing
+	playmoveanimation BS_ATTACKER, MOVE_REFLECT
+BattleScript_RaidCheerSetReflectLightscreen_Message::
+	printfromtable gReflectLightScreenSafeguardStringIds
+	waitmessage B_WAIT_TIME_LONG
+	end
+
+@ RAID_CHEER_SET_LIGHTSCREEN @
+
+BattleScript_RaidCheerSetLightscreen::
+	trysetlightscreen BattleScript_RaidCheerNothing
+	playmoveanimation BS_ATTACKER, MOVE_LIGHT_SCREEN
+	goto BattleScript_RaidCheerSetReflectLightscreen_Message
+
+@ RAID_CHEER_BREAK_SHIELD @
+
+BattleScript_RaidCheerBreakShield::
+	raidcheerdestroyshield BattleScript_RaidCheerNothing
+	printstring STRINGID_POKEMONMYSTERIOUSBARRIERFELL
+	waitmessage B_WAIT_TIME_LONG
+	call BattleScript_RaidShieldBreak
+	end
+
+@ RAID_CHEER_NOTHING @
+
+BattleScript_RaidCheerNothing::
+	printstring STRINGID_BUTITECHOEDFEEBLY
+	waitmessage B_WAIT_TIME_LONG
+	end

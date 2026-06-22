@@ -50,7 +50,7 @@
 #define MON_DATA_ABILITY_HIDDEN     45
 #define MON_DATA_NATURE             46
 #define MON_DATA_DYNAMAX_LEVEL      47
-#define MON_DATA_HAS_GMAX_FACTOR    48
+#define MON_DATA_GIGANTAMAX_FACTOR  48
 #define MON_DATA_TERA_TYPE          49
 #define MON_DATA_PERSONALITY        50
 #define MON_DATA_OT_ID              51
@@ -171,7 +171,8 @@
 #define SPECIES_FLAG_PARADOX        Bit(5)
 #define SPECIES_FLAG_TERASTAL       Bit(6)
 #define SPECIES_FLAG_CANT_TRADE     Bit(7)
-#define SPECIES_FLAG_PRIMAL         Bit(8)
+#define SPECIES_FLAG_RED_PRIMAL     Bit(8)
+#define SPECIES_FLAG_BLUE_PRIMAL    Bit(9)
 // Those species flags cause the pokemon to be created with 3 perfect ivs
 #define SPECIES_PERFECT_IVS_FLAGS (SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_MYTHICAL | SPECIES_FLAG_ULTRA_BEAST | SPECIES_FLAG_PARADOX)
 

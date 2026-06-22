@@ -874,6 +874,14 @@ static const union AnimCmd sAnim_TreeCut[] = {
     ANIMCMD_END,
 };
 
+static const union AnimCmd sAnim_RaidDenActive[] = {
+    ANIMCMD_FRAME(1, 8),
+    ANIMCMD_FRAME(1, 8),
+    ANIMCMD_FRAME(1, 8),
+    ANIMCMD_FRAME(1, 8),
+    ANIMCMD_JUMP(0),
+};
+
 static const union AnimCmd sAnim_TakeOutRodSouth[] = {
     ANIMCMD_FRAME(8, 4),
     ANIMCMD_FRAME(9, 4),
@@ -1250,6 +1258,11 @@ static const union AnimCmd *const sAnimTable_RockSmashRock[] = {
 static const union AnimCmd *const sAnimTable_CutTree[] = {
     [ANIM_STAY_STILL] = sAnim_StayStill,
     [ANIM_REMOVE_OBSTACLE] = sAnim_TreeCut,
+};
+
+static const union AnimCmd *const sAnimTable_RaidDen[] = {
+    [ANIM_STAY_STILL] = sAnim_StayStill,
+    [ANIM_ACTIVATE_RAID_DEN] = sAnim_RaidDenActive,
 };
 
 static const union AnimCmd *const sAnimTable_RedGreenFish[] = {

@@ -676,7 +676,7 @@ void OpenPartyMenuInTutorialBattle(u32 partyAction)
 {
     u32 layout = GetPartyLayoutFromBattleType();
     
-    if (!BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU) && (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE))
+    if ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU))
     {
         BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU);
         InitPartyMenu(PARTY_MENU_TYPE_IN_BATTLE, layout, partyAction, FALSE, PARTY_MSG_NONE, Task_FirstBattleEnterParty_WaitFadeIn, ReshowBattleScreenAfterMenu);
@@ -691,7 +691,7 @@ void EnterPartyFromItemMenuInBattle(void)
 {
     u32 layout = GetPartyLayoutFromBattleType();
     
-    if (!BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU) && (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE))
+    if ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) && !BtlCtrl_OakOldMan_TestState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU))
     {
         BtlCtrl_OakOldMan_SetState2Flag(FIRST_BATTLE_MSG_FLAG_PARTY_MENU);
         InitPartyMenu(PARTY_MENU_TYPE_IN_BATTLE, layout, PARTY_ACTION_USE_ITEM, FALSE, PARTY_MSG_NONE, Task_FirstBattleEnterParty_WaitFadeIn, CB2_BagMenuFromBattle);
@@ -2104,14 +2104,14 @@ static inline bool32 IsMultiPartnerSlot(u32 slot)
 
 static bool32 SelectedPartnerSlotInMulti(u32 slot)
 {
-    if (IsMultiBattle() && IsMultiPartnerSlot(slot))
+    if ((gBattleTypeFlags & BATTLE_TYPE_MULTI) && IsMultiPartnerSlot(slot))
         return TRUE;
     return FALSE;
 }
 
 static u32 GetPartyLayoutFromBattleType(void)
 {
-    if (IsMultiBattle())
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
         return PARTY_LAYOUT_MULTI;
     else if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || (gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE))
         return PARTY_LAYOUT_SINGLE;
@@ -6153,8 +6153,8 @@ bool32 PokemonUseItemEffects(struct Pokemon *mon, u32 item, u32 partyIndex, u32 
                 }
                 case ITEMEFFECT_GIVE_GMAX_FACTOR:
                 {
-                    bool32 newVal = GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR) ^ TRUE; // switch g max factor bit
-                    SetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, &newVal);
+                    bool32 newVal = GetMonData(mon, MON_DATA_GIGANTAMAX_FACTOR) ^ TRUE; // switch g max factor bit
+                    SetMonData(mon, MON_DATA_GIGANTAMAX_FACTOR, &newVal);
                     SET_STRING_TO_PRINT(ITEMUSE_STRING_CHANGE_GMAX_FACTOR)
                     SET_STRING_TO_COPY_DATA(ITEMUSE_COPY_GAINED_OR_LOSES, newVal)
                     failed = FALSE;
@@ -6969,7 +6969,7 @@ static void BufferBattlePartyCurrentOrderInternal(u8 *partyBattleOrder, u32 flan
     u32 i, j;
     u8 partyIds[PARTY_SIZE];
 
-    if (IsMultiBattle())
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
         // Party ids are packed in 4 bits at a time
         // i.e. the party id order below would be 0, 3, 5, 4, 2, 1, and the two parties would be 0,5,4 and 3,2,1
@@ -7046,7 +7046,7 @@ void SwitchPartyOrderLinkMulti(u32 battlerId, u32 slot, u32 slot2)
     u8 partyIds[PARTY_SIZE], *partyBattleOrder;
     u32 i, j, partyIdBuffer, tempSlot = 0;
 
-    if (IsMultiBattle())
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
     {
         partyBattleOrder = gBattleStruct->battlerPartyOrders[battlerId];
         

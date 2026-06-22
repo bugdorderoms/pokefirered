@@ -127,4 +127,33 @@ SINGLE_BATTLE_TEST("Forecast transforms Castform back when its suppressed")
     }
 }
 
-TO_DO_BATTLE_TEST("Forecast doesn't transforms Castform back if dynamaxed");
+SINGLE_BATTLE_TEST("Forecast doesn't transforms Castform back if dynamaxed, even when it ends")
+{
+    GIVEN {
+        ASSUME(gBattleMoves[MOVE_GASTRO_ACID].effect == EFFECT_GASTRO_ACID);
+        
+        PLAYER(SPECIES_CASTFORM) { Ability(ABILITY_FORECAST); }
+        OPPONENT(SPECIES_ABOMASNOW) { Ability(ABILITY_SNOW_WARNING); }
+    } WHEN {
+        TURN { MOVE(player, MOVE_SCRATCH, gimmick: GIMMICK_DYNAMAX); }
+        TURN { MOVE(player, MOVE_SCRATCH); MOVE(opponent, MOVE_GASTRO_ACID); }
+        TURN { MOVE(player, MOVE_SCRATCH); }
+        TURN { }
+        TURN { }
+    } SCENE {
+        // transforms
+        ABILITY_POPUP(player, ABILITY_FORECAST);
+        ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_FORM_CHANGE, player);
+        MESSAGE("Castform transformed!");
+        
+        // doesn't transforms back
+        MESSAGE("Castform is no longer Dynamaxed!");
+
+        NONE_OF {
+            ANIMATION(ANIM_TYPE_GENERAL, B_ANIM_FORM_CHANGE, player);
+            MESSAGE("Castform transformed!");
+        }
+    } THEN {
+        EXPECT_EQ(player->species, SPECIES_CASTFORM_SNOWY);
+    }
+}

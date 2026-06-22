@@ -34,6 +34,16 @@ struct Test
     void *data;
 };
 
+enum ExpectFailState
+{
+    NO_EXPECT_FAIL,
+    EXPECT_FAIL_OPEN,
+    EXPECT_FAIL_TURN_OPEN,
+    EXPECT_FAIL_SCENE_OPEN,
+    EXPECT_FAIL_SUCCESS,
+    EXPECT_FAIL_CLOSED
+};
+
 struct TestRunnerState
 {
     u8 state;
@@ -48,6 +58,9 @@ struct TestRunnerState
     u8 result;
     u8 expectedResult;
     u32 timeoutSeconds;
+    s32 expectedFailLine;
+    enum ExpectFailState expectedFailState;
+    bool8 runningExpectFail:1;
 };
 
 extern const u8 gTestRunnerN;
@@ -70,7 +83,8 @@ extern struct TestRunnerState gTestRunnerState;
 void CB2_TestRunner(void);
 
 void Test_ExpectedResult(enum TestResult);
-void Test_ExitWithResult(enum TestResult, const char *fmt, ...);
+void Test_ExpectFail(u32 failLine);
+void Test_ExitWithResult(enum TestResult, u32 stopLine, const char *fmt, ...);
 
 s32 MgbaPrintf_(const char *fmt, ...);
 
@@ -100,14 +114,14 @@ s32 MgbaPrintf_(const char *fmt, ...);
     do \
     { \
         if (!(c)) \
-            Test_ExitWithResult(TEST_RESULT_SKIP, "%s:%d: ASSUME failed", gTestRunnerState.test->filename, __LINE__); \
+            Test_ExitWithResult(TEST_RESULT_SKIP, __LINE__, "%s:%d: ASSUME failed", gTestRunnerState.test->filename, __LINE__); \
     } while (0)
 
 #define EXPECT(c) \
     do \
     { \
         if (!(c)) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT failed", gTestRunnerState.test->filename, __LINE__); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT failed", gTestRunnerState.test->filename, __LINE__); \
     } while (0)
 
 #define EXPECT_EQ(a, b) \
@@ -115,7 +129,7 @@ s32 MgbaPrintf_(const char *fmt, ...);
     { \
         typeof(a) _a = (a), _b = (b); \
         if (_a != _b) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_EQ(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_EQ(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
     } while (0)
 
 #define EXPECT_NE(a, b) \
@@ -123,7 +137,7 @@ s32 MgbaPrintf_(const char *fmt, ...);
     { \
         typeof(a) _a = (a), _b = (b); \
         if (_a == _b) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_NE(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_NE(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
     } while (0)
 
 #define EXPECT_LT(a, b) \
@@ -131,7 +145,7 @@ s32 MgbaPrintf_(const char *fmt, ...);
     { \
         typeof(a) _a = (a), _b = (b); \
         if (_a >= _b) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_LT(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_LT(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
     } while (0)
 
 #define EXPECT_LE(a, b) \
@@ -139,7 +153,7 @@ s32 MgbaPrintf_(const char *fmt, ...);
     { \
         typeof(a) _a = (a), _b = (b); \
         if (_a > _b) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_LE(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_LE(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
     } while (0)
 
 #define EXPECT_GT(a, b) \
@@ -147,7 +161,7 @@ s32 MgbaPrintf_(const char *fmt, ...);
     { \
         typeof(a) _a = (a), _b = (b); \
         if (_a <= _b) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_GT(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_GT(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
     } while (0)
 
 #define EXPECT_GE(a, b) \
@@ -155,7 +169,7 @@ s32 MgbaPrintf_(const char *fmt, ...);
     { \
         typeof(a) _a = (a), _b = (b); \
         if (_a < _b) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_GE(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_GE(%d, %d) failed", gTestRunnerState.test->filename, __LINE__, _a, _b); \
     } while (0)
 
 #define KNOWN_FAILING \
@@ -164,9 +178,13 @@ s32 MgbaPrintf_(const char *fmt, ...);
 #define TO_DO \
     do { \
         Test_ExpectedResult(TEST_RESULT_TODO); \
-        Test_ExitWithResult(TEST_RESULT_TODO, "%s:%d: EXPECT_TO_DO", gTestRunnerState.test->filename, __LINE__); \
+        Test_ExitWithResult(TEST_RESULT_TODO, __LINE__, "%s:%d: EXPECT_TO_DO", gTestRunnerState.test->filename, __LINE__); \
     } while (0)
 
 #define PARAMETRIZE if (gFunctionTestRunnerState->parameters++ == gFunctionTestRunnerState->runParameter)
+
+#define EXPECT_FAIL \
+    Test_ExpectFail(-1); \
+    for (gTestRunnerState.runningExpectFail = TRUE; gTestRunnerState.runningExpectFail; Test_ExpectFail(__LINE__), gTestRunnerState.runningExpectFail = FALSE)
 
 #endif

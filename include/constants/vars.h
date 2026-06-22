@@ -78,7 +78,7 @@
 // triangle in time.
 #define VAR_DEOXYS_INTERACTION_STEP_COUNTER 0x4026
 
-#define VAR_0x4027                         0x4027
+#define VAR_WISHING_PIECE_VALUE            0x4027
 #define VAR_0x4028                         0x4028
 #define VAR_DEXNAV_SPECIES                 0x4029
 #define VAR_DEXNAV_ENVIRONMENT             0x402A

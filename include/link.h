@@ -65,12 +65,12 @@
 #define LINKCMD_SEND_HELD_KEYS_2   0xCAFE
 #define LINKCMD_0xCCCC             0xCCCC
 
-#define LINKTYPE_TRADE              0x1111  // trade
-#define LINKTYPE_0x1122              0x1122  // trade
-#define LINKTYPE_0x1133              0x1133  // trade
-#define LINKTYPE_0x1144              0x1144  // trade
+#define LINKTYPE_TRADE               0x1111
+#define LINKTYPE_TRADE_CONNECTING    0x1122
+#define LINKTYPE_TRADE_SETUP         0x1133
+#define LINKTYPE_TRADE_DISCONNECTED  0x1144
 #define LINKTYPE_BATTLE              0x2211
-#define LINKTYPE_0x2222              0x2222  // unused battle?
+#define LINKTYPE_RAID_BATTLE         0x2222
 #define LINKTYPE_SINGLE_BATTLE       0x2233
 #define LINKTYPE_DOUBLE_BATTLE       0x2244
 #define LINKTYPE_MULTI_BATTLE        0x2255
@@ -79,8 +79,8 @@
 #define LINKTYPE_BATTLE_TOWER        0x2288
 #define LINKTYPE_0x3311              0x3311
 #define LINKTYPE_0x3322              0x3322
-#define LINKTYPE_BERRY_BLENDER_SETUP              0x4411
-#define LINKTYPE_CONTEST_GMODE              0x6601
+#define LINKTYPE_BERRY_BLENDER_SETUP 0x4411
+#define LINKTYPE_CONTEST_GMODE       0x6601
 
 #define MASTER_HANDSHAKE 0x8FFF
 #define SLAVE_HANDSHAKE  0xB9A0
@@ -220,7 +220,7 @@ void ClearLinkCallback(void);
 void ClearLinkCallback_2(void);
 u8 GetLinkPlayerCount(void);
 void OpenLinkTimed(void);
-u8 GetLinkPlayerDataExchangeStatusTimed(int lower, int higher);
+u32 GetLinkPlayerDataExchangeStatusTimed(u32 lower, u32 higher);
 bool8 IsLinkPlayerDataExchangeComplete(void);
 u32 GetLinkPlayerTrainerId(u8);
 void ResetLinkPlayers(void);

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "battle_anim.h"
+#include "battle_gfx_sfx_util.h"
 #include "graphics.h"
 #include "scanline_effect.h"
 #include "trig.h"
@@ -586,6 +587,50 @@ const struct SpriteTemplate gSkyDropBallSpriteTemplate =
     .images = NULL,
     .affineAnims = sAffineAnims_SkyDropBall,
     .callback = AnimThrowMistBall,
+};
+
+const struct SpriteTemplate gMaxMindstormBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_AURA_SPHERE,
+    .paletteTag = ANIM_TAG_AURA_SPHERE,
+    .oam = &gOamData_AffineNormal_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnims_ShadowBall,
+    .callback = AnimLaunchSpriteUpwards,
+};
+
+static const union AffineAnimCmd sAffineAnim_MaxMindstormGrowingRing[] =
+{
+    AFFINEANIMCMD_FRAME(8, 8, 0, 16), // Double in size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sAffineAnims_MaxMindstormGrowingRing[] =
+{
+    sAffineAnim_MaxMindstormGrowingRing
+};
+
+const struct SpriteTemplate gMaxMindstormRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GOLD_RING,
+    .paletteTag = ANIM_TAG_GOLD_RING,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxMindstormGrowingRing,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
+};
+
+const struct SpriteTemplate gMaxMindstormPinkRingSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GOLD_RING,
+    .paletteTag = ANIM_TAG_PINK_PETAL,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxMindstormGrowingRing,
+    .callback = TranslateAnimSpriteToTargetMonLocation,
 };
 
 // For the rectangular wall sprite used by Reflect, Mirror Coat, etc.
@@ -1326,38 +1371,33 @@ void Anim_KinesisZapEnergy(struct Sprite *sprite)
 // Copies the target mon's sprite, and makes a white silhouette that shrinks away.
 void AnimTask_RolePlaySilhouette(u32 taskId)
 {
-    struct Pokemon *targetMon = GetBattlerPartyIndexPtr(gBattleAnimTarget);
-    u32 personality = GetMonData(targetMon, MON_DATA_PERSONALITY);
-    bool32 isBackPic, isShiny = GetMonData(targetMon, MON_DATA_IS_SHINY);
-    u32 species, priority, spriteId;
-    s16 xOffset;
+    u32 spriteId, personality;
+    bool32 isBackPic, isShiny;
+    struct Pokemon *targetMon;
+    s16 xOffset = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    s16 yOffset = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y);
     
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
     {
         isBackPic = FALSE;
-        xOffset = 20;
+        xOffset += 20;
     }
     else
     {
         isBackPic = TRUE;
-        xOffset = -20;
+        xOffset += -20;
     }
+    targetMon = GetBattlerIllusionPartyIndexPtr(gBattleAnimTarget);
+    personality = GetMonData(targetMon, MON_DATA_PERSONALITY);
+    isShiny = GetMonData(targetMon, MON_DATA_IS_SHINY);
     
-    if (gBattleSpritesDataPtr->battlerData[gBattleAnimTarget].transformSpecies == SPECIES_NONE)
-        species = GetMonData(targetMon, MON_DATA_SPECIES);
-    else
-        species = gBattleSpritesDataPtr->battlerData[gBattleAnimTarget].transformSpecies;
+    spriteId = CreateAdditionalMonSpriteForMoveAnim(GetBattlerVisualSpecies(gBattleAnimTarget), isBackPic, xOffset, yOffset, 5, personality, isShiny, FALSE);
     
-    priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
-    spriteId = CreateAdditionalMonSpriteForMoveAnim(species, isBackPic, GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X) + xOffset, GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y), 5, personality, isShiny, FALSE);
-    
-    gSprites[spriteId].oam.priority = priority;
+    gSprites[spriteId].oam.priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
     gSprites[spriteId].oam.objMode = ST_OAM_OBJ_BLEND;
     
     FillPalette(RGB_WHITE, (gSprites[spriteId].oam.paletteNum << 4) + 0x100, 32);
-    
-    gSprites[spriteId].oam.priority = priority;
-    
+
     SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
     SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(gTasks[taskId].data[1], 16 - gTasks[taskId].data[1]));
     

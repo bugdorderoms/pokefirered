@@ -12,6 +12,21 @@
 #define UROOM_MAX_GROUP_COUNT 8
 #define UROOM_MAX_PARTY_SIZE  5
 
+// In the Union Room the player is only ever connected to ≤ 4 other players.
+// However, there can be up to UROOM_MAX_GROUP_COUNT (8) object events to
+// represent leaders of recently discovered link groups, and each of those groups
+// may have up to MAX_RFU_PLAYERS (5) players in it including the leader.
+// These players are represented on-screen by NPC sprites drawn around the leader.
+// Thus there can be 40 sprites of other players on-screen, in 8 groups of 5.
+#define NUM_UNION_ROOM_SPRITES (UROOM_MAX_GROUP_COUNT * MAX_RFU_PLAYERS)
+
+// The maximum number of recently connected players that can be tracked.
+// Note that this is significantly less than NUM_UNION_ROOM_SPRITES, i.e. not
+// every player that can be shown in the Union Room can be tracked at once.
+// Information such as a group member's gender can instead be read from partnerInfo
+// of the leader's RfuGameData by tracking at least all of the group leaders.
+#define MAX_RFU_PLAYER_LIST_SIZE 16
+
 struct UnionGnameUnamePair
 {
     struct GFtgtGname gname;
@@ -37,17 +52,14 @@ struct UnkStruct_x20
 // These arrays are dynamically allocated but must be
 // represented as structs to match.
 // Don't ask me why.
-
-// FIXME: Find a way around this.
-
 struct UnkStruct_Main0
 {
-    struct UnkStruct_x20 arr[0];
+    struct UnkStruct_x20 arr[MAX_RFU_PLAYER_LIST_SIZE];
 };
 
 struct UnkStruct_Main4
 {
-    struct UnkStruct_x1C arr[0];
+    struct UnkStruct_x1C arr[MAX_RFU_PLAYERS];
 };
 
 struct UnkStruct_Leader

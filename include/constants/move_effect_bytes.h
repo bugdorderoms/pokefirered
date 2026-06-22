@@ -57,6 +57,14 @@
 #define MOVE_EFFECT_SMACK_DOWN          52
 #define MOVE_EFFECT_CLEAR_SMOG          53
 #define MOVE_EFFECT_UPROAR              54
+#define MOVE_EFFECT_SET_WEATHER         55
+#define MOVE_EFFECT_DAMAGE_NON_TYPES    56
+#define MOVE_EFFECT_GMAX_BEFUDDLE       57
+#define MOVE_EFFECT_INFATUATION         58
+#define MOVE_EFFECT_STEALTH_ROCK        59
+#define MOVE_EFFECT_GMAX_STUN_SHOCK     60
+#define MOVE_EFFECT_SET_GRAVITY         61
+#define MOVE_EFFECT_STEELSURGE          62
 
 // Z-Move effect bytes
 #define Z_EFFECT_NONE                   0

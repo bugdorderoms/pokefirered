@@ -997,13 +997,13 @@ static void HallOfFame_PrintMonInfo(struct HallofFameMon* currMon)
     }
 
     // nick, species names, gender and lvl
+    i = 0;
     if (currMon->nick[0] != EOS)
     {
         for (i = 0; i < POKEMON_NAME_LENGTH && currMon->nick[i] != EOS; i++)
             text[i] = currMon->nick[i];
     }
-    else
-        text[0] = EOS;
+    text[i] = EOS;
     
     width = GetStringWidth(2, text, GetFontAttribute(2, FONTATTR_LETTER_SPACING));
     if (currMon->species == SPECIES_EGG)

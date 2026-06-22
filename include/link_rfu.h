@@ -68,6 +68,14 @@ struct GFtgtGnameSub
     u8 playerTrainerId[2];
 };
 
+// This struct is sent via the Wireless Adapter as the game name or "gname" data.
+// Gname is only applicable during Wireless Single Game Pak Multiplay, when the
+// adapter needs this data for connection. Per the RFU manual, during "normal"
+// wireless play (the kind the Pokémon games use) the gname data can be used for
+// anything the developers want. This struct is what GF decided to use it for.
+// It can be up to 13 bytes in size (RFU_GNAME_SIZE).
+// The player's name is sent separately as the username ("uname"), and does not
+// use a struct.
 struct __attribute__((packed, aligned(2))) GFtgtGname
 {
     struct GFtgtGnameSub unk_00;
@@ -76,18 +84,13 @@ struct __attribute__((packed, aligned(2))) GFtgtGname
     // u8 unk_4:3
     // u8 active:1
     u16 species;
-    u8 type;
     u8 activity:7;
     u8 started:1;
     u8 playerGender:1;
     u8 level:7;
-    u8 padding;
+    u8 type:6;
+    u8 padding:2;
 }; // size: RFU_GNAME_SIZE
-
-struct Padded_U8
-{
-    u8 value;
-};
 
 struct RfuBlockSend
 {

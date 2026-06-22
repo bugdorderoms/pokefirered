@@ -44,10 +44,13 @@ s32 CalculateBaseDamage(u16 move, u8 type, u8 battlerIdAtk, u8 battlerIdDef, boo
         switch (attackerHoldEffect)
         {
             case HOLD_EFFECT_CHOICE_ITEM:
-                if (attackerHoldEffectParam == STAT_ATK)
-                    attack = (15 * attack) / 10;
-                else if (attackerHoldEffectParam == STAT_SPATK)
-                    spAttack = (15 * spAttack) / 10;
+                if (GetActiveGimmick(battlerIdAtk) != GIMMICK_DYNAMAX)
+                {
+                    if (attackerHoldEffectParam == STAT_ATK)
+                        attack = (15 * attack) / 10;
+                    else if (attackerHoldEffectParam == STAT_SPATK)
+                        spAttack = (15 * spAttack) / 10;
+                }
                 break;
             case HOLD_EFFECT_TYPE_POWER:
                 if (type == attackerHoldEffectParam)
@@ -183,8 +186,11 @@ static inline u32 CalcBaseAttackStat(struct DamageCalc *ctx, bool32 isConfusionD
                 if (ctx->moveSplit == SPLIT_PHYSICAL)
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(2.0));
                 break;
-            case ABILITY_HUSTLE:
             case ABILITY_GORILLA_TACTICS:
+                if (GetActiveGimmick(attacker) == GIMMICK_DYNAMAX)
+                    break;
+                // fallthrough
+            case ABILITY_HUSTLE:
                 if (ctx->moveSplit == SPLIT_PHYSICAL)
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                 break;
@@ -434,10 +440,18 @@ static inline u32 GetBeatUpPower(u32 battler, bool32 forAI)
 
 static u32 GetMoveBasePower(struct DamageCalc *ctx)
 {
-    u32 i, move = ctx->move;
-    u32 basePower = gBattleMoves[move].power;
+    u32 i;
     u32 attacker = ctx->attacker, defender = ctx->defender;
-    bool32 forAI = (ctx->flags & FLAG_AI_DAMAGE_CALC);
+    u32 move = ctx->move;
+    u32 basePower;
+    bool32 forAI;
+    
+    // Max Moves
+    if (IsMaxMove(move))
+        return GetMaxMovePower(gBattleStruct->battlers[attacker].baseUsedMove, move, ctx->moveType);
+    
+    basePower = gBattleMoves[move].power;
+    forAI = (ctx->flags & FLAG_AI_DAMAGE_CALC);
     
     // Moves
     switch (move)
@@ -669,7 +683,7 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *ctx, u32 basePow
             if (ctx->moveType == TYPE_NORMAL)
             {
                 NORMALIZE_CHECK:
-                if (!GET_MOVEEFFECT_TABLE(moveEffect).normalizeUnaffected)
+                if (!IsMaxMove(move) && !GET_MOVEEFFECT_TABLE(moveEffect).normalizeUnaffected)
                     modifier = uq4_12_mul(modifier, UQ_4_12(1.2));
             }
             break;
@@ -969,22 +983,38 @@ static inline u32 GetSemiInvulnerableDamageModifier(struct DamageCalc *ctx)
         return UQ_4_12(1.0);
 }
 
+static inline u32 GetScreenDamageModifier(struct DamageCalc *ctx)
+{
+    if (IsDoubleBattleForBattler(ctx->defender))
+        return UQ_4_12(0.667);
+    else
+        return UQ_4_12(0.5);
+}
+
 static inline u32 GetScreensDamageModifier(struct DamageCalc *ctx)
 {
-    if (!ctx->isCrit && ctx->atkAbility != ABILITY_INFILTRATOR)
+    u32 modifier = UQ_4_12(1.0);
+    
+    if (!ctx->isCrit && ctx->atkAbility != ABILITY_INFILTRATOR && ctx->moveSplit != SPLIT_STATUS)
     {
         u32 side = GetBattlerSide(ctx->defender);
         
-        if (((gSideStatuses[side] & SIDE_STATUS_LIGHTSCREEN) && ctx->moveSplit == SPLIT_SPECIAL)
-        || ((gSideStatuses[side] & SIDE_STATUS_REFLECT) && ctx->moveSplit == SPLIT_PHYSICAL))
+        switch (ctx->moveSplit)
         {
-            if (IsDoubleBattleForBattler(ctx->defender))
-                return UQ_4_12(0.667);
-            else
-                return UQ_4_12(0.5);
+            case SPLIT_PHYSICAL:
+                if (gSideStatuses[side] & SIDE_STATUS_REFLECT)
+                    DAMAGE_MULTIPLY_MODIFIER(GetScreenDamageModifier(ctx));
+                break;
+            case SPLIT_SPECIAL:
+                if (gSideStatuses[side] & SIDE_STATUS_LIGHTSCREEN)
+                    DAMAGE_MULTIPLY_MODIFIER(GetScreenDamageModifier(ctx));
+                break;
         }
+        
+        if (gSideStatuses[side] & SIDE_STATUS_AURORA_VEIL)
+            DAMAGE_MULTIPLY_MODIFIER(GetScreenDamageModifier(ctx));
     }
-    return UQ_4_12(1.0);
+    return modifier;
 }
 
 static inline u32 GetAttackerAbilityDamageModifier(struct DamageCalc *ctx)
@@ -1076,6 +1106,16 @@ static inline u32 GetDefenderItemDamageModifier(struct DamageCalc *ctx)
     return UQ_4_12(1.0);
 }
 
+static inline u32 GetZMaxMoveAgainstProtectDamageModifier(struct DamageCalc *ctx)
+{
+    if (IsZMove(ctx->move) || IsMaxMove(ctx->move))
+    {
+        if (IsBattlerProtected(ctx->attacker, ctx->defender, ctx->move, TRUE))
+            return UQ_4_12(0.25);
+    }
+    return UQ_4_12(1.0);
+}
+
 static inline u32 GetOthersDamageModifier(struct DamageCalc *ctx)
 {
     u32 modifier = UQ_4_12(1.0);
@@ -1090,8 +1130,7 @@ static inline u32 GetOthersDamageModifier(struct DamageCalc *ctx)
     DAMAGE_MULTIPLY_MODIFIER(GetDefenderPartnerAbilityDamageModifier(ctx));
     DAMAGE_MULTIPLY_MODIFIER(GetAttackerItemDamageModifier(ctx));
     DAMAGE_MULTIPLY_MODIFIER(GetDefenderItemDamageModifier(ctx));
-    // TODO: Z-Moves multiplier
-    // TODO: Raid Shield multiplier
+    DAMAGE_MULTIPLY_MODIFIER(GetZMaxMoveAgainstProtectDamageModifier(ctx));
     
     return modifier;
 }
@@ -1151,10 +1190,10 @@ static s32 CalculateDamage(struct DamageCalc *ctx, u32 basePower)
             damage = (gBattleMons[ctx->attacker].level * RandomUniform(RNG_PSYWAVE, 50, 150)) / 100;
             break;
         case EFFECT_SUPER_FANG:
-            damage = gBattleMons[ctx->defender].hp / 2;
+            damage = GetNonDynamaxHP(ctx->defender) / 2;
             break;
         case EFFECT_ENDEAVOR:
-            damage = gBattleMons[ctx->defender].hp - gBattleMons[ctx->attacker].hp;
+            damage = GetNonDynamaxHP(ctx->defender) - gBattleMons[ctx->attacker].hp;
             break;
         default:
             damage = CalculateDamageInternal(ctx, basePower);

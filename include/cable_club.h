@@ -12,5 +12,7 @@ void Task_WaitForReceivedRemoteLinkPlayers5SecondTimeout(u32 taskId);
 u32 CreateTask_ReestablishLinkInCableClubRoom(void);
 void CB2_ReturnFromCableClubBattle(void);
 bool32 GetSeeingLinkPlayerCardMsg(u32 who);
+u32 sub_8080844(u32 lower, u32 higher);
+bool32 AnyConnectedPartnersPlayingRS(void);
 
 #endif //GUARD_CABLE_CLUB_H

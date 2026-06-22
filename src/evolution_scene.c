@@ -7,6 +7,7 @@
 #include "evolution_scene.h"
 #include "battle_gfx_sfx_util.h"
 #include "evolution_graphics.h"
+#include "battle_controllers.h"
 #include "link.h"
 #include "link_rfu.h"
 #include "m4a.h"
@@ -786,23 +787,21 @@ static void Task_EvolutionScene(u32 taskId)
                 BattlePutTextOnWindow(gText_BattleYesNoChoice, B_WIN_YESNO);
                 gTasks[taskId].tLearnMoveState++;
                 sEvoCursorPos = 0;
-                BattleCreateYesNoCursorAt();
+                BattleCreateYesNoCursorAt(sEvoCursorPos);
             }
             break;
         case 4:
             if (JOY_NEW(DPAD_UP) && sEvoCursorPos != 0)
             {
                 PlaySE(SE_SELECT);
-                BattleDestroyYesNoCursorAt();
-                sEvoCursorPos = 0;
-                BattleCreateYesNoCursorAt();
+                BattleDestroyYesNoCursorAt(sEvoCursorPos);
+                BattleCreateYesNoCursorAt(--sEvoCursorPos);
             }
             if (JOY_NEW(DPAD_DOWN) && sEvoCursorPos == 0)
             {
                 PlaySE(SE_SELECT);
-                BattleDestroyYesNoCursorAt();
-                sEvoCursorPos = 1;
-                BattleCreateYesNoCursorAt();
+                BattleDestroyYesNoCursorAt(sEvoCursorPos);
+                BattleCreateYesNoCursorAt(++sEvoCursorPos);
             }
             if (JOY_NEW(A_BUTTON))
             {

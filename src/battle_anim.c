@@ -29,6 +29,7 @@ EWRAM_DATA static u16 sAnimSpriteGfxIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
 EWRAM_DATA static u16 sAnimSpritePalIndexArray[ANIM_SPRITE_INDEX_COUNT] = {0};
 EWRAM_DATA u8 gAnimFriendship = 0;
 EWRAM_DATA u16 gWeatherMoveAnim = 0;
+EWRAM_DATA u16 gAnimLastUsedItem = 0;
 EWRAM_DATA s16 gBattleAnimArgs[ANIM_ARGS_COUNT] = {0};
 EWRAM_DATA static u16 sSoundAnimFramesToWait = 0;
 EWRAM_DATA static u8 sMonAnimTaskIdArray[2] = {0};
@@ -130,6 +131,20 @@ const struct OamData gOamData_AffineOff_ObjNormal_16x16 =
     .paletteNum = 0,
 };
 
+const struct OamData gOamData_AffineOff_ObjNormal_16x16_HiPrio =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(16x16),
+    .x = 0,
+    .size = SPRITE_SIZE(16x16),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+};
+
 const struct OamData gOamData_AffineOff_ObjNormal_32x32 =
 {
     .y = 0,
@@ -141,6 +156,20 @@ const struct OamData gOamData_AffineOff_ObjNormal_32x32 =
     .size = SPRITE_SIZE(32x32),
     .tileNum = 0,
     .priority = 2,
+    .paletteNum = 0,
+};
+
+const struct OamData gOamData_AffineOff_ObjNormal_32x32_HiPrio =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
     .paletteNum = 0,
 };
 
@@ -312,6 +341,20 @@ const struct OamData gOamData_AffineNormal_ObjNormal_32x32 =
     .paletteNum = 0,
 };
 
+const struct OamData gOamData_AffineNormal_ObjNormal_32x32_HiPrio =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_NORMAL,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+};
+
 const struct OamData gOamData_AffineNormal_ObjNormal_64x64 =
 {
     .y = 0,
@@ -477,6 +520,20 @@ const struct OamData gOamData_AffineDouble_ObjNormal_32x32 =
     .size = SPRITE_SIZE(32x32),
     .tileNum = 0,
     .priority = 2,
+    .paletteNum = 0,
+};
+
+const struct OamData gOamData_AffineDouble_ObjNormal_32x32_HiPrio =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
     .paletteNum = 0,
 };
 
@@ -984,6 +1041,20 @@ const struct OamData gOamData_AffineDouble_ObjBlend_32x32 =
     .paletteNum = 0,
 };
 
+const struct OamData gOamData_AffineDouble_ObjBlend_32x32_HiPrio =
+{
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .objMode = ST_OAM_OBJ_BLEND,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+};
+
 const struct OamData gOamData_AffineDouble_ObjBlend_64x64 =
 {
     .y = 0,
@@ -1207,7 +1278,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_FairyLockChains, 0x0400, ANIM_TAG_FAIRY_LOCK_CHAINS},
     {gBattleAnimSpriteGfx_Amnesia, 0x1000, ANIM_TAG_AMNESIA},
     {gBattleAnimSpriteGfx_String2, 0x0A00, ANIM_TAG_STRING_2},
-    {gBattleAnimSpriteGfx_Pencil2, 0x0180, ANIM_TAG_PENCIL_2},
+    {gBattleAnimSpriteGfx_Apple, 0x0200, ANIM_TAG_APPLE},
     {gBattleAnimSpriteGfx_Petal, 0x0380, ANIM_TAG_PETAL},
     {gBattleAnimSpriteGfx_BentSpoon, 0x0C00, ANIM_TAG_BENT_SPOON},
     {gBattleAnimSpriteGfx_Web, 0x0200, ANIM_TAG_WEB},
@@ -1219,7 +1290,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Fangs, 0x0400, ANIM_TAG_FANGS},
     {gBattleAnimSpriteGfx_Explosion2, 0x0c00, ANIM_TAG_EXPLOSION_2},
     {gBattleAnimSpriteGfx_Explosion3, 0x0200, ANIM_TAG_EXPLOSION_3},
-    {gBattleAnimSpriteGfx_WaterDroplet, 0x1000, ANIM_TAG_WATER_DROPLET},
+    {gBattleAnimSpriteGfx_GoldenApple, 0x0800, ANIM_TAG_GOLDEN_APPLE},
     {gBattleAnimSpriteGfx_WaterDroplet2, 0x0a00, ANIM_TAG_WATER_DROPLET_2},
     {gBattleAnimSpriteGfx_Seed2, 0x0020, ANIM_TAG_SEED_2},
     {gBattleAnimSpriteGfx_Sprout, 0x0e00, ANIM_TAG_SPROUT},
@@ -1234,8 +1305,8 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Bone2, 0x0800, ANIM_TAG_BONE_2},
     {gBattleAnimSpriteGfx_WhiteBag, 0x0200, ANIM_TAG_WHITE_BAG},
     {gBattleAnimSpriteGfx_UltraBurstSymbol, 0x0200, ANIM_TAG_ULTRA_BURST_SYMBOL},
-    {gBattleAnimSpriteGfx_PurpleCoral, 0x0180, ANIM_TAG_PURPLE_CORAL},
-    {gBattleAnimSpriteGfx_PurpleDroplet, 0x0600, ANIM_TAG_PURPLE_DROPLET},
+    {gBattleAnimSpriteGfx_IceRock, 0x0800, ANIM_TAG_ICE_ROCK},
+    {gBattleAnimSpriteGfx_RazorShell, 0x0200, ANIM_TAG_RAZOR_SHELL},
     {gBattleAnimSpriteGfx_Shock2, 0x0600, ANIM_TAG_SHOCK_2},
     {gBattleAnimSpriteGfx_ClosingEye2, 0x0200, ANIM_TAG_CLOSING_EYE_2},
     {gBattleAnimSpriteGfx_MetalBall, 0x0080, ANIM_TAG_METAL_BALL},
@@ -1246,7 +1317,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_Explosion5, 0x0280, ANIM_TAG_EXPLOSION_5},
     {gBattleAnimSpriteGfx_StealthRock, 0x0080, ANIM_TAG_STEALTH_ROCK},
     {gBattleAnimSpriteGfx_Smoke, 0x0100, ANIM_TAG_SMOKE},
-    {gBattleAnimSpriteGfx_Smoke2, 0x0200, ANIM_TAG_SMOKE_2},
+    {gBattleAnimSpriteGfx_Tornado, 0x1800, ANIM_TAG_TORNADO},
     {gBattleAnimSpriteGfx_Impact, 0x0200, ANIM_TAG_IMPACT},
     {gBattleAnimSpriteGfx_CircleImpact, 0x0020, ANIM_TAG_CIRCLE_IMPACT},
     {gBattleAnimSpriteGfx_Scratch, 0x0a00, ANIM_TAG_SCRATCH},
@@ -1391,7 +1462,7 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_MegaEvoSymbol, 0x0200, ANIM_TAG_MEGA_SYMBOL},
     {gBattleAnimSpriteGfx_SlamHit2, 0x1000, ANIM_TAG_SLAM_HIT_2},
     {gBattleAnimSpriteGfx_Recycle, 0x0800, ANIM_TAG_RECYCLE},
-    {gBattleAnimSpriteGfx_BerryEaten, 0x0200, ANIM_TAG_BERRY_EATEN},
+    {gBattleAnimSpriteGfx_Berry, 0x0400, ANIM_TAG_BERRY},
     {gBattleAnimSpriteGfx_Protect, 0x0800, ANIM_TAG_PROTECT},
     {gBattleAnimSpriteGfx_DirtMound, 0x0200, ANIM_TAG_DIRT_MOUND},
     {gBattleAnimSpriteGfx_Shock3, 0x0600, ANIM_TAG_SHOCK_3},
@@ -1423,6 +1494,11 @@ const struct CompressedSpriteSheet gBattleAnimPicTable[] =
     {gBattleAnimSpriteGfx_PowerTrick, 0x0800, ANIM_TAG_POWER_TRICK},
     {gBattleAnimSpriteGfx_MegaEvoStone, 0x0800, ANIM_TAG_MEGA_EVOLUTION_STONE},
     {gBattleAnimSpriteGfx_TeraShatter, 0x0180, ANIM_TAG_TERA_SHATTER},
+    {gBattleAnimSpriteGfx_PoisonColumn, 0x2000, ANIM_TAG_POISON_COLUMN},
+    {gBattleAnimSpriteGfx_StraightBeam, 0x0180, ANIM_TAG_STRAIGHT_BEAM},
+    {gBattleAnimSpriteGfx_StonePillar, 0x1800, ANIM_TAG_STONE_PILLAR},
+    {gBattleAnimSpriteGfx_LargeSpike, 0x1000, ANIM_TAG_LARGE_SPIKE},
+    {gBattleAnimSpriteGfx_PoisonColumn, 0x2000, ANIM_TAG_GARBAGE_COLUMN},
 };
 
 const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
@@ -1522,7 +1598,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_DracoMeteor, ANIM_TAG_FAIRY_LOCK_CHAINS},
     {gBattleAnimSpritePal_Amnesia, ANIM_TAG_AMNESIA},
     {gBattleAnimSpritePal_String2, ANIM_TAG_STRING_2},
-    {gBattleAnimSpritePal_Pencil2, ANIM_TAG_PENCIL_2},
+    {gBattleAnimSpritePal_Apple, ANIM_TAG_APPLE},
     {gBattleAnimSpritePal_Petal, ANIM_TAG_PETAL},
     {gBattleAnimSpritePal_BentSpoon, ANIM_TAG_BENT_SPOON},
     {gBattleAnimSpritePal_String2, ANIM_TAG_WEB},
@@ -1534,7 +1610,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Fangs, ANIM_TAG_FANGS},
     {gBattleAnimSpritePal_Explosion2, ANIM_TAG_EXPLOSION_2},
     {gBattleAnimSpritePal_Explosion2, ANIM_TAG_EXPLOSION_3},
-    {gBattleAnimSpritePal_WaterDroplet, ANIM_TAG_WATER_DROPLET},
+    {gBattleAnimSpritePal_GoldenApple, ANIM_TAG_GOLDEN_APPLE},
     {gBattleAnimSpritePal_WaterDroplet, ANIM_TAG_WATER_DROPLET_2},
     {gBattleAnimSpritePal_Seed2, ANIM_TAG_SEED_2},
     {gBattleAnimSpritePal_Seed2, ANIM_TAG_SPROUT},
@@ -1549,8 +1625,8 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Bone2, ANIM_TAG_BONE_2},
     {gBattleAnimSpritePal_WhiteBag, ANIM_TAG_WHITE_BAG},
     {gBattleAnimSpritePal_UltraBurstSymbol, ANIM_TAG_ULTRA_BURST_SYMBOL},
-    {gBattleAnimSpritePal_PurpleCoral, ANIM_TAG_PURPLE_CORAL},
-    {gBattleAnimSpritePal_PurpleCoral, ANIM_TAG_PURPLE_DROPLET},
+    {gBattleAnimSpritePal_IceRock, ANIM_TAG_ICE_ROCK},
+    {gBattleAnimSpritePal_RazorShell, ANIM_TAG_RAZOR_SHELL},
     {gBattleAnimSpritePal_Shock2, ANIM_TAG_SHOCK_2},
     {gBattleAnimSpritePal_ClosingEye2, ANIM_TAG_CLOSING_EYE_2},
     {gBattleAnimSpritePal_MetalBall, ANIM_TAG_METAL_BALL},
@@ -1561,7 +1637,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_Explosion4, ANIM_TAG_EXPLOSION_5},
     {gBattleAnimSpritePal_StealthRock, ANIM_TAG_STEALTH_ROCK},
     {gBattleAnimSpritePal_Smoke, ANIM_TAG_SMOKE},
-    {gBattleAnimSpritePal_Smoke, ANIM_TAG_SMOKE_2},
+    {gBattleAnimSpritePal_Tornado, ANIM_TAG_TORNADO},
     {gBattleAnimSpritePal_Impact, ANIM_TAG_IMPACT},
     {gBattleAnimSpritePal_CircleImpact, ANIM_TAG_CIRCLE_IMPACT},
     {gBattleAnimSpritePal_Impact, ANIM_TAG_SCRATCH},
@@ -1706,7 +1782,7 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_MegaEvoSymbol, ANIM_TAG_MEGA_SYMBOL},
     {gBattleAnimSpritePal_SlamHit2, ANIM_TAG_SLAM_HIT_2},
     {gBattleAnimSpritePal_Recycle, ANIM_TAG_RECYCLE},
-    {gBattleAnimSpritePal_BerryEaten, ANIM_TAG_BERRY_EATEN},
+    {gBattleAnimSpritePal_Berry, ANIM_TAG_BERRY},
     {gBattleAnimSpritePal_Protect, ANIM_TAG_PROTECT},
     {gBattleAnimSpritePal_DirtMound, ANIM_TAG_DIRT_MOUND},
     {gBattleAnimSpritePal_Shock3, ANIM_TAG_SHOCK_3},
@@ -1738,6 +1814,11 @@ const struct CompressedSpritePalette gBattleAnimPaletteTable[] =
     {gBattleAnimSpritePal_PowerTrick, ANIM_TAG_POWER_TRICK},
     {gBattleAnimSpritePal_MegaEvoStone, ANIM_TAG_MEGA_EVOLUTION_STONE},
     {gBattleAnimSpritePal_TeraShatter, ANIM_TAG_TERA_SHATTER},
+    {gBattleAnimSpritePal_PoisonColumn, ANIM_TAG_POISON_COLUMN},
+    {gBattleAnimSpritePal_StraightBeam, ANIM_TAG_STRAIGHT_BEAM},
+    {gBattleAnimSpritePal_StonePillar, ANIM_TAG_STONE_PILLAR},
+    {gBattleAnimSpritePal_LargeSpike, ANIM_TAG_LARGE_SPIKE},
+    {gBattleAnimSpritePal_GarbageColumn, ANIM_TAG_GARBAGE_COLUMN},
 };
 
 static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
@@ -1786,6 +1867,10 @@ static const struct BattleAnimBackground sBattleAnimBackgroundTable[] =
     [BG_DARK_VOID] = {gBattleAnimBgImage_Waterfall, gBattleAnimBgPalette_DarkVoid, gBattleAnimBgTilemap_Waterfall},
     [BG_WONDER_ROOM] = {gBattleAnimBgImage_FieldRoom, gBattleAnimBgPalette_WonderRoom, gBattleAnimBgTilemap_FieldRoom},
     [BG_MAGIC_ROOM] = {gBattleAnimBgImage_FieldRoom, gBattleAnimBgPalette_MagicRoom, gBattleAnimBgTilemap_FieldRoom},
+    [BG_INFERNO_OVERDRIVE] = {gBattleAnimBgImage_InfernoOverdrive, gBattleAnimBgPalette_InfernoOverdrive, gBattleAnimBgTilemap_InfernoOverdrive},
+    [BG_MAX_LIGHTNING] = {gBattleAnimBgImage_MaxLightning, gBattleAnimBgPalette_MaxLightning, gBattleAnimBgTilemap_MaxLightning},
+    [BG_POISON_FALL] = {gBattleAnimBgImage_Waterfall, gBattleAnimBgPalette_Poison, gBattleAnimBgTilemap_Waterfall},
+    [BG_GARBAGE_FALL] = {gBattleAnimBgImage_Waterfall, gBattleAnimBgPalette_Garbage, gBattleAnimBgTilemap_Waterfall},
 };
 
 static void (*const sScriptCmdTable[])(void) =
@@ -2104,7 +2189,7 @@ static void ScriptCmd_unloadspritegfx(void)
 
 void CreateItemBagSprite(const struct SpriteTemplate *template, s16 x, s16 y, u32 subpriority)
 {
-    struct Sprite *sprite = &gSprites[AddItemIconObjectWithCustomObjectTemplate(template, template->tileTag, template->paletteTag, gLastUsedItem)];
+    struct Sprite *sprite = &gSprites[AddItemIconObjectWithCustomObjectTemplate(template, template->tileTag, template->paletteTag, gAnimLastUsedItem)];
     
     AddSpriteIndex(GET_TRUE_SPRITE_INDEX(template->tileTag), 0);
         
@@ -2389,16 +2474,21 @@ static void ScriptCmd_monbg(void)
 
 bool32 IsBattlerSpriteVisible(u32 battlerId)
 {
-    if (!IsBattlerSpritePresent(battlerId))
-        return FALSE;
-    else if ((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && GetBattlerPosition(battlerId) == B_POSITION_PLAYER_RIGHT)
-        return FALSE;
-    else if ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && GetBattlerPosition(battlerId) == B_POSITION_OPPONENT_RIGHT)
+    if (!IsBattlerSpritePresent(battlerId) || !BattleTypeDisplaysSpriteInPosition(GetBattlerPosition(battlerId)))
         return FALSE;
     else if (!gBattleSpritesDataPtr->battlerData[battlerId].invisible || !gSprites[gBattlerSpriteIds[battlerId]].invisible)
         return TRUE;
     else
         return FALSE;
+}
+
+bool32 BattleTypeDisplaysSpriteInPosition(u32 battlerPosition)
+{
+    if (((gBattleTypeFlags & BATTLE_TYPE_TWO_VS_ONE) && battlerPosition == B_POSITION_PLAYER_RIGHT)
+    || ((gBattleTypeFlags & BATTLE_TYPE_ONE_VS_TWO) && battlerPosition == B_POSITION_OPPONENT_RIGHT))
+        return FALSE;
+    
+    return TRUE;
 }
 
 static void CopyBattlerSpriteToBg(u32 bgId, u32 battlerId, u32 palNum, u8 *tilesDest, u16 *tilemapDest, u32 tilesOffset)

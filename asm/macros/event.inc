@@ -70,8 +70,17 @@
 	.byte \function
 	.endm
 
-	.macro nop0c
+	.macro initfixedraidintro numStars:req, species:req, level:req, item:req, partners:req, drops:req, canCancel=TRUE, canConnectInLink=TRUE, tryGigantamax=TRUE
 	.byte 0x0c
+	.byte \numStars
+	.2byte \species
+	.byte \level
+	.2byte \item
+	.4byte \partners
+	.4byte \drops
+	.byte \canCancel
+	.byte \canConnectInLink
+	.byte \tryGigantamax
 	.endm
 
 	.macro nop0d

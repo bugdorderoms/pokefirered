@@ -3,6 +3,14 @@
 
 #include "global.h"
 
+enum
+{
+    BRIDGE_TYPE_OCEAN,
+    BRIDGE_TYPE_POND_LOW,
+    BRIDGE_TYPE_POND_MED,
+    BRIDGE_TYPE_POND_HIGH
+};
+
 typedef bool32 (*MetatileFunc)(u32);
 
 bool32 MetatileBehavior_IsATile(u32 metatileBehavior);
@@ -58,7 +66,6 @@ bool32 MetatileBehavior_IsLongGrass(u32 metatileBehavior);
 bool32 MetatileBehavior_ReturnFalse_4(u32 metatileBehavior);
 bool32 MetatileBehavior_IsFootprints(u32 metatileBehavior);
 bool32 MetatileBehavior_IsBridge(u32 metatileBehavior);
-bool32 MetatileBehavior_GetBridgeType(u32 metatileBehavior);
 bool32 MetatileBehavior_IsGroundRocks(u32 metatileBehavior);
 bool32 MetatileBehavior_UnusedIsTallGrass(u32 metatileBehavior);
 bool32 MetatileBehavior_IsIndoorEncounter(u32 metatileBehavior);
@@ -151,5 +158,7 @@ bool32 MetatileBehavior_IsNeatlyLinedUpTools(u32 metatileBehavior);
 bool32 MetatileBehavior_IsImpressiveMachine(u32 metatileBehavior);
 bool32 MetatileBehavior_IsVideoGame(u32 metatileBehavior);
 bool32 MetatileBehavior_IsBurglary(u32 metatileBehavior);
+
+u32 MetatileBehavior_GetBridgeType(u32 metatileBehavior);
 
 #endif // GUARD_METATILE_BEHAVIOR

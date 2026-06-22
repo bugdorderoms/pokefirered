@@ -72,6 +72,22 @@ SINGLE_BATTLE_TEST("Sky Drop fails on heavy targets")
     }
 }
 
+SINGLE_BATTLE_TEST("Sky Drop fails if the target is dynamaxed")
+{
+    GIVEN {
+        ASSUME(gSpeciesInfo[SPECIES_WOBBUFFET].weight < 2000);
+        
+        PLAYER(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_WOBBUFFET);
+    } WHEN {
+        TURN { MOVE(player, MOVE_SKY_DROP); MOVE(opponent, MOVE_SCRATCH, gimmick: GIMMICK_DYNAMAX); }
+    } SCENE {
+        MESSAGE("Foe Wobbuffet grew huge into its Dynamax form!");
+        NOT ANIMATION(ANIM_TYPE_MOVE, MOVE_SKY_DROP, player);
+        MESSAGE("But it failed!");
+    }
+}
+
 SINGLE_BATTLE_TEST("Sky Drop does no damage to Flying type Pokémon")
 {
     GIVEN {

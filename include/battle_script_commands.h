@@ -14,6 +14,7 @@ enum
 enum
 {
     CANCELLER_FLAGS,
+    CANCELLER_RAID_BATTLE_NULLIFICATION,
     CANCELLER_ASLEEP,
     CANCELLER_FROZEN,
     CANCELLER_TRUANT,
@@ -41,7 +42,7 @@ enum
     CANCELLER_GRAVITY_2,
     CANCELLER_HEAL_BLOCKED_2,
     // CANCELLER_THROAT_CHOP_2, // TODO:
-    // CANCELLER_DYNAMAX_MOVES, // TODO:
+    CANCELLER_DYNAMAX_MOVES,
     CANCELLER_NATURAL_GIFT,
     CANCELLER_DANCER,
     // CANCELLER_POWDER, // TODO:
@@ -56,16 +57,10 @@ enum
 
 #define CANCELLER_RECALL_CASEID CANCELLER_GRAVITY_2
 
-#define WINDOW_CLEAR            0x1
-#define WINDOW_x80              0x80
-
 bool32 CanOHKOBattler(u32 attacker, u32 target, u32 move);
 bool32 CheckIfCanFireTwoTurnMoveNow(u32 battlerId, u32 move, bool32 checkChargeTurnEffects);
 bool32 JumpIfMoveAffectedByProtect(const u8 *nextInstr, const u8 *jumpStr);
 bool32 IsMonGettingExpSentOut(void);
-void BattleCreateYesNoCursorAt(void);
-void BattleDestroyYesNoCursorAt(void);
-void HandleBattleWindow(u32 xStart, u32 yStart, u32 xEnd, u32 yEnd, u32 flags);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
 u32 GetCurrentLevelCapLevel(void);
 u32 AccuracyCalcHelper(u32 battlerIdAtk, u32 battlerIdDef, u32 move, const u8 *nextInstr, const u8 *jumpStr);

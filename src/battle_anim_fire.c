@@ -32,6 +32,8 @@ static void UpdateEruptionLaunchRockPos(struct Sprite *sprite);
 static void AnimTask_MoveHeatWaveTargets_Step(u32 taskId);
 static void AnimMoveSpriteUpwardsForDuration(struct Sprite *sprite);
 static void AnimMoveSpriteUpwardsForDuration_Step(struct Sprite *sprite);
+static void AnimMaxFlareFireBall(struct Sprite *sprite);
+static void AnimMaxFlareFireBall_Step(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_FireSpiralSpread_0[] =
 {
@@ -508,6 +510,88 @@ const struct SpriteTemplate gFloatingFlameSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimPetalDanceFlower,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_MaxFlareBallAttacker[] =
+{
+    AFFINEANIMCMD_FRAME(4, 4, 0, 32), // 1.5x Size
+    // Fluctuate Size
+    AFFINEANIMCMD_FRAME(-4, -4, 0, 32), // Normal size
+    AFFINEANIMCMD_FRAME(0, 0, 0, 8), // Pause
+    AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const sAffineAnimTable_MaxFlareFireBallAttacker[] =
+{
+    sSpriteAffineAnim_MaxFlareBallAttacker
+};
+
+const struct SpriteTemplate gMaxFlareFireBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .paletteTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_MaxFlareFireBallAttacker,
+    .callback = AnimSpriteOnMonPos,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_MaxFlareBalLooped[] =
+{
+    AFFINEANIMCMD_FRAME(8, 8, 0, 32), // Get to double size
+    AFFINEANIMCMD_FRAME(-4, -4, 0, 8),
+    AFFINEANIMCMD_FRAME(4, 4, 0, 8),
+    AFFINEANIMCMD_JUMP(2),
+};
+
+const union AffineAnimCmd* const sAffineAnimTable_MaxFlareFireBallLaunch[] =
+{
+    sSpriteAffineAnim_MaxFlareBalLooped
+};
+
+const struct SpriteTemplate gMaxFlareRedFireBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .paletteTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_MaxFlareFireBallLaunch,
+    .callback = AnimMaxFlareFireBall,
+};
+
+const struct SpriteTemplate gMaxFlareOrangeFireBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .paletteTag = ANIM_TAG_SHARP_TEETH,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_MaxFlareFireBallLaunch,
+    .callback = AnimMaxFlareFireBall,
+};
+
+const struct SpriteTemplate gMaxFlareYellowFireBallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FLASH_CANNON_BALL,
+    .paletteTag = ANIM_TAG_ACUPRESSURE_FINGER,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_MaxFlareFireBallLaunch,
+    .callback = AnimMaxFlareFireBall,
+};
+
+const struct SpriteTemplate gMaxWildfireBirdSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BIRD,
+    .paletteTag = ANIM_TAG_BIRD,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_MaxFlareFireBallAttacker,
+    .callback = AnimMissileArc,
 };
 
 // For the first stage of Fire Punch and Ice Punch
@@ -1277,4 +1361,50 @@ static void AnimMoveSpriteUpwardsForDuration_Step(struct Sprite *sprite)
     sprite->y -= sprite->data[1];
     if (sprite->data[0]++ > sprite->data[2])
         DestroyAnimSprite(sprite);
+}
+
+// Animates MOVE_MAX_FLARE's fire ball launch sprite.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: duration
+// arg 3: wave amplitude
+static void AnimMaxFlareFireBall(struct Sprite *sprite)
+{
+    InitSpritePosToAnimAttacker(sprite, TRUE);
+    
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+    sprite->data[5] = gBattleAnimArgs[3];
+
+    InitAnimArcTranslation(sprite);
+    sprite->callback = AnimMaxFlareFireBall_Step;
+}
+
+static void AnimMaxFlareFireBall_Step(struct Sprite *sprite)
+{
+    if (TranslateAnimHorizontalArc(sprite))
+        DestroyAnimSprite(sprite);
+    else
+    {
+        u32 i;
+        s16 tempData[8];
+        u16 *data = sprite->data;
+        u16 x1 = sprite->x;
+        s16 x2 = sprite->x2;
+        u16 y1 = sprite->y;
+        s16 y2 = sprite->y2;
+
+        for (i = 0; i < 8; ++i)
+            tempData[i] = data[i];
+        
+        x2 += x1;
+        y2 += y1;
+        
+        if (!TranslateAnimHorizontalArc(sprite))
+        {
+            for (i = 0; i < 8; ++i)
+                data[i] = tempData[i];
+        }
+    }
 }

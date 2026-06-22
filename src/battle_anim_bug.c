@@ -243,6 +243,28 @@ const struct SpriteTemplate gQuiverDanceOrbSpriteTemplate =
     .callback = AnimQuiverDanceOrb,
 };
 
+const struct SpriteTemplate gMaxFlutterbySpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPARKLE_6,
+    .paletteTag = ANIM_TAG_SPARKLE_6,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gAffineAnimTable_MaxFlutterby,
+    .callback = AnimMaxFlutterby,
+};
+
+const struct SpriteTemplate gNeedleGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_NEEDLE,
+    .paletteTag = ANIM_TAG_NEEDLE,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
+};
+
 // Animates the horn sprite in MOVE_MEGAHORN's anim.
 // arg 0: initial x pixel offset
 // arg 1: initial y pixel offset

@@ -40,7 +40,18 @@ const struct SpriteTemplate gDisableSparkleSpriteTemplate =
     .anims = sSpriteAnimTable_DisableSparkle,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
-    .callback = SpriteCB_TrackOffsetFromAttackerAndWaitAnim,
+    .callback = AnimDisableSparkle,
+};
+
+const struct SpriteTemplate gTwinkleSparkleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPARKLE_4,
+    .paletteTag = ANIM_TAG_SPARKLE_4,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sSpriteAnimTable_DisableSparkle,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimTwinkleSparkle,
 };
 
 static const struct Subsprite sFrozenIceCubeSubsprites[] =

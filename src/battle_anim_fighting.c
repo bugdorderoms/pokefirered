@@ -596,6 +596,28 @@ const struct SpriteTemplate gWakeUpSlapStarSpriteTemplate =
     .callback = AnimDizzyPunchDuck,
 };
 
+const struct SpriteTemplate gWickedBlowRedStarSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PAIN_SPLIT,
+    .paletteTag = ANIM_TAG_PAIN_SPLIT,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDizzyPunchDuck,
+};
+
+const struct SpriteTemplate gWickedBlowBlackStarSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PAIN_SPLIT,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimDizzyPunchDuck,
+};
+
 const struct SpriteTemplate gLeftRightMovingFistSpriteTemplate =
 {
     .tileTag = ANIM_TAG_HANDS_AND_FEET,
@@ -651,7 +673,7 @@ static const union AffineAnimCmd sAffineAnimCmds_DrainPunchFist[] =
     AFFINEANIMCMD_END,
 };
 
-const union AffineAnimCmd* const sAffineAnims_DrainPunchFist[] =
+static const union AffineAnimCmd* const sAffineAnims_DrainPunchFist[] =
 {
     sAffineAnimCmds_DrainPunchFist
 };
@@ -660,6 +682,17 @@ const struct SpriteTemplate gDrainPunchFistSpriteTemplate =
 {
     .tileTag = ANIM_TAG_HANDS_AND_FEET,
     .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_DrainPunchFist,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gWickedBlowFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
     .oam = &gOamData_AffineDouble_ObjBlend_32x32,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
@@ -716,6 +749,94 @@ const struct SpriteTemplate gQuickGuardArmSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimBasicFistOrFoot,
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_MaxKnuckleFist[] =
+{
+    AFFINEANIMCMD_FRAME(4, 4, 0, 64), // Double in size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sAffineAnims_MaxKnuckleFist[] =
+{
+    sAffineAnimCmds_MaxKnuckleFist
+};
+
+const struct SpriteTemplate gMaxKnuckleGrowingFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_VERTICAL_HEX,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxKnuckleFist,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gMaxOneBlowGrowingFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxKnuckleFist,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gMaxRapidFlowGrowingFistSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_HANDS_AND_FEET,
+    .paletteTag = ANIM_TAG_ICE_CRYSTALS,
+    .oam = &gOamData_AffineDouble_ObjBlend_32x32_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxKnuckleFist,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gPoisonBubbleReversalSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POISON_BUBBLE,
+    .paletteTag = ANIM_TAG_POISON_BUBBLE,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxKnuckleFist,
+    .callback = AnimReversalOrb,
+};
+
+const struct SpriteTemplate gGreenPoisonBubbleReversalSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POISON_BUBBLE,
+    .paletteTag = ANIM_TAG_RAZOR_LEAF,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxKnuckleFist,
+    .callback = AnimReversalOrb,
+};
+
+const struct SpriteTemplate gMaxOvergrowthSeedUpSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SEED,
+    .paletteTag = ANIM_TAG_SEED,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16_HiPrio,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxKnuckleFist,
+    .callback = AnimLaunchSpriteUpwards,
+};
+
+const struct SpriteTemplate gRaidProtectWallSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_PROTECT,
+    .paletteTag = ANIM_TAG_PROTECT,
+    .oam = &gOamData_AffineOff_ObjBlend_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSpriteOnMonForDuration,
 };
 
 // Animates the High Jump Kick sprite sliding to the target.

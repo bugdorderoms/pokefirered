@@ -952,6 +952,17 @@ const struct SpriteTemplate gEndureYellowEnergySpriteTemplate =
     .callback = AnimEndureEnergy,
 };
 
+const struct SpriteTemplate gEndureBlackEnergySpriteTemplate =
+{
+    .tileTag = ANIM_TAG_FOCUS_ENERGY,
+    .paletteTag = ANIM_TAG_HANDS_AND_FEET,
+    .oam = &gOamData_AffineOff_ObjNormal_16x32,
+    .anims = gEndureEnergyAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimEndureEnergy,
+};
+
 static const union AnimCmd sSharpenSphereAnimCmds[] =
 {
     ANIMCMD_FRAME(0, 18),
@@ -1699,6 +1710,39 @@ const struct SpriteTemplate gSparkleVortexSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimParticleInVortex,
+};
+
+const struct SpriteTemplate gMaxDarknessPinkOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_ORBS,
+    .oam = &gOamData_AffineOff_ObjNormal_8x8,
+    .anims = sSolarbeamBigOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimToTargetInSinWave,
+};
+
+const struct SpriteTemplate gMaxDarknessPurpleOrbSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ORBS,
+    .paletteTag = ANIM_TAG_PINK_ORB,
+    .oam = &gOamData_AffineOff_ObjNormal_8x8,
+    .anims = sSolarbeamBigOrbAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimToTargetInSinWave,
+};
+
+const struct SpriteTemplate gBerryGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_BERRY,
+    .paletteTag = ANIM_TAG_BERRY,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
 };
 
 // Animates the falling particles that horizontally wave back and forth. Used by Sleep Powder, Stun Spore, and Poison Powder.

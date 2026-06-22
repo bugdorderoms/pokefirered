@@ -281,7 +281,8 @@ bool32 MetatileBehavior_IsLongGrass(u32 metatileBehavior) { return FALSE; }
 bool32 MetatileBehavior_ReturnFalse_4(u32 metatileBehavior) { return FALSE; }
 bool32 MetatileBehavior_IsFootprints(u32 metatileBehavior) { return FALSE; }
 bool32 MetatileBehavior_IsBridge(u32 metatileBehavior) { return FALSE; }
-bool32 MetatileBehavior_GetBridgeType(u32 metatileBehavior) { return FALSE; }
+
+u32 MetatileBehavior_GetBridgeType(u32 metatileBehavior) { return BRIDGE_TYPE_OCEAN; }
 
 bool32 MetatileBehavior_IsGroundRocks(u32 metatileBehavior)
 {

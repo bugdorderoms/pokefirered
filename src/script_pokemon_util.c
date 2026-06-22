@@ -36,7 +36,7 @@ void HealPlayerParty(void)
 
 u32 ScriptGiveMon(u32 species, u32 level, u32 item, u8 *ivs, u32 pokeBall, u32 shinyType, bool32 hiddenAbility, u32 nature, u32 gender, u16 *moves)
 {
-    u32 i, nationalDexNum, sentToPc;
+    u32 i, sentToPc;
     struct Pokemon *mon = AllocZeroed(sizeof(struct Pokemon));
     struct PokemonGenerator generator =
     {
@@ -59,7 +59,10 @@ u32 ScriptGiveMon(u32 species, u32 level, u32 item, u8 *ivs, u32 pokeBall, u32 s
     SetMonData(mon, MON_DATA_HELD_ITEM, &item);
     
     if (pokeBall)
+    {
+        pokeBall = ITEM_TO_BALL(pokeBall);
         SetMonData(mon, MON_DATA_POKEBALL, &pokeBall);
+    }
     
     if (hiddenAbility)
         SetMonData(mon, MON_DATA_ABILITY_HIDDEN, &hiddenAbility);
@@ -71,19 +74,8 @@ u32 ScriptGiveMon(u32 species, u32 level, u32 item, u8 *ivs, u32 pokeBall, u32 s
     }
     CalculateMonStats(mon);
     
-    sentToPc = GiveMonToPlayer(mon);
-    nationalDexNum = SpeciesToNationalPokedexNum(GetMonData(mon, MON_DATA_SPECIES));
-
-    switch(sentToPc)
-    {
-    case MON_GIVEN_TO_PARTY:
-    case MON_GIVEN_TO_PC:
-        GetSetPokedexFlag(nationalDexNum, FLAG_SET_SEEN);
-        GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
-        break;
-    }
+    sentToPc = GiveScriptCreatedMonToPlayer(mon, TRUE);
     Free(mon);
-    
     return sentToPc;
 }
 
@@ -119,8 +111,28 @@ u32 ScriptGiveEgg(u32 species, u8 *ivs, u32 shinyType, bool32 hiddenAbility, u32
     }
     CalculateMonStats(mon);
     
-    sentToPc = GiveMonToPlayer(mon);
+    sentToPc = GiveScriptCreatedMonToPlayer(mon, FALSE);
     Free(mon);
+    return sentToPc;
+}
+
+u32 GiveScriptCreatedMonToPlayer(struct Pokemon *mon, bool32 setPokedexFlags)
+{
+    u32 nationalDexNum, sentToPc = GiveMonToPlayer(mon);
+    
+    if (setPokedexFlags)
+    {
+        nationalDexNum = SpeciesToNationalPokedexNum(GetMonData(mon, MON_DATA_SPECIES));
+        
+        switch(sentToPc)
+        {
+        case MON_GIVEN_TO_PARTY:
+        case MON_GIVEN_TO_PC:
+            GetSetPokedexFlag(nationalDexNum, FLAG_SET_SEEN);
+            GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
+            break;
+        }
+    }
     return sentToPc;
 }
 

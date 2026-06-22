@@ -115,5 +115,20 @@ SINGLE_BATTLE_TEST("Dragon Tail fails to switch if user faints")
     }
 }
 
+SINGLE_BATTLE_TEST("Dragon Tail fails to switch if target is Dynamaxed")
+{
+    GIVEN {
+        PLAYER(SPECIES_WOBBUFFET);
+        
+        OPPONENT(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_BULBASAUR);
+    } WHEN {
+        TURN { MOVE(player, MOVE_DRAGON_TAIL); MOVE(opponent, MOVE_SCRATCH, gimmick: GIMMICK_DYNAMAX); }
+    } SCENE {
+        MESSAGE("Foe Wobbuffet grew huge into its Dynamax form!");
+        ANIMATION(ANIM_TYPE_MOVE, MOVE_DRAGON_TAIL, player);
+        NOT MESSAGE("Foe Bulbasaur was dragged out!");
+    }
+}
+
 TO_DO_BATTLE_TEST("Dragon Tail fails to switch if target has Guard Dog");
-TO_DO_BATTLE_TEST("Dragon Tail fails to switch if target is Dynamaxed");

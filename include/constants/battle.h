@@ -58,12 +58,12 @@
 #define BATTLE_TYPE_GHOST_UNVEILED     (1 << 10)
 #define BATTLE_TYPE_GHOST              (1 << 11)
 #define BATTLE_TYPE_POKEDUDE           (1 << 12)
-#define BATTLE_TYPE_WILD_SCRIPTED      (1 << 13)
-#define BATTLE_TYPE_SOS                (1 << 14)
+#define BATTLE_TYPE_RAID               (1 << 13)
+#define BATTLE_TYPE_ONE_VS_TWO         (1 << 14)
 #define BATTLE_TYPE_TWO_VS_ONE         (1 << 15)
 #define BATTLE_TYPE_TOTEM              (1 << 16)
-#define BATTLE_TYPE_RECORDED           (1 << 17) // This includes BATTLE_TYPE_RECORDED_LINK and BATTLE_TYPE_RECORDED_IS_MASTER from pret, used by the test system
-#define BATTLE_TYPE_ONE_VS_TWO         (1 << 18)
+#define BATTLE_TYPE_SOS                (1 << 17)
+#define BATTLE_TYPE_RECORDED           (1 << 18) // This includes BATTLE_TYPE_RECORDED_LINK and BATTLE_TYPE_RECORDED_IS_MASTER from pret, used by the test system
 #define BATTLE_TYPE_INGAME_PARTNER     (1 << 19)
 
 #define IS_BATTLE_TYPE_GHOST_WITHOUT_SCOPE ((gBattleTypeFlags & BATTLE_TYPE_GHOST) && !(gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED))
@@ -152,6 +152,7 @@
 #define STATUS3_SMACKED_DOWN          (1 << 22)
 #define STATUS3_SKY_DROP_ATTACKER     (1 << 23)
 #define STATUS3_SKY_DROP_TARGET       (1 << 24)
+#define STATUS3_ABILITY_NULLIFIED     (1 << 25) // Ability nullified by raid shockwave
 #define STATUS3_SEMI_INVULNERABLE     (STATUS3_UNDERGROUND | STATUS3_ON_AIR | STATUS3_UNDERWATER | STATUS3_VANISHED | STATUS3_SKY_DROPPED)
 #define STATUS3_SKY_DROPPED           (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)
 

@@ -11,7 +11,6 @@ static void AnimDirtParticleAcrossScreen(struct Sprite *sprite);
 static void AnimRaiseSprite(struct Sprite *sprite);
 static void AnimTask_Rollout_Step(u32 taskId);
 static void CreateRolloutSprite(struct Task *task);
-static void AnimRolloutParticle(struct Sprite *sprite);
 static void AnimRockTomb(struct Sprite *sprite);
 static void AnimRockTomb_Step(struct Sprite *sprite);
 static void AnimRockBlastRock(struct Sprite *sprite);
@@ -22,6 +21,11 @@ static void AnimStoneEdgeRock(struct Sprite *sprite);
 static void AnimStoneEdgeRock_Step1(struct Sprite *sprite);
 static void AnimStoneEdgeRock_Step2(struct Sprite *sprite);
 static void AnimTask_LoadSandstormBackground_Step(u32 taskId);
+static void AnimFallingIceRock(struct Sprite *sprite);
+static void AnimFallingIceRockStep(struct Sprite *sprite);
+static void AnimStonePillar(struct Sprite *sprite);
+static void AnimStonePillar_Step1(struct Sprite *sprite);
+static void AnimStonePillar_Step2(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_FlyingRock_0[] =
 {
@@ -383,6 +387,167 @@ const struct SpriteTemplate gShellFragmentSpriteTemplate =
     .callback = AnimRockFragment,
 };
 
+static const union AffineAnimCmd sAffineAnim_MaxHailstormIceRock[] =
+{
+    AFFINEANIMCMD_FRAME(256, 256, 0, 1), // Double sprite size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd sAffineAnim_MaxHailstormBigIceRock[] =
+{
+    AFFINEANIMCMD_FRAME(256, 256, 0, 1), // Double sprite size
+    AFFINEANIMCMD_FRAME(128, 128, 0, 1), // 1.5x sprite size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd *const sAffineAnims_MaxHailstormIceRock[] =
+{
+    sAffineAnim_MaxHailstormIceRock,
+    sAffineAnim_MaxHailstormBigIceRock
+};
+
+const struct SpriteTemplate gMaxHailstormIceRockSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ICE_ROCK,
+    .paletteTag = ANIM_TAG_ICE_ROCK,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxHailstormIceRock,
+    .callback = AnimFallingIceRock,
+};
+
+const struct SpriteTemplate gFallingStarSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_YELLOW_STAR,
+    .paletteTag = ANIM_TAG_YELLOW_STAR,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxHailstormIceRock,
+    .callback = AnimRockTomb,
+};
+
+static const union AnimCmd sAnimCmds_StonePillar[] =
+{
+    ANIMCMD_FRAME(128, 12),
+    ANIMCMD_FRAME(64, 12),
+    ANIMCMD_FRAME(0, 12),    
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnimTable_StonePillar[] =
+{
+    sAnimCmds_StonePillar,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_StonePillarGrow[] =
+{
+    AFFINEANIMCMD_FRAME(196, 196, 0, 1), // 1.75x sprite size
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_StonePillarFallLeft[] =
+{
+    AFFINEANIMCMD_FRAME(196, 196, 0, 1), // 1.75x sprite size
+    AFFINEANIMCMD_FRAME(0, 0, 1, 0x40),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_StonePillarFallRight[] =
+{
+    AFFINEANIMCMD_FRAME(196, 196, 0, 1), // 1.75x sprite size
+    AFFINEANIMCMD_FRAME(0, 0, -1, 0x40),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd* const sAffineAnimTable_StonePillar[] =
+{
+    sSpriteAffineAnim_StonePillarGrow,
+    sSpriteAffineAnim_StonePillarFallLeft,
+    sSpriteAffineAnim_StonePillarFallRight
+};
+
+const struct SpriteTemplate gStonePillarSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_STONE_PILLAR,
+    .paletteTag = ANIM_TAG_STONE_PILLAR,
+    .oam = &gOamData_AffineDouble_ObjNormal_64x64,
+    .anims = sAnimTable_StonePillar,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_StonePillar,
+    .callback = AnimStonePillar,
+};
+
+const struct SpriteTemplate gRockGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROCKS,
+    .paletteTag = ANIM_TAG_ROCKS,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sAnims_FlyingRock,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
+};
+
+const struct SpriteTemplate gMaxOvergrowthSeedDownSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SEED,
+    .paletteTag = ANIM_TAG_SEED,
+    .oam = &gOamData_AffineDouble_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxHailstormIceRock,
+    .callback = AnimRockTomb,
+};
+
+static const union AnimCmd sAnimCmds_GrowingMushroom[] =
+{
+    ANIMCMD_FRAME(0, 3),
+    ANIMCMD_FRAME(16, 3),
+    ANIMCMD_FRAME(32, 3),
+    ANIMCMD_FRAME(48, 3),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sAnimTable_GrowingMushroom[] =
+{
+    sAnimCmds_GrowingMushroom,
+};
+
+const struct SpriteTemplate gMaxOvergrowthMushroomSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_MUSHROOM,
+    .paletteTag = ANIM_TAG_MUSHROOM,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = sAnimTable_GrowingMushroom,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxHailstormIceRock,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gMaxTartnessGoldenAppleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GOLDEN_APPLE,
+    .paletteTag = ANIM_TAG_GOLDEN_APPLE,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = sAnimTable_GrowingMushroom,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxHailstormIceRock,
+    .callback = AnimSpriteOnMonForDuration,
+};
+
+const struct SpriteTemplate gMaxSmiteSparkGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPARK,
+    .paletteTag = ANIM_TAG_SPARK,
+    .oam = &gOamData_AffineDouble_ObjNormal_8x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = sAffineAnims_MaxHailstormIceRock,
+    .callback = AnimGeyserSprite,
+};
+
 // Animates a falling rock into the target.
 // arg 0: x pos
 // arg 1: sprite anim num
@@ -669,7 +834,7 @@ void AnimTask_SetRolloutAnimTimer(u32 taskId)
 
 // Animates Rollout rocks translating from the attacker to the target. The counter determines the intencity of the anim.
 // The counter is set through gBattleAnimArgs[ARG_RET_ID].
-// No args.
+// arg 0: create explosions on path (boolean)
 void AnimTask_Rollout(u32 taskId)
 {
     u8 var4;
@@ -712,12 +877,13 @@ void AnimTask_Rollout(u32 taskId)
     task->data[13] = pan1;
     task->data[14] = (pan2 - pan1) / task->data[8];
     task->data[1] = var4;
-    task->data[15] = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+    task->data[15] = gBattleAnimArgs[0];
     task->func = AnimTask_Rollout_Step;
 }
 
 static void AnimTask_Rollout_Step(u32 taskId)
 {
+    u32 spriteId;
     struct Task *task = &gTasks[taskId];
 
     switch (task->data[0])
@@ -726,8 +892,10 @@ static void AnimTask_Rollout_Step(u32 taskId)
         task->data[6] -= task->data[4];
         task->data[7] -= task->data[5];
         
-        gSprites[task->data[15]].x2 = task->data[6] >> 3;
-        gSprites[task->data[15]].y2 = task->data[7] >> 3;
+        spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+        
+        gSprites[spriteId].x2 = task->data[6] >> 3;
+        gSprites[spriteId].y2 = task->data[7] >> 3;
         
         if (++task->data[9] == 10)
         {
@@ -752,8 +920,10 @@ static void AnimTask_Rollout_Step(u32 taskId)
             task->data[7] = 0;
             ++task->data[0];
         }
-        gSprites[task->data[15]].x2 = task->data[6] >> 3;
-        gSprites[task->data[15]].y2 = task->data[7] >> 3;
+        spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
+        
+        gSprites[spriteId].x2 = task->data[6] >> 3;
+        gSprites[spriteId].y2 = task->data[7] >> 3;
         break;
     case 3:
         task->data[2] += task->data[4];
@@ -778,12 +948,29 @@ static void AnimTask_Rollout_Step(u32 taskId)
     }
 }
 
+static void CreateRolloutSpriteInternal(struct Task *task, const struct SpriteTemplate *spriteTemplate, u16 x, u16 y, s32 tileNum)
+{
+    u32 spriteId = CreateSprite(spriteTemplate, x, y, 35);
+    
+    if (spriteId != MAX_SPRITES)
+    {
+        gSprites[spriteId].data[0] = 18;
+        gSprites[spriteId].data[2] = ((task->data[12] * 20) + x) + (task->data[1] * 3);
+        gSprites[spriteId].data[4] = y;
+        gSprites[spriteId].data[5] = -16 - (task->data[1] * 2);
+        gSprites[spriteId].oam.tileNum += tileNum;
+        
+        InitAnimArcTranslation(&gSprites[spriteId]);
+        
+        ++task->data[11];
+    }
+}
+
 static void CreateRolloutSprite(struct Task *task)
 {
     const struct SpriteTemplate *spriteTemplate;
     s32 tileNum;
     u16 x, y;
-    u32 spriteId;
 
     switch (task->data[1])
     {
@@ -811,24 +998,15 @@ static void CreateRolloutSprite(struct Task *task)
     y = task->data[3] >> 3;
     x += (task->data[12] * 4);
     
-    spriteId = CreateSprite(spriteTemplate, x, y, 35);
+    CreateRolloutSpriteInternal(task, spriteTemplate, x, y, tileNum);
     
-    if (spriteId != MAX_SPRITES)
-    {
-        gSprites[spriteId].data[0] = 18;
-        gSprites[spriteId].data[2] = ((task->data[12] * 20) + x) + (task->data[1] * 3);
-        gSprites[spriteId].data[4] = y;
-        gSprites[spriteId].data[5] = -16 - (task->data[1] * 2);
-        gSprites[spriteId].oam.tileNum += tileNum;
-        
-        InitAnimArcTranslation(&gSprites[spriteId]);
-        
-        ++task->data[11];
-    }
+    if (task->data[15])
+        CreateRolloutSpriteInternal(task, &gRolloutExplosionSpriteTemplate, x, y, 0);
+
     task->data[12] *= -1;
 }
 
-static void AnimRolloutParticle(struct Sprite *sprite)
+void AnimRolloutParticle(struct Sprite *sprite)
 {
     if (TranslateAnimHorizontalArc(sprite))
     {
@@ -847,9 +1025,11 @@ static void AnimRolloutParticle(struct Sprite *sprite)
 // arg 2: falling speed
 // arg 3: in ground duration
 // arg 4: sprite anim num
+// arg 5: sprite affine anim num
 static void AnimRockTomb(struct Sprite *sprite)
 {
     StartSpriteAnim(sprite, gBattleAnimArgs[4]);
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[5]);
     
     sprite->x2 = gBattleAnimArgs[0];
     
@@ -1012,4 +1192,114 @@ static void AnimStoneEdgeRock_Step2(struct Sprite *sprite)
         sprite->y -= 4;
     else
         DestroyAnimSprite(sprite);
+}
+
+// Animates Max Hailstorm's ice rock falling from the sky.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: speed
+// arg 3: in ground duration
+// arg 4: affine anim num
+static void AnimFallingIceRock(struct Sprite *sprite)
+{
+    sprite->x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+    sprite->y = gBattleAnimArgs[1];
+    
+    sprite->x2 = gBattleAnimArgs[0];
+    sprite->y2 = -gBattleAnimArgs[1];
+    
+    if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
+    {
+        sprite->y += 45;
+        sprite->y2 -= 45;
+    }
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[4]);
+    
+    sprite->data[3] = gBattleAnimArgs[2];
+    sprite->data[4] = gBattleAnimArgs[3];
+    sprite->callback = AnimFallingIceRockStep;
+}
+
+static void AnimFallingIceRockStep(struct Sprite *sprite)
+{
+    switch (sprite->data[0])
+    {
+        case 0:
+            sprite->y2 += sprite->data[3];
+            
+            if (sprite->y2 >= 0)
+            {
+                sprite->y2 = 0;
+                sprite->data[0]++;
+            }
+            break;
+        case 1:
+            sprite->data[0] = sprite->data[4] + 1;
+            sprite->callback = DestroyAnimSpriteAfterTimer;
+            break;
+    }
+}
+
+// Animates a stone pillar that falls on the target.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+static void AnimStonePillar(struct Sprite *sprite)
+{
+    sprite->data[2] = (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER);
+    
+    if (sprite->data[2])
+        gBattleAnimArgs[1] -= 9;
+    
+    InitSpritePosToAnimTarget(sprite, TRUE);
+    
+    sprite->x2 = gBattleAnimArgs[0];
+    
+    if (sprite->data[2])
+    {
+        sprite->x2 *= -1;
+        sprite->y2 *= -1;
+    }
+    sprite->callback = AnimStonePillar_Step1;
+}
+
+static void AnimStonePillar_Step1(struct Sprite *sprite)
+{
+    if (sprite->data[0]++ == 0x48)
+    {
+        sprite->data[0] = 0;
+        StartSpriteAffineAnim(sprite, sprite->data[2] ? 1 : 2);
+        sprite->callback = AnimStonePillar_Step2;
+    }
+}
+
+static void AnimStonePillar_Step2(struct Sprite *sprite)
+{
+    if (!sprite->affineAnimEnded)
+    {
+        // Counteract the rotation movement
+        if (sprite->data[2])
+            sprite->x2--;
+        else
+            sprite->x2++;
+        
+        sprite->data[1]++;
+        
+        switch (sprite->data[1])
+        {
+            case 8:
+            case 11:
+            case 13:
+            case 16:
+            case 19:
+            case 22:
+            case 25 ... 70:
+                sprite->y2++; // Counteract the rotation lifting
+                break;
+        }
+    }
+    else
+    {
+        sprite->data[0] = 0x25;
+        sprite->callback = DestroyAnimSpriteAfterTimer;
+    }
 }

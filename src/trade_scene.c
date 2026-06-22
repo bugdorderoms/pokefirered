@@ -754,7 +754,7 @@ void CB2_InitTradeAnim_LinkTrade(void)
     case 0:
         if (!gReceivedRemoteLinkPlayers)
         {
-            gLinkType = 0x1144;
+            gLinkType = LINKTYPE_TRADE_DISCONNECTED;
             CloseLink();
         }
         sTradeData = AllocZeroed(sizeof(struct TradeAnimationResources));
@@ -2444,7 +2444,7 @@ void CreateInGameTradePokemon(void)
     value = inGameTrade->dynamaxLevel;
     SetMonData(tradeMon, MON_DATA_DYNAMAX_LEVEL, &value);
     value = inGameTrade->gMaxFactor;
-    SetMonData(tradeMon, MON_DATA_HAS_GMAX_FACTOR, &value);
+    SetMonData(tradeMon, MON_DATA_GIGANTAMAX_FACTOR, &value);
     
     // Set met location
     value = METLOC_IN_GAME_TRADE;
@@ -2453,7 +2453,7 @@ void CreateInGameTradePokemon(void)
     // Set pokeball
     if (inGameTrade->ballId)
     {
-        value = inGameTrade->ballId;
+        value = ITEM_TO_BALL(inGameTrade->ballId);
         SetMonData(tradeMon, MON_DATA_POKEBALL, &value);
     }
     

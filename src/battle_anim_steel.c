@@ -2,8 +2,13 @@
 #include "gflib.h"
 #include "battle_anim.h"
 #include "graphics.h"
+#include "constants/songs.h"
 
 static void AnimTask_MetallicShine_Step(u32 taskId);
+static void AnimTask_MaxSteelspike_Step(u32 taskId);
+static void CreateSteelspikeSprite(struct Task *task);
+static void CreateSteelspikeCurvedSprite(void);
+static void AnimLargeSteelSpike(struct Sprite *sprite);
 
 const struct SpriteTemplate gMetalSoundSpriteTemplate =    
 {
@@ -58,6 +63,71 @@ const struct SpriteTemplate gMagnetBombRockBallSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimNeedleArmSpike,
+};
+
+static const union AnimCmd sLargeSpikeAnimCmds[] =
+{
+    ANIMCMD_FRAME(0, 3),
+    ANIMCMD_FRAME(32, 3),
+    ANIMCMD_FRAME(64, 3),
+    ANIMCMD_FRAME(96, 3),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sLargeSpikeAnimTable[] =
+{
+    sLargeSpikeAnimCmds,
+};
+
+const struct SpriteTemplate gMaxSteelspikeSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LARGE_SPIKE,
+    .paletteTag = ANIM_TAG_LARGE_SPIKE,
+    .oam = &gOamData_AffineOff_ObjNormal_32x64,
+    .anims = sLargeSpikeAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimLargeSteelSpike,
+};
+
+static const union AffineAnimCmd sLargeSpikeLeftAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 32, 1), // 45 degree turn
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sLargeSpikeRightAffineAnimCmds[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, -32, 1), // 45 degree turn
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd *const sLargeSpikeAffineAnimTable[] =
+{
+    sLargeSpikeLeftAffineAnimCmds,
+    sLargeSpikeRightAffineAnimCmds
+};
+
+const struct SpriteTemplate gMaxSteelspikeCurvedSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LARGE_SPIKE,
+    .paletteTag = ANIM_TAG_LARGE_SPIKE,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x64,
+    .anims = sLargeSpikeAnimTable,
+    .images = NULL,
+    .affineAnims = sLargeSpikeAffineAnimTable,
+    .callback = AnimLargeSteelSpike,
+};
+
+const struct SpriteTemplate gSteelsurgeSpriteTemplate =    
+{
+    .tileTag = ANIM_TAG_SPIKES,
+    .paletteTag = ANIM_TAG_LARGE_SPIKE,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimSpikes,
 };
 
 // Makes the attacker metallic and shining.
@@ -167,4 +237,130 @@ static void AnimTask_MetallicShine_Step(u32 taskId)
             DestroyAnimVisualTaskAndDisableBlend(taskId);
         }
     }
+}
+
+// Creates Max Steelspike's spikes.
+// No args.
+void AnimTask_MaxSteelspike(u32 taskId)
+{
+    u32 var0, var1, var2, var3;
+    s32 var4;
+    struct Task *task = &gTasks[taskId];
+
+    var0 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
+    var1 = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y) + 24;
+    var2 = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+    var3 = IsBattlerAlly(gBattleAnimAttacker, gBattleAnimTarget) ? var1 : GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) + 24;
+    
+    task->data[8] = 48 - (4 * 8);
+    task->data[0] = 0;
+    task->data[11] = 0;
+    task->data[9] = 0;
+    task->data[12] = 1;
+    
+    var4 = task->data[8];
+    if (var4 < 0)
+        var4 += 7;
+    
+    task->data[10] = (var4 >> 3) - 1;
+    task->data[2] = var0 * 8;
+    task->data[3] = var1 * 8;
+    task->data[4] = ((var2 - var0) * 8) / task->data[8];
+    task->data[5] = ((var3 - var1) * 8) / task->data[8];
+    task->func = AnimTask_MaxSteelspike_Step;
+}
+
+static void AnimTask_MaxSteelspike_Step(u32 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    
+    switch (task->data[0])
+    {
+        case 0:
+            task->data[2] += task->data[4];
+            task->data[3] += task->data[5];
+            
+            if (++task->data[9] >= task->data[10])
+            {
+                task->data[9] = 0;
+                CreateSteelspikeSprite(task);
+                task->data[13] += task->data[14];
+            }
+            
+            if (--task->data[8] == 0)
+            {
+                task->data[11] = 0;
+                task->data[0]++;
+            }
+            break;
+        case 1:
+            if (++task->data[11] == 10)
+                task->data[0]++;
+            break;
+        case 2:
+            CreateSteelspikeCurvedSprite();
+            task->data[11] = 0;
+            task->data[0]++;
+            break;
+        case 3:
+            if (++task->data[11] == 7)
+                task->data[0]++;
+            break;
+        case 4:
+            DestroyAnimVisualTask(taskId);
+            break;
+    }
+}
+
+static void CreateSteelspikeSprite(struct Task *task)
+{
+    u32 spriteId;
+    u16 x, y;
+    
+    x = task->data[2] >> 3;
+    y = task->data[3] >> 3;
+    x += (task->data[12] * 8);
+    
+    spriteId = CreateSprite(&gMaxSteelspikeSpriteTemplate, x, y, 35);
+    
+    if (spriteId != MAX_SPRITES)
+    {
+        gSprites[spriteId].data[0] = task->data[8] + 60;
+        PlaySE(SE_M_HARDEN);
+        task->data[11]++;
+    }
+    task->data[12] *= -1;
+}
+
+static void CreateSteelspikeCurvedSprite(void)
+{
+    u32 spriteId1, spriteId2;
+    u16 x, y;
+    
+    x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
+    y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y);
+    
+    spriteId1 = CreateSprite(&gMaxSteelspikeCurvedSpriteTemplate, x + 5, y, 35);
+    spriteId2 = CreateSprite(&gMaxSteelspikeCurvedSpriteTemplate, x - 5, y, 35);
+    
+    StartSpriteAffineAnim(&gSprites[spriteId1], 0); // Point left
+    gSprites[spriteId1].data[0] = 50;
+    
+    StartSpriteAffineAnim(&gSprites[spriteId2], 1); // Point right
+    gSprites[spriteId2].data[0] = 50;
+    
+    if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
+    {
+        gSprites[spriteId1].oam.priority--;
+        gSprites[spriteId1].y += 15;
+        
+        gSprites[spriteId2].oam.priority--;
+        gSprites[spriteId2].y2 += 15;
+    }
+}
+
+static void AnimLargeSteelSpike(struct Sprite *sprite)
+{
+    if (--sprite->data[0] == 0)
+        DestroySpriteAndFreeMatrix(sprite);
 }

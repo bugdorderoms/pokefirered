@@ -10,6 +10,7 @@ static void AnimSludgeBombHitParticle(struct Sprite *sprite);
 static void AnimSludgeBombHitParticle_Step(struct Sprite *sprite);
 static void AnimAcidPoisonDroplet(struct Sprite *sprite);
 static void AnimTask_AcidArmorStep(u32);
+static void AnimPoisonColumn(struct Sprite *sprite);
 
 static const union AnimCmd sAnim_ToxicBubble[] =
 {
@@ -305,6 +306,56 @@ const struct SpriteTemplate gClearSmogCloudSpriteTemplate =
     .callback = InitSwirlingFogAnim,
 };
 
+static const union AnimCmd sAnimCmdPoisonColumn[] =
+{
+    ANIMCMD_FRAME(0, 6),
+    ANIMCMD_FRAME(32, 3),
+    ANIMCMD_FRAME(64, 3),
+    ANIMCMD_FRAME(96, 3),
+    ANIMCMD_FRAME(128, 3),
+    ANIMCMD_FRAME(160, 3),
+    ANIMCMD_FRAME(192, 3),
+    ANIMCMD_JUMP(3),
+};
+
+static const union AnimCmd *const sAnimCmdTable_PoisonColumn[] =
+{
+    sAnimCmdPoisonColumn,
+};
+
+static const union AffineAnimCmd sAffineAnimCmds_PoisonColumn[] =
+{
+    AFFINEANIMCMD_FRAME(256, 256, 0, 1), // Double sprite size
+    AFFINEANIMCMD_END,
+};
+
+static const union AffineAnimCmd* const sAffineAnimTable_PoisonColumn[] =
+{
+    sAffineAnimCmds_PoisonColumn
+};
+
+const struct SpriteTemplate gPoisonColumnSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_POISON_COLUMN,
+    .paletteTag = ANIM_TAG_POISON_COLUMN,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x64,
+    .anims = sAnimCmdTable_PoisonColumn,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_PoisonColumn,
+    .callback = AnimPoisonColumn,
+};
+
+const struct SpriteTemplate gGarbageColumnSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_GARBAGE_COLUMN,
+    .paletteTag = ANIM_TAG_GARBAGE_COLUMN,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x64,
+    .anims = sAnimCmdTable_PoisonColumn,
+    .images = NULL,
+    .affineAnims = sAffineAnimTable_PoisonColumn,
+    .callback = AnimPoisonColumn,
+};
+
 // Animates a sludge project.
 // arg 0: initial x offset
 // arg 1: initial y offset
@@ -588,4 +639,52 @@ static void AnimTask_AcidArmorStep(u32 taskId)
         DestroyAnimVisualTask(taskId);
         break;
     }
+}
+
+// Animates the poison column sprite in MOVE_MAX_OOZE's anim.
+// arg 0: anim battler
+// arg 1: which position
+// arg 2: change priority based on side (boolean)
+// arg 3: initial delay amount
+// arg 4: duration
+// arg 5: split prio (boolean)
+// arg 6: affine anim num
+static void AnimPoisonColumn(struct Sprite *sprite)
+{
+    s16 x, y;
+    u32 battler = GetBattlerForAnimScript(gBattleAnimArgs[0]);
+    bool32 isPlayerSide = (GetBattlerSide(battler) == B_SIDE_PLAYER);
+    
+    if (gBattleAnimArgs[2] && isPlayerSide)
+        sprite->oam.priority++;
+    
+    if (gBattleAnimArgs[5] && GetBattlerPosition(battler) == B_POSITION_PLAYER_LEFT)
+    {
+        SetAnimBgAttribute(1, BG_ANIM_PRIORITY, 1);
+        SetAnimBgAttribute(2, BG_ANIM_PRIORITY, 2);
+    }
+    
+    switch (gBattleAnimArgs[1])
+    {
+        case 0:
+            if (!isPlayerSide)
+                x = 30, y = 5;
+            else
+                x = -15, y = -60;
+            break;
+        case 1:
+            if (!isPlayerSide)
+                x = -50, y = -10;
+            else
+                x = 45, y = -40;
+            break;
+        case 2:
+            x = -10, y = -25;
+            break;
+    }
+    gBattleAnimArgs[1] = x;
+    gBattleAnimArgs[2] = y;
+    gBattleAnimArgs[5] = FALSE;
+    sprite->callback = AnimSpriteOnMonForDuration;
+    sprite->callback(sprite);
 }

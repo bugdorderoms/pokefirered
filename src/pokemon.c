@@ -521,6 +521,21 @@ static const u16 sLinkPlayerFacilityClasses[] =
     FACILITY_CLASS_BEAUTY,
 };
 
+static const u32 sDynamaxLevelHPMultipliers[MAX_DYNAMAX_LEVEL + 1] =
+{
+    [0] = UQ_4_12(1.5),
+    [1] = UQ_4_12(1.55),
+    [2] = UQ_4_12(1.6),
+    [3] = UQ_4_12(1.65),
+    [4] = UQ_4_12(1.7),
+    [5] = UQ_4_12(1.75),
+    [6] = UQ_4_12(1.8),
+    [7] = UQ_4_12(1.85),
+    [8] = UQ_4_12(1.9),
+    [9] = UQ_4_12(1.95),
+    [10] = UQ_4_12(2.0),
+};
+
 // code
 void ZeroBoxMonData(struct BoxPokemon *boxMon)
 {
@@ -807,7 +822,7 @@ void CreateMon(struct Pokemon *mon, struct PokemonGenerator generator)
         }
     }
     // Set pokeball
-    value = ITEM_POKE_BALL;
+    value = ITEM_TO_BALL(ITEM_POKE_BALL);
     SetMonData(mon, MON_DATA_POKEBALL, &value);
     
     // Set language
@@ -1353,7 +1368,7 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
     case MON_DATA_DYNAMAX_LEVEL:
         retVal = boxMon->dynamaxLevel;
         break;
-    case MON_DATA_HAS_GMAX_FACTOR:
+    case MON_DATA_GIGANTAMAX_FACTOR:
         retVal = boxMon->gMaxFactor;
         break;
     case MON_DATA_MOVE1:
@@ -1458,13 +1473,12 @@ u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data)
         if (boxMon->species && !boxMon->isEgg)
         {
             u16 *moves = (u16 *)data;
-
-            while (moves[i] != MOVES_COUNT)
+            
+            for (i = 0; moves[i] != MOVES_COUNT; i++)
             {
                 u32 move = moves[i];
                 if (boxMon->move1 == move || boxMon->move2 == move || boxMon->move3 == move || boxMon->move4 == move)
                     retVal |= Bit(i);
-                i++;
             }
         }
         break;
@@ -1671,7 +1685,7 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
     case MON_DATA_DYNAMAX_LEVEL:
         SET8(boxMon->dynamaxLevel);
         break;
-    case MON_DATA_HAS_GMAX_FACTOR:
+    case MON_DATA_GIGANTAMAX_FACTOR:
         SET8(boxMon->gMaxFactor);
         break;
     case MON_DATA_EVOLUTION_TRACKER:
@@ -1822,10 +1836,16 @@ static bool32 IsPokemonStorageFull(void)
 bool32 IsPlayerPartyAndPokemonStorageFull(void)
 {
     u32 i;
+    struct Pokemon *party;
+    
+    if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
+        party = gSaveBlock1Ptr->playerParty; // Need check the full party, not only the selected ones
+    else
+        party = gPlayerParty;
 
     for (i = 0; i < PARTY_SIZE; i++)
     {
-        if (!GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL))
+        if (!GetMonData(&party[i], MON_DATA_SPECIES, NULL))
             return FALSE;
     }
     return IsPokemonStorageFull();
@@ -2105,7 +2125,7 @@ u32 GetEvolutionTargetSpecies(u32 partyId, u32 type, u32 evolutionItem, struct P
     // If an Everstone is being held, still want to show that the stone *could* be used on that Pokémon to evolve
     || (ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) == HOLD_EFFECT_PREVENT_EVOLVE && type == EVO_MODE_ITEM_USE && !onlyChecking)
     // Non-fully-evolved Pokémon can't evolve if it has the gigantamax factor
-    || (SpeciesHasFormChangeType(species, FORM_CHANGE_GIGANTAMAX) && GetMonData(mon, MON_DATA_HAS_GMAX_FACTOR, NULL)))
+    || (SpeciesHasFormChangeType(species, FORM_CHANGE_GIGANTAMAX) && GetMonData(mon, MON_DATA_GIGANTAMAX_FACTOR, NULL)))
         return targetSpecies;
     
     passes = TRUE;
@@ -2350,7 +2370,7 @@ bool32 ModifyMonFriendship(struct Pokemon *mon, s8 friendshipDelta)
     
         if (friendshipDelta > 0)
         {
-            if (GetMonData(mon, MON_DATA_POKEBALL, NULL) == ITEM_LUXURY_BALL)
+            if (GetMonData(mon, MON_DATA_POKEBALL, NULL) == ITEM_TO_BALL(ITEM_LUXURY_BALL))
                 friendship++;
             if (GetMonData(mon, MON_DATA_MET_LOCATION, NULL) == GetCurrentRegionMapSectionId())
                 friendship++;
@@ -2878,7 +2898,7 @@ void SetMonPreventsSwitchingString(void)
 
 void SetWildMonsHeldItem(void)
 {
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER)) && !gDexnavBattle)
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_TRAINER | BATTLE_TYPE_RAID)) && !gDexnavBattle)
     {
         u32 i, rnd, rndVal1, rndVal2, species;
         struct Pokemon *mon;
@@ -3192,4 +3212,31 @@ u32 GetMonTeraType(struct Pokemon *mon)
         teraType = GetMonData(mon, MON_DATA_TERA_TYPE, NULL);
     
     return teraType;
+}
+
+u32 GetDynamaxLevelHPMultiplier(u32 dynamaxLevel, bool32 inverseMultiplier)
+{
+    u32 multiplier = sDynamaxLevelHPMultipliers[dynamaxLevel];
+    
+    if (inverseMultiplier)
+        return (UQ_4_12(1.0) * 4096) / multiplier;
+    else
+        return multiplier;
+}
+
+bool32 IsGigantamaxSpecies(u32 species)
+{
+    return (gSpeciesInfo[species].flags & SPECIES_FLAG_GIGANTAMAX);
+}
+
+bool32 IsBannedSpeciesForDynamaxing(u32 species)
+{
+    u32 nationalDex = SpeciesToNationalPokedexNum(species);
+    return (nationalDex == NATIONAL_DEX_ZACIAN || nationalDex == NATIONAL_DEX_ZAMAZENTA || nationalDex == NATIONAL_DEX_ETERNATUS);
+}
+
+u32 GetSpeciesBaseStatsTotal(u32 species)
+{
+    return (gSpeciesInfo[species].baseHP + gSpeciesInfo[species].baseAttack + gSpeciesInfo[species].baseDefense
+        + gSpeciesInfo[species].baseSpeed + gSpeciesInfo[species].baseSpAttack + gSpeciesInfo[species].baseSpDefense);
 }

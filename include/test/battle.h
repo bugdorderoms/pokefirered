@@ -758,6 +758,8 @@ struct moveWithPP {
 #define SpDefenseIV(iv) SpDefenseIV_(__LINE__, iv)
 #define SpeedIV(iv) SpeedIV_(__LINE__, iv)
 #define TeraType(type) TeraType_(__LINE__, type)
+#define GigantamaxFactor(factor) GigantamaxFactor_(__LINE__, factor)
+#define DynamaxLevel(level) DynamaxLevel_(__LINE__, level)
 
 void OpenPokemon(u32 sourceLine, u32 side, u32 species, u32 gender);
 void ClosePokemon(u32 sourceLine);
@@ -786,6 +788,8 @@ void SpAttackIV_(u32 sourceLine, u32 spAttackIV);
 void SpDefenseIV_(u32 sourceLine, u32 spDefenseIV);
 void SpeedIV_(u32 sourceLine, u32 speedIV);
 void TeraType_(u32 sourceLine, u32 type);
+void GigantamaxFactor_(u32 sourceLine, bool32 factor);
+void DynamaxLevel_(u32 sourceLine, u32 level);
 
 #define PLAYER_PARTY (gBattleTestRunnerState->data.recordedBattle.playerParty)
 #define OPPONENT_PARTY (gBattleTestRunnerState->data.recordedBattle.opponentParty)
@@ -939,7 +943,7 @@ void QueueStatus(u32 sourceLine, struct BattlePokemon *battler, struct StatusEve
         s32 _am = Q_4_12_TO_INT(_a * _m); \
         s32 _t = max(Q_4_12_TO_INT(abs(_m) + Q_4_12_ROUND), 1); \
         if (abs(_am-_b) > _t) \
-            Test_ExitWithResult(TEST_RESULT_FAIL, "%s:%d: EXPECT_MUL_EQ(%d, %q, %d) failed: %d not in [%d..%d]", gTestRunnerState.test->filename, __LINE__, _a, _m, _b, _am, _b-_t, _b+_t); \
+            Test_ExitWithResult(TEST_RESULT_FAIL, __LINE__, "%s:%d: EXPECT_MUL_EQ(%d, %q, %d) failed: %d not in [%d..%d]", gTestRunnerState.test->filename, __LINE__, _a, _m, _b, _am, _b-_t, _b+_t); \
     } while (0)
 
 #endif

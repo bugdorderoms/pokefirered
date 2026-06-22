@@ -269,6 +269,16 @@ void AnimGeyserSprite(struct Sprite *sprite)
         DestroyAnimSprite(sprite);
 }
 
+// Launches an object upwards.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+void AnimLaunchSpriteUpwards(struct Sprite *sprite)
+{
+    InitSpritePosToAnimAttacker(sprite, FALSE);
+    sprite->data[0] = gBattleAnimArgs[0] > 0 ? 1 : -1;
+    sprite->callback = AnimMudSportDirtRising;
+}
+
 // Moves a particle of dirt in the Mud Sport animation. The dirt can either be rising upward, or falling down.
 // arg 0: FALSE = dirt is rising into the air, TRUE = dirt is falling down
 // arg 1: initial x pixel offset

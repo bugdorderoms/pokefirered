@@ -300,14 +300,15 @@ static const u8 sContextMenuItems_Cancel[] = {
 };
 
 static const TaskFunc sItemContextTaskFuncs[] = {
-    [ITEMMENULOCATION_FIELD]  = Task_ItemContext_FieldOrBattle,
-    [ITEMMENULOCATION_PARTY]  = Task_ItemContext_FieldGive,
-    [ITEMMENULOCATION_SHOP]   = Task_ItemContext_Sell,
-    [ITEMMENULOCATION_ITEMPC] = Task_ItemContext_Deposit,
-    [ITEMMENULOCATION_PCBOX]  = Task_ItemContext_PcBoxGive,
-    [ITEMMENULOCATION_BATTLE] = Task_ItemContext_FieldOrBattle,
-    [ITEMMENULOCATION_OLD_MAN] = NULL,
+    [ITEMMENULOCATION_FIELD]       = Task_ItemContext_FieldOrBattle,
+    [ITEMMENULOCATION_PARTY]       = Task_ItemContext_FieldGive,
+    [ITEMMENULOCATION_SHOP]        = Task_ItemContext_Sell,
+    [ITEMMENULOCATION_ITEMPC]      = Task_ItemContext_Deposit,
+    [ITEMMENULOCATION_PCBOX]       = Task_ItemContext_PcBoxGive,
+    [ITEMMENULOCATION_BATTLE]      = Task_ItemContext_FieldOrBattle,
+    [ITEMMENULOCATION_OLD_MAN]     = NULL,
     [ITEMMENULOCATION_CHOOSE_ITEM] = ItemMenu_StartFadeToExitCallback,
+    [ITEMMENULOCATION_RAIDEND]     = Task_ItemContext_FieldOrBattle,
 };
 
 static const u8 *const sSortTypeStrings[] = 
@@ -380,7 +381,7 @@ void GoToBagMenu(u32 location, u32 pocket, MainCallback bagCallback)
         sBagMenuDisplay->pocketScrollArrowsTask = 0xFF;
         sBagMenuDisplay->pocketSwitchArrowsTask = 0xFF;
         
-        if (location == ITEMMENULOCATION_ITEMPC)
+        if (location == ITEMMENULOCATION_ITEMPC || location == ITEMMENULOCATION_RAIDEND)
             sBagMenuDisplay->pocketSwitchMode = 1;
         else if (location == ITEMMENULOCATION_OLD_MAN)
             sBagMenuDisplay->pocketSwitchMode = 2;
@@ -408,6 +409,11 @@ void CB2_BagMenuFromStartMenu(void)
 void CB2_BagMenuFromBattle(void)
 {
     GoToBagMenu(ITEMMENULOCATION_BATTLE, OPEN_BAG_LAST, ReshowBattleScreenAfterMenu);
+}
+
+void CB2_ChooseBall(void)
+{
+    GoToBagMenu(ITEMMENULOCATION_RAIDEND, OPEN_BAG_POKEBALLS, ReshowBattleScreenAfterMenu);
 }
 
 static void CB2_BagMenuRun(void)
@@ -1413,6 +1419,7 @@ static void OpenContextMenu(u32 taskId)
     {
     case ITEMMENULOCATION_BATTLE:
     case ITEMMENULOCATION_TTVSCR_STATUS:
+    case ITEMMENULOCATION_RAIDEND:
         if (gSpecialVar_ItemId == ITEM_BERRY_POUCH)
         {
             sContextMenuItemsBuffer[0] = ITEMMENUACTION_OPEN_BERRIES;

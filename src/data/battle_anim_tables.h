@@ -32,6 +32,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_STATS_CHANGE] =
     {
@@ -177,6 +178,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .hideHpBoxes = TRUE,
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_FOG_CONTINUES] =
     {
@@ -228,6 +230,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_BATTLE_BOND] =
     {
@@ -237,6 +240,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_ZYGARDE_CELL_SWIRL] =
     {
@@ -246,6 +250,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_SCHOOLING] =
     {
@@ -255,6 +260,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_SPIT_OUT_PREY] =
     {
@@ -263,6 +269,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_SILENT_FORM_CHANGE] =
     {
@@ -270,6 +277,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_TOTEM_BOOST] =
     {
@@ -294,6 +302,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_BLUE_PRIMAL_REVERSION] =
     {
@@ -303,6 +312,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_ULTRA_BURST] =
     {
@@ -312,6 +322,7 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .substituteRecede = TRUE,
         .changeForm = TRUE,
         .resumeIfAnimsOff = TRUE,
+        .ignore0HpCheck = TRUE,
     },
     [B_ANIM_MIST] =
     {
@@ -362,5 +373,83 @@ const struct BattleAnimTable gBattleAnims_General[] =
         .shouldBePlayed = TRUE,
         .substituteRecede = TRUE,
         .changeForm = TRUE,
+        .ignore0HpCheck = TRUE,
+    },
+    [B_ANIM_RAID_STORM_BREWS] =
+    {
+        .script = gGeneralAnim_RaidStormBrews,
+        .ignoreSemiInvulnerability = TRUE,
+        .ignoreSubstitute = TRUE,
+    },
+    [B_ANIM_POWDER_EXPLOSION] =
+    {
+        .script = gGeneralAnim_PowderExplosion,
+        .ignoreSemiInvulnerability = TRUE,
+        .ignoreSubstitute = TRUE,
+    },
+    [B_ANIM_DYNAMAX_GROWTH] =
+    {
+        .script = gGeneralAnim_DynamaxGrowth,
+        .hideHpBoxes = TRUE,
+        .shouldBePlayed = TRUE,
+        .ignoreSubstitute = TRUE,
+        .substituteRecede = TRUE,
+    },
+    [B_ANIM_DYNAMAX_ENERGY_SWIRL] =
+    {
+        .script = gGeneralAnim_DynamaxEnergySwirl,
+        .shouldBePlayed = TRUE,
+        .ignoreSubstitute = TRUE,
+    },
+    [B_ANIM_RAID_SHIELD_APPEARED] =
+    {
+        .script = gGeneralAnim_RaidShieldAppeared,
+        .shouldBePlayed = TRUE,
+        .ignoreSubstitute = TRUE,
+    },
+    [B_ANIM_RAID_SHIELD_DESTROYED] =
+    {
+        .script = gGeneralAnim_RaidShieldDestroyed,
+        .shouldBePlayed = TRUE,
+        .ignoreSubstitute = TRUE,
+    },
+    [B_ANIM_TURN_DAMAGE_NON_TYPES] =
+    {
+        .script = gGeneralAnim_TurnDamageNonTypes,
+        .hideHpBoxes = TRUE,
+    },
+    [B_ANIM_SET_STEALTH_ROCK] =
+    {
+        .script = gMoveAnim_STEALTH_ROCK,
+        .ignoreSemiInvulnerability = TRUE,
+    },
+    [B_ANIM_AURORA_VEIL] =
+    {
+        .script = gMoveAnim_AURORA_VEIL,
+        .ignoreSemiInvulnerability = TRUE,
+    },
+    [B_ANIM_SET_STEELSURGE] =
+    {
+        .script = gGeneralAnim_Steelsurge,
+        .ignoreSemiInvulnerability = TRUE,
+    },
+    [B_ANIM_RAID_ENERGY_BURST] =
+    {
+        .script = gGeneralAnim_RaidEnergyBurst,
+        .hideHpBoxes = TRUE,
+        .ignoreSubstitute = TRUE,
+        .substituteRecede = TRUE,
+    },
+    [B_ANIM_RAID_BLOWN_OUT] =
+    {
+        .script = gGeneralAnim_RaidBlownOut,
+        .shouldBePlayed = TRUE,
+        .ignoreSubstitute = TRUE,
+    },
+    [B_ANIM_RAID_BOSS_DISAPPEAR] =
+    {
+        .script = gGeneralAnim_RaidBossDisappear,
+        .shouldBePlayed = TRUE,
+        .ignoreSubstitute = TRUE,
     },
 };

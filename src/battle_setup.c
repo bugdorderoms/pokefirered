@@ -336,7 +336,7 @@ void StartScriptedWildBattle(void)
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
     
-    gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
+    gBattleTypeFlags = 0;
     if (GetMonData(&gEnemyParty[1], MON_DATA_SPECIES)) // if have a second mon turn into double battle
         gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
         
@@ -408,7 +408,7 @@ void StartLegendaryBattle(void)
     
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
-    gBattleTypeFlags = BATTLE_TYPE_WILD_SCRIPTED;
+    gBattleTypeFlags = 0;
     
     switch (SpeciesToNationalPokedexNum(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)))
     {
@@ -529,7 +529,7 @@ u32 BattleSetup_GetTerrainId(void)
         return BATTLE_TERRAIN_MOUNTAIN;
     else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
     {
-        if (MetatileBehavior_GetBridgeType(tileBehavior))
+        if (MetatileBehavior_GetBridgeType(tileBehavior) != BRIDGE_TYPE_OCEAN)
             return BATTLE_TERRAIN_POND;
         else if (MetatileBehavior_IsBridge(tileBehavior))
             return BATTLE_TERRAIN_WATER;

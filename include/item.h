@@ -127,7 +127,7 @@ extern struct BagPocket gBagPockets[];
 u16 GetBagItemQuantity(u16 *quantity);
 u8 *CopyItemName(u32 itemId, u8 *dest);
 u8 *CopyItemNameHandlePlural(u32 itemId, u32 quantity, u8 *dest);
-bool32 IsBagPocketNonEmpty(u32 pocket);
+bool32 IsPocketNotEmpty(u32 pocket);
 bool32 CheckBagHasItem(u32 itemId, u32 count);
 bool32 CheckBagHasSpace(u32 itemId, u32 count);
 bool32 RemoveBagItem(u32 itemId, u32 count);

@@ -58,3 +58,8 @@ EventScript_AskSaveGame:: @ 81A4EAF
 	special Field_AskSaveTheGame
 	waitstate
 	return
+
+EventScript_SaveGame::
+	special Field_SaveTheGame
+	waitstate
+	return

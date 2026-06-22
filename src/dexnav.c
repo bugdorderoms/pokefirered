@@ -986,7 +986,7 @@ static u32 DexNavGenerateMoveset(u32 species, u32 encounterLevel, u16* moveDst)
     }
 
     // Generate a wild mon just to get the initial moveset (later overwritten by CreateDexNavWildMon)
-    newSpecies = GenerateWildMon(species, encounterLevel, FALSE);
+    newSpecies = GenerateWildMon(species, encounterLevel, FALSE, 0);
 
     // Store generated mon moves into Dex Nav Struct
     for (i = 0; i < MAX_MON_MOVES; i++)

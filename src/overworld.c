@@ -182,14 +182,14 @@ static void InitLinkRoomStartMenuScript(void);
 static void InitMenuBasedScript(const u8 *script);
 static void sub_80581DC(const u8 *script);
 static void RunTerminateLinkScript(void);
-static void SpawnLinkPlayerObjectEvent(u32 i, s16 x, s16 y, u32 gender);
+static void SpawnLinkPlayerObjectEvent(u32 linkPlayerId, s16 x, s16 y);
 static void InitLinkPlayerObjectEventPos(struct ObjectEvent *objEvent, s16 x, s16 y);
 static u32 GetSpriteForLinkedPlayer(u32 linkPlayerId);
 static void GetLinkPlayerCoords(u32 linkPlayerId, u16 *x, u16 *y);
 static u32 GetLinkPlayerFacingDirection(u32 linkPlayerId);
 static u32 GetLinkPlayerElevation(u32 linkPlayerId);
 static u32 GetLinkPlayerIdAt(s16 x, s16 y);
-static void CreateLinkPlayerSprite(u32 i, u32 version);
+static void CreateLinkPlayerSprite(u32 linkPlayerId);
 static u32 MovementEventModeCB_Normal(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u32);
 static u32 MovementEventModeCB_Ignored(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u32);
 static bool32 FacingHandler_DoNothing(struct LinkPlayerObjectEvent *, struct ObjectEvent *, u32);
@@ -1998,8 +1998,8 @@ static void SpawnLinkPlayers(void)
 
     for (i = 0; i < gFieldLinkPlayerCount; i++)
     {
-        SpawnLinkPlayerObjectEvent(i, i + x, y, gLinkPlayers[i].gender);
-        CreateLinkPlayerSprite(i, gLinkPlayers[i].version);
+        SpawnLinkPlayerObjectEvent(i, i + x, y);
+        CreateLinkPlayerSprite(i);
     }
     ClearAllPlayerKeys();
 }
@@ -2009,7 +2009,7 @@ static void CreateLinkPlayerSprites(void)
     u32 i;
     
     for (i = 0; i < gFieldLinkPlayerCount; i++)
-        CreateLinkPlayerSprite(i, gLinkPlayers[i].version);
+        CreateLinkPlayerSprite(i);
 }
 
 // Credits
@@ -2927,7 +2927,7 @@ static void ZeroObjectEvent(struct ObjectEvent *objEvent)
 // not even one can reference *byte* aligned bitfield members...
 #define linkDirection(obj) ((u8*)obj)[offsetof(typeof(*obj), fieldEffectSpriteId) - 1] // -> rangeX
 
-static void SpawnLinkPlayerObjectEvent(u32 linkPlayerId, s16 x, s16 y, u32 gender)
+static void SpawnLinkPlayerObjectEvent(u32 linkPlayerId, s16 x, s16 y)
 {
     u32 objEventId = GetFirstInactiveObjectEventId();
     struct LinkPlayerObjectEvent *linkPlayerObjEvent = &gLinkPlayerObjectEvents[linkPlayerId];
@@ -2942,7 +2942,7 @@ static void SpawnLinkPlayerObjectEvent(u32 linkPlayerId, s16 x, s16 y, u32 gende
     linkPlayerObjEvent->movementMode = MOVEMENT_MODE_FREE;
 
     objEvent->active = TRUE;
-    linkGender(objEvent) = gender;
+    linkGender(objEvent) = gLinkPlayers[linkPlayerId].gender;
     linkDirection(objEvent) = DIR_NORTH;
     objEvent->spriteId = MAX_SPRITES;
 
@@ -3121,14 +3121,19 @@ static bool32 LinkPlayerDetectCollision(u32 selfObjEventId, s16 x, s16 y)
     return MapGridIsImpassableAt(x, y);
 }
 
-static void CreateLinkPlayerSprite(u32 linkPlayerId, u32 gameVersion)
+static void CreateLinkPlayerSprite(u32 linkPlayerId)
 {
-    struct LinkPlayerObjectEvent *linkPlayerObjEvent = &gLinkPlayerObjectEvents[linkPlayerId];
-    struct ObjectEvent *objEvent = &gObjectEvents[linkPlayerObjEvent->objEventId];
+    u32 gameVersion;
+    struct ObjectEvent *objEvent;
     struct Sprite *sprite;
+    struct LinkPlayerObjectEvent *linkPlayerObjEvent = &gLinkPlayerObjectEvents[linkPlayerId];
 
     if (linkPlayerObjEvent->active)
     {
+        objEvent = &gObjectEvents[linkPlayerObjEvent->objEventId];
+        
+        gameVersion = gLinkPlayers[linkPlayerId].version & 0xFF;
+        
         if (gameVersion == VERSION_FIRE_RED || gameVersion == VERSION_LEAF_GREEN)
             objEvent->spriteId = AddPseudoObjectEvent(GetPlayerAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, linkGender(objEvent)), SpriteCB_LinkPlayer, 0, 0, 0);
         else

@@ -1,8 +1,11 @@
 #include "global.h"
 #include "battle.h"
+#include "battle_gfx_sfx_util.h"
 #include "battle_gimmicks.h"
 #include "battle_interface.h"
 #include "battle_message.h"
+#include "battle_move_effects.h"
+#include "battle_raid.h"
 #include "battle_scripts.h"
 #include "event_data.h"
 #include "form_change.h"
@@ -31,9 +34,13 @@ struct GimmickInfo
 {
     const struct SpriteSheet *triggerSheet;
     const u16 *triggerPal;
+    bool32 (*keyItemCheck)(u32 battler);
     bool32 (*canActivate)(u32 battler);
     void (*activateGimmick)(u32 battler);
+    const u8 *activationScript;
     u8 indicatorId;
+    bool8 removesOnFaint:1;
+    bool8 removesOnSwitchOut:1;
 };
 
 static bool32 CanActivateGimmick(u32 battler, u32 gimmick);
@@ -43,27 +50,26 @@ static void SpriteCB_GimmickIndicator(struct Sprite *sprite);
 #include "data/gimmicks/graphics.h"
 #include "data/gimmicks/gimmicks_info.h"
 
-// Populates usable gimmicks for each battler.
-void AssignUsableGimmicks(void)
+// Populate usable gimmick for this battler.
+void AssignUsableGimmick(u32 battler)
 {
-    u32 battler, gimmick;
+    u32 gimmick;
     
-    for (battler = 0; battler < gBattlersCount; battler++)
+    gBattleStruct->battlers[battler].usableGimmick = GIMMICK_NONE;
+    
+    if (!(gStatuses3[battler] & (STATUS3_SEMI_INVULNERABLE | STATUS3_COMMANDING)) && GetActiveGimmick(battler) == GIMMICK_NONE && CanActivateGimmickInRaid(battler))
     {
-        gBattleStruct->battlers[battler].usableGimmick = GIMMICK_NONE;
-        
-        if (!(gStatuses3[battler] & (STATUS3_SEMI_INVULNERABLE | STATUS3_COMMANDING)) && GetActiveGimmick(battler) == GIMMICK_NONE)
+        for (gimmick = GIMMICK_NONE + 1; gimmick < GIMMICKS_COUNT; gimmick++)
         {
-            for (gimmick = 0; gimmick < GIMMICKS_COUNT; gimmick++)
+            if (!HasTrainerUsedGimmick(battler, gimmick) && CanActivateGimmick(battler, gimmick))
             {
-                if (!HasTrainerUsedGimmick(battler, gimmick) && CanActivateGimmick(battler, gimmick))
-                {
-                    gBattleStruct->battlers[battler].usableGimmick = gimmick;
-                    break;
-                }
+                gBattleStruct->battlers[battler].usableGimmick = gimmick;
+                break;
             }
         }
     }
+    BtlController_EmitGimmickState(battler, BUFFER_A, STATE_USABLE_GIMMICK, gBattleStruct->battlers[battler].usableGimmick);
+    MarkBattlerForControllerExec(battler);
 }
 
 // Returns whether a battler is able to use a gimmick. Checks consumption and gimmick specific functions.
@@ -73,7 +79,7 @@ static bool32 CanActivateGimmick(u32 battler, u32 gimmick)
 }
 
 // Returns whether the player has a gimmick selected while in the move selection menu.
-bool32 IsGimmickSelected(u32 battler, u32 gimmick)
+static bool32 IsGimmickSelected(u32 battler, u32 gimmick)
 {
     if (gBattleStruct->battlers[battler].usableGimmick != gimmick)
         return FALSE;
@@ -91,11 +97,28 @@ void SetActiveGimmick(u32 battler, u32 gimmick)
     gBattleStruct->sides[GetBattlerSide(battler)].party[gBattlerPartyIndexes[battler]].activeGimmick = gimmick;
 }
 
-// Removes a battler's active gimmick on fainting.
-void RemoveActiveGimmick(u32 battler, u32 gimmick)
+// Returns whether a battler's gimmick should be removed, if any.
+bool32 ShouldRemoveActiveGimmick(u32 battler, u32 state)
 {
+    u32 gimmick = GetActiveGimmick(battler);
+    
     if (gimmick != GIMMICK_NONE)
-        SetActiveGimmick(battler, GIMMICK_NONE);
+    {
+        switch (state)
+        {
+            case REMOVE_GIMMICK_ON_FAINT:
+                if (sGimmicksInfo[gimmick].removesOnFaint)
+                    return TRUE;
+                break;
+            case REMOVE_GIMMICK_ON_SWITCHOUT:
+                if (sGimmicksInfo[gimmick].removesOnSwitchOut)
+                    return TRUE;
+                break;
+            case REMOVE_GIMMICK_ON_DYNAMAX_END:
+                return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 // Returns a battler's active gimmick, if any.
@@ -138,7 +161,7 @@ bool32 HasTrainerUsedGimmick(u32 battler, u32 gimmick)
 }
 
 // Sets a gimmick as used by a trainer with checks for Multi Battles.
-void SetGimmickAsActivated(u32 battler, u32 gimmick)
+static void SetGimmickAsActivated(u32 battler, u32 gimmick)
 {
     GetSetActivatedGimmick(battler, gimmick, FLAG_SET_ACTIVATED);
     
@@ -147,30 +170,44 @@ void SetGimmickAsActivated(u32 battler, u32 gimmick)
 }
 
 // Executes a gimmick's activation function.
-void ActivateGimmick(u32 battler)
+void ActivateGimmick(u32 battler, u32 gimmick)
 {
-    u32 gimmick = gBattleStruct->battlers[battler].usableGimmick;
-    
     if (sGimmicksInfo[gimmick].activateGimmick != NULL)
-    {
         sGimmicksInfo[gimmick].activateGimmick(battler);
-        
-        SetActiveGimmick(battler, gimmick);
-        SetGimmickAsActivated(battler, gimmick);
+    
+    SetGimmickAsActivated(battler, gimmick);
+}
+
+// Returns the activation script of the gimmick.
+const u8 *GetGimmickActivationScript(u32 gimmick)
+{
+    return sGimmicksInfo[gimmick].activationScript;
+}
+
+//////////////////////
+// GIMMICK KEY ITEM //
+//////////////////////
+
+// Gets a bitfield with which Key Item this battler's trainer has to activate a gimmick.
+void GetGimmicksKeyItemsBits(u32 battler, u8 *data)
+{
+    u32 gimmick;
+    
+    for (gimmick = GIMMICK_NONE + 1; gimmick < GIMMICKS_COUNT; gimmick++)
+    {
+        // Check if gimmick doesn't need an item or if has it on the bag to activate
+        if (sGimmicksInfo[gimmick].keyItemCheck != NULL && sGimmicksInfo[gimmick].keyItemCheck(battler))
+            data[gimmick / 8] |= Bit(gimmick % 8);
     }
 }
 
-// Returns whether a trainer has a gimmick key item on its bag.
-static bool32 TrainerHasGimmickKeyItem(u32 battler, u16 itemId)
+// Returns whether the battler can activate the gimmick using its Key Item.
+static bool32 CanActivateGimmickWithKeyItem(u32 battler, u32 gimmick)
 {
-    if (!gTestRunnerEnabled)
-    {
-        u32 position = GetBattlerPosition(battler);
-        
-        if ((position == B_POSITION_PLAYER_LEFT || (position == B_POSITION_PLAYER_RIGHT && IsPartnerMonFromSameTrainer(battler))) && !CheckBagHasItem(itemId, 1))
-            return FALSE;
-    }
-    return TRUE;
+    if (gTestRunnerEnabled)
+        return (TestRunner_Battle_GetChosenGimmick(battler, gBattlerPartyIndexes[battler]) == gimmick);
+    else
+        return (gBattleStruct->battlers[battler].hasGimmickKeyItem[gimmick / 8] & Bit(gimmick % 8));
 }
 
 //////////////////////
@@ -466,8 +503,12 @@ u32 GetGimmickIndicatorId(u32 battler)
         return gimmickIndicatorId;
     else
     {
-        if (gSpeciesInfo[gBattleMons[battler].species].flags & SPECIES_FLAG_PRIMAL)
-            return ItemId_GetHoldEffectParam(gBattleMons[battler].item);
+        u32 species = GetMonData(GetBattlerPartyIndexPtr(battler), MON_DATA_SPECIES);
+        
+        if (gSpeciesInfo[species].flags & SPECIES_FLAG_RED_PRIMAL)
+            return GIMMICK_INDICATOR_OMEGA;
+        else if (gSpeciesInfo[species].flags & SPECIES_FLAG_BLUE_PRIMAL)
+            return GIMMICK_INDICATOR_ALPHA;
         else if (IsBattlerTotemPokemon(battler))
             return GIMMICK_INDICATOR_TOTEM;
     }
@@ -479,7 +520,7 @@ static void SpriteCB_GimmickIndicator(struct Sprite *sprite)
     u32 indicatorId, battler = sprite->sBattler;
     bool32 invisible = sprite->invisible;
     
-    if (invisible != sprite->sInvisible && !gBattleStruct->battlers[battler].gimmickInProgress)
+    if (invisible != sprite->sInvisible && !gBattleSpritesDataPtr->battlerData[battler].gimmickInProgress)
     {
         invisible ^= TRUE;
         
@@ -510,9 +551,14 @@ static void SpriteCB_GimmickIndicator(struct Sprite *sprite)
 // MEGA EVOLUTION //
 ////////////////////
 
+bool32 HasMegaBracelet(u32 battler)
+{
+    return CheckBagHasItem(ITEM_MEGA_BRACELET, 1);
+}
+
 bool32 CanMegaEvolve(u32 battler)
 {
-    if (!TrainerHasGimmickKeyItem(battler, ITEM_MEGA_BRACELET))
+    if (!CanActivateGimmickWithKeyItem(battler, GIMMICK_MEGA))
         return FALSE;
     else if (GetBattlerItemHoldEffect(battler, FALSE) == HOLD_EFFECT_Z_CRYSTAL)
         return FALSE;
@@ -541,8 +587,11 @@ void ActivateMegaEvolution(u32 battler)
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_REACTING_TO_KEY_STONE;
     }
     PrepareSpeciesBuffer(gBattleTextBuff1, targetSpecies);
-    DoBattleFormChange(battler, targetSpecies, TRUE, TRUE, TRUE);
-    BattleScriptExecute(BattleScript_MegaEvolution);
+    
+    gBattleFormChangeData.species = targetSpecies;
+    gBattleFormChangeData.reloadTypes = TRUE;
+    gBattleFormChangeData.reloadStats = TRUE;
+    gBattleFormChangeData.reloadAbility = TRUE;
 }
 
 /////////////////
@@ -551,23 +600,30 @@ void ActivateMegaEvolution(u32 battler)
 
 bool32 CanUltraBurst(u32 battler)
 {
-    if (!TrainerHasGimmickKeyItem(battler, ITEM_Z_RING))
+    if (!CanActivateGimmickWithKeyItem(battler, GIMMICK_ULTRA_BURST))
         return FALSE;
-    else if (TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST))
-        return TRUE;
+    else if (!TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST))
+        return FALSE;
     else
-        return FALSE;
+        return TRUE;
 }
 
 void ActivateUltraBurst(u32 battler)
 {
-    DoBattleFormChange(battler, TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST), TRUE, TRUE, TRUE);
-    BattleScriptExecute(BattleScript_UltraBurst);
+    gBattleFormChangeData.species = TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST);
+    gBattleFormChangeData.reloadTypes = TRUE;
+    gBattleFormChangeData.reloadStats = TRUE;
+    gBattleFormChangeData.reloadAbility = TRUE;
 }
 
 ////////////
 // Z-MOVE //
 ////////////
+
+bool32 HasZRing(u32 battler)
+{
+    return CheckBagHasItem(ITEM_Z_RING, 1);
+}
 
 bool32 IsZMove(u32 move)
 {
@@ -583,19 +639,424 @@ bool32 IsTypeBasedZMove(u32 move)
 // DYNAMAX //
 /////////////
 
-bool32 HasRaidShields(u32 battler)
+// First value is for Fighting-type, Poison-type and Multi-Attack. The second is for everything else.
+enum
 {
+    MAX_POWER_TIER_1, // 70 or 90 damage
+    MAX_POWER_TIER_2, // 75 or 100 damage
+    MAX_POWER_TIER_3, // 80 or 110 damage
+    MAX_POWER_TIER_4, // 85 or 120 damage
+    MAX_POWER_TIER_5, // 90 or 130 damage
+    MAX_POWER_TIER_6, // 95 or 140 damage
+    MAX_POWER_TIER_7, // 100 or 130 damage
+    MAX_POWER_TIER_8, // 100 or 150 damage
+};
+
+struct
+{
+    u16 species;
+    u8 moveType;
+    u16 gmaxMove;
+} static const sGMaxMoveTable[] =
+{
+    {SPECIES_VENUSAUR_GIGA,               TYPE_GRASS,      MOVE_GMAX_VINE_LASH},
+    {SPECIES_BLASTOISE_GIGA,              TYPE_WATER,      MOVE_GMAX_CANNONADE},
+    {SPECIES_CHARIZARD_GIGA,              TYPE_FIRE,       MOVE_GMAX_WILDFIRE},
+    {SPECIES_BUTTERFREE_GIGA,             TYPE_BUG,        MOVE_GMAX_BEFUDDLE},
+    {SPECIES_PIKACHU_GIGA,                TYPE_ELECTRIC,   MOVE_GMAX_VOLT_CRASH},
+    {SPECIES_MEOWTH_GIGA,                 TYPE_NORMAL,     MOVE_GMAX_GOLD_RUSH},
+    {SPECIES_MACHAMP_GIGA,                TYPE_FIGHTING,   MOVE_GMAX_CHI_STRIKE},
+    {SPECIES_GENGAR_GIGA,                 TYPE_GHOST,      MOVE_GMAX_TERROR},
+    {SPECIES_KINGLER_GIGA,                TYPE_WATER,      MOVE_GMAX_FOAM_BURST},
+    {SPECIES_LAPRAS_GIGA,                 TYPE_ICE,        MOVE_GMAX_RESONANCE},
+    {SPECIES_EEVEE_GIGA,                  TYPE_NORMAL,     MOVE_GMAX_CUDDLE},
+    {SPECIES_SNORLAX_GIGA,                TYPE_NORMAL,     MOVE_GMAX_REPLENISH},
+    {SPECIES_GARBODOR_GIGA,               TYPE_POISON,     MOVE_GMAX_MALODOR},
+    {SPECIES_MELMETAL_GIGA,               TYPE_STEEL,      MOVE_GMAX_MELTDOWN},
+    {SPECIES_RILLABOOM_GIGA,              TYPE_GRASS,      MOVE_GMAX_DRUM_SOLO},
+    {SPECIES_CINDERACE_GIGA,              TYPE_FIRE,       MOVE_GMAX_FIREBALL},
+    {SPECIES_INTELEON_GIGA,               TYPE_WATER,      MOVE_GMAX_HYDROSNIPE},
+    {SPECIES_CORVIKNIGHT_GIGA,            TYPE_FLYING,     MOVE_GMAX_WIND_RAGE},
+    {SPECIES_ORBEETLE_GIGA,               TYPE_PSYCHIC,    MOVE_GMAX_GRAVITAS},
+    {SPECIES_DREDNAW_GIGA,                TYPE_WATER,      MOVE_GMAX_STONESURGE},
+    {SPECIES_COALOSSAL_GIGA,              TYPE_ROCK,       MOVE_GMAX_VOLCALITH},
+    {SPECIES_FLAPPLE_GIGA,                TYPE_GRASS,      MOVE_GMAX_TARTNESS},
+    {SPECIES_APPLETUN_GIGA,               TYPE_GRASS,      MOVE_GMAX_SWEETNESS},
+    {SPECIES_SANDACONDA_GIGA,             TYPE_GROUND,     MOVE_GMAX_SANDBLAST},
+    {SPECIES_TOXTRICITY_GIGA,             TYPE_ELECTRIC,   MOVE_GMAX_STUN_SHOCK},
+    {SPECIES_TOXTRICITY_LOW_KEY_GIGA,     TYPE_ELECTRIC,   MOVE_GMAX_STUN_SHOCK},
+    {SPECIES_CENTISKORCH_GIGA,            TYPE_FIRE,       MOVE_GMAX_CENTIFERNO},
+    {SPECIES_HATTERENE_GIGA,              TYPE_FAIRY,      MOVE_GMAX_SMITE},
+    {SPECIES_GRIMMSNARL_GIGA,             TYPE_DARK,       MOVE_GMAX_SNOOZE},
+    {SPECIES_ALCREMIE_GIGA,               TYPE_FAIRY,      MOVE_GMAX_FINALE},
+    {SPECIES_COPPERAJAH_GIGA,             TYPE_STEEL,      MOVE_GMAX_STEELSURGE},
+    {SPECIES_DURALUDON_GIGA,              TYPE_DRAGON,     MOVE_GMAX_DEPLETION},
+    {SPECIES_URSHIFU_GIGA,                TYPE_DARK,       MOVE_GMAX_ONE_BLOW},
+    {SPECIES_URSHIFU_RAPID_STRIKE_GIGA,   TYPE_WATER,      MOVE_GMAX_RAPID_FLOW},
+};
+
+bool32 HasDynamaxBand(u32 battler)
+{
+    if (GetBattlerSide(battler) == B_SIDE_PLAYER && !FlagGet(FLAG_DYNAMAX_ENABLED))
+        return FALSE;
+    else if (!CheckBagHasItem(ITEM_DYNAMAX_BAND, 1))
+        return FALSE;
+    else
+        return TRUE;
+}
+
+bool32 CanDynamax(u32 battler)
+{
+    if (!CanActivateGimmickWithKeyItem(battler, GIMMICK_DYNAMAX))
+        return FALSE;
+    else if (TryDoBattleFormChange(battler, FORM_CHANGE_MEGA_EVO) || TryDoBattleFormChange(battler, FORM_CHANGE_MOVE_MEGA_EVO))
+        return FALSE;
+    else if (TryDoBattleFormChange(battler, FORM_CHANGE_PRIMAL) || TryDoBattleFormChange(battler, FORM_CHANGE_ULTRA_BURST))
+        return FALSE;
+    else if (GetBattlerItemHoldEffect(battler, FALSE) == HOLD_EFFECT_Z_CRYSTAL)
+        return FALSE;
+    else if (IsBannedSpeciesForDynamaxing(GetBattlerVisualSpecies(battler)))
+        return FALSE;
+    else
+        return TRUE;
+}
+
+void ActivateDynamax(u32 battler)
+{
+    u32 targetSpecies;
+
+    if (GetMonData(GetBattlerPartyIndexPtr(battler), MON_DATA_GIGANTAMAX_FACTOR) && (targetSpecies = TryDoBattleFormChange(battler, FORM_CHANGE_GIGANTAMAX)))
+    {
+        gBattleFormChangeData.species = targetSpecies;
+        gBattleFormChangeData.reloadTypes = FALSE;
+        gBattleFormChangeData.reloadStats = FALSE;
+        gBattleFormChangeData.reloadAbility = FALSE;
+        
+        gBattleCommunication[MULTIUSE_STATE] = TRUE;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_GIGANTAMAX;
+    }
+    else
+    {
+        gBattleCommunication[MULTIUSE_STATE] = FALSE;
+        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_DYNAMAX;
+    }
+    gBattleMons[battler].status2 &= ~(STATUS2_SUBSTITUTE);
+    gDisableStructs[battler].substituteHP = 0;
+    
+    gBattleStruct->battlers[battler].choicedMove = MOVE_NONE;
+    gBattleStruct->battlers[battler].dynamaxTurns = 3;
+}
+
+bool32 IsGigantamaxed(u32 battler)
+{
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(battler);
+    
+    if (GetMonData(mon, MON_DATA_GIGANTAMAX_FACTOR) && IsGigantamaxSpecies(GetMonData(mon, MON_DATA_SPECIES)))
+        return TRUE;
+    
     return FALSE;
 }
 
+bool32 TryRevertGigantamax(u32 battler)
+{
+    if (IsGigantamaxed(battler))
+    {
+        gBattleFormChangeData.species = gBattleMonForms[GetBattlerSide(battler)][gBattlerPartyIndexes[battler]];
+        gBattleFormChangeData.reloadTypes = FALSE;
+        gBattleFormChangeData.reloadStats = FALSE;
+        gBattleFormChangeData.reloadAbility = FALSE;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static u32 GetBattlerDynamaxHPMultiplier(u32 battler, struct Pokemon *mon, bool32 inverseMultiplier)
+{
+    if (IsRaidBoss(battler))
+        return GetRaidBossDynamaxHPMultiplier(inverseMultiplier);
+    else
+        return GetDynamaxLevelHPMultiplier(GetMonData(mon, MON_DATA_DYNAMAX_LEVEL), inverseMultiplier);
+}
+
+// Calculates the new HP of the battler after it Dynamaxes
+bool32 CalcBattlerDynamaxHP(u32 battler, u16 *hp, u16 *maxHP, bool32 inverseMultiplier)
+{
+    struct Pokemon *mon = GetBattlerPartyIndexPtr(battler);
+    
+    if (GetMonData(mon, MON_DATA_SPECIES) != SPECIES_SHEDINJA)
+    {
+        u32 multiplier = GetBattlerDynamaxHPMultiplier(battler, mon, inverseMultiplier);
+        
+        if (hp != NULL)
+            *hp = UQ_4_12_TO_INT((*hp * multiplier) + UQ_4_12_ROUND);
+        
+        if (maxHP != NULL)
+            *maxHP = UQ_4_12_TO_INT((*maxHP * multiplier) + UQ_4_12_ROUND);
+        
+        return TRUE;
+    }
+    return FALSE;
+}
+
+// Returns the non-Dynamax HP of the battler
+u32 GetNonDynamaxHP(u32 battler)
+{
+    u16 hp = gBattleMons[battler].hp;
+    
+    if (GetActiveGimmick(battler) == GIMMICK_DYNAMAX)
+        CalcBattlerDynamaxHP(battler, &hp, NULL, TRUE);
+    
+    return hp;
+}
+
+// Returns the non-Dynamax Max HP of the battler
+u32 GetNonDynamaxMaxHP(u32 battler)
+{
+    u16 maxHP = gBattleMons[battler].maxHP;
+    
+    if (GetActiveGimmick(battler) == GIMMICK_DYNAMAX)
+        CalcBattlerDynamaxHP(battler, NULL, &maxHP, TRUE);
+    
+    return maxHP;
+}
+
+// Returns the appropriate Max Move or G-Max Move for a battler to use.
+u32 GetMaxMove(u32 battler, u32 species, u32 baseMove, u32 moveType, u32 moveSplit)
+{
+    if (!baseMove || baseMove == MOVE_STRUGGLE)
+        return baseMove;
+    else if (moveSplit == SPLIT_STATUS)
+        return MOVE_MAX_GUARD;
+    else
+        return GetTypeBasedMaxMove(battler, species, moveType);
+}
+
+// Returns the Max Move or G-Max Move of the given type.
+u32 GetTypeBasedMaxMove(u32 battler, u32 species, u32 type)
+{
+    u32 i;
+    
+    // Try to Gigantamax species to get their respective G-Max move
+    if (!IsGigantamaxSpecies(species))
+    {
+        struct Pokemon *mon = GetBattlerPartyIndexPtr(battler);
+        
+        if (GetMonData(mon, MON_DATA_GIGANTAMAX_FACTOR))
+        {
+            u32 gigantamaxSpecies = GetMonFormChangeSpecies(mon, species, FORM_CHANGE_GIGANTAMAX);
+            
+            if (gigantamaxSpecies)
+                species = gigantamaxSpecies;
+        }
+    }
+
+    if (IsGigantamaxSpecies(species))
+    {
+        for (i = 0; i < ARRAY_COUNT(sGMaxMoveTable); i++)
+        {
+            if (sGMaxMoveTable[i].species == species && sGMaxMoveTable[i].moveType == type)
+                return sGMaxMoveTable[i].gmaxMove;
+        }
+    }
+    return gTypesInfo[type].maxMove;
+}
+
+// Returns the Max Move power tier of this base move.
+static u32 GetMaxMovePowerTier(u32 baseMove)
+{
+    if (gBattleMoves[baseMove].strikeCount >= 2 && gBattleMoves[baseMove].strikeCount <= 5)
+    {
+        switch (gBattleMoves[baseMove].power)
+        {
+            case 0 ... 25:
+                return MAX_POWER_TIER_2;
+            case 26 ... 30:
+                return MAX_POWER_TIER_3;
+            case 31 ... 35:
+                return MAX_POWER_TIER_4;
+            case 36 ... 50:
+                return MAX_POWER_TIER_5;
+            default:
+                return MAX_POWER_TIER_6;
+        }
+    }
+    
+    switch (gBattleMoves[baseMove].effect)
+    {
+        case EFFECT_BIDE:
+        case EFFECT_SUPER_FANG:
+        case EFFECT_USER_LEVEL_TO_DAMAGE:
+        case EFFECT_PSYWAVE:
+        case EFFECT_COUNTER_ATTACK:
+        case EFFECT_PRESENT:
+        case EFFECT_BEAT_UP:
+        case EFFECT_WEATHER_BALL:
+        case EFFECT_FLING:
+        case EFFECT_ELECTRO_BALL:
+        case EFFECT_TERRAIN_PULSE:
+        case EFFECT_PUNISHMENT:
+        case EFFECT_TRUMP_CARD:
+        case EFFECT_FIXED_DAMAGE:
+        case EFFECT_SPIT_UP:
+        case EFFECT_NATURAL_GIFT:
+        case EFFECT_FINAL_GAMBIT:
+            return MAX_POWER_TIER_2;
+        case EFFECT_OHKO:
+        case EFFECT_RETURN:
+        case EFFECT_FRUSTRATION:
+        case EFFECT_HEAT_CRASH:
+        case EFFECT_STORED_POWER:
+        case EFFECT_GYRO_BALL:
+            return MAX_POWER_TIER_5;
+        case EFFECT_MAGNITUDE:
+        case EFFECT_WRING_OUT:
+            return MAX_POWER_TIER_6;
+        case EFFECT_FLAIL:
+        case EFFECT_DAMAGE_BASED_TARGET_WEIGHT:
+            return MAX_POWER_TIER_7;
+        case EFFECT_MULTI_HIT:
+            switch (gBattleMoves[baseMove].power)
+            {
+                case 0 ... 15:
+                    return MAX_POWER_TIER_1;
+                case 16 ... 18:
+                    return MAX_POWER_TIER_2;
+                case 19 ... 20:
+                    return MAX_POWER_TIER_4;
+                default:
+                    return MAX_POWER_TIER_5;
+            }
+            break;
+    }
+    
+    switch (gBattleMoves[baseMove].power)
+    {
+        case 0 ... 40:
+            return MAX_POWER_TIER_1;
+        case 45 ... 50:
+            return MAX_POWER_TIER_2;
+        case 55 ... 60:
+            return MAX_POWER_TIER_3;
+        case 65 ... 70:
+            return MAX_POWER_TIER_4;
+        case 75 ... 100:
+            return MAX_POWER_TIER_5;
+        case 110 ... 140:
+            return MAX_POWER_TIER_6;
+        default:
+            return MAX_POWER_TIER_8;
+    }
+}
+
+// Return the power of this Max Move.
+u32 GetMaxMovePower(u32 baseMove, u32 maxMove, u32 moveType)
+{
+    u32 powerTier;
+    
+    // G-Max Drum Solo, G-Max Hydrosnipe, and G-Max Fireball have fixed base powers.
+    if (gBattleMoves[maxMove].power > 1)
+        return gBattleMoves[maxMove].power;
+    
+    // Exceptions to all other rules below:
+    switch (baseMove)
+    {
+        case MOVE_TRIPLE_KICK:
+            return 80;
+        case MOVE_GEAR_GRIND:
+            return 100;
+        case MOVE_DUAL_WINGBEAT:
+            return 100;
+        case MOVE_TRIPLE_AXEL:
+            return 140;
+    }
+    powerTier = GetMaxMovePowerTier(baseMove);
+    
+    if (moveType == TYPE_FIGHTING || moveType == TYPE_POISON || baseMove == MOVE_MULTI_ATTACK)
+    {
+        switch (powerTier)
+        {
+            case MAX_POWER_TIER_1:
+                return 70;
+            case MAX_POWER_TIER_2:
+                return 75;
+            case MAX_POWER_TIER_3:
+                return 80;
+            case MAX_POWER_TIER_4:
+                return 85;
+            case MAX_POWER_TIER_5:
+                return 90;
+            case MAX_POWER_TIER_6:
+                return 95;
+            case MAX_POWER_TIER_7:
+                return 100;
+            case MAX_POWER_TIER_8:
+                return 100;
+        }
+    }
+    else
+    {
+        switch (powerTier)
+        {
+            case MAX_POWER_TIER_1:
+                return 90;
+            case MAX_POWER_TIER_2:
+                return 100;
+            case MAX_POWER_TIER_3:
+                return 110;
+            case MAX_POWER_TIER_4:
+                return 120;
+            case MAX_POWER_TIER_5:
+                return 130;
+            case MAX_POWER_TIER_6:
+                return 140;
+            case MAX_POWER_TIER_7:
+                return 130;
+            case MAX_POWER_TIER_8:
+                return 150;
+        }
+    }
+}
+
+// Returns whether the move is a Max Move or G-Max Move.
 bool32 IsMaxMove(u32 move)
 {
-    return (move >= FIRST_GMAX_MOVE && move <= LAST_GMAX_MOVE);
+    return (move >= FIRST_MAX_MOVE && move <= LAST_GMAX_MOVE);
+}
+
+bool32 IsMoveBlockedByDynamax(u32 move)
+{
+    switch (gBattleMoves[move].effect)
+    {
+        case EFFECT_AUTOTOMIZE:
+        case EFFECT_DAMAGE_BASED_TARGET_WEIGHT:
+        case EFFECT_HEAT_CRASH:
+        case EFFECT_SKY_DROP:
+        case EFFECT_ENCORE:
+        case EFFECT_TORMENT:
+        case EFFECT_ENTRAINMENT:
+        case EFFECT_DESTINY_BOND:
+        case EFFECT_INSTRUCT:
+        // Those two are handled separated
+        // case EFFECT_RANDOM_SWITCH:
+        // case EFFECT_OHKO:
+            return TRUE;
+    }
+    return FALSE;
 }
 
 //////////////////////
 // TERASTALLIZATION //
 //////////////////////
+
+bool32 HasTeraOrb(u32 battler)
+{
+    if (!CheckBagHasItem(ITEM_TERA_ORB, 1))
+        return FALSE;
+    else if (GetBattlerSide(battler) == B_SIDE_PLAYER && !FlagGet(FLAG_TERA_ORB_NO_COST) && !FlagGet(FLAG_TERA_ORB_CHARGED))
+        return FALSE;
+    else
+        return TRUE;
+}
 
 bool32 CanTerastallize(u32 battler)
 {
@@ -605,9 +1066,7 @@ bool32 CanTerastallize(u32 battler)
         return FALSE;
     else if ((gBattleMons[battler].status2 & STATUS2_TRANSFORMED) && SpeciesToNationalPokedexNum(gBattleMons[battler].species) == NATIONAL_DEX_TERAPAGOS)
         return FALSE;
-    else if (!TrainerHasGimmickKeyItem(battler, ITEM_TERA_ORB))
-        return FALSE;
-    else if (!gTestRunnerEnabled && GetBattlerSide(battler) == B_SIDE_PLAYER && !FlagGet(FLAG_TERA_ORB_NO_COST) && !FlagGet(FLAG_TERA_ORB_CHARGED))
+    else if (!CanActivateGimmickWithKeyItem(battler, GIMMICK_TERA))
         return FALSE;
     else
         return TRUE;
@@ -616,12 +1075,11 @@ bool32 CanTerastallize(u32 battler)
 void ActivateTera(u32 battler)
 {
     // Remove Tera Orb charge
-    if (!gTestRunnerEnabled && !FlagGet(FLAG_TERA_ORB_NO_COST) && GetBattlerSide(battler) == B_SIDE_PLAYER
+    if (!gTestRunnerEnabled && !FlagGet(FLAG_TERA_ORB_NO_COST) && GetBattlerSide(battler) == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_LINK)
     && !(IsDoubleBattleForBattler(battler) && !IsPartnerMonFromSameTrainer(battler)))
         FlagClear(FLAG_TERA_ORB_CHARGED);
     
     PrepareTypeBuffer(gBattleTextBuff1, GetBattlerTeraType(battler));
-    BattleScriptExecute(BattleScript_Terastallization);
 }
 
 u32 GetBattlerTeraType(u32 battler)

@@ -201,6 +201,7 @@ enum
 #define TAG_GIMMICK_INDICATOR_GFX               (TAG_GIMMICK_TRIGGER_GFX + 1) // Gimmick indicator
 #define GFX_TAG_TEAM_PREVIEW_TRIGGER            (TAG_GIMMICK_INDICATOR_GFX + 1) // Team preview trigger
 #define GFX_TAG_LAST_USED_BALL_THROW            (GFX_TAG_TEAM_PREVIEW_TRIGGER + 1) // Last used ball throw
+#define GFX_TAG_RAID_SHIELD                     (GFX_TAG_LAST_USED_BALL_THROW + 1) // Raid shield
 
 #define ENEMY_SHADOW_Y_OFFSET                   27
 
@@ -208,8 +209,7 @@ void Task_HidePartyStatusSummary(u32 taskId);
 u32 CreateBattlerHealthboxSprites(u32 battlerId);
 u32 CreateSafariPlayerHealthboxSprites(void);
 void SetBattleBarStruct(u32 battlerId, s32 maxVal, s32 currVal, s32 receivedValue);
-void SetHealthboxSpriteInvisible(u32 healthboxSpriteId);
-void SetHealthboxSpriteVisible(u32 healthboxSpriteId);
+void SetHealthboxSpriteVisibility(u32 healthboxSpriteId, bool32 invisible);
 void DestoryHealthboxSprite(u32 healthboxSpriteId);
 void UpdateOamPriorityInAllHealthboxes(u32 priority, bool32 hideHpBoxes);
 void InitBattlerHealthboxCoords(u32 battlerId);
@@ -235,6 +235,8 @@ void TryAddLastUsedBallTrigger(void);
 void ShowOrHideLastUsedBall(bool32 hide);
 void SwapBallToDisplay(bool32 isSameBall);
 void ChangeLastBallCycleArrowsColor(bool32 showArrows);
+void CreateRaidShieldSprites(u32 battlerId, u32 numShields, bool32 animate);
+bool32 DestroyRaidShieldSprites(u32 numShields);
 
 extern const struct SpritePalette gSpritePalette_AbilityPopUp;
 

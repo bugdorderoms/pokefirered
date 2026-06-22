@@ -47,14 +47,14 @@ static void BattleAI_SetupAILogicDataForSide(u32 side)
         gAIData->logic[side].aiFlags = AI_FLAG_ROAMER;
         return;
     }
-    else if (side == B_SIDE_PLAYER)
+    else if (side == B_SIDE_PLAYER && (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
     {
         gAIData->logic[side].aiFlags = gBattlePartners[gPartnerTrainerId].aiFlags;
         
         for (i = 0; i < MAX_TRAINER_ITEMS; i++)
             gAIData->logic[side].items[i] = gBattlePartners[gPartnerTrainerId].items[i];
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    else if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
     {
         gAIData->logic[side].aiFlags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
         
@@ -71,15 +71,12 @@ static void BattleAI_SetupAILogicDataForSide(u32 side)
 
 void BattleAI_SetupAILogicData(void)
 {
-    if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
-    {
-        u32 i;
-        
-        for (i = 0; i < B_SIDE_COUNT; i++)
-            BattleAI_SetupAILogicDataForSide(i);
-
-        BattleAI_SetAILogicDataForTurn();
-    }
+    u32 i;
+    
+    for (i = 0; i < B_SIDE_COUNT; i++)
+        BattleAI_SetupAILogicDataForSide(i);
+    
+    BattleAI_SetAILogicDataForTurn();
 }
 
 static void SetBattlerData(u32 attacker)
@@ -137,7 +134,7 @@ static void SetBattlerData(u32 attacker)
 void BattleAI_SetAILogicDataForTurn(void)
 {
     // Only set if battle type has AI
-    if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER | BATTLE_TYPE_INGAME_PARTNER)))
+    if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_RAID)))
     {
         u32 attacker;
         
@@ -325,7 +322,7 @@ static u32 BattleAI_ChooseMoveOrAction_Doubles(u32 battlerId, u32 aiFlags)
                 {
                     u32 move = gBattleMons[battlerId].moves[j];
                     
-                    if (!move || !CanTargetBattler(battlerId, i, move, GetBattlerMoveTargetType(battlerId, move)))
+                    if (!move || !CanTargetBattler(battlerId, i, move, GetBattlerMoveTargetType(battlerId, move), (gStatuses3[i] & STATUS3_HEAL_BLOCK)))
                         continue;
                     
                     if (mostViableMovesScores[0] < gAIData->thinking[battlerId].score[j])
@@ -345,7 +342,7 @@ static u32 BattleAI_ChooseMoveOrAction_Doubles(u32 battlerId, u32 aiFlags)
                 actionOrMoveIndex[i] = mostViableMovesIndices[RandomUniform(RNG_AI_CHOSEN_MOVE, 0, mostViableMovesNo - 1)];
                 bestMovePointsForTarget[i] = mostViableMovesScores[0];
                 
-                if (i == BATTLE_PARTNER(battlerId) && bestMovePointsForTarget[i] < DEFAULT_MOVE_SCORE)
+                if (IsBattlerAlly(battlerId, i) && bestMovePointsForTarget[i] < DEFAULT_MOVE_SCORE)
                     bestMovePointsForTarget[i] = -1;
             }
         }

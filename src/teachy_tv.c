@@ -1218,6 +1218,9 @@ static void TeachyTvPreBattleAnimAndSetBattleCallback(u32 taskId)
 
 static void TeachyTvRestorePlayerPartyCallback(void)
 {
+    // Needs be cleared for the DNS system
+    gBattleTypeFlags = 0;
+    
     LoadPlayerParty();
 
     if (gBattleOutcome == B_OUTCOME_DREW)

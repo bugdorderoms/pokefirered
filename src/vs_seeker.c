@@ -734,7 +734,6 @@ void ClearRematchStateByTrainerId(void)
 
                 TryGetObjectEventIdByLocalIdAndMap(objectEventTemplates[i].localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, &objEventId);
                 objectEvent = &gObjectEvents[objEventId];
-                GetRandomFaceDirectionMovementType();
                 OverrideMovementTypeForObjectEvent(objectEvent, sFaceDirectionMovementTypeByFacingDirection[objectEvent->facingDirection]);
                 gSaveBlock1Ptr->trainerRematches[objectEventTemplates[i].localId] = 0;
                 

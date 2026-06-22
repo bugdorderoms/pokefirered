@@ -26,18 +26,18 @@ enum
     FORM_CHANGE_ANIM_FALLING_FEATHERS,
 };
 
+// general
+u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 ability, u32 itemId, u16 *moves, u32 battlerId);
+bool32 SpeciesHasFormChangeType(u32 species, u32 formChangeType);
+
 // overworld form change
 u32 GetMonFormChangeSpecies(struct Pokemon *mon, u32 species, u32 formChangeType);
 u32 DoOverworldFormChange(struct Pokemon *mon, u32 formChangeType);
-void DoPlayerPartyEndBattleFormChange(void);
-bool32 SpeciesHasFormChangeType(u32 species, u32 formChangeType);
 void TrySetMonFormChangeCountdown(struct Pokemon *mon);
 
 // battle form change
 u32 GetBattlerFormChangeSpecies(u32 battlerId, u32 species, u32 itemId, u32 formChangeType);
 u32 TryDoBattleFormChange(u32 battlerId, u32 formChangeType);
-void DoBattleFormChange(u32 battlerId, u32 newSpecies, bool32 reloadTypes, bool32 reloadStats, bool32 reloadAbility);
-bool32 DoSpecialFormChange(u32 battlerId, u32 partyId, u32 formChangeType);
 
 extern const struct Fusion gFusionsTable[];
 

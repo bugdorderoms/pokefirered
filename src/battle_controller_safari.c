@@ -24,7 +24,6 @@ static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = BattleControllerComplete,
     [CONTROLLER_SWITCHINANIM]             = BattleControllerComplete,
     [CONTROLLER_RETURNMONTOBALL]          = BattleControllerComplete,
@@ -61,6 +60,11 @@ static void (*const sSafariBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
     [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
     [CONTROLLER_ENDLINKBATTLE]            = OakOldManHandleEndLinkBattle,
+    [CONTROLLER_GIMMICKSTATE]             = PlayerHandleGimmickState,
+    [CONTROLLER_HEALTHBOXUPDATE]          = BtlController_HandleHealthboxUpdate,
+    [CONTROLLER_HIDEALLHEALTHBOXES]       = BtlController_HandleHideAllHealthboxes,
+    [CONTROLLER_ISPOCKETNOTEMPTY]         = BtlController_HandleIsPocketNotEmpty,
+    [CONTROLLER_YESNOBOX]                 = BtlController_HandleYesNoBox,
     [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 
@@ -161,7 +165,7 @@ static void SafariHandleIntroTrainerBallThrow(u32 battlerId)
 {
     UpdateHealthboxAttribute(battlerId, HEALTHBOX_SAFARI_ALL_TEXT);
     StartHealthboxSlideIn(battlerId);
-    SetHealthboxSpriteVisible(gHealthboxSpriteIds[battlerId]);
+    SetHealthboxSpriteVisibility(gHealthboxSpriteIds[battlerId], FALSE);
     gBattlerControllersData[battlerId].func = CompleteOnHealthboxSpriteCallbackDummy;
 }
 

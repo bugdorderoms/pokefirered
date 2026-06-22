@@ -70,21 +70,21 @@ static const union AnimCmd *const sGimmickIndicators[] = {
 
 static const u8 ALIGNED(4) sMegaTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/mega_trigger.4bpp");
 static const u8 ALIGNED(4) sBurstTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/ultra_burst_trigger.4bpp");
+static const u8 ALIGNED(4) sDynamaxTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/dynamax_trigger.4bpp");
 static const u8 ALIGNED(4) sTeraTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/tera_trigger.4bpp");
 // static const u8 ALIGNED(4) sZMoveTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/z_move_trigger.4bpp");
-// static const u8 ALIGNED(4) sDynamaxTriggerGfx[] = INCBIN_U8("graphics/battle_interface/gimmicks/dynamax_trigger.4bpp");
 
 static const u16 sMegaTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/mega_trigger.gbapal");
 static const u16 sBurstTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/ultra_burst_trigger.gbapal");
+static const u16 sDynamaxTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/dynamax_trigger.gbapal");
 static const u16 sTeraTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/tera_trigger.gbapal");
 // static const u16 sZMoveTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/z_move_trigger.gbapal");
-// static const u16 sDynamaxTriggerPal[] = INCBIN_U16("graphics/battle_interface/gimmicks/dynamax_trigger.gbapal");
 
 static const struct SpriteSheet sSpriteSheet_MegaTrigger = {sMegaTriggerGfx, sizeof(sMegaTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 static const struct SpriteSheet sSpriteSheet_BurstTrigger = {sBurstTriggerGfx, sizeof(sBurstTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
+static const struct SpriteSheet sSpriteSheet_DynamaxTrigger = {sDynamaxTriggerGfx, sizeof(sDynamaxTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 static const struct SpriteSheet sSpriteSheet_TeraTrigger = {sTeraTriggerGfx, sizeof(sTeraTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 // static const struct SpriteSheet sSpriteSheet_ZMoveTrigger = {sZMoveTriggerGfx, sizeof(sZMoveTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
-// static const struct SpriteSheet sSpriteSheet_DynamaxTrigger = {sDynamaxTriggerGfx, sizeof(sDynamaxTriggerGfx), TAG_GIMMICK_TRIGGER_GFX};
 
 static const struct OamData sOamData_GimmickTrigger =
 {

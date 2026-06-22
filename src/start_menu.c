@@ -106,8 +106,9 @@ static u32 StartMenuOptionCallback(void);
 static u32 StartMenuExitCallback(void);
 static u32 StartMenuRetireCallback(void);
 static u32 StartMenuRidePagerCallback(void);
-static void StartMenu_PrepareForSave(void);
+static void StartMenu_PrepareForSave(u32 (*saveDialogCB)(void));
 static u32 RunSaveDialogCB(void);
+static u32 SaveDialogCB_PrintSavingText(void);
 static u32 SaveDialogCB_PrintAskSaveText(void);
 static u32 SaveDialogCB_AskSavePrintYesNoMenu(void);
 static u32 SaveDialogCB_AskSaveHandleInput(void);
@@ -375,7 +376,7 @@ void Task_StartMenuHandleInput(u32 taskId)
         }
         break;
     case INPUT_STATE_PREPARE_FOR_SAVE:
-        StartMenu_PrepareForSave();
+        StartMenu_PrepareForSave(SaveDialogCB_PrintAskSaveText);
         tInputState = INPUT_STATE_RUN_SAVE_CALLBACK;
         break;
     case INPUT_STATE_RUN_SAVE_CALLBACK:
@@ -572,9 +573,17 @@ static u32 StartMenuRidePagerCallback(void)
 // CLOCK //
 ///////////
 
+// Do not display the time box while connected, otherwise Task_UpdateTimeInClockBox will cause a connection error.
+// Disconnection only occurs when using the Game Link cable.
+// But disabling it for both makes the behavior more consistent.
+static bool32 CanShowTimeBox(void)
+{
+    return (!gWirelessCommType && !IsUpdateLinkStateCBActive());
+}
+
 static inline bool32 CanShowCurrentLevelCapOnClockBox(u32 levelCap)
 {
-    if (levelCap != MAX_LEVEL && !MenuHelpers_LinkSomething() && !InUnionRoom() && FlagGet(FLAG_SYS_POKEMON_GET))
+    if (levelCap != MAX_LEVEL && FlagGet(FLAG_SYS_POKEMON_GET))
         return TRUE;
     
     return FALSE;
@@ -609,51 +618,57 @@ static void Task_UpdateTimeInClockBox(u32 taskId)
 
 static void DrawClockBox(void)
 {
-    u32 windowId, height, levelCap = GetCurrentLevelCapLevel();
-    bool32 inSafari = GetSafariZoneFlag(), canShowLevelCap = CanShowCurrentLevelCapOnClockBox(levelCap);
-    struct WindowTemplate template;
-    
-    // Create task
-    sStartMenu.clockTaskId = CreateTask(Task_UpdateTimeInClockBox, 90);
-    gTasks[sStartMenu.clockTaskId].tShowSecondsColon = TRUE;
-    
-    // Create window
-    if (inSafari)
-        height = 5;
-    else if (canShowLevelCap)
-        height = 3;
-    else
-        height = 2;
-    
-    template = SetWindowTemplateFields(0, 1, 1, 10, height, 15, 0x1CE);
-    gTasks[sStartMenu.clockTaskId].tWindowId = windowId = AddWindow(&template);
-    PutWindowTilemap(windowId);
-    DrawStdWindowFrame(windowId, FALSE);
-    
-    if (inSafari) // Display safari texts
+    if (CanShowTimeBox())
     {
-        ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_LEFT_ALIGN, 3);
-        ConvertIntToDecimalStringN(gStringVar2, MAX_SAFARI_STEPS, STR_CONV_MODE_LEFT_ALIGN, 3);
-        ConvertIntToDecimalStringN(gStringVar3, gNumSafariBalls, STR_CONV_MODE_LEFT_ALIGN, 2);
-        StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
-        AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
+        u32 windowId, height, levelCap = GetCurrentLevelCapLevel();
+        bool32 inSafari = GetSafariZoneFlag(), canShowLevelCap = CanShowCurrentLevelCapOnClockBox(levelCap);
+        struct WindowTemplate template;
+        
+        // Create task
+        sStartMenu.clockTaskId = CreateTask(Task_UpdateTimeInClockBox, 90);
+        gTasks[sStartMenu.clockTaskId].tShowSecondsColon = TRUE;
+        
+        // Create window
+        if (inSafari)
+            height = 5;
+        else if (canShowLevelCap)
+            height = 3;
+        else
+            height = 2;
+        
+        template = SetWindowTemplateFields(0, 1, 1, 10, height, 15, 0x1CE);
+        gTasks[sStartMenu.clockTaskId].tWindowId = windowId = AddWindow(&template);
+        PutWindowTilemap(windowId);
+        DrawStdWindowFrame(windowId, FALSE);
+        
+        if (inSafari) // Display safari texts
+        {
+            ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_LEFT_ALIGN, 3);
+            ConvertIntToDecimalStringN(gStringVar2, MAX_SAFARI_STEPS, STR_CONV_MODE_LEFT_ALIGN, 3);
+            ConvertIntToDecimalStringN(gStringVar3, gNumSafariBalls, STR_CONV_MODE_LEFT_ALIGN, 2);
+            StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
+            AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
+        }
+        else if (canShowLevelCap) // Display level cap
+        {
+            ConvertIntToDecimalStringN(gStringVar1, levelCap, STR_CONV_MODE_LEFT_ALIGN, 3);
+            StringExpandPlaceholders(gStringVar4, gText_CurrentLevelCap);
+            AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
+        }
+        CopyWindowToVram(windowId, COPYWIN_GFX);
     }
-    else if (canShowLevelCap) // Display level cap
-    {
-        ConvertIntToDecimalStringN(gStringVar1, levelCap, STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringExpandPlaceholders(gStringVar4, gText_CurrentLevelCap);
-        AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
-    }
-    CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
 static void RemoveClockBox(void)
 {
-    s16 *data = gTasks[sStartMenu.clockTaskId].data;
-    ClearStdWindowAndFrameToTransparent(tWindowId, FALSE);
-    CopyWindowToVram(tWindowId, COPYWIN_GFX);
-    RemoveWindow(tWindowId);
-    DestroyTask(sStartMenu.clockTaskId);
+    if (CanShowTimeBox())
+    {
+        s16 *data = gTasks[sStartMenu.clockTaskId].data;
+        ClearStdWindowAndFrameToTransparent(tWindowId, FALSE);
+        CopyWindowToVram(tWindowId, COPYWIN_GFX);
+        RemoveWindow(tWindowId);
+        DestroyTask(sStartMenu.clockTaskId);
+    }
 }
 
 #undef tTimer
@@ -770,10 +785,10 @@ static void CloseSaveMessageWindow(void)
     ClearDialogWindowAndFrame(0, TRUE);
 }
 
-static void StartMenu_PrepareForSave(void)
+static void StartMenu_PrepareForSave(u32 (*saveDialogCB)(void))
 {
     SaveMapView();
-    sStartMenu.saveDialogCB = SaveDialogCB_PrintAskSaveText;
+    sStartMenu.saveDialogCB = saveDialogCB;
     sStartMenu.saveDialogIsPrinting = FALSE;
 }
 
@@ -786,6 +801,14 @@ static u32 RunSaveDialogCB(void)
         sStartMenu.saveDialogIsPrinting = FALSE;
         return sStartMenu.saveDialogCB();
     }
+}
+
+// Save the game without asking the player
+static u32 SaveDialogCB_PrintSavingText(void)
+{
+    PrintSaveStats();
+    sStartMenu.saveDialogCB = SaveDialogCB_PrintSavingDontTurnOffPower;
+    return SAVECB_RETURN_CONTINUE;
 }
 
 static u32 SaveDialogCB_PrintAskSaveText(void)
@@ -988,8 +1011,23 @@ static void Task_SaveGame(u32 taskId)
 
 void Field_AskSaveTheGame(void)
 {
-    StartMenu_PrepareForSave();
+    StartMenu_PrepareForSave(SaveDialogCB_PrintAskSaveText);
     CreateTask(Task_SaveGame, 80);
+}
+
+static void Task_SaveGameNoAsk(u32 taskId)
+{
+    if (RunSaveDialogCB() != SAVECB_RETURN_CONTINUE)
+    {
+        DestroyTask(taskId);
+        EnableBothScriptContexts();
+    }
+}
+
+void Field_SaveTheGame(void)
+{
+    StartMenu_PrepareForSave(SaveDialogCB_PrintSavingText);
+    CreateTask(Task_SaveGameNoAsk, 80);
 }
 
 static void VBlankCB_WhileSavingAfterLinkBattle(void)

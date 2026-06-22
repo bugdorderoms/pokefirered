@@ -258,20 +258,19 @@ struct ObjectEventGraphicsInfo
 {
     /*0x00*/ u16 tileTag;
     /*0x02*/ u16 paletteTag;
-    /*0x04*/ u16 reflectionPaletteTag;
-    /*0x06*/ u16 size;
-    /*0x08*/ s16 width;
-    /*0x0A*/ s16 height;
-    /*0x0C*/ u8 paletteSlot:4;
-             u8 shadowSize:2;
-             u8 inanimate:1;
-             u8 disableReflectionPaletteLoad:1;
-    /*0x0D*/ u8 tracks;
-    /*0x10*/ const struct OamData *oam;
-    /*0x14*/ const struct SubspriteTable *subspriteTables;
-    /*0x18*/ const union AnimCmd *const *anims;
-    /*0x1C*/ const struct SpriteFrameImage *images;
-    /*0x20*/ const union AffineAnimCmd *const *affineAnims;
+    /*0x04*/ u16 size;
+    /*0x06*/ s16 width;
+    /*0x08*/ s16 height;
+    /*0x0A*/ u16 shadowSize:2;
+             u16 inanimate:1;
+             u16 disableReflectionPaletteLoad:1;
+             u16 tracks:2;
+             u16 unused:10;
+    /*0x0C*/ const struct OamData *oam;
+    /*0x10*/ const struct SubspriteTable *subspriteTables;
+    /*0x14*/ const union AnimCmd *const *anims;
+    /*0x18*/ const struct SpriteFrameImage *images;
+    /*0x1C*/ const union AffineAnimCmd *const *affineAnims;
 };
 
 enum

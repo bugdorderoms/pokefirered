@@ -422,6 +422,13 @@ void RemoveScrollIndicatorArrowPair(u32 taskId)
     DestroyTask(taskId);
 }
 
+void SetScrollIndicatorArrowPairSpritePriority(u32 taskId, u32 priority)
+{
+    struct ScrollIndicatorPair *data = (struct ScrollIndicatorPair *)gTasks[taskId].data;
+    gSprites[data->topSpriteId].oam.priority = priority;
+    gSprites[data->bottomSpriteId].oam.priority = priority;
+}
+
 u32 ListMenuAddCursorObjectInternal(const struct CursorStruct *cursor, u32 cursorKind)
 {
     switch (cursorKind)

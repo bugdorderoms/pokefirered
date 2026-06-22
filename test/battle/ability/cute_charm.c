@@ -13,8 +13,8 @@ SINGLE_BATTLE_TEST("Cute Charm has a 30% chance to inflict infatuation")
     } WHEN {
         TURN { MOVE(player, MOVE_SCRATCH); }
     } SCENE {
-        ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
         ABILITY_POPUP(opponent, ABILITY_CUTE_CHARM);
+        ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
         MESSAGE("Wobbuffet fell in love!");
     }
 }
@@ -36,8 +36,8 @@ SINGLE_BATTLE_TEST("Cute Charm doesn't triggers on genderless or same gender Pok
         TURN { MOVE(player, MOVE_SCRATCH, WITH_RNG(RNG_CUTE_CHARM, TRUE)); }
     } SCENE {
         NONE_OF {
-            ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
             ABILITY_POPUP(opponent, ABILITY_CUTE_CHARM);
+            ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
         }
     }
 }
@@ -59,13 +59,13 @@ SINGLE_BATTLE_TEST("Cute Charm only triggers if move makes contact")
         TURN { MOVE(player, move, WITH_RNG(RNG_CUTE_CHARM, TRUE)); }
     } SCENE {
         if (gBattleMoves[move].flags.makesContact) {
-            ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
             ABILITY_POPUP(opponent, ABILITY_CUTE_CHARM);
+            ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
             MESSAGE("Wobbuffet fell in love!");
         } else {
             NONE_OF {
-                ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
                 ABILITY_POPUP(opponent, ABILITY_CUTE_CHARM);
+                ANIMATION(ANIM_TYPE_STATUS, B_ANIM_STATUS_INFATUATION, player);
                 MESSAGE("Wobbuffet fell in love!");
             }
         }

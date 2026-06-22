@@ -129,3 +129,6 @@
 	.include "src/map_name_popup.o"
 	.include "src/voltorb_flip.o"
 	.include "src/recorded_battle.o"
+	.include "src/raid_intro.o"
+	.include "src/raid_clear_screen.o"
+	.include "src/battle_controller_player.o"

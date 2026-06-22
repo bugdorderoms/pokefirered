@@ -36,6 +36,7 @@
 #include "constants/sliding_puzzles.h"
 #include "constants/party_menu.h"
 #include "constants/map_event_ids.h"
+#include "constants/raid.h"
 	.include "asm/macros.inc"
 	.include "asm/macros/event.inc"
 	.set FALSE, 0
@@ -1343,3 +1344,4 @@ Text_TestMsg:: @ 81ACD45
 	.include "data/text/new_game_intro.inc"
 	.include "data/text/pokedude.inc"
 	.include "data/scripts/dexnav.inc"
+	.include "data/scripts/raids.inc"

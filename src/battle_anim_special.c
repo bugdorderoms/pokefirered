@@ -332,7 +332,7 @@ void AnimTask_SwitchOutBallEffect(u32 taskId)
     case 0:
         x = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
         y = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_Y);
-        ballId = ItemIdToBallId(GetBattlerPokeballItemId(gBattleAnimAttacker));
+        ballId = GetBattlerPokeballItemId(gBattleAnimAttacker);
         
         gTasks[taskId].data[10] = LaunchBallStarsTask(x, y + 32, gSprites[spriteId].oam.priority, gSprites[spriteId].subpriority, ballId);
         gTasks[taskId].data[11] = LaunchBallFadeMonTask(FALSE, gBattleAnimAttacker,
@@ -348,7 +348,7 @@ void AnimTask_SwitchOutBallEffect(u32 taskId)
 
 void AnimTask_LoadOrFreeBallGfx(u32 taskId)
 {
-    u32 ballId = ItemIdToBallId(gLastUsedItem);
+    u32 ballId = ITEM_TO_BALL(gAnimLastUsedItem);
     
     if (gBattleAnimArgs[0])
         LoadBallGfx(ballId);
@@ -377,7 +377,7 @@ void AnimTask_IsBallBlockedByTrainerOrDodged(u32 taskId)
 
 void AnimTask_ThrowBall(u32 taskId)
 {
-    u32 spriteId = CreateBallSprite(ItemIdToBallId(gLastUsedItem), 32, 80, 29);
+    u32 spriteId = CreateBallSprite(ITEM_TO_BALL(gAnimLastUsedItem), 32, 80, 29);
     
     gSprites[spriteId].data[0] = 34;
     gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
@@ -413,7 +413,7 @@ void AnimTask_ThrowBallSpecial(u32 taskId)
         else
             y = 11;
     }
-    spriteId = CreateBallSprite(ItemIdToBallId(gLastUsedItem), x | 32, y | 80, GetBattlerSpriteSubpriority(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) + 1);
+    spriteId = CreateBallSprite(ITEM_TO_BALL(gAnimLastUsedItem), x | 32, y | 80, GetBattlerSpriteSubpriority(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) + 1);
     gSprites[spriteId].data[0] = 34;
     gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X);
     gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y) - 16;
@@ -477,10 +477,10 @@ static void SpriteCB_ThrowBall_ArcFlight(struct Sprite *sprite)
             sprite->data[5] = 0;
             sprite->callback = SpriteCB_ThrowBall_TenFrameDelay;
 
-            ballId = ItemIdToBallId(gLastUsedItem);
+            ballId = ITEM_TO_BALL(gAnimLastUsedItem);
             switch (ballId)
             {
-            case 0 ... ITEM_TO_BALL(POKE_BALL_ITEMS_END - 1):
+            case 0 ... ITEM_TO_BALL(NUM_POKE_BALL_GRAPHICS):
                 LaunchBallStarsTask(sprite->x, sprite->y - 5, 1, 28, ballId);
                 LaunchBallFadeMonTask(FALSE, gBattleAnimTarget, 14, ballId);
                 break;
@@ -914,7 +914,7 @@ static void BattleAnimObj_SignalEnd(struct Sprite *sprite)
 
 static void SpriteCB_ThrowBall_BeginBreakOut(struct Sprite *sprite)
 {
-    u32 ballId = ItemIdToBallId(gLastUsedItem);
+    u32 ballId = ITEM_TO_BALL(gAnimLastUsedItem);
 
     StartSpriteAnim(sprite, 1);
     StartSpriteAffineAnim(sprite, 0);
@@ -922,7 +922,7 @@ static void SpriteCB_ThrowBall_BeginBreakOut(struct Sprite *sprite)
 
     switch (ballId)
     {
-    case 0 ... ITEM_TO_BALL(POKE_BALL_ITEMS_END - 1):
+    case 0 ... ITEM_TO_BALL(NUM_POKE_BALL_GRAPHICS):
         LaunchBallStarsTask(sprite->x, sprite->y - 5, 1, 28, ballId);
         LaunchBallFadeMonTask(TRUE, gBattleAnimTarget, 14, ballId);
         break;
@@ -1355,12 +1355,6 @@ void AnimTask_SafariGetReaction(u32 taskId)
     DestroyAnimVisualTask(taskId);
 }
 
-void AnimTask_GetTrappedMoveAnimId(u32 taskId)
-{
-    gBattleAnimArgs[ARG_RET_ID] = gBattleMoves[gAnimDisableStructPtr->wrappedMove].argument.generic;
-    DestroyAnimVisualTask(taskId);
-}
-
 void AnimTask_GetBattlersFromArg(u32 taskId)
 {
     gBattleAnimAttacker = gBattleSpritesDataPtr->animationData->animArg;
@@ -1481,13 +1475,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sp
     AbilityPopUpPrinter((const u8*)pokemonName, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP),
                         (void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP), 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_WHITE);
 
-    if (gBattleStruct->battlers[battler].abilityOverride)
-    {
-        ability = gBattleStruct->battlers[battler].abilityOverride;
-        gBattleStruct->battlers[battler].abilityOverride = ABILITY_NONE;
-    }
-    else
-        ability = gBattleMons[battler].ability;
+    ability = gBattleSpritesDataPtr->animationData->animArg;
     
     if (gTestRunnerEnabled)
         TestRunner_Battle_RecordAbilityPopUp(battler, ability);
@@ -1581,6 +1569,7 @@ void AnimTask_CreateAbilityPopUp(u32 taskId)
     s16 x, y;
     u32 position, spriteId1, spriteId2, battler = gBattleAnimAttacker;
     u32 gfxTag = GFX_TAG_ABILITY_POP_UP + battler;
+    bool32 useDoublesCoords;
     
     // Resources
     const struct SpriteSheet sSpriteSheet_AbilityPopUp =
@@ -1618,8 +1607,11 @@ void AnimTask_CreateAbilityPopUp(u32 taskId)
     
     position = GetBattlerPosition(battler);
     
-    x = sAbilityPopUpCoords[IsDoubleBattleForBattler(battler)][position].x;
-    y = sAbilityPopUpCoords[IsDoubleBattleForBattler(battler)][position].y;
+    // Opponent pop up may override the player's healthbox, so check if is a double battle on the player's side
+    useDoublesCoords = IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT));
+    
+    x = sAbilityPopUpCoords[useDoublesCoords][position].x;
+    y = sAbilityPopUpCoords[useDoublesCoords][position].y;
     
     if (GetBattlerSide(battler) == B_SIDE_PLAYER)
     {

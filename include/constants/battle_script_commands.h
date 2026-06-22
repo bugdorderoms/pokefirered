@@ -10,9 +10,8 @@
 #define STATUS_CHANGE_FLAG_IGNORE_SLEEP_CLAUSE   (1 << 5)
 
 #define STAT_CHANGE_FLAG_SELF_INFLICT    (1 << 0) // The stat change is self inflicted. So, can't be bounced back by Mirror Armor or blocked by any effect
-#define STAT_CHANGE_FLAG_IGNORE_PROTECT  (1 << 1) // Ignore Protect effects
-#define STAT_CHANGE_FLAG_UPDATE_RESULT   (1 << 2) // If stat change failed to apply set gMoveResultFlags as MOVE_RESULT_MISSED
-#define STAT_CHANGE_FLAG_NO_MIRROR_ARMOR (1 << 3) // Ignore Mirror Armor
+#define STAT_CHANGE_FLAG_UPDATE_RESULT   (1 << 1) // If stat change failed to apply set gMoveResultFlags as MOVE_RESULT_MISSED
+#define STAT_CHANGE_FLAG_NO_MIRROR_ARMOR (1 << 2) // Ignore Mirror Armor
 
 // Battle Scripting addresses
 #define sPAINSPLIT_HP gBattleScripting + 0x0
@@ -32,10 +31,9 @@
 #define sGIVEEXP_STATE gBattleScripting + 0x1E
 #define sBATTLE_STYLE gBattleScripting + 0x1F
 #define sLVLBOX_STATE gBattleScripting + 0x20
-#define sLEARNMOVE_STATE gBattleScripting + 0x21
-#define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x25
-#define sEXP_CATCH gBattleScripting + 0x26
-#define sBEATUP_COUNTER gBattleScripting + 0x27
+#define sSWITCHIN_EFFECTS_STATE gBattleScripting + 0x24
+#define sEXP_CATCH gBattleScripting + 0x25
+#define sBEATUP_COUNTER gBattleScripting + 0x26
 
 // array entries for battle communication
 #define MULTIUSE_STATE                      0
@@ -52,7 +50,6 @@
 
 // BattleCommunication addresses
 #define sMULTIUSE_STATE gBattleCommunication + MULTIUSE_STATE
-#define sCURSOR_POSITION gBattleCommunication + CURSOR_POSITION
 #define sFAINT_EFFECTS_STATE gBattleCommunication + FAINT_EFFECTS_STATE
 #define sMULTISTRING_CHOOSER gBattleCommunication + MULTISTRING_CHOOSER
 #define sMISS_TYPE gBattleCommunication + MISS_TYPE
@@ -94,6 +91,8 @@
 #define HEALTHBOX_STATUS_ICON       7
 #define HEALTHBOX_SAFARI_ALL_TEXT   8
 #define HEALTHBOX_SAFARI_BALLS_TEXT 9
+#define HEALTHBOX_GIMMICK_INDICATOR 10
+#define HEALTHBOX_VISIBILITY        11
 
 // status ids
 #define ID_STATUS1 0
@@ -104,6 +103,22 @@
 #define PARENTAL_BOND_1ST_HIT 2
 #define PARENTAL_BOND_2ND_HIT 1
 #define PARENTAL_BOND_OFF     0
+
+// atk18, fainteffects states
+#define FAINT_EFFECT_UNDO_DYNAMAX_MAX_HP              0
+#define FAINT_EFFECT_REMOVE_ILLUSION                  1
+#define FAINT_EFFECT_PLAY_CRY                         2
+#define FAINT_EFFECT_FAINT_ANIMATION                  3
+#define FAINT_EFFECT_PRINT_STRING                     4
+#define FAINT_EFFECT_CLEAR_FLAGS                      5
+#define FAINT_EFFECT_REMOVE_GIMMICK                   6
+#define FAINT_EFFECT_RESTORE_COMMANDER_SPRITE         7
+#define FAINT_EFFECT_ACTIVATE_RECEIVER                8
+#define FAINT_EFFECT_ACTIVATE_SOUL_HEART              9
+#define FAINT_EFFECT_FREE_FROM_SKY_DROP               10
+#define FAINT_EFFECT_REVERT_FORM                      11
+#define FAINT_EFFECT_TRY_FIRST_MON_DOWN_TRAINER_SLIDE 12
+#define FAINT_EFFECT_END                              13
 
 // moveend states
 #define MOVEEND_ALL           0 // loop through all cases
@@ -137,25 +152,32 @@
 #define ATK49_STATUS_IMMUNITY_ABILITIES 9
 #define ATK49_UPDATE_LAST_MOVES         10
 #define ATK49_MIRROR_MOVE               11
-#define ATK49_MULTIHIT_MOVE             12
-#define ATK49_DEFROST                   13
-#define ATK49_SECOND_MOVE_EFFECT        14
-#define ATK49_MAGICIAN                  15
-#define ATK49_ATTACKER_ENDTURN_ITEMS_2  16
-#define ATK49_NEXT_TARGET               17
-#define ATK49_RECOIL                    18
-#define ATK49_ATTACKER_ENDTURN_ITEMS_3  19
-#define ATK49_EJECT_BUTTON              20
-#define ATK49_RED_CARD                  21
-#define ATK49_EJECT_PACK                22
-#define ATK49_SHELL_BELL_LIFE_ORB       23
-#define ATK49_EMERGENCY_EXIT            24
-#define ATK49_PICKPOCKET                25
-#define ATK49_SUBSTITUTE                26
-#define ATK49_OPPORTUNIST               27
-#define ATK49_CLEAR_BITS                28
-#define ATK49_DANCER                    29
-#define ATK49_COUNT                     30
+#define ATK49_RAID_SHIELD_BREAK         12
+#define ATK49_MULTIHIT_MOVE             13
+#define ATK49_DEFROST                   14
+#define ATK49_SECOND_MOVE_EFFECT        15
+#define ATK49_MAGICIAN                  16
+#define ATK49_ATTACKER_ENDTURN_ITEMS_2  17
+#define ATK49_NEXT_TARGET               18
+#define ATK49_RECOIL                    19
+#define ATK49_ATTACKER_ENDTURN_ITEMS_3  20
+#define ATK49_EJECT_BUTTON              21
+#define ATK49_RED_CARD                  22
+#define ATK49_EJECT_PACK                23
+#define ATK49_SHELL_BELL_LIFE_ORB       24
+#define ATK49_EMERGENCY_EXIT            25
+#define ATK49_PICKPOCKET                26
+#define ATK49_SUBSTITUTE                27
+#define ATK49_OPPORTUNIST               28
+#define ATK49_CLEAR_BITS                29
+#define ATK49_DANCER                    30
+#define ATK49_RAID_SHIELD_CREATE        31
+#define ATK49_COUNT                     32
+
+// switchinanim flags
+#define SWITCHIN_ANIM_DONT_CLEAR_BEHIND_SUBSTITUTE (1 << 0)
+#define SWITCHIN_ANIM_DONT_CLEAR_TRANSFORM         (1 << 1)
+#define SWITCHIN_ANIM_DONT_RESET_MOVE_CURSOR       (1 << 2)
 
 // Atk4F, a flag used for the jumpifcantswitch command
 #define ATK4F_DONT_CHECK_STATUSES   0x80
@@ -209,7 +231,7 @@
 
 // Atk76, various cases
 #define VARIOUS_JUMP_IF_PARENTAL_BOND_COUNTER       0
-#define VARIOUS_RESET_GIMMICK_IN_PROGRESS           1
+#define VARIOUS_TERASTALLIZATION_ABILITIES          1
 #define VARIOUS_TRY_RATTLED_ON_INTIMIDATE           2
 #define VARIOUS_GET_BATTLER_SIDE                    3
 #define VARIOUS_TRY_TRAINER_SLIDE                   4
@@ -225,7 +247,7 @@
 #define VARIOUS_JUMP_IF_TARGET_ALLY                 14
 #define VARIOUS_TRY_ACTIVATE_SAP_SIPPER             15
 #define VARIOUS_TRY_ACTIVATE_WIND_ABILITIES         16
-#define VARIOUS_UPDATE_HEALTHBOX_ATTRIBUTE          17
+#define VARIOUS_UPDATE_DYNAMAX_HP                   17
 #define VARIOUS_JUMP_IF_WEATHER_AFFECTED            18
 #define VARIOUS_TRY_REMOVE_ILLUSION                 19
 #define VARIOUS_PLAY_MOVE_ANIMATION                 20
@@ -250,11 +272,19 @@
 #define VARIOUS_JUMP_IF_ACTIVE_GIMMICK              39
 #define VARIOUS_JUMP_IF_SKY_DROP_FAILS              40
 #define VARIOUS_TRY_TERASTALLIZATION_FORM_CHANGE    41
-#define VARIOUS_TERASTALLIZATION_ABILITIES          42
+#define VARIOUS_SET_GIMMICK_IN_PROGRESS             42
+#define VARIOUS_SET_TARGET_ALLY                     43
+#define VARIOUS_TRY_INCREASE_GMAX_CHISTRIKE_BOOST   44
+#define VARIOUS_TRY_SET_ESCAPE_PREVENTION           45
+#define VARIOUS_HIDE_ALL_HEALTHBOXES                46
+#define VARIOUS_TRY_REVERT_SHAYMIN_SKY              47
+#define VARIOUS_TRY_REVERT_CRAMORANT                48
+#define VARIOUS_JUMP_BASED_CHOSEN_SELECTION         49
+#define VARIOUS_TRY_RAID_SHOCKWAVE_NULLIFICATION    50
 
 // Atk80, dmg manipulation
 #define ATK80_DMG_CHANGE_SIGN        0
-#define ATK80_DMG_HALF_USER_HP       1
+#define ATK80_DMG_HALF_USER_MAX_HP   1
 #define ATK80_DMG_DRAINED            2
 #define ATK80_DMG_1_8_TARGET_MAX_HP  3
 #define ATK48_DMG_BIG_ROOT           4

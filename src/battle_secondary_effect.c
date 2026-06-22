@@ -84,6 +84,12 @@ static const u8 *const sMoveEffectBS_Ptrs[] =
     [MOVE_EFFECT_KNOCK_OFF]          = BattleScript_MoveEffectKnockOff,
     [MOVE_EFFECT_SMACK_DOWN]         = BattleScript_MoveEffectSmackDown,
     [MOVE_EFFECT_CLEAR_SMOG]         = BattleScript_MoveEffectClearSmog,
+    [MOVE_EFFECT_SET_WEATHER]        = BattleScript_MoveEffectSetWeather,
+    [MOVE_EFFECT_DAMAGE_NON_TYPES]   = BattleScript_MoveEffectDamageNonTypes,
+    [MOVE_EFFECT_INFATUATION]        = BattleScript_MoveEffectInfatuation,
+    [MOVE_EFFECT_STEALTH_ROCK]       = BattleScript_MoveEffectStealthRock,
+    [MOVE_EFFECT_SET_GRAVITY]        = BattleScript_MoveEffectSetGravity,
+    [MOVE_EFFECT_STEELSURGE]         = BattleScript_MoveEffectSteelsurge,
 };
 
 static const u8 sTriAttackEffects[] =
@@ -93,18 +99,24 @@ static const u8 sTriAttackEffects[] =
     MOVE_EFFECT_PARALYSIS
 };
 
+static const u8 sGMaxBefuddleEffects[] =
+{
+    MOVE_EFFECT_POISON,
+    MOVE_EFFECT_PARALYSIS,
+    MOVE_EFFECT_SLEEP
+};
+
+static const u8 sGMaxStunShockEffects[] =
+{
+    MOVE_EFFECT_POISON,
+    MOVE_EFFECT_PARALYSIS
+};
+
 void SetMoveEffect(u32 moveEffect, bool32 affectsUser, bool32 certain)
 {
     gBattleStruct->moveEffect.moveEffectByte = moveEffect;
     gBattleStruct->moveEffect.affectsUser = affectsUser;
     gBattleStruct->moveEffect.certain = certain;
-}
-
-static bool32 IsStatLoweringMoveEffect(u32 moveEffect)
-{
-    if ((moveEffect >= MOVE_EFFECT_ATK_MINUS_1 && moveEffect <= MOVE_EFFECT_EVS_MINUS_1) || (moveEffect >= MOVE_EFFECT_ATK_MINUS_2 && moveEffect <= MOVE_EFFECT_EVS_MINUS_2))
-        return TRUE;
-    return FALSE;
 }
 
 // moveEffect = the effect that will be applyed
@@ -244,22 +256,39 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             }
             break;
         case MOVE_EFFECT_FLINCH:
-            if (GetBattlerAbility(gEffectBattler) == ABILITY_INNER_FOCUS)
+            if (GetActiveGimmick(gEffectBattler) != GIMMICK_DYNAMAX)
             {
-                if (scriptStr != NULL && certain)
+                if (GetBattlerAbility(gEffectBattler) == ABILITY_INNER_FOCUS)
                 {
-                    BattleScriptPush(scriptStr);
-                    gBattlescriptCurrInstr = BattleScript_FlinchPrevention;
+                    if (scriptStr != NULL && certain)
+                    {
+                        BattleScriptPush(scriptStr);
+                        gBattlescriptCurrInstr = BattleScript_FlinchPrevention;
+                    }
+                }
+                else if (!(gBattleMons[gEffectBattler].status2 & STATUS2_FLINCHED) && GetBattlerTurnOrderNum(gEffectBattler) > gCurrentTurnActionNumber)
+                {
+                    gBattleMons[gEffectBattler].status2 |= STATUS2_FLINCHED;
+                    effect = 3; // No script
                 }
             }
-            else if (!(gBattleMons[gEffectBattler].status2 & STATUS2_FLINCHED) && GetBattlerTurnOrderNum(gEffectBattler) > gCurrentTurnActionNumber)
+            break;
+        case MOVE_EFFECT_INFATUATION:
+            if (CanBeInfatuatedBy(gEffectBattler, gBattleScripting.battler) == STATUS_CHANGE_WORKED)
             {
-                gBattleMons[gEffectBattler].status2 |= STATUS2_FLINCHED;
-                effect = 3; // No script
+                gBattleMons[gEffectBattler].status2 |= STATUS2_INFATUATION;
+                gDisableStructs[gEffectBattler].infatuatedWith = gBattleScripting.battler;
+                effect = 2;
             }
             break;
         case MOVE_EFFECT_TRI_ATTACK:
             SetMoveEffect(RandomElement(RNG_TRI_ATTACK, sTriAttackEffects), FALSE, FALSE);
+            return DoMoveEffect(primary, scriptStr, 0);
+        case MOVE_EFFECT_GMAX_BEFUDDLE:
+            SetMoveEffect(RandomElement(RNG_GMAX_BEFUDDLE, sGMaxBefuddleEffects), FALSE, FALSE);
+            return DoMoveEffect(primary, scriptStr, 0);
+        case MOVE_EFFECT_GMAX_STUN_SHOCK:
+            SetMoveEffect(RandomElement(RNG_GMAX_STUN_SHOCK, sGMaxStunShockEffects), FALSE, FALSE);
             return DoMoveEffect(primary, scriptStr, 0);
         case MOVE_EFFECT_SECRET_POWER:
             SetMoveEffect(gBattleTerrainTable[gBattleTerrain].secretPowerEffect, FALSE, FALSE);
@@ -274,20 +303,46 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             }
             break;
         case MOVE_EFFECT_PAYDAY:
-            // Only scatter coins on the first hit
-            if (GetBattlerSide(gBattleScripting.battler) == B_SIDE_PLAYER && gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_2ND_HIT)
+            if (!(gBattleTypeFlags & BATTLE_TYPE_RAID) && GetBattlerSide(gBattleScripting.battler) == B_SIDE_PLAYER
+            && gSpecialStatuses[gBattleScripting.battler].parentalBondState != PARENTAL_BOND_2ND_HIT) // Only scatter coins on the first hit
             {
-                gBattleStruct->battlers[gBattleScripting.battler].payDayLevel = gBattleMons[gBattleScripting.battler].level;
+                if (CalculatePayDayMoney() < 99999)
+                {
+                    switch (gBattleMoves[gCurrentMove].argument.generic)
+                    {
+                        case 0:
+                            if (gBattleStruct->battlers[gBattleScripting.battler].timesUsedPayDay < 0x7FFF)
+                                gBattleStruct->battlers[gBattleScripting.battler].timesUsedPayDay++;
+                            break;
+                        case 1:
+                            if (gBattleStruct->battlers[gBattleScripting.battler].timesUsedGMaxGoldRush < 3)
+                                gBattleStruct->battlers[gBattleScripting.battler].timesUsedGMaxGoldRush++;
+                            break;
+                    }
+                }
                 effect = 2;
             }
             break;
         case MOVE_EFFECT_WRAP:
             if (gDisableStructs[gEffectBattler].wrapTurns == 0)
             {
+                u32 wrappedMove;
+                
+                if (IsMaxMove(gCurrentMove))
+                {
+                    wrappedMove = gBattleMoves[gCurrentMove].argument.generic;
+                    gDisableStructs[gEffectBattler].wrappedByGMaxEffect = TRUE;
+                }
+                else
+                {
+                    wrappedMove = gCurrentMove;
+                    gDisableStructs[gEffectBattler].wrappedByGMaxEffect = FALSE;
+                }
                 gDisableStructs[gEffectBattler].wrapTurns = RandomUniform(RNG_WRAP_TURNS, 4, 5);
                 gDisableStructs[gEffectBattler].wrappedBy = gBattleScripting.battler;
-                gDisableStructs[gEffectBattler].wrappedMove = gCurrentMove;
-                gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.generic;
+                gDisableStructs[gEffectBattler].wrappedMove = wrappedMove;
+                PrepareMoveBuffer(gBattleTextBuff1, wrappedMove);
+                gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[wrappedMove].argument.generic;
                 effect = 2;
             }
             break;
@@ -364,6 +419,9 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             gDisableStructs[gEffectBattler].stockpileCounter = 0; // Reset counter
             // fallthrough
         case MOVE_EFFECT_CLEAR_HAZARDS:
+        case MOVE_EFFECT_STEALTH_ROCK:
+        case MOVE_EFFECT_SET_GRAVITY:
+        case MOVE_EFFECT_STEELSURGE:
             effect = 2;
             break;
         case MOVE_EFFECT_CURE_STATUS1:
@@ -412,9 +470,7 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
                         GiveItemToBattler(gBattleScripting.battler, itemId);
                     }
                     RemoveBattlerItem(gEffectBattler);
-
-                    gBattleScripting.animArg1 = gBattleScripting.battler;
-                    gBattleScripting.animArg2 = gEffectBattler;
+                    gBattleScripting.animArg1 = gEffectBattler;
                     effect = 2;
                 }
             }
@@ -449,6 +505,43 @@ bool32 DoMoveEffect(bool32 primary, const u8 *scriptStr, u32 flags)
             if (TryResetBattlerStatChanges(gEffectBattler))
                 effect = 2;
             break;
+        case MOVE_EFFECT_SET_WEATHER:
+            if (TryChangeBattleWeather(gEffectBattler, gBattleMoves[gCurrentMove].argument.setWeather.weatherId))
+            {
+                gBattleCommunication[MULTISTRING_CHOOSER] = gBattleMoves[gCurrentMove].argument.setWeather.stringId;
+                gBattleScripting.animArg1 = gBattleWeatherInfo[gBattleMoves[gCurrentMove].argument.setWeather.weatherId].animation;
+                effect = 2;
+            }
+            break;
+        case MOVE_EFFECT_DAMAGE_NON_TYPES:
+        {
+            u32 side = GetBattlerSide(gEffectBattler);
+            
+            if (AddBattleEffectToSideQueueList(side, gBattleMoves[gCurrentMove].argument.generic))
+            {
+                switch (gBattleMoves[gCurrentMove].argument.generic)
+                {
+                    case B_SIDE_QUEUED_GMAX_WILDFIRE:
+                        gSideTimers[side].gMaxWildfireTimer = 4;
+                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TEAM_SURROUNDED_BY_FIRE;
+                        break;
+                    case B_SIDE_QUEUED_GMAX_VOLCALITH:
+                        gSideTimers[side].gMaxVolcalithTimer = 4;
+                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TEAM_SURROUNDED_BY_ROCKS;
+                        break;
+                    case B_SIDE_QUEUED_GMAX_VINE_LASH:
+                        gSideTimers[side].gMaxVineLashTimer = 4;
+                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TEAM_TRAPPED_WITH_VINES;
+                        break;
+                    case B_SIDE_QUEUED_GMAX_CANNONADE:
+                        gSideTimers[side].gMaxCannonadeTimer = 4;
+                        gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TEAM_CAUGHT_IN_WATER_VORTEX;
+                        break;
+                }
+                effect = 2;
+            }
+            break;
+        }
     }
     
     // Check if the effect worked
@@ -499,17 +592,18 @@ bool32 CheckSecondaryEffectsBlockers(u32 attacker, u32 defender, u32 move, u32 m
             return TRUE;
         
         // Check Flower Veil
-        if (!affectsUser && IsBattlerProtectedByFlowerVeil(defender) && (moveEffect <= MOVE_EFFECT_TOXIC || IsStatLoweringMoveEffect(moveEffect)))
+        if (!affectsUser && IsBattlerProtectedByFlowerVeil(defender) && moveEffect <= MOVE_EFFECT_TOXIC)
             return TRUE;
     }
     
     // Check if target isn't alive
-    if (!IsBattlerAlive(defender) && moveEffect != MOVE_EFFECT_PAYDAY && moveEffect != MOVE_EFFECT_STEAL_ITEM && moveEffect != MOVE_EFFECT_KNOCK_OFF
-    && moveEffect != MOVE_EFFECT_FEINT && moveEffect != MOVE_EFFECT_CLEAR_HAZARDS)
+    if (!IsBattlerAlive(defender) && moveEffect != MOVE_EFFECT_STEAL_ITEM && moveEffect != MOVE_EFFECT_DAMAGE_NON_TYPES && moveEffect != MOVE_EFFECT_KNOCK_OFF
+    && moveEffect != MOVE_EFFECT_PAYDAY && moveEffect != MOVE_EFFECT_CLEAR_HAZARDS && moveEffect != MOVE_EFFECT_SET_WEATHER && moveEffect != MOVE_EFFECT_FEINT
+    && moveEffect != MOVE_EFFECT_STEALTH_ROCK && moveEffect != MOVE_EFFECT_SET_GRAVITY && moveEffect != MOVE_EFFECT_STEELSURGE)
         return TRUE;
     
     // Check substitute
-    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && !affectsUser && SubsBlockMove(attacker, defender, move))
+    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && !affectsUser && SubsBlockMove(attacker, defender, move) && !IsMaxMove(move))
         return TRUE;
     
     return FALSE;
@@ -531,8 +625,6 @@ u32 CheckStatDecreaseBlockEffects(u32 attacker, u32 target, u32 statId, u32 flag
 {
     if ((gSideStatuses[GetBattlerSide(target)] & SIDE_STATUS_MIST) && GetBattlerAbility(attacker) != ABILITY_INFILTRATOR) // Check Mist
         return STAT_CHANGE_FAIL_MIST;
-    else if (!(flags & STAT_CHANGE_FLAG_IGNORE_PROTECT) && JumpIfMoveAffectedByProtect(gBattlescriptCurrInstr, gBattlescriptCurrInstr)) // Check protect
-        return STAT_CHANGE_FAIL_PROTECTED;
     else if (IsBattlerProtectedByFlowerVeil(target)) // Check Flower Veil
         return STAT_CHANGE_FAIL_FLOWER_VEIL;
     

@@ -13,6 +13,7 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "random.h"
+#include "raid_intro.h"
 #include "script.h"
 #include "trainer_see.h"
 #include "trig.h"
@@ -76,12 +77,11 @@ static void RemoveObjectEventIfOutsideView(struct ObjectEvent *);
 static void ReloadMapObjectWithOffset(u32 objectEventId, s16 x, s16 y);
 static void SetPlayerAvatarObjectEventIdAndObjectId(u32, u32);
 static void sub_805EFF4(struct ObjectEvent *);
-static u32 FindObjectEventPaletteIndexByTag(u32);
-static bool32 ObjectEventDoesZCoordMatch(struct ObjectEvent *, u32);
 static void ObjectCB_CameraObject(struct Sprite *);
 static void CameraObject_0(struct Sprite *);
 static void CameraObject_1(struct Sprite *);
 static void CameraObject_2(struct Sprite *);
+static void PatchObjectPalette(u32);
 static struct ObjectEventTemplate *FindObjectEventTemplateByLocalId(u32 localId, struct ObjectEventTemplate *templates, u32 count);
 static void ClearObjectEventMovement(struct ObjectEvent *, struct Sprite *);
 static void ObjectEventSetSingleMovement(struct ObjectEvent *, struct Sprite *, u32);
@@ -412,27 +412,22 @@ static const u8 gInitialMovementTypeFacingDirections[MOVEMENT_TYPES_COUNT] = {
 #include "data/object_events/object_event_graphics_info.h"
 #include "data/object_events/object_event_graphics_info_pointers.h"
 
+#define OBJECT_EVENT_PALETTE(tag, pal) [tag - OBJ_EVENT_PAL_TAG_PLAYER_RED] = {pal, tag}
+
 static const struct SpritePalette sObjectEventSpritePalettes[] = {
-    {gObjectEventPal_NpcBlue,                 OBJ_EVENT_PAL_TAG_NPC_BLUE},
-    {gObjectEventPal_NpcPink,                 OBJ_EVENT_PAL_TAG_NPC_PINK},
-    {gObjectEventPal_NpcGreen,                OBJ_EVENT_PAL_TAG_NPC_GREEN},
-    {gObjectEventPal_NpcWhite,                OBJ_EVENT_PAL_TAG_NPC_WHITE},
-    {gObjectEventPal_NpcBlueReflection,       OBJ_EVENT_PAL_TAG_NPC_BLUE_REFLECTION},
-    {gObjectEventPal_NpcPinkReflection,       OBJ_EVENT_PAL_TAG_NPC_PINK_REFLECTION},
-    {gObjectEventPal_NpcGreenReflection,      OBJ_EVENT_PAL_TAG_NPC_GREEN_REFLECTION},
-    {gObjectEventPal_NpcWhiteReflection,      OBJ_EVENT_PAL_TAG_NPC_WHITE_REFLECTION},
-    {gObjectEventPal_Player,                  OBJ_EVENT_PAL_TAG_PLAYER_RED},
-    {gObjectEventPal_PlayerReflection,        OBJ_EVENT_PAL_TAG_PLAYER_RED_REFLECTION},
-    {gObjectEventPal_BridgeReflection,        OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION},
-    {gObjectEventPal_RSQuintyPlump,           OBJ_EVENT_PAL_TAG_RS_QUINTY_PLUMP},
-    {gObjectEventPal_RSQuintyPlumpReflection, OBJ_EVENT_PAL_TAG_RS_QUINTY_PLUMP_REFLECTION},
-    {gObjectEventPal_Player,                  OBJ_EVENT_PAL_TAG_PLAYER_GREEN},
-    {gObjectEventPal_PlayerReflection,        OBJ_EVENT_PAL_TAG_PLAYER_GREEN_REFLECTION},
-    {gObjectEventPal_Meteorite,               OBJ_EVENT_PAL_TAG_METEORITE},
-    {gObjectEventPal_SSAnne,                  OBJ_EVENT_PAL_TAG_SS_ANNE},
-    {gObjectEventPal_Seagallop,               OBJ_EVENT_PAL_TAG_SEAGALLOP},
-    {},
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_PLAYER_RED,        gObjectEventPal_Player),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION, gObjectEventPal_BridgeReflection),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_NPC_BLUE,          gObjectEventPal_NpcBlue),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_NPC_PINK,          gObjectEventPal_NpcPink),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_NPC_GREEN,         gObjectEventPal_NpcGreen),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_NPC_WHITE,         gObjectEventPal_NpcWhite),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_PLAYER_GREEN,      gObjectEventPal_Player),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_METEORITE,         gObjectEventPal_Meteorite),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_SS_ANNE,           gObjectEventPal_SSAnne),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_SEAGALLOP,         gObjectEventPal_Seagallop),
 };
+
+#undef OBJECT_EVENT_PALETTE
 
 //#include "data/object_events/berry_tree_graphics_tables.h"
 
@@ -1272,6 +1267,12 @@ void RemoveObjectEventByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup)
     }
 }
 
+static void UpdateRaidDenObjectEvent(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    if (objectEvent->graphicsId == OBJ_EVENT_GFX_RAID_DEN)
+        StartSpriteAnim(sprite, IsRaidClearedFlagSet() ? ANIM_STAY_STILL : ANIM_ACTIVATE_RAID_DEN);
+}
+
 static u32 TrySetupObjectEventSprite(struct ObjectEventTemplate *objectEventTemplate, struct SpriteTemplate *spriteTemplate, u32 mapNum, u32 mapGroup, s16 cameraX, s16 cameraY)
 {
     u32 spriteId;
@@ -1310,11 +1311,14 @@ static u32 TrySetupObjectEventSprite(struct ObjectEventTemplate *objectEventTemp
     sprite->data[0] = objectEventId;
     objectEvent->spriteId = spriteId;
     objectEvent->inanimate = graphicsInfo->inanimate;
+    
     if (!objectEvent->inanimate)
         StartSpriteAnim(sprite, GetFaceDirectionAnimNum(objectEvent->facingDirection));
 
     SetObjectSubpriorityByZCoord(objectEvent->previousElevation, sprite, 1);
+    UpdateRaidDenObjectEvent(objectEvent, sprite);
     UpdateObjectEventVisibility(objectEvent, sprite);
+    
     return objectEventId;
 }
 
@@ -1409,7 +1413,7 @@ static void MakeObjectTemplateFromObjectEventTemplate(struct ObjectEventTemplate
 void BlitObjectEventToWindow(u32 windowId, u32 graphicsId, u32 frameId, u32 paletteOffset, u32 width, u32 height)
 {
     const struct ObjectEventGraphicsInfo *graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
-    LoadPalette(sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(graphicsInfo->paletteTag)].data, paletteOffset, 0x20);
+    LoadPalette(sObjectEventSpritePalettes[graphicsInfo->paletteTag - OBJ_EVENT_PAL_TAG_PLAYER_RED].data, paletteOffset, 0x20);
     BlitBitmapToWindow(windowId, graphicsInfo->images[frameId].data, 0, 0, width, height);
 }
 
@@ -1442,10 +1446,14 @@ u32 sprite_new(u32 graphicsId, u32 a1, s16 x, s16 y, u32 z, u32 direction)
     const struct ObjectEventGraphicsInfo *graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
 
     MakeObjectTemplateFromObjectEventGraphicsInfo(graphicsId, UpdateObjectEventSpriteSubpriorityAndVisibility, &spriteTemplate, &subspriteTables);
-    *(u16 *)&spriteTemplate.paletteTag = SPRITE_INVALID_TAG;
+    
+    if (spriteTemplate.paletteTag != SPRITE_INVALID_TAG)
+        LoadObjectEventPalette(spriteTemplate.paletteTag);
+    
     x += 7;
     y += 7;
     SetSpritePosToOffsetMapCoords(&x, &y, 8, 16);
+    
     spriteId = CreateSpriteAtEnd(&spriteTemplate, x, y, 0);
     if (spriteId != MAX_SPRITES)
     {
@@ -1453,7 +1461,6 @@ u32 sprite_new(u32 graphicsId, u32 a1, s16 x, s16 y, u32 z, u32 direction)
         sprite->centerToCornerVecX = -(graphicsInfo->width >> 1);
         sprite->centerToCornerVecY = -(graphicsInfo->height >> 1);
         sprite->y += sprite->centerToCornerVecY;
-        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
         sprite->coordOffsetEnabled = TRUE;
         sprite->data[0] = a1;
         sprite->data[1] = z;
@@ -1479,7 +1486,9 @@ u32 sub_805EB44(u32 graphicsId, u32 a1, s16 x, s16 y)
     const struct ObjectEventGraphicsInfo *graphicsInfo = GetObjectEventGraphicsInfo(graphicsId);
 
     MakeObjectTemplateFromObjectEventGraphicsInfo(graphicsId, SpriteCallbackDummy, &spriteTemplate, &subspriteTables);
-    *(u16 *)&spriteTemplate.paletteTag = SPRITE_INVALID_TAG;
+    
+    if (spriteTemplate.paletteTag != SPRITE_INVALID_TAG)
+        LoadObjectEventPalette(spriteTemplate.paletteTag);
 
     spriteId = CreateSpriteAtEnd(&spriteTemplate, x, y, 0);
     if (spriteId != MAX_SPRITES)
@@ -1487,7 +1496,6 @@ u32 sub_805EB44(u32 graphicsId, u32 a1, s16 x, s16 y)
         sprite = &gSprites[spriteId];
         sprite->centerToCornerVecY = -(graphicsInfo->height >> 1);
         sprite->y += sprite->centerToCornerVecY;
-        sprite->oam.paletteNum = graphicsInfo->paletteSlot;
         sprite->data[0] = a1;
         
         if (subspriteTables != NULL)
@@ -1630,6 +1638,7 @@ static void ReloadMapObjectWithOffset(u32 objectEventId, s16 x, s16 y)
 
         sub_805EFF4(objectEvent);
         SetObjectSubpriorityByZCoord(objectEvent->previousElevation, sprite, 1);
+        UpdateRaidDenObjectEvent(objectEvent, sprite);
     }
 }
 
@@ -1679,8 +1688,8 @@ void ObjectEventSetGraphicsId(struct ObjectEvent *objectEvent, u32 graphicsId)
     u8 var;
     u8 var3;
 
-    if (graphicsInfo->paletteSlot == 0)
-        PatchObjectPalette(graphicsInfo->paletteTag, graphicsInfo->paletteSlot);
+    if (objectEvent->isPlayer)
+        PatchObjectPalette(graphicsInfo->paletteTag);
     
     var = sprite->images->size / TILE_SIZE_4BPP;
     if (!sprite->usingSheet)
@@ -1691,7 +1700,7 @@ void ObjectEventSetGraphicsId(struct ObjectEvent *objectEvent, u32 graphicsId)
     sprite->images = graphicsInfo->images;
     sprite->anims = graphicsInfo->anims;
     sprite->subspriteTables = graphicsInfo->subspriteTables;
-    sprite->oam.paletteNum = graphicsInfo->paletteSlot;
+    sprite->oam.paletteNum = IndexOfSpritePaletteTag(graphicsInfo->paletteTag);
     
     if (!sprite->usingSheet)
     {
@@ -1810,34 +1819,23 @@ void SetObjectPositionByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup, s16
 
 void LoadObjectEventPalette(u32 paletteTag)
 {
-    u32 paletteIndex = FindObjectEventPaletteIndexByTag(paletteTag);
-
-    if (sObjectEventSpritePalettes[paletteIndex].tag != OBJ_EVENT_PAL_TAG_NONE && IndexOfSpritePaletteTag(sObjectEventSpritePalettes[paletteIndex].tag) == 0xFF)
-        LoadSpritePalette(&sObjectEventSpritePalettes[paletteIndex]);
+    if (paletteTag != OBJ_EVENT_PAL_TAG_NONE && IndexOfSpritePaletteTag(paletteTag) == 0xFF)
+        LoadSpritePalette(&sObjectEventSpritePalettes[paletteTag - OBJ_EVENT_PAL_TAG_PLAYER_RED]);
 }
 
-void PatchObjectPalette(u32 paletteTag, u32 paletteSlot)
+static void PatchObjectPalette(u32 paletteTag)
 {
-    LoadPalette(sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(paletteTag)].data, 16 * paletteSlot + 0x100, 0x20);
+    u32 paletteSlot = paletteTag - OBJ_EVENT_PAL_TAG_PLAYER_RED;
+    LoadPalette(sObjectEventSpritePalettes[paletteSlot].data, 16 * paletteSlot + 0x100, 0x20);
     ApplyGlobalFieldPaletteTint(paletteSlot);
 }
 
-static void PatchObjectPaletteRange(const u16 *paletteTags, u32 minSlot, u32 maxSlot)
-{
-    while (minSlot < maxSlot)
-        PatchObjectPalette(*paletteTags++, minSlot++);
-}
-
-static u32 FindObjectEventPaletteIndexByTag(u32 tag)
+static void PatchObjectPaletteRange(const u16 *paletteTags, u32 count)
 {
     u32 i;
-
-    for (i = 0; sObjectEventSpritePalettes[i].tag != OBJ_EVENT_PAL_TAG_NONE; i++)
-    {
-        if (sObjectEventSpritePalettes[i].tag == tag)
-            return i;
-    }
-    return 0xFF;
+    
+    for (i = 0; i < count; i++)
+        PatchObjectPalette(*paletteTags++);
 }
 
 void ShiftObjectEventCoords(struct ObjectEvent *objectEvent, s16 x, s16 y)
@@ -1915,7 +1913,14 @@ void UpdateObjectEventCoordsForCameraUpdate(void)
     }
 }
 
-u32 GetObjectEventIdByXYZ(u32 x, u32 y, u32 z)
+static bool32 ObjectEventDoesZCoordMatch(struct ObjectEvent *objectEvent, u32 z)
+{
+    if (objectEvent->currentElevation != 0 && z != 0 && objectEvent->currentElevation != z)
+        return FALSE;
+    return TRUE;
+}
+
+u32 GetObjectEventIdByXYZ(u16 x, u16 y, u32 z)
 {
     u32 i;
 
@@ -1928,13 +1933,6 @@ u32 GetObjectEventIdByXYZ(u32 x, u32 y, u32 z)
         }
     }
     return OBJECT_EVENTS_COUNT;
-}
-
-static bool32 ObjectEventDoesZCoordMatch(struct ObjectEvent *objectEvent, u32 z)
-{
-    if (objectEvent->currentElevation != 0 && z != 0 && objectEvent->currentElevation != z)
-        return FALSE;
-    return TRUE;
 }
 
 void UpdateObjectEventsForCameraUpdate(s16 x, s16 y)
@@ -7021,6 +7019,13 @@ bool32 MovementActionFunc_xA4_2(struct ObjectEvent *objectEvent, struct Sprite *
     return TRUE;
 }
 
+static bool32 MovementAction_ChangeRaidDenState_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    SetAndStartSpriteAnim(sprite, IsRaidClearedFlagSet() ? ANIM_STAY_STILL : ANIM_ACTIVATE_RAID_DEN, 0);
+    sprite->data[2] = 1;
+    return FALSE;
+}
+
 static void UpdateObjectEventSpriteAnimPause(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     if (objectEvent->disableAnim)
@@ -8243,7 +8248,7 @@ void RfuUnionObjectSetFacingDirection(u32 objectEventId, u32 direction)
         baseBlock = sprite->oam.tileNum;
         sprite->oam = *info->oam;
         sprite->oam.tileNum = baseBlock;
-        sprite->oam.paletteNum = info->paletteSlot;
+        sprite->oam.paletteNum = IndexOfSpritePaletteTag(info->paletteTag);
         sprite->images = info->images;
         
         if (info->subspriteTables == NULL)
@@ -8392,16 +8397,11 @@ void InitObjectEventPalettes(u32 palSlot) // palSlot is unused for now
 {
     u16 palSet[] = {
         OBJ_EVENT_PAL_TAG_PLAYER_RED,
-        OBJ_EVENT_PAL_TAG_PLAYER_RED_REFLECTION,
         OBJ_EVENT_PAL_TAG_NPC_BLUE,
         OBJ_EVENT_PAL_TAG_NPC_PINK,
         OBJ_EVENT_PAL_TAG_NPC_GREEN,
         OBJ_EVENT_PAL_TAG_NPC_WHITE,
-        OBJ_EVENT_PAL_TAG_NPC_BLUE_REFLECTION,
-        OBJ_EVENT_PAL_TAG_NPC_PINK_REFLECTION,
-        OBJ_EVENT_PAL_TAG_NPC_GREEN_REFLECTION,
-        OBJ_EVENT_PAL_TAG_NPC_WHITE_REFLECTION
     };
     FreeAllSpritePalettes();
-    PatchObjectPaletteRange(palSet, 0, 10);
+    PatchObjectPaletteRange(palSet, ARRAY_COUNT(palSet));
 }

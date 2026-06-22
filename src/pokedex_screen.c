@@ -2652,7 +2652,7 @@ static void DexScreen_PrintMonHeight(u32 windowId, u32 species, u32 x, u32 y)
     
     if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
     {
-        bool32 isGigantamax = (gSpeciesInfo[species].flags & SPECIES_FLAG_GIGANTAMAX);
+        bool32 isGigantamax = IsGigantamaxSpecies(species);
         
         if (isGigantamax)
             --labelText;

@@ -96,6 +96,19 @@ SINGLE_BATTLE_TEST("OHKO moves always fails if the target has a higher level tha
     }
 }
 
-TO_DO_BATTLE_TEST("OHKO moves always fails if target is dynamaxed");
+SINGLE_BATTLE_TEST("OHKO moves always fails if target is dynamaxed")
+{
+    GIVEN {
+        PLAYER(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_WOBBUFFET);
+    } WHEN {
+        TURN { MOVE(player, MOVE_FISSURE); MOVE(opponent, MOVE_SCRATCH, gimmick: GIMMICK_DYNAMAX); }
+    } SCENE {
+        MESSAGE("Foe Wobbuffet grew huge into its Dynamax form!");
+        NOT ANIMATION(ANIM_TYPE_MOVE, MOVE_FISSURE, player);
+        MESSAGE("Foe Wobbuffet is unaffected!");
+    }
+}
+
 TO_DO_BATTLE_TEST("OHKO moves doesn't fails in max raid battles if target has no shields");
 TO_DO_BATTLE_TEST("OHKO moves always fails if target is a tera raid boss");

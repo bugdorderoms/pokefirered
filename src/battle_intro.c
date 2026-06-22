@@ -79,7 +79,12 @@ s32 GetAnimBgAttribute(u32 bgId, u32 attributeId)
 
 void HandleIntroSlide(u32 terrain)
 {
-    u32 taskId = CreateTask((gBattleTypeFlags & BATTLE_TYPE_LINK) ? BattleIntroSlideLink : gBattleTerrainTable[terrain].introSlideFunc, 0);
+    u32 taskId;
+    
+    if ((gBattleTypeFlags & BATTLE_TYPE_LINK) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+        taskId = CreateTask(BattleIntroSlideLink, 0);
+    else
+        taskId = CreateTask(gBattleTerrainTable[terrain].introSlideFunc, 0);
 
     gTasks[taskId].data[0] = 0;
     gTasks[taskId].data[1] = terrain;
@@ -226,16 +231,19 @@ void BattleIntroSlide2(u32 taskId)
         }
         break;
     case 3:
-        if (gTasks[taskId].data[3] && --gTasks[taskId].data[3] == 0)
+        if (gTasks[taskId].data[3])
         {
-            SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ);
-            SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(15, 0));
-            SetGpuReg(REG_OFFSET_BLDY, 0);
+            if (--gTasks[taskId].data[3] == 0)
+            {
+                SetGpuReg(REG_OFFSET_BLDCNT, BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ);
+                SetGpuReg(REG_OFFSET_BLDALPHA, BLDALPHA_BLEND(15, 0));
+                SetGpuReg(REG_OFFSET_BLDY, 0);
+            }
         }
         else if ((gTasks[taskId].data[4] & 0x1F) && --gTasks[taskId].data[5] == 0)
         {
-                gTasks[taskId].data[4] += 0xFF;
-                gTasks[taskId].data[5] = 4;
+            gTasks[taskId].data[4] += 0xFF;
+            gTasks[taskId].data[5] = 4;
         }
         if (gBattle_WIN0V & 0xFF00)
             gBattle_WIN0V -= 0x3FC;

@@ -415,7 +415,7 @@ u32 TryGetForcedWildMonNature(struct Pokemon *mon, u32 ability)
     return NUM_NATURES; // No forced nature
 }
 
-u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence)
+u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence, u32 nPerfectIvs)
 {
     struct PokemonGenerator generator =
     {
@@ -430,7 +430,7 @@ u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence)
         .forcedNature = checkWildInfluence ? TryGetForcedWildMonNature(&gPlayerParty[0], GetMonAbility(&gPlayerParty[0])) : NUM_NATURES,
         .formChanges = GENERATOR_FORMS(DEFAULT_GENERATOR_FORMS),
         .moves = {0},
-        .nPerfectIvs = 0,
+        .nPerfectIvs = nPerfectIvs,
     };
     
     ZeroEnemyPartyMons();
@@ -458,7 +458,7 @@ static bool32 TryGenerateWildMon(const struct WildPokemonInfo * info, u32 header
     if (checkLevelAllowed && (!IsWildLevelAllowedByRepel(level) || !IsAbilityAllowingEncounter(level)))
         return FALSE;
 
-    GenerateWildMon(info->wildPokemon[slot].species, level, TRUE);
+    GenerateWildMon(info->wildPokemon[slot].species, level, TRUE, 0);
     
     return TRUE;
 }
@@ -552,29 +552,27 @@ static bool32 TryStartStandardWildEncounter(u32 currMetatileAttrs, u32 previousM
 
 bool32 TryStandardWildEncounter(u32 currMetatileAttrs)
 {
+    bool32 encounterStarted;
+    
     if (!HandleWildEncounterCooldown(currMetatileAttrs))
-    {
-        sWildEncounterData.prevMetatileBehavior = ExtractMetatileAttribute(currMetatileAttrs, METATILE_ATTRIBUTE_BEHAVIOR);
-        return FALSE;
-    }
+        encounterStarted = FALSE;
     else if (TryStartStandardWildEncounter(currMetatileAttrs, sWildEncounterData.prevMetatileBehavior))
     {
-        sWildEncounterData.encounterRateBuff = 0;
-        sWildEncounterData.stepsSinceLastEncounter = 0;
-        sWildEncounterData.prevMetatileBehavior = ExtractMetatileAttribute(currMetatileAttrs, METATILE_ATTRIBUTE_BEHAVIOR);
-        return TRUE;
+        ResetEncounterRateModifiers();
+        encounterStarted = TRUE;
     }
     else
-    {
-        sWildEncounterData.prevMetatileBehavior = ExtractMetatileAttribute(currMetatileAttrs, METATILE_ATTRIBUTE_BEHAVIOR);
-        return FALSE;
-    }
+        encounterStarted = FALSE;
+    
+    sWildEncounterData.prevMetatileBehavior = ExtractMetatileAttribute(currMetatileAttrs, METATILE_ATTRIBUTE_BEHAVIOR);
+    
+    return encounterStarted;
 }
 
 static u32 GenerateFishingEncounter(const struct WildPokemonInfo * info, u32 rod)
 {
     u32 slot = ChooseWildMonIndex_Fishing(info->wildPokemon, rod);
-    return GenerateWildMon(info->wildPokemon[slot].species, ChooseWildMonLevel(&info->wildPokemon[slot]), TRUE);
+    return GenerateWildMon(info->wildPokemon[slot].species, ChooseWildMonLevel(&info->wildPokemon[slot]), TRUE, 0);
 }
 
 void FishingWildEncounter(u32 rod)

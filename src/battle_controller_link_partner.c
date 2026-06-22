@@ -15,7 +15,6 @@ static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
     [CONTROLLER_SETMONDATA]               = BtlController_HandleSetMonData,
-    [CONTROLLER_SETRAWMONDATA]            = BtlController_HandleSetRawMonData,
     [CONTROLLER_LOADMONSPRITE]            = BtlController_HandleLoadMonSprite,
     [CONTROLLER_SWITCHINANIM]             = LinkOpponentHandleSwitchInAnim,
     [CONTROLLER_RETURNMONTOBALL]          = BtlController_HandleReturnMonToBall,
@@ -23,7 +22,7 @@ static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_TRAINERSLIDE]             = BattleControllerComplete,
     [CONTROLLER_TRAINERSLIDEBACK]         = OpponentHandleTrainerSlideBack,
     [CONTROLLER_FAINTANIMATION]           = BtlController_HandleFaintAnimation,
-    [CONTROLLER_BALLTHROWANIM]            = BattleControllerComplete,
+    [CONTROLLER_BALLTHROWANIM]            = PlayerHandleBallThrowAnim,
     [CONTROLLER_MOVEANIMATION]            = BtlController_HandleMoveAnimation,
     [CONTROLLER_PRINTSTRING]              = BtlController_HandlePrintString,
     [CONTROLLER_PRINTSELECTIONSTRING]     = BattleControllerComplete,
@@ -52,6 +51,14 @@ static void (*const sLinkPartnerBufferCommands[CONTROLLER_CMDS_COUNT])(u32) =
     [CONTROLLER_LINKSTANDBYMSG]           = BattleControllerComplete,
     [CONTROLLER_RESETACTIONMOVESELECTION] = BattleControllerComplete,
     [CONTROLLER_ENDLINKBATTLE]            = PlayerHandleEndLinkBattle,
+    [CONTROLLER_GIMMICKSTATE]             = LinkOpponentHandleGimmickState,
+    [CONTROLLER_HEALTHBOXUPDATE]          = BtlController_HandleHealthboxUpdate,
+    [CONTROLLER_HIDEALLHEALTHBOXES]       = BtlController_HandleHideAllHealthboxes,
+    [CONTROLLER_BATTLEFORMCHANGE]         = BtlController_HandleBattleFormChange,
+    [CONTROLLER_PARTYFORMCHANGE]          = BtlController_HandlePartyFormChange,
+    [CONTROLLER_ISPOCKETNOTEMPTY]         = BattleControllerComplete,
+    [CONTROLLER_YESNOBOX]                 = BattleControllerComplete,
+    [CONTROLLER_MONCAUGHTEFFECTS]         = BattleControllerComplete,
     [CONTROLLER_TERMINATOR_NOP]           = ControllerDummy,
 };
 

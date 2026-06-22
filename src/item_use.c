@@ -18,6 +18,7 @@
 #include "field_weather.h"
 #include "fieldmap.h"
 #include "item.h"
+#include "raid_intro.h"
 #include "ride_pager.h"
 #include "script_menu.h"
 #include "item_menu.h"
@@ -37,6 +38,7 @@
 #include "teachy_tv.h"
 #include "tm_case.h"
 #include "vs_seeker.h"
+#include "constants/event_objects.h"
 #include "constants/sound.h"
 #include "constants/items.h"
 #include "constants/maps.h"
@@ -614,6 +616,23 @@ static void FieldUseFunc_HoneyCB(u32 taskId)
     SetWeatherScreenFadeOut();
     StartSweetScentFieldEffect();
     DestroyTask(taskId);
+}
+
+static void ItemUseOnFieldCB_WishingPiece(u32 taskId)
+{
+    ScriptContext1_SetupScript(EventScript_WishingPiece);
+    DestroyTask(taskId);
+}
+
+void FieldUseFunc_WishingPiece(u32 taskId)
+{
+    if (CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_RAID_DEN) && !IsRaidBattleAvailable())
+    {
+        sItemUseOnFieldCB = ItemUseOnFieldCB_WishingPiece;
+        SetUpItemUseOnFieldCallback(taskId);
+    }
+    else
+        PrintNotTheTimeToUseThat(taskId, gTasks[taskId].data[3]);
 }
 
 void FieldUseFunc_ExpShare(u32 taskId)

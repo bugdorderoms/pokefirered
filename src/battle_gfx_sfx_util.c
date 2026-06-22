@@ -5,16 +5,19 @@
 #include "battle_interface.h"
 #include "battle_move_effects.h"
 #include "decompress.h"
+#include "form_change.h"
 #include "gflib.h"
 #include "graphics.h"
 #include "m4a.h"
 #include "party_menu.h"
+#include "pokedex.h"
+#include "constants/pokedex.h"
 #include "constants/songs.h"
 
 static void Task_HandleBattleTableAnimation(u32 taskId);
 static void Task_ClearBitWhenSpecialAnimDone(u32 taskId);
 static void ClearSpritesBattlerHealthboxAnimData(void);
-static void TintBattlerSprite(u32 battlerId, u32 paletteOffset);
+static void TintBattlerSprite(u32 battlerId, u32 paletteOffset, u32 species);
 
 static const struct CompressedSpriteSheet sSpriteSheet_SinglesPlayerHealthbox =
 {
@@ -216,7 +219,8 @@ void InitAndLaunchChosenStatusAnimation(u32 battlerId, u32 animStatusId, u32 sta
 #define tArgument         data[2]
 #define tSubstituteRecede data[3]
 #define tChangeMonForm    data[4]
-#define tState            data[5]
+#define tIgnore0HpCheck   data[5]
+#define tState            data[6]
 
 bool32 TryHandleLaunchBattleTableAnimation(u32 battlerId, u32 tableId, u32 argument)
 {
@@ -235,6 +239,11 @@ bool32 TryHandleLaunchBattleTableAnimation(u32 battlerId, u32 tableId, u32 argum
             return TRUE;
         }
     }
+    else
+    {
+        if (tableId == B_ANIM_SUBSTITUTE_FADE)
+            return TRUE;
+    }
     
     if (tableId == B_ANIM_ILLUSION_OFF)
         gBattleStruct->battlers[battlerId].illusionState = ILLUSION_STATE_OFF;
@@ -249,6 +258,7 @@ bool32 TryHandleLaunchBattleTableAnimation(u32 battlerId, u32 tableId, u32 argum
     gTasks[taskId].tArgument = argument;
     gTasks[taskId].tSubstituteRecede = substituteRecede;
     gTasks[taskId].tChangeMonForm = gBattleAnims_General[tableId].changeForm;
+    gTasks[taskId].tIgnore0HpCheck = gBattleAnims_General[tableId].ignore0HpCheck;
     
     gBattleSpritesDataPtr->healthBoxesData[battlerId].animFromTableActive = TRUE;
     
@@ -293,6 +303,10 @@ static void Task_HandleBattleTableAnimation(u32 taskId)
                     SwapSpeciesForFormChangeAnim(battlerId);
                     gBattleSpritesDataPtr->battlerData[battlerId].formChangeSpecies = SPECIES_NONE;
                 }
+                
+                if (gTasks[taskId].tIgnore0HpCheck)
+                    gBattleSpritesDataPtr->battlerData[battlerId].ignore0Hp = TRUE;
+                
                 gBattleSpritesDataPtr->animationData->animArg = gTasks[taskId].tArgument;
                 LaunchBattleAnimation(ANIM_TYPE_GENERAL, gTasks[taskId].tAnimId);
                 gTasks[taskId].tState++;
@@ -301,6 +315,8 @@ static void Task_HandleBattleTableAnimation(u32 taskId)
         case 2:
             if (!gAnimScriptActive)
             {
+                gBattleSpritesDataPtr->battlerData[battlerId].ignore0Hp = FALSE;
+                
                 CopyAllBattleSpritesInvisibilities(); // To maintain battlers sprites that became invisible in the anim
                 
                 if (gBattleSpritesDataPtr->battlerData[battlerId].behindSubstitute && gBattleSpritesDataPtr->battlerData[battlerId].flag_x8)
@@ -368,6 +384,15 @@ void BattleLoadMonSpriteGfx(u32 battlerId)
     else
     {
         species = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies;
+        
+        // If battler has Gigantamax factor, try convert gfx to G-Max version
+        if (GetActiveGimmick(battlerId) == GIMMICK_DYNAMAX && GetMonData(mon, MON_DATA_GIGANTAMAX_FACTOR))
+        {
+            u32 newSpecies = GetMonFormChangeSpecies(mon, species, FORM_CHANGE_GIGANTAMAX);
+            
+            if (newSpecies)
+                species = gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies = newSpecies;
+        }
         currentPersonality = gTransformedPersonalities[battlerId];
         frontSpritePal = GetMonSpritePalFromSpecies(species, gTransformedShinies[battlerId]);
     }
@@ -381,10 +406,10 @@ void BattleLoadMonSpriteGfx(u32 battlerId)
     LoadPalette(buffer, 0x80 + battlerId * 16, 0x20);
     Free(buffer);
     
-    TintBattlerSprite(battlerId, paletteOffset);
+    TintBattlerSprite(battlerId, paletteOffset, species);
 }
 
-static void TintBattlerSprite(u32 battlerId, u32 paletteOffset)
+static void TintBattlerSprite(u32 battlerId, u32 paletteOffset, u32 species)
 {
     // Transform's white color
     if (gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies)
@@ -400,11 +425,17 @@ static void TintBattlerSprite(u32 battlerId, u32 paletteOffset)
         CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
     }
     
-    // Terastallization tint
-    if (GetActiveGimmick(battlerId) == GIMMICK_TERA)
+    // Gimmick tint
+    switch (GetActiveGimmick(battlerId))
     {
-        BlendPalette(paletteOffset, 16, 8, gTypesInfo[GetBattlerTeraType(battlerId)].teraBlendColor);
-        CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+        case GIMMICK_DYNAMAX:
+            BlendPalette(paletteOffset, 16, 4, SpeciesToNationalPokedexNum(species) == NATIONAL_DEX_CALYREX ? RGB(12, 0, 31) : RGB(31, 0, 12));
+            CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+            break;
+        case GIMMICK_TERA:
+            BlendPalette(paletteOffset, 16, 8, gTypesInfo[GetBattlerTeraType(battlerId)].teraBlendColor);
+            CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
+            break;
     }
 }
 
@@ -465,8 +496,8 @@ bool32 BattleLoadAllHealthBoxesGfx(u32 state)
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SinglesPlayerHealthbox);
             break;
         case 3:
-            if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-                LoadCompressedSpriteSheet(&sSpriteSheets_DoublesPlayerHealthbox[1]); // In a Two vs One battle this goes unused, it's loaded only for align purpose
+            if (IsDoubleBattleForBattler(0))
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_DoublesPlayerHealthbox[1]);
             break;
         case 4:
             if (IsDoubleBattleForBattler(1))
@@ -485,7 +516,7 @@ bool32 BattleLoadAllHealthBoxesGfx(u32 state)
             LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[1]]);
             break;
         case 8:
-            if (IsDoubleBattleForBattler(1))
+            if (IsDoubleBattleForBattler(0))
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[2]]);
             break;
         case 9:
@@ -546,16 +577,18 @@ bool32 BattleInitAllSprites(u8 *state, u8 *battlerId)
         }
         break;
     case 5:
-        if (GetBattlerSide(*battlerId) == B_SIDE_PLAYER)
+        if (BattleTypeDisplaysSpriteInPosition(GetBattlerPosition(*battlerId)))
         {
-            if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
+            if (GetBattlerSide(*battlerId) == B_SIDE_PLAYER)
+            {
+                if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
+                    UpdateHealthboxAttribute(*battlerId, HEALTHBOX_ALL);
+            }
+            else
                 UpdateHealthboxAttribute(*battlerId, HEALTHBOX_ALL);
         }
-        else
-            UpdateHealthboxAttribute(*battlerId, HEALTHBOX_ALL);
-        
-        SetHealthboxSpriteInvisible(gHealthboxSpriteIds[*battlerId]);
-        
+        SetHealthboxSpriteVisibility(gHealthboxSpriteIds[*battlerId], TRUE);
+
         if (++*battlerId == gBattlersCount)
         {
             *battlerId = 0;
@@ -610,6 +643,10 @@ void HandleSpeciesGfxDataChange(u32 battlerAtk, u32 battlerDef, u32 flags)
     }
     else // Battler transforming into another pokemon, copy personality and shynies
     {
+        // Get base form if its currently Gigantamax
+        if (IsGigantamaxSpecies(targetSpecies))
+            targetSpecies = gBattleMonForms[GetBattlerSide(battlerDef)][gBattlerPartyIndexes[battlerDef]];
+        
         personality = gTransformedPersonalities[battlerAtk];
         isShiny = gTransformedShinies[battlerAtk];
     }
@@ -626,7 +663,7 @@ void HandleSpeciesGfxDataChange(u32 battlerAtk, u32 battlerDef, u32 flags)
     if (!(flags & (SPECIESGFX_FLAG_IS_GHOST | SPECIESGFX_FLAG_NO_TRANSFORM_PAL_FADE)))
         gBattleSpritesDataPtr->battlerData[battlerAtk].transformSpecies = targetSpecies;
     
-    TintBattlerSprite(battlerAtk, paletteOffset);
+    TintBattlerSprite(battlerAtk, paletteOffset, targetSpecies);
     
     gSprites[gBattlerSpriteIds[battlerAtk]].y = GetBattlerSpriteDefault_Y(battlerAtk);
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battlerAtk]], 0);
@@ -868,11 +905,12 @@ void BattleInterfaceSetWindowPals(void)
     }
 }
 
-void ClearTemporarySpeciesSpriteData(u32 battlerId, bool32 dontClearSubstitute)
+void ClearTemporarySpeciesSpriteData(u32 battlerId, u32 flags)
 {
-    gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies = SPECIES_NONE;
+    if (!(flags & SWITCHIN_ANIM_DONT_CLEAR_TRANSFORM))
+        gBattleSpritesDataPtr->battlerData[battlerId].transformSpecies = SPECIES_NONE;
     
-    if (!dontClearSubstitute)
+    if (!(flags & SWITCHIN_ANIM_DONT_CLEAR_BEHIND_SUBSTITUTE))
         ClearBehindSubstituteBit(battlerId);
 }
 

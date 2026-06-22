@@ -25,6 +25,7 @@ static void AnimIngrainOrb(struct Sprite* sprite);
 static void AnimFrenzyPlantRoot(struct Sprite *sprite);
 static void AnimWoodHammer(struct Sprite *sprite);
 static void AnimWoodHammerStep(struct Sprite *sprite);
+static void AnimMaxVineLashVine(struct Sprite *sprite);
 
 static const u16 sMagicalLeafBlendColors[] =
 {
@@ -575,6 +576,79 @@ const struct SpriteTemplate gRagePowderSporeSpriteTemplate =
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = AnimSporeParticle,
+};
+
+const struct SpriteTemplate gSporeGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SPORE,
+    .paletteTag = ANIM_TAG_SPORE,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sSporeParticleAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
+};
+
+const struct SpriteTemplate gLeafGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LEAF,
+    .paletteTag = ANIM_TAG_LEAF,
+    .oam = &gOamData_AffineOff_ObjNormal_16x16,
+    .anims = sRazorLeafParticleAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
+};
+
+const struct SpriteTemplate gAppleGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_APPLE,
+    .paletteTag = ANIM_TAG_APPLE,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = gDummySpriteAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
+};
+
+static const union AffineAnimCmd sMaxVineLashVineLeftAffineAnimCmd[] = 
+{
+    AFFINEANIMCMD_FRAME(256, 256, 0, 1),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd sMaxVineLashVineRightAffineAnimCmd[] = 
+{
+    AFFINEANIMCMD_FRAME(-256 - 256 - 256, 256, 0, 1),
+    AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd *const sMaxVineLashVineAffineAnimTable[] = 
+{
+    sMaxVineLashVineLeftAffineAnimCmd,
+    sMaxVineLashVineRightAffineAnimCmd
+};
+
+const struct SpriteTemplate gMaxVineLashVineSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_VINE_2,
+    .paletteTag = ANIM_TAG_VINE_2,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = sAnims_PowerWhipVine,
+    .images = NULL,
+    .affineAnims = sMaxVineLashVineAffineAnimTable,
+    .callback = AnimMaxVineLashVine,
+};
+
+const struct SpriteTemplate gMaxDrumSoloRootSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_ROOTS,
+    .paletteTag = ANIM_TAG_ROOTS,
+    .oam = &gOamData_AffineDouble_ObjNormal_32x32,
+    .anims = sIngrainRootAnimTable,
+    .images = NULL,
+    .affineAnims = sMaxVineLashVineAffineAnimTable,
+    .callback = AnimFrenzyPlantRoot,
 };
 
 // Shoots a leaf upward, then floats it downward while swaying back and forth.
@@ -1309,6 +1383,7 @@ static void AnimIngrainOrb(struct Sprite* sprite)
 // arg 3: sprite subpriority offset
 // arg 4: sprite anim num
 // arg 5: duration
+// arg 6: affine anim num
 static void AnimFrenzyPlantRoot(struct Sprite *sprite)
 {
     s16 attackerX = GetBattlerSpriteCoord(gBattleAnimAttacker, BATTLER_COORD_X);
@@ -1328,6 +1403,7 @@ static void AnimFrenzyPlantRoot(struct Sprite *sprite)
     sprite->subpriority = gBattleAnimArgs[3] + 30;
     
     StartSpriteAnim(sprite, gBattleAnimArgs[4]);
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[6]);
     
     sprite->data[2] = gBattleAnimArgs[5];
     sprite->callback = AnimRootFlickerOut;
@@ -1430,4 +1506,19 @@ static void AnimWoodHammerStep(struct Sprite *sprite)
         StartSpriteAffineAnim(sprite, sprite->data[0] + 2);
         sprite->callback = DestroyAnimSpriteWhenAffineAnimEnds;
     }
+}
+
+// Animates MOVE_GMAX_VINE_LASH's vines.
+// arg 0: initial x-pixel offset
+// arg 1: initial y-pixel offset
+// arg 2: flip horizontally (boolean)
+static void AnimMaxVineLashVine(struct Sprite *sprite)
+{
+    if (GetBattlerSide(gBattleAnimTarget) == B_SIDE_PLAYER)
+        gBattleAnimArgs[0] = -gBattleAnimArgs[0];
+    
+    InitSpritePosToAnimTarget(sprite, TRUE);
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[2]);
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+    sprite->callback = RunStoredCallbackWhenAnimEnds;
 }

@@ -50,7 +50,7 @@ void ResetEncounterRateModifiers(void);
 void ToggleWildEncountersState(bool32 disabled);
 u32 GetCurrentMapWildMonHeaderId(void);
 const struct WildPokemonInfo *GetWildPokemonInfoByHeaderType(u16 headerId, u32 type);
-u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence);
+u32 GenerateWildMon(u32 species, u32 level, bool32 checkWildInfluence, u32 nPerfectIvs);
 bool32 TryStandardWildEncounter(u32 currMetatileAttrs);
 void FishingWildEncounter(u32 rod);
 bool32 DoesCurrentMapHaveFishingMons(void);

@@ -240,7 +240,7 @@ const struct SpriteTemplate gDracoMeteorRockSpriteTemplate =
 {
     .tileTag = ANIM_TAG_ROCKS,
     .paletteTag = ANIM_TAG_FAIRY_LOCK_CHAINS,
-    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32_HiPrio,
     .anims = gDummySpriteAnimTable,
     .images = NULL,
     .affineAnims = gDummySpriteAffineAnimTable,
@@ -267,6 +267,17 @@ const struct SpriteTemplate gDracoMeteorRockTailSpriteTemplate =
     .images = NULL,
     .affineAnims = sAffineAnims_DracoMeteorRockTail,
     .callback = AnimDracoMeteorRock,
+};
+
+const struct SpriteTemplate gMaxFlareFireGeyserSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_SMALL_EMBER,
+    .paletteTag = ANIM_TAG_SMALL_EMBER,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32_HiPrio,
+    .anims = sAnims_DragonBreathFire,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimGeyserSprite,
 };
 
 // Animates MOVE_OUTRAGE's flame sprite.
@@ -392,12 +403,8 @@ static void AnimOverheatFlame_Step(struct Sprite *sprite)
 // arg 2: final x pixel offset
 // arg 3: final y pixel offset
 // arg 4: duration
-// arg 5: set above sprites (boolean) (if set, the sprite will be created with higher priority)
 static void AnimDracoMeteorRock(struct Sprite *sprite)
 {
-    if (gBattleAnimArgs[5])
-        sprite->oam.priority--;
-    
     sprite->data[6] = gBattleAnimArgs[2];
     sprite->data[7] = gBattleAnimArgs[3];
     

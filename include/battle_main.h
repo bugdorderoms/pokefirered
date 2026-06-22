@@ -100,6 +100,7 @@ void FaintClearSetData(u32 battlerId);
 void BattleTurnPassed(void);
 u32 IsRunningFromBattleImpossible(u32 battlerId, bool32 checkIngrain);
 void UpdatePartyOwnerOnSwitch_NonMulti(u32 battler);
+void SwitchPartyOrderInGameMulti(u32 battler, u32 monToSwitchIntoId);
 void SwapTurnOrder(u32 id1, u32 id2);
 u32 GetWhoStrikesFirst(u32 battler1, u32 battler2, bool32 ignoreChosenMoves);
 s8 GetMovePriority(u32 battler, u32 move);
@@ -108,5 +109,6 @@ void RunBattleScriptCommands_PopCallbacksStack(void);
 void RunBattleScriptCommands(void);
 bool32 TryRunFromBattle(u32 battler);
 void CB2_QuitRecordedBattle(void);
+void FillPartnerParty(u32 trainerId);
 
 #endif // GUARD_BATTLE_MAIN_H

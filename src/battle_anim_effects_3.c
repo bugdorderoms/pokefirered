@@ -70,6 +70,8 @@ static void AnimTask_SnatchOpposingMonMove(u32 taskId);
 static void AnimTask_SnatchPartnerMove(u32 taskId);
 static void AnimHealingWishStar(struct Sprite *sprite);
 static void AnimHealingWishStar_Step(struct Sprite *sprite);
+static void AnimUpperCornerTwinkle(struct Sprite *sprite);
+static void AnimTwinkleAboveTarget(struct Sprite *sprite);
 
 // Data
 static const struct CompressedSpriteSheet sSmokescreenImpactSpriteSheet =
@@ -1311,6 +1313,28 @@ const struct SpriteTemplate gLavaPlumeSmokeSpriteTemplate =
     .images = NULL,
     .affineAnims = sSmokeBallEscapeCloudAffineAnimTable,
     .callback = AnimSmokeBallEscapeCloud,
+};
+
+const struct SpriteTemplate gMaxKnuckleTwinkleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LEER,
+    .paletteTag = ANIM_TAG_LEER,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sLeerAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimUpperCornerTwinkle,
+};
+
+const struct SpriteTemplate gMaxStarfallTwinkleSpriteTemplate =
+{
+    .tileTag = ANIM_TAG_LEER,
+    .paletteTag = ANIM_TAG_LEER,
+    .oam = &gOamData_AffineOff_ObjNormal_32x32,
+    .anims = sLeerAnimTable,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = AnimTwinkleAboveTarget,
 };
 
 // Animates the Smokescreen's black smokes moving on the target.
@@ -5044,4 +5068,29 @@ void AnimTask_CompressTargetHorizontally(u32 taskId)
 {
     PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_TARGET), sCompressTargetHorizontallyAffineAnimCmds);
     gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
+}
+
+// Creates a twinkle in the upper corner of the screen.
+// No args.
+static void AnimUpperCornerTwinkle(struct Sprite *sprite)
+{
+    if (GetBattlerSide(gBattleAnimAttacker) == B_SIDE_PLAYER)
+        sprite->x = 15;
+    else
+        sprite->x = 225;
+    
+    sprite->y = 13;
+    sprite->callback = RunStoredCallbackWhenAnimEnds;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+// Animates the twinkle above the target in MOVE_MAX_STARFALL's anim.
+// arg 0: x pixel offset
+static void AnimTwinkleAboveTarget(struct Sprite *sprite)
+{
+    SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+    sprite->y = 6;
+    sprite->y2 = 0;
+    sprite->callback = RunStoredCallbackWhenAnimEnds;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
