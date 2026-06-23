@@ -1705,109 +1705,123 @@ bool32 DoEndTurnEffects(void)
     }
 }
 
-#define FAINTED_ACTIONS_MAX_CASE 8
+enum
+{
+    FAINTED_ACTIONS_NO_MONS_TO_SWITCH,
+    FAINTED_ACTIONS_GIVE_EXP,
+    FAINTED_ACTIONS_SET_ABSENT_FLAGS,
+    FAINTED_ACTIONS_WAIT_STATE,
+    FAINTED_ACTIONS_HANDLE_FAINTED_MON,
+    FAINTED_ACTIONS_HANDLE_NEXT_BATTLER,
+    FAINTED_ACTIONS_SWITCHIN_ABILITIES,
+    FAINTED_ACTIONS_SWITCHIN_ITEMS,
+    FAINTED_ACTIONS_MAX_CASE
+};
 
 bool32 HandleFaintedMonActions(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-        return FALSE;
-    do
+    if (!(gBattleTypeFlags & BATTLE_TYPE_SAFARI))
     {
-        u32 i;
-
-        switch (gBattleStruct->faintedActionsState)
+        do
         {
-        case 0:
-            gBattleStruct->faintedActionsBattlerId = 0;
-            ++gBattleStruct->faintedActionsState;
-            
-            for (i = 0; i < gBattlersCount; ++i)
+            u32 i;
+    
+            switch (gBattleStruct->faintedActionsState)
             {
-                if (!BattleTypeDisplaysSpriteInPosition(GetBattlerPosition(i)))
-                    continue;
-                
-                if ((gAbsentBattlerFlags & Bit(i)) && !HasNoMonsToSwitch(i, PARTY_SIZE, PARTY_SIZE))
-                    gAbsentBattlerFlags &= ~(Bit(i));
-            }
-            // fall through
-        case 1:
-            do
-            {
-                gBattlerFainted = gBattlerTarget = gBattleStruct->faintedActionsBattlerId;
-                
-                if (gBattleMons[gBattlerFainted].hp == 0 && !(gBattleStruct->givenExpMons & Bit(gBattlerPartyIndexes[gBattlerFainted])) && !(gAbsentBattlerFlags & Bit(gBattlerFainted)))
-                {
-                    BattleScriptExecute(BattleScript_GiveExp);
-                    gBattleStruct->faintedActionsState = 2;
-                    return TRUE;
-                }
-            } while (++gBattleStruct->faintedActionsBattlerId != gBattlersCount);
-            
-            gBattleStruct->faintedActionsState = 3;
-            break;
-        case 2:
-            OpponentSwitchInResetSentPokesToOpponentValue(gBattlerFainted);
-            
-            if (++gBattleStruct->faintedActionsBattlerId == gBattlersCount)
-                gBattleStruct->faintedActionsState = 3;
-            else
-                gBattleStruct->faintedActionsState = 1;
-            
-            // Don't switch mons until all pokemon performed their actions or the battle's over.
-            if (gBattleOutcome == 0 && !NoAliveMonsForEitherParty() && gCurrentTurnActionNumber != gBattlersCount)
-            {
-                gAbsentBattlerFlags |= Bit(gBattlerFainted);
-                return FALSE;
-            }
-            break;
-        case 3:
-            // Don't switch mons until all pokemon performed their actions or the battle's over.
-            if (gBattleOutcome == 0 && !NoAliveMonsForEitherParty() && gCurrentTurnActionNumber != gBattlersCount)
-                return FALSE;
-            gBattleStruct->faintedActionsBattlerId = 0;
-            ++gBattleStruct->faintedActionsState;
-            // fall through
-        case 4:
-            do
-            {
-                gBattlerFainted = gBattlerTarget = gBattleStruct->faintedActionsBattlerId;
-
-                if (gBattleMons[gBattlerFainted].hp == 0 && !(gAbsentBattlerFlags & Bit(gBattlerFainted)))
-                {
-                    BattleScriptExecute(BattleScript_HandleFaintedMon);
-                    gBattleStruct->faintedActionsState = 5;
-                    return TRUE;
-                }
-            } while (++gBattleStruct->faintedActionsBattlerId != gBattlersCount);
-            gBattleStruct->faintedActionsState = 6;
-            break;
-        case 5:
-            if (++gBattleStruct->faintedActionsBattlerId == gBattlersCount)
-                gBattleStruct->faintedActionsState = 6;
-            else
-                gBattleStruct->faintedActionsState = 4;
-            break;
-        case 6: // All battlers switch-in abilities happen here to prevent them happening against an empty field.
-            for (i = 0; i < gBattlersCount; i++)
-            {
-                if (gBattleStruct->switchInAbilityPostponed & Bit(i))
-                {
-                    if (DoSwitchInAbilitiesItems(i))
+                case FAINTED_ACTIONS_NO_MONS_TO_SWITCH:
+                    gBattleStruct->faintedActionsBattlerId = 0;
+                    ++gBattleStruct->faintedActionsState;
+                    
+                    for (i = 0; i < gBattlersCount; ++i)
+                    {
+                        if (!BattleTypeDisplaysSpriteInPosition(GetBattlerPosition(i)))
+                            continue;
+                        
+                        if ((gAbsentBattlerFlags & Bit(i)) && !HasNoMonsToSwitch(i, PARTY_SIZE, PARTY_SIZE))
+                            gAbsentBattlerFlags &= ~(Bit(i));
+                    }
+                    // fall through
+                case FAINTED_ACTIONS_GIVE_EXP:
+                    do
+                    {
+                        gBattlerFainted = gBattlerTarget = gBattleStruct->faintedActionsBattlerId;
+                        
+                        if (gBattleMons[gBattlerFainted].hp == 0 && !(gBattleStruct->givenExpMons & Bit(gBattlerPartyIndexes[gBattlerFainted]))
+                        && !(gAbsentBattlerFlags & Bit(gBattlerFainted)))
+                        {
+                            BattleScriptExecute(BattleScript_GiveExp);
+                            gBattleStruct->faintedActionsState = FAINTED_ACTIONS_SET_ABSENT_FLAGS;
+                            return TRUE;
+                        }
+                    } while (++gBattleStruct->faintedActionsBattlerId != gBattlersCount);
+                    
+                    gBattleStruct->faintedActionsState = FAINTED_ACTIONS_WAIT_STATE;
+                    break;
+                case FAINTED_ACTIONS_SET_ABSENT_FLAGS:
+                    OpponentSwitchInResetSentPokesToOpponentValue(gBattlerFainted);
+                    
+                    if (++gBattleStruct->faintedActionsBattlerId == gBattlersCount)
+                        gBattleStruct->faintedActionsState = FAINTED_ACTIONS_WAIT_STATE;
+                    else
+                        gBattleStruct->faintedActionsState = FAINTED_ACTIONS_GIVE_EXP;
+                    
+                    // Don't switch mons until all pokemon performed their actions or the battle's over.
+                    if (gBattleOutcome == 0 && !NoAliveMonsForEitherParty() && gCurrentTurnActionNumber != gBattlersCount)
+                    {
+                        gAbsentBattlerFlags |= Bit(gBattlerFainted);
+                        return FALSE;
+                    }
+                    break;
+                case FAINTED_ACTIONS_WAIT_STATE:
+                    // Don't switch mons until all pokemon performed their actions or the battle's over.
+                    if (gBattleOutcome == 0 && !NoAliveMonsForEitherParty() && gCurrentTurnActionNumber != gBattlersCount)
+                        return FALSE;
+                    gBattleStruct->faintedActionsBattlerId = 0;
+                    ++gBattleStruct->faintedActionsState;
+                    // fall through
+                case FAINTED_ACTIONS_HANDLE_FAINTED_MON:
+                    do
+                    {
+                        gBattlerFainted = gBattlerTarget = gBattleStruct->faintedActionsBattlerId;
+        
+                        if (gBattleMons[gBattlerFainted].hp == 0 && !(gAbsentBattlerFlags & Bit(gBattlerFainted)))
+                        {
+                            BattleScriptExecute(BattleScript_HandleFaintedMon);
+                            gBattleStruct->faintedActionsState = FAINTED_ACTIONS_HANDLE_NEXT_BATTLER;
+                            return TRUE;
+                        }
+                    } while (++gBattleStruct->faintedActionsBattlerId != gBattlersCount);
+                    
+                    gBattleStruct->faintedActionsState = FAINTED_ACTIONS_SWITCHIN_ABILITIES;
+                    break;
+                case FAINTED_ACTIONS_HANDLE_NEXT_BATTLER:
+                    if (++gBattleStruct->faintedActionsBattlerId == gBattlersCount)
+                        gBattleStruct->faintedActionsState = FAINTED_ACTIONS_SWITCHIN_ABILITIES;
+                    else
+                        gBattleStruct->faintedActionsState = FAINTED_ACTIONS_HANDLE_FAINTED_MON;
+                    break;
+                case FAINTED_ACTIONS_SWITCHIN_ABILITIES: // All battlers switch-in abilities happen here to prevent them happening against an empty field.
+                    for (i = 0; i < gBattlersCount; i++)
+                    {
+                        if (gBattleStruct->switchInAbilityPostponed & Bit(i))
+                        {
+                            if (DoSwitchInAbilitiesItems(i))
+                                return TRUE;
+                            gBattleStruct->switchInAbilityPostponed &= ~(Bit(i));
+                        }
+                    }
+                    gBattleStruct->faintedActionsState++;
+                    break;
+                case FAINTED_ACTIONS_SWITCHIN_ITEMS:
+                    if (ItemBattleEffects(1, 0, TRUE))
                         return TRUE;
-                    gBattleStruct->switchInAbilityPostponed &= ~(Bit(i));
-                }
+                    ++gBattleStruct->faintedActionsState;
+                    break;
+                case FAINTED_ACTIONS_MAX_CASE:
+                    break;
             }
-            gBattleStruct->faintedActionsState++;
-            break;
-        case 7:
-            if (ItemBattleEffects(1, 0, TRUE))
-                return TRUE;
-            ++gBattleStruct->faintedActionsState;
-            break;
-        case FAINTED_ACTIONS_MAX_CASE:
-            break;
-        }
-    } while (gBattleStruct->faintedActionsState != FAINTED_ACTIONS_MAX_CASE);
+        } while (gBattleStruct->faintedActionsState != FAINTED_ACTIONS_MAX_CASE);
+    }
     return FALSE;
 }
 
