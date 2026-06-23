@@ -943,15 +943,17 @@ static inline u32 GetTeraTypeDamageModifier(struct DamageCalc *ctx)
         else
             return UQ_4_12(2.0);
     }
-    // Base or Tera type only.
-    else if ((!isOfBaseType && ctx->moveType == teraType) || (isOfBaseType && ctx->moveType != teraType))
+    else if (!isOfBaseType && ctx->moveType == teraType) // Tera type only.
     {
         if (ctx->atkAbility == ABILITY_ADAPTABILITY)
             return UQ_4_12(2.0);
         else
             return UQ_4_12(1.5);
     }
-    return UQ_4_12(1.0);
+    else if (isOfBaseType && ctx->moveType != teraType) // Base type only.
+        return UQ_4_12(1.5);
+    else // Neither base or Tera type.
+        return UQ_4_12(1.0);
 }
 
 static inline u32 GetBurnDamageModifier(struct DamageCalc *ctx)
