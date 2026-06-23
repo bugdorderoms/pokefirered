@@ -629,7 +629,7 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *ctx, u32 basePow
                 modifier = uq4_12_mul(modifier, UQ_4_12(2.0));
             break;
         case EFFECT_CURE_STATUS1_FROM_ARG:
-            if (!SubsBlockMove(attacker, defender, move) && (gBattleMons[defender].status1.id == gBattleMoves[move].argument.generic
+            if (!SubstituteBlocksMove(attacker, defender, move) && (gBattleMons[defender].status1.id == gBattleMoves[move].argument.generic
             || (gBattleMoves[move].argument.generic == STATUS1_SLEEP && ctx->defAbility == ABILITY_COMATOSE)))
                 modifier = uq4_12_mul(modifier, UQ_4_12(2.0));
             break;

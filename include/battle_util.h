@@ -123,7 +123,7 @@ u32 GetBattlerMoveTargetType(u32 battlerId, u32 move);
 u32 GetMoveTarget(u32 move, u32 setTarget, bool32 useBaseType);
 void CopyMoveTargetName(u32 moveTarget, u8 *dest);
 u32 IsMonDisobedient(void);
-bool32 SubsBlockMove(u32 attacker, u32 defender, u32 move);
+bool32 SubstituteBlocksMove(u32 attacker, u32 defender, u32 move);
 u32 GetHiddenPowerType(struct Pokemon *mon);
 bool32 CheckPinchBerryActivate(u32 battler, u32 item);
 void CopyStatusStringToBattleBuffer1(u32 statusId);

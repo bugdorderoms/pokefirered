@@ -3727,8 +3727,8 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_COLOR_CHANGE:
                             if (BattlerTurnDamaged(battler) && gCurrentMove != MOVE_STRUGGLE && GetBattleMoveSplit(gCurrentMove) != SPLIT_STATUS && IsBattlerAlive(battler)
-                            && !IsBattlerOfType(battler, moveType) && moveType != TYPE_MYSTERY && moveType != TYPE_STELLAR && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
-                            && IS_MULTIHIT_FINAL_STRIKE && GetActiveGimmick(battler) != GIMMICK_TERA)
+                            && !IsBattlerOfType(battler, moveType) && moveType != TYPE_MYSTERY && moveType != TYPE_STELLAR && IS_MULTIHIT_FINAL_STRIKE
+                            && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove) && GetActiveGimmick(battler) != GIMMICK_TERA)
                             {
                                 SetBattlerType(battler, moveType);
                                 BattleScriptCall(BattleScript_ColorChangeActivates);
@@ -3745,7 +3745,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                                 else if (i < 9 + 10)
                                     goto STATIC;
                                 else if (i < 9 + 10 + 11 && BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-                                && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBePutToSleep(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
+                                && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove) && CanBePutToSleep(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
                                 {
                                     SetMoveEffect(MOVE_EFFECT_SLEEP, TRUE, FALSE);
                                     BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -3759,7 +3759,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         
                             POISON_POINT:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-                            && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBePoisoned(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
+                            && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove) && CanBePoisoned(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
                             {
                                 SetMoveEffect(MOVE_EFFECT_POISON, TRUE, FALSE);
                                 BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -3772,7 +3772,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                         
                             STATIC:
                             if (BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && IsMoveMakingContact(gBattlerAttacker, gCurrentMove)
-                            && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && CanBeParalyzed(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
+                            && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove) && CanBeParalyzed(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
                             {
                                 SetMoveEffect(MOVE_EFFECT_PARALYSIS, TRUE, FALSE);
                                 BattleScriptCall(BattleScript_ApplySecondaryEffect);
@@ -3781,7 +3781,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_FLAME_BODY:
                             if (RandomPercentage(RNG_FLAME_BODY, 30) && BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker)
-                            && IsMoveMakingContact(gBattlerAttacker, gCurrentMove) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
+                            && IsMoveMakingContact(gBattlerAttacker, gCurrentMove) && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove)
                             && CanBeBurned(battler, gBattlerAttacker, 0) == STATUS_CHANGE_WORKED)
                             {
                                 SetMoveEffect(MOVE_EFFECT_BURN, TRUE, FALSE);
@@ -3799,7 +3799,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_ANGER_POINT:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove)
                             && gIsCriticalHit && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetStatChanger(STAT_ATK, +6); // Max out
@@ -3809,7 +3809,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             break;
                         case ABILITY_CURSED_BODY:
                             if (RandomPercentage(RNG_CURSED_BODY, 30) && BattlerTurnDamaged(battler) && IsBattlerAlive(gBattlerAttacker) && gCurrentMove != MOVE_STRUGGLE
-                            && !IsMaxMove(gCurrentMove) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && !gDisableStructs[gBattlerAttacker].disabledMove
+                            && !IsMaxMove(gCurrentMove) && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove) && !gDisableStructs[gBattlerAttacker].disabledMove
                             && !ABILITY_ON_SIDE(gBattlerAttacker, ABILITY_AROMA_VEIL))
                             {
                                 gDisableStructs[gBattlerAttacker].disabledMove = gCurrentMove;
@@ -3841,7 +3841,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_THERMAL_EXCHANGE:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove)
                             && moveType == TYPE_FIRE && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetMoveEffect(MOVE_EFFECT_ATK_PLUS_1, TRUE, FALSE);
@@ -3850,7 +3850,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_JUSTIFIED:
-                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove)
+                            if (BattlerTurnDamaged(battler) && IsBattlerAlive(battler) && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove)
                             && moveType == TYPE_DARK && CompareStat(battler, STAT_ATK, MAX_STAT_STAGES, CMP_NOT_EQUAL))
                             {
                                 SetMoveEffect(MOVE_EFFECT_ATK_PLUS_1, TRUE, FALSE);
@@ -4001,7 +4001,7 @@ u32 AbilityBattleEffects(u32 caseId, u32 battler)
                             }
                             break;
                         case ABILITY_TOXIC_DEBRIS:
-                            if (BattlerTurnDamaged(battler) && GetBattleMoveSplit(gCurrentMove) == SPLIT_PHYSICAL && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove))
+                            if (BattlerTurnDamaged(battler) && GetBattleMoveSplit(gCurrentMove) == SPLIT_PHYSICAL && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove))
                             {
                                 SaveAttackerToStack(BATTLE_OPPOSITE(battler));
                                 BattleScriptCall(BattleScript_ToxicDebrisActivation);

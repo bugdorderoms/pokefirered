@@ -92,7 +92,7 @@ s8 BattleAIFunc_EffectRandomSwitch(struct AIScript *data, s8 score, u32 caseId)
                 CHANGE_SCORE(-10);*/
             break;
         case AI_CHECK_GOOD_MOVE_EFFECT:
-            /*if (!SubsBlockMove(data->attacker, data->target, data->move) && AI_ShouldPhaze())*/
+            /*if (!SubstituteBlocksMove(data->attacker, data->target, data->move) && AI_ShouldPhaze())*/
             break;
     }
     return score;

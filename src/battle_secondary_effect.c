@@ -603,7 +603,7 @@ bool32 CheckSecondaryEffectsBlockers(u32 attacker, u32 defender, u32 move, u32 m
         return TRUE;
     
     // Check substitute
-    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && !affectsUser && SubsBlockMove(attacker, defender, move) && !IsMaxMove(move))
+    if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && !affectsUser && SubstituteBlocksMove(attacker, defender, move) && !IsMaxMove(move))
         return TRUE;
     
     return FALSE;

@@ -1338,7 +1338,7 @@ static void atk06_typecalc(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
-bool32 SubsBlockMove(u32 attacker, u32 defender, u32 move) // Check if substitute can block the move
+bool32 SubstituteBlocksMove(u32 attacker, u32 defender, u32 move) // Check if substitute can block the move
 {
     if ((!(gBattleMons[defender].status2 & STATUS2_SUBSTITUTE) || gBattleMoves[move].flags.soundMove || (GetBattlerAbility(attacker) == ABILITY_INFILTRATOR
     && gBattleMoves[move].effect != EFFECT_TRANSFORM && gBattleMoves[move].effect != EFFECT_SKY_DROP)))
@@ -1411,7 +1411,7 @@ static void atk07_adjustdamage(void) // Check for effects that prevent the targe
 {
     CMD_ARGS();
     
-    if (gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage && !SubsBlockMove(gBattlerAttacker, gBattlerTarget, gCurrentMove))
+    if (gBattleMons[gBattlerTarget].hp <= gBattleMoveDamage && !SubstituteBlocksMove(gBattlerAttacker, gBattlerTarget, gCurrentMove))
         AdjustDamage(gBattlerTarget, gCurrentMove, TRUE);
     
     if (!TryDisplayDamageChangeMessage())
@@ -1509,7 +1509,7 @@ static void atk0B_healthbarupdate(void)
             u32 battlerId = GetBattlerForBattleScript(cmd->battler);
             
             // Check effects that blocks the move
-            if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove) && gDisableStructs[battlerId].substituteHP)
+            if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove) && gDisableStructs[battlerId].substituteHP)
                 PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, battlerId); // Hit the substitute
             else if (!CanBattlerIceFaceBlockMove(battlerId, gCurrentMove) && !BattlerIsDisguised(battlerId)) // Skip the health bar update
             {
@@ -1554,7 +1554,7 @@ static void atk0C_datahpupdate(void)
         if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
         {
             // Check Substitute
-            if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove) && gDisableStructs[battlerId].substituteHP)
+            if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove) && gDisableStructs[battlerId].substituteHP)
             {
                 if (gDisableStructs[battlerId].substituteHP >= gBattleMoveDamage)
                 {
@@ -3063,7 +3063,7 @@ static void atk42_trysetsleep(void)
     switch (CanBePutToSleep(gBattlerAttacker, battlerId, flags))
     {
         case STATUS_CHANGE_WORKED:
-            if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove))
+            if (!(flags & STATUS_CHANGE_FLAG_IGNORE_SUBSTITUTE) && SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove))
                 gBattlescriptCurrInstr = BattleScript_ButItFailed;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -3107,7 +3107,7 @@ static void atk43_trysetconfusion(void)
     switch (CanBecameConfused(gBattlerAttacker, battlerId, 0))
     {
         case STATUS_CHANGE_WORKED:
-            if (SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove))
+            if (SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove))
                 gBattlescriptCurrInstr = BattleScript_ButItFailed;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -3133,7 +3133,7 @@ static void atk44_trysetpoison(void)
     switch (CanBePoisoned(gBattlerAttacker, battlerId, 0))
     {
         case STATUS_CHANGE_WORKED:
-            if (SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove))
+            if (SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove))
                 gBattlescriptCurrInstr = BattleScript_ButItFailed;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -3174,7 +3174,7 @@ static void atk45_trysetburn(void)
     switch (CanBeBurned(gBattlerAttacker, battlerId, 0))
     {
         case STATUS_CHANGE_WORKED:
-            if (SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove))
+            if (SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove))
                 gBattlescriptCurrInstr = BattleScript_ButItFailed;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -3211,7 +3211,7 @@ static void atk46_trysetparalyze(void)
     switch (CanBeParalyzed(gBattlerAttacker, battlerId, 0))
     {
         case STATUS_CHANGE_WORKED:
-            if (SubsBlockMove(gBattlerAttacker, battlerId, gCurrentMove))
+            if (SubstituteBlocksMove(gBattlerAttacker, battlerId, gCurrentMove))
                 gBattlescriptCurrInstr = BattleScript_ButItFailed;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -3789,7 +3789,7 @@ static void atk49_moveend(void)
                         u32 battler = gBattlerByTurnOrder[i];
                         
                         if (battler != gBattlerAttacker && TryActivateEmergencyExit(battler) && BattlerTurnDamaged(battler)
-                        && !SubsBlockMove(gBattlerAttacker, battler, gCurrentMove) && !gSpecialStatuses[battler].emergencyExited)
+                        && !SubstituteBlocksMove(gBattlerAttacker, battler, gCurrentMove) && !gSpecialStatuses[battler].emergencyExited)
                         {
                             gSpecialStatuses[battler].emergencyExited = TRUE;
                             gBattlerTarget = battler;
@@ -3815,7 +3815,7 @@ static void atk49_moveend(void)
                         target = battlers[i];
                         
                         if (target != gBattlerAttacker && IsBattlerAlive(target) && GetBattlerAbility(target) == ABILITY_PICKPOCKET
-                        && BattlerTurnDamaged(target) && !SubsBlockMove(gBattlerAttacker, target, gCurrentMove))
+                        && BattlerTurnDamaged(target) && !SubstituteBlocksMove(gBattlerAttacker, target, gCurrentMove))
                         {
                             u32 savedTarget = gBattlerTarget;
                             gBattlerTarget = target;
@@ -5324,7 +5324,7 @@ static void atk63_jumpifsubstituteblocks(void)
 {
     CMD_ARGS(const u8 *ptr);
 
-    if (SubsBlockMove(gBattlerAttacker, gBattlerTarget, gCurrentMove)) 
+    if (SubstituteBlocksMove(gBattlerAttacker, gBattlerTarget, gCurrentMove)) 
         gBattlescriptCurrInstr = cmd->ptr;
     else
         gBattlescriptCurrInstr = cmd->nextInstr;
@@ -6838,7 +6838,7 @@ static void atk7D_tryacupressure(void)
 {
     CMD_ARGS(const u8 *failStr);
     
-    if (gBattlerTarget != gBattlerAttacker && (SubsBlockMove(gBattlerAttacker, gBattlerTarget, gCurrentMove)
+    if (gBattlerTarget != gBattlerAttacker && (SubstituteBlocksMove(gBattlerAttacker, gBattlerTarget, gCurrentMove)
     || (gSideStatuses[GetBattlerSide(gBattlerTarget)] & SIDE_STATUS_CRAFTY_SHIELD)))
         gBattlescriptCurrInstr = cmd->failStr;
     else
@@ -8090,7 +8090,7 @@ static void atkAE_healpartystatus(void)
                                 BattleScriptCall(BattleScript_SoundproofBlocksString);
                                 break;
                             }
-                            else if (SubsBlockMove(gBattlerAttacker, gBattleScripting.battler, gCurrentMove))
+                            else if (SubstituteBlocksMove(gBattlerAttacker, gBattleScripting.battler, gCurrentMove))
                             {
                                 BattleScriptCall(BattleScript_SubstituteBlocksHealBell);
                                 break;
