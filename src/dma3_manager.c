@@ -80,10 +80,8 @@ void ProcessDma3Requests(void)
         gDma3Requests[gDma3RequestCursor].size = 0;
         gDma3Requests[gDma3RequestCursor].mode = 0;
         gDma3Requests[gDma3RequestCursor].value = 0;
-        gDma3RequestCursor++;
-
-        if (gDma3RequestCursor >= MAX_DMA_REQUESTS) // loop back to the first DMA request
-            gDma3RequestCursor = 0;
+        
+        gDma3RequestCursor = INCREMENT_OR_WRAP(gDma3RequestCursor, MAX_DMA_REQUESTS); // loop back to the first DMA request
     }
 }
 
@@ -107,11 +105,9 @@ s16 RequestDma3Copy(const void *src, void *dest, u16 size, u8 mode)
             gDma3ManagerLocked = FALSE;
             return (s16)cursor;
         }
-        if(++cursor >= 0x80) // loop back to start.
-        {
-            cursor = 0;
-        }
-        if(++var >= 0x80) // max checks were made. all resulted in failure.
+        cursor = INCREMENT_OR_WRAP(cursor, MAX_DMA_REQUESTS); // loop back to start.
+
+        if(++var >= MAX_DMA_REQUESTS) // max checks were made. all resulted in failure.
         {
             break;
         }
@@ -141,11 +137,9 @@ s16 RequestDma3Fill(s32 value, void *dest, u16 size, u8 mode)
             gDma3ManagerLocked = FALSE;
             return (s16)cursor;
         }
-        if(++cursor >= 0x80) // loop back to start.
-        {
-            cursor = 0;
-        }
-        if(++var >= 0x80) // max checks were made. all resulted in failure.
+        cursor = INCREMENT_OR_WRAP(cursor, MAX_DMA_REQUESTS); // loop back to start.
+        
+        if(++var >= MAX_DMA_REQUESTS) // max checks were made. all resulted in failure.
         {
             break;
         }
@@ -160,10 +154,11 @@ s16 WaitDma3Request(s16 index)
 
     if (index == -1)
     {
-        for (; current < 0x80; current ++)
+        for (; current < MAX_DMA_REQUESTS; current ++)
+        {
             if (gDma3Requests[current].size)
                 return -1;
-
+        }
         return 0;
     }
 
