@@ -829,14 +829,14 @@ static u32 SaveDialogCB_AskSaveHandleInput(void)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         if ((gSaveFileStatus != SAVE_STATUS_EMPTY && gSaveFileStatus != SAVE_STATUS_INVALID) || !gDifferentSaveFile)
             sStartMenu.saveDialogCB = SaveDialogCB_PrintAskOverwriteText;
         else
             sStartMenu.saveDialogCB = SaveDialogCB_PrintSavingDontTurnOffPower;
         break;
-    case 1:
-    case -1:
+    case MENU_ACTION_NO:
+    case MENU_B_PRESSED:
         CloseSaveStatsWindow();
         CloseSaveMessageWindow();
         return SAVECB_RETURN_CANCEL;
@@ -872,11 +872,11 @@ static u32 SaveDialogCB_AskOverwriteOrReplacePreviousFileHandleInput(void)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         sStartMenu.saveDialogCB = SaveDialogCB_PrintSavingDontTurnOffPower;
         break;
-    case 1:
-    case -1:
+    case MENU_ACTION_NO:
+    case MENU_B_PRESSED:
         CloseSaveStatsWindow();
         CloseSaveMessageWindow();
         return SAVECB_RETURN_CANCEL;

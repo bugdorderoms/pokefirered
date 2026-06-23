@@ -745,9 +745,9 @@ static void Task_MultichoiceMenu_HandleInput(u32 taskId)
     
     switch (input)
     {
-        case -2:
+        case MENU_NOTHING_CHOSEN:
             return;
-        case -1:
+        case MENU_B_PRESSED:
             if (!tIgnoreBPress)
             {
                 PlaySE(SE_SELECT);
@@ -949,14 +949,14 @@ static void Task_YesNoMenu_HandleInput(u32 taskId)
     {
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
-            case -2:
+            case MENU_NOTHING_CHOSEN:
                 return;
-            case -1:
-            case 1:
+            case MENU_B_PRESSED:
+            case MENU_ACTION_NO:
                 PlaySE(SE_SELECT);
                 gSpecialVar_Result = FALSE;
                 break;
-            case 0:
+            case MENU_ACTION_YES:
                 gSpecialVar_Result = TRUE;
                 break;
         }

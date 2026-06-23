@@ -519,17 +519,14 @@ static u16 HandleJoypad_SelectWord(void)
 
 static u16 Cancel_HandleYesNoMenu(void)
 {
-    u8 var0;
-
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
     case MENU_B_PRESSED: // B Button
-    case 1: // No
+    case MENU_ACTION_NO: // No
         sEasyChatScreen->state = sEasyChatScreen->stateBackup;
         return 7;
-    case 0: // Yes
+    case MENU_ACTION_YES: // Yes
         gSpecialVar_Result = 0;
-
         return 23;
     default:
         return 0;
@@ -541,10 +538,10 @@ static u16 Confirm_HandleYesNoMenu(void)
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
     case MENU_B_PRESSED: // B Button
-    case 1: // No
+    case MENU_ACTION_NO: // No
         sEasyChatScreen->state = sEasyChatScreen->stateBackup;
         return 7;
-    case 0: // Yes
+    case MENU_ACTION_YES: // Yes
         gSpecialVar_Result = HasECMessageChanged();
         CommitECWords();
         return 23;
@@ -558,10 +555,10 @@ static u16 DelAll_HandleYesNoMenu(void)
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
     case MENU_B_PRESSED: // B Button
-    case 1: // No
+    case MENU_ACTION_NO: // No
         sEasyChatScreen->state = 1;
         return 7;
-    case 0: // Yes
+    case MENU_ACTION_YES: // Yes
         DeleteAllECFields();
         sEasyChatScreen->state = 1;
         return 8;

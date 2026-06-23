@@ -53,7 +53,7 @@ const struct TextWindowGraphics gUserFrames[] = {
 
 const struct TextWindowGraphics * GetUserFrameGraphicsInfo(u32 idx)
 {
-    if (idx >= 20) // if (idx >= ARRAY_COUNT(gUserFrames))
+    if (idx >= ARRAY_COUNT(gUserFrames))
         return &gUserFrames[0];
     else
         return &gUserFrames[idx];

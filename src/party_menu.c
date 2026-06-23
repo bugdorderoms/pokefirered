@@ -2917,7 +2917,7 @@ static void Task_HandleSwitchItemsFromBagYesNoInput(u32 taskId)
 
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0: // Yes, switch items
+    case MENU_ACTION_YES: // Yes, switch items
         item = gPartyMenu.bagItem;
         
         RemoveItemToGiveFromBag(item);
@@ -2944,7 +2944,7 @@ static void Task_HandleSwitchItemsFromBagYesNoInput(u32 taskId)
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1: // No, dont switch items
+    case MENU_ACTION_NO: // No, dont switch items
         gTasks[taskId].func = Task_UpdateHeldItemSpriteAndClosePartyMenu;
         break;
     }
@@ -3287,7 +3287,7 @@ static void Task_HandleCancelChooseMonYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         gPartyMenuUseExitCallback = FALSE;
         gPartyMenu.slotId = PARTY_SIZE + 1;
         ClearSelectedPartyOrder();
@@ -3296,7 +3296,7 @@ static void Task_HandleCancelChooseMonYesNoInput(u32 taskId)
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         Task_ReturnToChooseMonAfterText(taskId);
         break;
     }
@@ -3306,9 +3306,9 @@ static bool32 HandleMedicineItemYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-        case 0:
+        case MENU_ACTION_YES:
             return TRUE;
-        case 1:
+        case MENU_ACTION_NO:
         case MENU_B_PRESSED:
             SetMedicineItemFunc(taskId);
             break;
@@ -3338,7 +3338,7 @@ static void Task_HandleSwitchItemsYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0: // Yes, switch items
+    case MENU_ACTION_YES: // Yes, switch items
         RemoveBagItem(gSpecialVar_ItemId, 1);
         
         if (!AddBagItem(sPartyMenuItemId, 1)) // No room to return held item to bag
@@ -3364,7 +3364,7 @@ static void Task_HandleSwitchItemsYesNoInput(u32 taskId)
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1: // No
+    case MENU_ACTION_NO: // No
         gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
         break;
     }
@@ -3392,7 +3392,7 @@ static void Task_HandleSendMailToPCYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0: // Yes, send to PC
+    case MENU_ACTION_YES: // Yes, send to PC
         if (TakeMailFromMon2(&gPlayerParty[gPartyMenu.slotId]) != 0xFF)
         {
             DisplayPartyMenuMessage(gText_MailSentToPC, FALSE);
@@ -3407,7 +3407,7 @@ static void Task_HandleSendMailToPCYesNoInput(u32 taskId)
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         DisplayPartyMenuMessage(gText_MailMessageWillBeLost, TRUE);
         gTasks[taskId].func = Task_LoseMailMessageYesNo;
         break;
@@ -3429,7 +3429,7 @@ static void Task_HandleLoseMailMessageYesNoInput(u32 taskId)
 
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0: // Yes, lose mail message
+    case MENU_ACTION_YES: // Yes, lose mail message
         item = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_HELD_ITEM);
         
         if (AddBagItem(item, 1))
@@ -3448,7 +3448,7 @@ static void Task_HandleLoseMailMessageYesNoInput(u32 taskId)
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
         break;
     }
@@ -3473,14 +3473,14 @@ static void Task_HandleFieldMoveExitAreaYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         gPartyMenu.exitCallback = CB2_ReturnToField;
         Task_ClosePartyMenu(taskId);
         break;
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         gFieldCallback2 = NULL;
         gPostMenuFieldCallback = NULL;
         Task_ReturnToChooseMonAfterText(taskId);
@@ -3508,14 +3508,14 @@ static void Task_HandleCancelParticipationYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         gSpecialVar_0x8004 = PARTY_SIZE + 1;
         Task_ClosePartyMenu(taskId);
         break;
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         gTasks[taskId].func = Task_ReturnToChooseMonAfterText;
         break;
     }
@@ -3591,14 +3591,14 @@ static void Task_HandleReplaceMoveYesNoInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         DisplayPartyMenuMessage(gText_WhichMoveToForget, TRUE);
         gTasks[taskId].func = Task_ShowSummaryScreenToForgetMove;
         break;
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         StopLearningMovePrompt(taskId);
         break;
     }
@@ -3634,7 +3634,7 @@ static void Task_HandleStopLearningMoveYesNoInput(u32 taskId)
 
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         GetMonNickname(mon, gStringVar1);
         StringCopy(gStringVar2, gBattleMoves[gPartyMenu.data1].name);
         StringExpandPlaceholders(gStringVar4, gText_MoveNotLearned);
@@ -3656,7 +3656,7 @@ static void Task_HandleStopLearningMoveYesNoInput(u32 taskId)
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         GetMonNickname(mon, gStringVar1);
         StringCopy(gStringVar2, gBattleMoves[gPartyMenu.data1].name);
         DisplayLearnMoveMessage(gText_PkmnNeedsToReplaceMove);
@@ -6791,13 +6791,11 @@ static void Task_AbilityChange(u32 taskId)
             
             species = GetMonData(mon, MON_DATA_SPECIES);
             
-            if (!toHidden && (gSpeciesInfo[species].abilities[0] == gSpeciesInfo[species].abilities[1]))
-                failed = TRUE; // Ability Capsule fail check
-            else if (toHidden && !gSpeciesInfo[species].hiddenAbility)
-                failed = TRUE; // Ability Patch fail check
+            if (!toHidden)
+                failed = (gSpeciesInfo[species].abilities[0] == gSpeciesInfo[species].abilities[1]); // Ability Capsule fail check
             else
-                failed = FALSE;
-            
+                failed = (gSpeciesInfo[species].hiddenAbility == ABILITY_NONE); // Ability Patch fail check
+
             if (failed)
             {
                 gPartyMenuUseExitCallback = FALSE;

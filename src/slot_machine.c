@@ -1035,13 +1035,13 @@ static void MainTask_ConfirmExitGame(u32 taskId)
     case 2:
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
-        case 0:
+        case MENU_ACTION_YES:
             AddCoins(sSlotMachineState->bet);
             SetSlotMachineSetupTask(SLOTTASK_SHOW_AMOUNTS, 0);
             data[0] = 3;
             break;
-        case 1:
-        case -1:
+        case MENU_ACTION_NO:
+        case MENU_B_PRESSED:
             SetSlotMachineSetupTask(SLOTTASK_DESTROY_YESNO, 0);
             data[0] = 4;
             break;

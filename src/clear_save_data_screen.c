@@ -132,17 +132,16 @@ static void Task_HandleYesNoMenu(u32 taskId)
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
         case MENU_B_PRESSED:
-        case 1:
+        case MENU_ACTION_NO:
             PlaySE(SE_SELECT);
             break;
-        case 0:
+        case MENU_ACTION_YES:
             PlaySE(SE_SELECT);
             FillWindowPixelBuffer(1, PIXEL_FILL(1));
             AddTextPrinterParameterized4(1, 2, 0, 3, 1, 1, sTextColor, 0, COMPOUND_STRING("Clearing data‥\nPlease wait."));
             CopyWindowToVram(1, COPYWIN_BOTH);
             ClearSaveData();
             break;
-        case MENU_NOTHING_CHOSEN:
         default:
             return;
         }

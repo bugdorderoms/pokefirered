@@ -1215,11 +1215,11 @@ static void Cb_ReleaseMon(u32 taskId)
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
         case MENU_B_PRESSED:
-        case  1:
+        case MENU_ACTION_NO:
             ClearBottomWindow();
             SetPSSCallback(Cb_MainPSS);
             break;
-        case  0:
+        case MENU_ACTION_YES:
             ClearBottomWindow();
             InitCanReleaseMonVars();
             sub_8093194();
@@ -1572,11 +1572,11 @@ static void Cb_CloseBoxWhileHoldingItem(u32 taskId)
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
         case MENU_B_PRESSED:
-        case 1:
+        case MENU_ACTION_NO:
             ClearBottomWindow();
             SetPSSCallback(Cb_MainPSS);
             break;
-        case 0:
+        case MENU_ACTION_YES:
             if (AddBagItem(gPSSData->movingItem, 1) == TRUE)
             {
                 ClearBottomWindow();
@@ -1901,11 +1901,11 @@ static void Cb_OnCloseBoxPressed(u32 taskId)
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
         case MENU_B_PRESSED:
-        case 1:
+        case MENU_ACTION_NO:
             ClearBottomWindow();
             SetPSSCallback(Cb_MainPSS);
             break;
-        case 0:
+        case MENU_ACTION_YES:
             PlaySE(SE_PC_OFF);
             ClearBottomWindow();
             gPSSData->state++;
@@ -1959,11 +1959,11 @@ static void Cb_OnBPressed(u32 taskId)
     case 2:
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
-        case 0:
+        case MENU_ACTION_YES:
             ClearBottomWindow();
             SetPSSCallback(Cb_MainPSS);
             break;
-        case 1:
+        case MENU_ACTION_NO:
         case MENU_B_PRESSED:
             PlaySE(SE_PC_OFF);
             ClearBottomWindow();

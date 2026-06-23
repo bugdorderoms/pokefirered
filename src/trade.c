@@ -1812,12 +1812,12 @@ static void TradeMenuCB_3(void)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         CommunicateWhetherMonCanBeTraded();
         sTradeMenuResourcesPtr->tradeMenuCBnum = 100;
         PutWindowTilemap(17);
         break;
-    case 1:
+    case MENU_ACTION_NO:
     case MENU_B_PRESSED:
         ScheduleLinkTaskWithDelay(3, 1);
 
@@ -1847,7 +1847,7 @@ static void TradeMenuCB_4(void)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         PrintTradeErrorOrStatusMessage(TRADESTATMSG_WAITINGFORFRIEND);
         sTradeMenuResourcesPtr->linkData[0] = 0xEEAA;
         sTradeMenuResourcesPtr->linkData[1] = 0;
@@ -1856,7 +1856,7 @@ static void TradeMenuCB_4(void)
         sTradeMenuResourcesPtr->tradeMenuCBnum = 100;
         CommitWindows();
         break;
-    case 1:
+    case MENU_ACTION_NO:
     case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         RedrawChooseAPokemonWindow();

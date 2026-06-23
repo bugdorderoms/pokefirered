@@ -1235,7 +1235,7 @@ static void Task_OakSpeech27(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case 0:
+    case MENU_ACTION_YES:
         PlaySE(SE_SELECT);
         gTasks[taskId].data[3] = 40;
         
@@ -1252,8 +1252,8 @@ static void Task_OakSpeech27(u32 taskId)
             gTasks[taskId].func = Task_OakSpeech31;
         }
         break;
-    case 1:
-    case -1:
+    case MENU_ACTION_NO:
+    case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         
         if (!sOakSpeechResources->hasPlayerBeenNamed)

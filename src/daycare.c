@@ -1748,12 +1748,12 @@ static void CB2_EggHatch_1(void)
     case 10:
         switch (Menu_ProcessInputNoWrapClearOnChoose())
         {
-        case 0:
+        case MENU_ACTION_YES:
             GetMonNickname(&gPlayerParty[sEggHatchData->eggPartyID], gStringVar3);
             DoNamingScreen(NAMING_SCREEN_NAME_RATER, gStringVar3, GetMonData(&gPlayerParty[sEggHatchData->eggPartyID], MON_DATA_SPECIES), GetMonGender(&gPlayerParty[sEggHatchData->eggPartyID]), EggHatchSetMonNickname);
             break;
-        case 1:
-        case -1:
+        case MENU_ACTION_NO:
+        case MENU_B_PRESSED:
             sEggHatchData->CB2_state++;
         }
         break;

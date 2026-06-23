@@ -514,11 +514,11 @@ static void Task_MailSubmenuHandleInput(u32 taskId)
     
     switch (input)
     {
-    case -1:
+    case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         Task_PlayerPcExitMailSubmenu(taskId);
         break;
-    case -2:
+    case MENU_NOTHING_CHOSEN:
         break;
     default:
         PlaySE(SE_SELECT);
@@ -586,15 +586,15 @@ static void Task_MoveToBagYesNoMenuHandleInput(u32 taskId)
 {
     switch (Menu_ProcessInputNoWrapClearOnChoose())
     {
-    case -2:
+    case MENU_NOTHING_CHOSEN:
         break;
-    case 0:
+    case MENU_ACTION_YES:
         Task_TryPutMailInBag_DestroyMsgIfSuccessful(taskId);
         break;
-    case -1:
+    case MENU_B_PRESSED:
         PlaySE(SE_SELECT);
         // fallthrough
-    case 1:
+    case MENU_ACTION_NO:
         Task_PlayerPcExitMailSubmenu(taskId);
         break;
     }

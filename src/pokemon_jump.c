@@ -2348,12 +2348,12 @@ static bool32 DoPlayAgainPrompt(void)
             switch (Menu_ProcessInputNoWrapClearOnChoose())
             {
                 case MENU_B_PRESSED:
-                case 1: // No
+                case MENU_ACTION_NO:
                     sPokemonJump->playAgainState = 1;
                     SetUpPokeJumpGfxFuncById(GFXFUNC_ERASE_MSG);
                     sPokemonJump->helperState++;
                     break;
-                case 0: // Yes
+                case MENU_ACTION_YES:
                     sPokemonJump->playAgainState = 2;
                     SetUpPokeJumpGfxFuncById(GFXFUNC_ERASE_MSG);
                     sPokemonJump->helperState++;

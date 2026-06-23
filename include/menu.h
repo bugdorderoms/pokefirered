@@ -23,6 +23,9 @@ enum
 #define MENU_NOTHING_CHOSEN -2
 #define MENU_B_PRESSED -1
 
+#define MENU_ACTION_YES 0
+#define MENU_ACTION_NO  1
+
 struct MenuAction
 {
     const u8 *text;

@@ -488,7 +488,7 @@ static void MoveRelearnerStateMachine(void)
     case MENU_STATE_TEACH_MOVE_CONFIRM :
         switch (YesNoMenuProcessInput())
         {
-        case 0:
+        case MENU_ACTION_YES:
             if (GiveMoveToMon(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex]) != MON_HAS_MAX_MOVES)
             {
                 StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_MonLearnedMove);
@@ -498,8 +498,8 @@ static void MoveRelearnerStateMachine(void)
             else
                 sMoveRelearner->state = 16;
             break;
-        case 1:
-        case -1:
+        case MENU_ACTION_NO:
+        case MENU_B_PRESSED:
             sMoveRelearner->state = 3;
             break;
         }
@@ -511,12 +511,12 @@ static void MoveRelearnerStateMachine(void)
     case MENU_STATE_GIVE_UP_CONFIRM:
         switch (YesNoMenuProcessInput())
         {
-        case 0:
+        case MENU_ACTION_YES:
             gSpecialVar_0x8004 = FALSE;
             sMoveRelearner->state = 14;
             break;
-        case 1:
-        case -1:
+        case MENU_ACTION_NO:
+        case MENU_B_PRESSED:
             sMoveRelearner->state = 3;
             break;
         }
@@ -532,12 +532,12 @@ static void MoveRelearnerStateMachine(void)
     case MENU_STATE_CONFIRM_DELETE_OLD_MOVE:
         switch (YesNoMenuProcessInput())
         {
-        case 0:
+        case MENU_ACTION_YES:
             StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_WhichMoveShouldBeForgotten);
             sMoveRelearner->state = 19;
             break;
-        case 1:
-        case -1:
+        case MENU_ACTION_NO:
+        case MENU_B_PRESSED:
             sMoveRelearner->state = 24;
             break;
         }
@@ -553,11 +553,11 @@ static void MoveRelearnerStateMachine(void)
     case MENU_STATE_CONFIRM_STOP_TEACHING:
         switch (YesNoMenuProcessInput())
         {
-        case 0:
+        case MENU_ACTION_YES:
             sMoveRelearner->state = 27;
             break;
-        case 1:
-        case -1:
+        case MENU_ACTION_NO:
+        case MENU_B_PRESSED:
             sMoveRelearner->state = 16;
             break;
         }
@@ -873,7 +873,7 @@ static s8 YesNoMenuProcessInput(void)
 {
     s8 input = Menu_ProcessInputNoWrapClearOnChoose();
     
-    if (input != -2)
+    if (input != MENU_NOTHING_CHOSEN)
     {
         PutWindowTilemap(6);
         CopyWindowToVram(6, COPYWIN_MAP);

@@ -1123,7 +1123,7 @@ static void Task_TradeEvolutionScene(u32 taskId)
         case 4:
             switch (Menu_ProcessInputNoWrapClearOnChoose())
             {
-            case 0:
+            case MENU_ACTION_YES:
                 sEvoCursorPos = 0;
                 BattleStringExpandPlaceholdersToDisplayedString(gBattleStringsTable[STRINGID_EMPTYSTRING - BATTLESTRINGS_ID_ADDER]);
                 DrawTextOnTradeWindow(0, gDisplayedStringBattle, 1);
@@ -1131,8 +1131,8 @@ static void Task_TradeEvolutionScene(u32 taskId)
                 if (gTasks[taskId].tLearnMoveState == 5)
                     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
                 break;
-            case 1:
-            case -1:
+            case MENU_ACTION_NO:
+            case MENU_B_PRESSED:
                 sEvoCursorPos = 1;
                 BattleStringExpandPlaceholdersToDisplayedString(gBattleStringsTable[STRINGID_EMPTYSTRING - BATTLESTRINGS_ID_ADDER]);
                 DrawTextOnTradeWindow(0, gDisplayedStringBattle, 1);

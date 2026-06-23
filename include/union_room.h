@@ -175,6 +175,6 @@ extern u16 gUnionRoomOfferedSpecies;
 extern u8 gUnionRoomRequestedMonType;
 
 void StartUnionRoomBattle(u16 battleFlags);
-u8 UnionRoom_CreateTask_CallCB2ReturnFromLinkTrade(void);
+void UnionRoom_CreateTask_CallCB2ReturnFromLinkTrade(void);
 
 #endif //GUARD_UNION_ROOM_H

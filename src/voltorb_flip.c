@@ -2230,7 +2230,7 @@ static bool32 VFSequence_HandleYesNoInput(s16 *data)
     {
         case MENU_NOTHING_CHOSEN:
             break;
-        case 0: // Choose Yes
+        case MENU_ACTION_YES:
             tState += 6;
             break;
         default: // Choose No or pressed B
