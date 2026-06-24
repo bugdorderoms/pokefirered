@@ -211,7 +211,8 @@ struct Sprite
     /*0x3E*/ u16 inUse:1;               //1
              u16 coordOffsetEnabled:1;  //2
              u16 invisible:1;           //4
-             u16 flags_3:1;             //8
+             // If set to TRUE a copy of the sprite's OAM is created with objMode set to ST_OAM_OBJ_WINDOW
+             u16 copyToObjWin:1;        //8
              u16 flags_4:1;             //0x10
              u16 flags_5:1;             //0x20
              u16 flags_6:1;             //0x40
@@ -223,7 +224,7 @@ struct Sprite
              u16 animEnded:1;           //0x10
              u16 affineAnimEnded:1;     //0x20
              u16 usingSheet:1;          //0x40
-             u16 flags_f:1;             //0x80
+             u16 anchored:1;            //0x80
 
     /*0x40*/ u16 sheetTileStart;
 
@@ -304,8 +305,6 @@ u32 IndexOfSpritePaletteTag(u32 tag);
 u32 GetSpritePaletteTagByPaletteNum(u32 paletteNum);
 void FreeSpritePaletteByTag(u32 tag);
 void SetSubspriteTables(struct Sprite *sprite, const struct SubspriteTable *subspriteTables);
-bool32 AddSpriteToOamBuffer(struct Sprite *object, u8 *oamIndex);
-bool32 AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex);
 void CopyToSprites(u8 *src);
 void CopyFromSprites(u8 *dest);
 u8 SpriteTileAllocBitmapOp(u16 bit, u32 op);

@@ -965,56 +965,32 @@ static void Task_YesNoMenu_HandleInput(u32 taskId)
     }
 }
 
-static u32 CreateMonSprite_PicBox(u32 species, s16 x, s16 y)
-{
-    return CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, ITEMICON_TAG);
-}
-
 static u32 CreateMenuMonPic(u32 species, u8 x, u8 y)
 {
-    u32 spriteId = CreateMonSprite_PicBox(species, x, y), spriteId2 = MAX_SPRITES;
-    
-    if (Overworld_GetFlashLevel() > 0)
-    {
-        spriteId2 = CreateMonSprite_PicBox(species, x, y);
-        
-        if (spriteId2 != MAX_SPRITES)
-        {
-            gSprites[spriteId2].callback = SpriteCallbackDummy;
-            gSprites[spriteId2].oam.priority = 0;
-            gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
-        }
-    }
+    u32 spriteId = CreateMonPicSprite(species, FALSE, 0x8000, TRUE, 8 * x + 40, 8 * y + 40, 0, ITEMICON_TAG);
+
     gSprites[spriteId].callback = SpriteCallbackDummy;
     gSprites[spriteId].oam.priority = 0;
-    gSprites[spriteId].data[0] = spriteId2;
+    
+    if (Overworld_GetFlashLevel() > 0)
+        gSprites[spriteId].copyToObjWin = TRUE;
     
     return spriteId;
 }
 
 static u32 CreateMenuItemPic(u32 itemId, u16 x, u16 y)
 {
-    u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2 = MAX_SPRITES;
+    u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
     
     x = 8 * x + 16;
     y = 8 * y + 16;
     
-    if (Overworld_GetFlashLevel() > 0)
-    {
-        spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
-        
-        if (spriteId2 != MAX_SPRITES)
-        {
-            gSprites[spriteId2].x = x;
-            gSprites[spriteId2].y = y;
-            gSprites[spriteId2].oam.priority = 0;
-            gSprites[spriteId2].oam.objMode = ST_OAM_OBJ_WINDOW;
-        }
-    }
     gSprites[spriteId].x = x;
     gSprites[spriteId].y = y;
     gSprites[spriteId].oam.priority = 0;
-    gSprites[spriteId].data[0] = spriteId2;
+    
+    if (Overworld_GetFlashLevel() > 0)
+        gSprites[spriteId].copyToObjWin = TRUE;
     
     return spriteId;
 }
@@ -1033,9 +1009,6 @@ static void DestroyPicboxPic(u32 picType, u32 spriteId)
     switch (picType)
     {
         case PIC_TYPE_POKEMON:
-            if (sprite->data[0] != MAX_SPRITES)
-                FreeResourcesAndDestroySprite(&gSprites[sprite->data[0]], sprite->data[0]);
-
             FreeResourcesAndDestroySprite(sprite, spriteId);
             break;
         case PIC_TYPE_MUSEUM_FOSSIL:
@@ -1043,9 +1016,6 @@ static void DestroyPicboxPic(u32 picType, u32 spriteId)
             FreeSpriteTilesByTag(TAG_MUSEUM_FOSSIL_PIC);
             break;
         case PIC_TYPE_ITEM:
-            if (sprite->data[0] != MAX_SPRITES)
-                DestroySpriteAndFreeResources(&gSprites[sprite->data[0]]);
-
             DestroySpriteAndFreeResources(sprite);
             break;
     }

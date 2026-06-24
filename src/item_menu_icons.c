@@ -482,47 +482,33 @@ static u32 ShowObtainedItemDescription(u32 item)
 
 void CreateItemIconOnFindMessage(void)
 {
-    s16 x, y;
-    bool32 itemObtained;
-    struct Sprite *sprite1, *sprite2;
     u32 itemId = gSpecialVar_0x8009;
-    u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId), spriteId2, windowId = 0xFF;
-    
-    // Handle flash
-    if (Overworld_GetFlashLevel() > 0)
-        spriteId2 = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
-    else
-        spriteId2 = MAX_SPRITES;
+    u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
     
     if (spriteId != MAX_SPRITES)
     {
-        sprite1 = &gSprites[spriteId];
+        s16 x, y;
+        bool32 itemObtained;
+        u32 windowId = 0xFF;
+        struct Sprite *sprite = &gSprites[spriteId];
         
-        if (spriteId2 != MAX_SPRITES)
-            sprite2 = &gSprites[spriteId2];
+        // Handle flash
+        if (Overworld_GetFlashLevel() > 0)
+            sprite->copyToObjWin = TRUE;
         
         itemObtained = GetSetItemObtained(itemId, FLAG_GET_OBTAINED);
-        
+
         if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
         {
             x = 96;
             y = 48;
             
-            sprite1->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
-            sprite1->oam.matrixNum = AllocOamMatrix();
-            sprite1->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
+            sprite->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+            sprite->oam.matrixNum = AllocOamMatrix();
+            sprite->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
             
-            StartSpriteAffineAnim(sprite1, 0);
-            
-            if (spriteId2 != MAX_SPRITES)
-            {
-                sprite2->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
-                sprite2->oam.matrixNum = AllocOamMatrix();
-                sprite2->affineAnims = sSpriteAffineAnimTable_KeyItemTM;
-                
-                StartSpriteAffineAnim(sprite2, 0);
-            }
-            
+            StartSpriteAffineAnim(sprite, 0);
+
             if (!itemObtained)
                 windowId = ShowObtainedItemDescription(itemId);
         }
@@ -541,34 +527,21 @@ void CreateItemIconOnFindMessage(void)
                 windowId = ShowObtainedItemDescription(itemId);
             }
         }
-        sprite1->x2 = x;
-        sprite1->y2 = y;
-        sprite1->oam.priority = 0;
-        sprite1->data[0] = windowId;
-        sprite1->data[1] = spriteId2;
-        
-        if (spriteId2 != MAX_SPRITES)
-        {
-            sprite2->x2 = x;
-            sprite2->y2 = y;
-            sprite2->oam.priority = 0;
-            sprite2->oam.objMode = ST_OAM_OBJ_WINDOW;
-        }
+        sprite->x2 = x;
+        sprite->y2 = y;
+        sprite->oam.priority = 0;
+        sprite->data[0] = windowId;
     }
     gSpecialVar_0x8009 = spriteId; // save sprite id for use later
 }
 
 void DestroyItemIconOnFindMessage(void)
 {
-    u32 spriteId = gSpecialVar_0x8009;
-    struct Sprite * sprite = &gSprites[spriteId];
-    u32 windowId = sprite->data[0], spriteId2 = sprite->data[1];
+    struct Sprite *sprite = &gSprites[gSpecialVar_0x8009];
+    u32 windowId = sprite->data[0];
     
     DestroyItemIconObj(sprite, ITEMICON_TAG, ITEMICON_TAG);
-    
-    if (spriteId2 != MAX_SPRITES)
-        DestroyItemIconObj(&gSprites[spriteId2], ITEMICON_TAG, ITEMICON_TAG);
-    
+
     if (windowId != 0xFF)
     {
         ClearDialogWindowAndFrame(windowId, TRUE);
