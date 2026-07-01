@@ -119,5 +119,7 @@ extern const u16 gMissStringIds[];
 extern const u8 gText_Win[];
 extern const u8 gText_Loss[];
 extern const u8 gText_Draw[];
+extern const u8 gText_BattleYesNoChoice[];
+extern const u8 gText_EmptyString[];
 
 #endif // GUARD_BATTLE_MESSAGE_H

@@ -23,7 +23,6 @@
 #include "palette.h"
 #include "pokeball.h"
 #include "recorded_battle.h"
-#include "strings.h"
 #include "task.h"
 #include "test_runner.h"
 #include "util.h"

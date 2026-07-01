@@ -12,7 +12,6 @@
 #include "battle_gfx_sfx_util.h"
 #include "pokeball.h"
 #include "battle_main.h"
-#include "strings.h"
 #include "battle_ai_util.h"
 #include "pokemon_special_anim.h"
 #include "task.h"
@@ -234,7 +233,7 @@ void PlayerHandleChooseAction(u32 battlerId)
     const u8 *actionsText;
     
     if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN_TUTORIAL)
-        StringCopy(gBattleTextBuff1, gText_TheOldMan);
+        StringCopy(gBattleTextBuff1, COMPOUND_STRING("the old man"));
     else
         PrepareMonNickNoIllusionBuffer(gBattleTextBuff1, battlerId, gBattlerPartyIndexes[battlerId]);
     
@@ -325,7 +324,7 @@ static void PrintLinkStandbyMsg(void)
     {
         gBattle_BG0_X = 0;
         gBattle_BG0_Y = 0;
-        BattlePutTextOnWindow(gText_LinkStandby, B_WIN_MSG);
+        BattlePutTextOnWindow(COMPOUND_STRING("{PAUSE 16}Link standby…"), B_WIN_MSG);
     }
 }
 
@@ -1372,7 +1371,7 @@ static void MoveInfoPrintPowerAndAccuracy(u32 moveSlot)
     
     // Move's power
     if (sChooseMoveStructOverride.moves[moveSlot].power <= 1)
-        StringCopy(gBattleTextBuff1, gText_ThreeHyphens);
+        StringCopy(gBattleTextBuff1, gText_MoveNoPowerAccuracy);
     else
         ConvertIntToDecimalStringN(gBattleTextBuff1, sChooseMoveStructOverride.moves[moveSlot].power, STR_CONV_MODE_LEFT_ALIGN, 3);
     
@@ -1380,7 +1379,7 @@ static void MoveInfoPrintPowerAndAccuracy(u32 moveSlot)
     move = sChooseMoveStructOverride.moves[moveSlot].move;
     
     if (gBattleMoves[move].accuracy == 0)
-        StringCopy(gBattleTextBuff2, gText_ThreeHyphens);
+        StringCopy(gBattleTextBuff2, gText_MoveNoPowerAccuracy);
     else
         ConvertIntToDecimalStringN(gBattleTextBuff2, gBattleMoves[move].accuracy, STR_CONV_MODE_LEFT_ALIGN, 3);
 }

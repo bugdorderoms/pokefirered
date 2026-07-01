@@ -4,6 +4,13 @@
 #include "pokemon_storage_system_internal.h"
 #include "constants/form_change.h"
 
+const u8 gString_Bill[] = _("Bill");
+const u8 gString_Someone[] = _("Someone");
+const u8 gText_SomeoneSPc[] = _("Someone's PC");
+const u8 gText_BillSPc[] = _("Bill's PC");
+const u8 gText_SPc[] = _("{PLAYER}'s PC");
+const u8 gText_ProfOakSPc[] = _("Prof. Oak's PC");
+
 // Functions here are general utility functions.
 u32 StorageGetCurrentBox(void)
 {

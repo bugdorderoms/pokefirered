@@ -5,7 +5,6 @@
 #include "scanline_effect.h"
 #include "script.h"
 #include "task.h"
-#include "strings.h"
 #include "menu.h"
 #include "heal_location.h"
 #include "new_menu_helpers.h"

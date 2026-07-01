@@ -329,6 +329,18 @@ void MoveSelectionCreateCursorAt(u32 cursorPos, u32 arg1);
 void MoveSelectionDestroyCursorAt(u32 cursorPos);
 bool32 CanTargetBattler(u32 attacker, u32 defender, u32 move, u32 moveTarget, bool32 isDefenderHealBlocked);
 
+extern const u8 gText_BattleMenu[];
+extern const u8 gText_BattleMenuBagDisabled[];
+extern const u8 gText_RaidMenu[];
+extern const u8 gText_WhatWillBufferDo[];
+extern const u8 gText_MoveInterfaceMoveNamesColor[];
+extern const u8 gText_MoveInterfaceEffectiveness[];
+extern const u8 gText_MoveInterfacePP[];
+extern const u8 gText_MoveInterfaceType[];
+extern const u8 gText_MoveInfoPowerAndAccuracy[];
+extern const u8 gText_MoveInfoPriorityAndCategory[];
+extern const u8 gText_MoveInfoTarget[];
+
 // opponent controller
 void SetControllerToOpponent(u32 battlerId);
 void OpponentHandleTrainerSlideBack(u32 battlerId);
@@ -340,10 +352,34 @@ void SetControllerToSafari(u32 battlerId);
 void SafariHandleBallThrowAnim(u32 battlerId);
 void SafariHandleFaintingCry(u32 battlerId);
 
+extern const u8 gText_SafariMenu[];
+extern const u8 gText_WhatWillPlayerThrow[];
+
 // pokedude controller
 void SetControllerToPokedude(u32 battlerId);
 void InitPokedudePartyAndOpponent(void);
 void Pokedude_SimulateInputChooseAction(u32 battlerId);
+
+extern const u8 Pokedude_Text_SpeedierBattlerGoesFirst[];
+extern const u8 Pokedude_Text_MyRattataFasterThanPidgey[];
+extern const u8 Pokedude_Text_BattlersTakeTurnsAttacking[];
+extern const u8 Pokedude_Text_MyRattataWonGetsEXP[];
+extern const u8 Pokedude_Text_UhOhRattataPoisoned[];
+extern const u8 Pokedude_Text_HealStatusRightAway[];
+extern const u8 Pokedude_Text_UsingItemTakesTurn[];
+extern const u8 Pokedude_Text_YayWeManagedToWin[];
+extern const u8 Pokedude_Text_WaterNotVeryEffectiveAgainstGrass[];
+extern const u8 Pokedude_Text_GrassEffectiveAgainstWater[];
+extern const u8 Pokedude_Text_LetsTryShiftingMons[];
+extern const u8 Pokedude_Text_ShiftingUsesTurn[];
+extern const u8 Pokedude_Text_ButterfreeDoubleResistsGrass[];
+extern const u8 Pokedude_Text_ButterfreeGoodAgainstOddish[];
+extern const u8 Pokedude_Text_YeahWeWon[];
+extern const u8 Pokedude_Text_WeakenMonBeforeCatching[];
+extern const u8 Pokedude_Text_BestIfTargetStatused[];
+extern const u8 Pokedude_Text_CantDoubleUpOnStatus[];
+extern const u8 Pokedude_Text_LetMeThrowBall[];
+extern const u8 Pokedude_Text_PickBestKindOfBall[];
 
 // oak and old man controller
 void SetControllerToOakOrOldMan(u32 battlerId);

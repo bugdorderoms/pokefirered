@@ -44,7 +44,6 @@
 #include "sprite.h"
 #include "start_menu.h"
 #include "string_util.h"
-#include "strings.h"
 #include "task.h"
 #include "text.h"
 #include "text_window.h"
@@ -655,7 +654,7 @@ static void DexNavUpdateDirectionArrow(void)
     FillWindowPixelRect(windowId, PIXEL_FILL(1), SEARCH_ARROW_X, WINDOW_COL_0, 12, 12);
     
     if (deltaX <= 1 && deltaY <= 1)
-        str = gString_Dummy;
+        str = COMPOUND_STRING("");
     else if (deltaX > deltaY)
     {
         if (playerX > tileX)
@@ -1520,9 +1519,11 @@ static void PrintCurrentSpeciesInfo(void)
     // hidden ability
     if (!species)
         AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, sText_DexNav_NoInfo);
-    else if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))       
-        AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gSpeciesInfo[species].hiddenAbility ?
-        gAbilities[gSpeciesInfo[species].hiddenAbility].name : gText_PokeSum_Item_None);
+    else if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))
+    {
+        const u8 *hiddenAbilityName = gSpeciesInfo[species].hiddenAbility ? gAbilities[gSpeciesInfo[species].hiddenAbility].name : COMPOUND_STRING("None");
+        AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, hiddenAbilityName);
+    }
     else
         AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, COMPOUND_STRING("Capture first!"));
 

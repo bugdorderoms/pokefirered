@@ -41,4 +41,11 @@ u32 CountPartyNonEggMons(void);
 void UpdatePcMonIconSpecies(void);
 s16 SeekToNextMonInBox(struct BoxPokemon * boxMons, s8 curIndex, u32 maxIndex, u32 flags);
 
+extern const u8 gString_Bill[];
+extern const u8 gString_Someone[];
+extern const u8 gText_SomeoneSPc[];
+extern const u8 gText_BillSPc[];
+extern const u8 gText_SPc[];
+extern const u8 gText_ProfOakSPc[];
+
 #endif // GUARD_POKEMON_STORAGE_SYSTEM_H

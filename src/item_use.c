@@ -33,7 +33,6 @@
 #include "party_menu.h"
 #include "region_map.h"
 #include "script.h"
-#include "strings.h"
 #include "task.h"
 #include "teachy_tv.h"
 #include "tm_case.h"
@@ -57,6 +56,10 @@ static void Task_UseRepel(u32 taskId);
 static void RemoveUsedItem(void);
 static void Task_UsedBlackWhiteFlute(u32 taskId);
 static void FieldUseFunc_HoneyCB(u32 taskId);
+
+const u8 gText_PlayerUsedItem[] = _("{PLAYER} used the\n{STR_VAR_2}.{PAUSE_UNTIL_PRESS}");
+const u8 gText_WontHaveEffect[] = _("It won't have any effect.{PAUSE_UNTIL_PRESS}");
+const u8 gText_OakForbidsUseOfItemHere[] = _("Oak: {PLAYER}!\nThis isn't the time to use that!{PAUSE_UNTIL_PRESS}");
 
 static void (*const sExitCallbackByItemType[])(void) = {
     CB2_ShowPartyMenuForItemUse,
@@ -137,7 +140,7 @@ static void RemoveUsedItem(void)
     Pocket_CalculateNItemsAndMaxShowed(ItemId_GetPocket(gSpecialVar_ItemId));
     PocketCalculateInitialCursorPosAndItemsAbove(ItemId_GetPocket(gSpecialVar_ItemId));
     CopyItemName(gSpecialVar_ItemId, gStringVar2);
-    StringExpandPlaceholders(gStringVar4, gUnknown_841658C);
+    StringExpandPlaceholders(gStringVar4, gText_PlayerUsedItem);
 }
 
 static inline void SetFieldCallback2ForItemUse(void)
@@ -181,14 +184,11 @@ void FieldUseFunc_OrangeMail(u32 taskId)
 void FieldUseFunc_MachBike(u32 taskId)
 {
     s16 x, y;
-    u32 behavior;
 
     PlayerGetDestCoords(&x, &y);
-    behavior = MapGridGetMetatileBehaviorAt(x, y);
 
-    if (FlagGet(FLAG_SYS_ON_CYCLING_ROAD) || MetatileBehavior_IsVerticalRail(behavior) || MetatileBehavior_IsHorizontalRail(behavior)
-    || MetatileBehavior_IsIsolatedVerticalRail(behavior) || MetatileBehavior_IsIsolatedHorizontalRail(behavior) || MetatileBehavior_IsGroundRocks(behavior))
-        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_8416451);
+    if (!CanPlayerDismountOfBike(MapGridGetMetatileBehaviorAt(x, y)))
+        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, COMPOUND_STRING("You can't dismount your Bike here.{PAUSE_UNTIL_PRESS}"));
     else if (Overworld_IsBikingAllowed() == TRUE && !IsBikingDisallowedByPlayer())
     {
         sItemUseOnFieldCB = ItemUseOnFieldCB_Bicycle;
@@ -260,7 +260,7 @@ void ItemUseOutOfBattle_Itemfinder(u32 taskId)
 void FieldUseFunc_CoinCase(u32 taskId)
 {
     ConvertIntToDecimalStringN(gStringVar1, GetCoins(), STR_CONV_MODE_LEFT_ALIGN, 4);
-    DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_8416537);
+    DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, COMPOUND_STRING("Your Coins:\n{STR_VAR_1}{PAUSE_UNTIL_PRESS}"));
 }
 
 void FieldUseFunc_PokeFlute(u32 taskId)
@@ -280,19 +280,21 @@ void FieldUseFunc_PokeFlute(u32 taskId)
     
     if (wokeSomeoneUp)
     {
+        const u8 *playedPokeFlute = COMPOUND_STRING("Played the Poké Flute.");
+        
         if (!gTasks[taskId].data[3])
-            DisplayItemMessageInBag(taskId, 2, gUnknown_8416690, Task_PlayPokeFlute);
+            DisplayItemMessageInBag(taskId, 2, playedPokeFlute, Task_PlayPokeFlute);
         else
-            DisplayItemMessageOnField(taskId, 2, gUnknown_8416690, Task_PlayPokeFlute);
+            DisplayItemMessageOnField(taskId, 2, playedPokeFlute, Task_PlayPokeFlute);
     }
-    else // Now that's a catchy tune!
-        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_841665C);
+    else
+        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, COMPOUND_STRING("Played the Poké Flute.\pNow, that's a catchy tune!{PAUSE_UNTIL_PRESS}"));
 }
 
 static void Task_DisplayPokeFluteMessage(u32 taskId)
 {
     if (WaitFanfare(FALSE))
-        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, gUnknown_84166A7);
+        DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, COMPOUND_STRING("The Poké Flute awakened sleeping\nPokémon.{PAUSE_UNTIL_PRESS}"));
 }
 
 static void Task_PlayPokeFlute(u32 taskId)
@@ -449,7 +451,7 @@ void FieldUseFunc_SuperRepel(u32 taskId)
         gTasks[taskId].func = Task_UseRepel;
     }
     else // An earlier repel is still in effect
-        DisplayItemMessageInBag(taskId, 2, gUnknown_841659E, Task_ReturnToBagFromContextMenu);
+        DisplayItemMessageInBag(taskId, 2, COMPOUND_STRING("But the effects of a Repel\nlingered from earlier.{PAUSE_UNTIL_PRESS}"), Task_ReturnToBagFromContextMenu);
 }
 
 static void Task_UseRepel(u32 taskId)
@@ -469,12 +471,12 @@ void FieldUseFunc_BlackFlute(u32 taskId)
         case ITEM_WHITE_FLUTE:
             FlagSet(FLAG_SYS_WHITE_FLUTE_ACTIVE);
             FlagClear(FLAG_SYS_BLACK_FLUTE_ACTIVE);
-            StringExpandPlaceholders(gStringVar4, gUnknown_84165D2);
+            StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{PLAYER} used the\n{STR_VAR_2}.\pWild Pokémon will be lured.{PAUSE_UNTIL_PRESS}"));
             break;
         case ITEM_BLACK_FLUTE:
             FlagSet(FLAG_SYS_BLACK_FLUTE_ACTIVE);
             FlagClear(FLAG_SYS_WHITE_FLUTE_ACTIVE);
-            StringExpandPlaceholders(gStringVar4, gUnknown_8416600);
+            StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{PLAYER} used the\n{STR_VAR_2}.\pWild Pokémon will be repelled.{PAUSE_UNTIL_PRESS}"));
             break;
     }
     CopyItemName(gSpecialVar_ItemId, gStringVar2);
@@ -643,12 +645,12 @@ void FieldUseFunc_ExpShare(u32 taskId)
     
     if (gSaveBlock2Ptr->expShare)
     {
-        txt = gText_ExpShareOn;
+        txt = COMPOUND_STRING("Turned on the Exp. Share.\pParty will now gain a portion\nof the Experience Points.{PAUSE_UNTIL_PRESS}");
         PlaySE(SE_EXP_MAX);
     }
     else
     {
-        txt = gText_ExpShareOff;
+        txt = COMPOUND_STRING("Turned off the Exp. Share.\pParty will no longer gain a portion\nof any Experience Points.{PAUSE_UNTIL_PRESS}");
         PlaySE(SE_PC_OFF);
     }
     DisplayItemMessageInCurrentContext(taskId, gTasks[taskId].data[3], 2, txt);

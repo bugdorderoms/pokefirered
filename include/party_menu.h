@@ -93,4 +93,6 @@ u8 GetPartyIdFromBattleSlot(u32 slot);
 u32 GetItemUseAnimFollowUpCBIdByItemType(u32 itemId);
 void SwapPartyPokemon(struct Pokemon *mon1, struct Pokemon *mon2);
 
+extern const u8 gText_CantUseHere[];
+
 #endif // GUARD_PARTY_MENU_H

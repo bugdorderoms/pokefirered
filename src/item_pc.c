@@ -16,7 +16,6 @@
 #include "party_menu.h"
 #include "pc_screen_effect.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "task.h"
 #include "text_window.h"
 #include "constants/items.h"
@@ -113,9 +112,9 @@ static const struct BgTemplate sBgTemplates[2] = {
 };
 
 static const struct MenuAction sItemPcSubmenuOptions[] = {
-    {gText_Withdraw,          {.void_u32 = Task_ItemPcWithdraw}},
-    {gOtherText_Give,         {.void_u32 = Task_ItemPcGive}},
-    {gFameCheckerText_Cancel, {.void_u32 = Task_ItemPcCancel}}
+    {COMPOUND_STRING("Withdraw"), {.void_u32 = Task_ItemPcWithdraw}},
+    {gText_ItemMenuGive,          {.void_u32 = Task_ItemPcGive}},
+    {gMenuText_Cancel,            {.void_u32 = Task_ItemPcCancel}}
 };
 
 static const u8 sTextColors[][3] = {
@@ -477,7 +476,7 @@ static void ItemPc_BuildListMenuTemplate(void)
         sListMenuItems[i].label = ItemId_GetName(gSaveBlock1Ptr->pcItems[i].itemId);
         sListMenuItems[i].index = i;
     }
-    sListMenuItems[i].label = gFameCheckerText_Cancel;
+    sListMenuItems[i].label = gMenuText_Cancel;
     sListMenuItems[i].index = -2;
 
     gMultiuseListMenuTemplate.items = sListMenuItems;
@@ -526,7 +525,7 @@ static void ItemPc_MoveCursorFunc(s32 itemIndex, bool32 onInit, struct ListMenu 
         else
         {
             CreateItemMenuIcon(ITEMS_COUNT, sStateDataPtr->itemMenuIconSlot);
-            desc = gText_ReturnToPC;
+            desc = COMPOUND_STRING("Return to the PC.");
         }
         sStateDataPtr->itemMenuIconSlot ^= 1;
         FillWindowPixelBuffer(1, 0);
@@ -564,7 +563,7 @@ static void ItemPc_PrintOrRemoveCursorAt(u32 y, u32 colorIdx)
 
 static void ItemPc_PrintWithdrawItem(void)
 {
-    ItemPc_AddTextPrinterParameterized(2, 0, gText_WithdrawItem, 0, 1, 0, 1, 0, 0);
+    ItemPc_AddTextPrinterParameterized(2, 0, COMPOUND_STRING("Withdraw\nItem"), 0, 1, 0, 1, 0, 0);
 }
 
 static void ItemPc_PlaceTopMenuScrollIndicatorArrows(void)
@@ -887,13 +886,13 @@ static void ItemPc_DoWithdraw(u32 taskId)
     {
         CopyItemName(itemId, gStringVar1);
         ConvertIntToDecimalStringN(gStringVar2, data[8], STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringExpandPlaceholders(gStringVar4, gText_WithdrewQuantItem);
+        StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Withdrew {STR_VAR_2}\n{STR_VAR_1}(s)."));
         AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(2), 2, gStringVar4, 0, 2, 0, NULL);
         gTasks[taskId].func = Task_ItemPcWaitButtonAndFinishWithdrawMultiple;
     }
     else
     {
-        AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(2), 2, gText_NoMoreRoomInBag, 0, 2, 0, NULL);
+        AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(2), 2, COMPOUND_STRING("There is no more\nroom in the Bag."), 0, 2, 0, NULL);
         gTasks[taskId].func = Task_ItemPcWaitButtonWithdrawMultipleFailed;
     }
 }
@@ -938,7 +937,7 @@ static void Task_ItemPcCleanUpWithdraw(u32 taskId)
 static void ItemPc_WithdrawMultipleInitWindow(u32 slotId)
 {
     CopyItemName(ItemPc_GetItemIdBySlotId(slotId), gStringVar1);
-    StringExpandPlaceholders(gStringVar4, gText_WithdrawHowMany);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Withdraw how many\n{STR_VAR_1}(s)?"));
     AddTextPrinterParameterized(ItemPc_GetOrCreateSubwindow(1), 2, gStringVar4, 0, 2, 0, NULL);
     ConvertIntToDecimalStringN(gStringVar1, 1, STR_CONV_MODE_LEADING_ZEROS, 3);
     StringExpandPlaceholders(gStringVar4, gText_TimesStrVar1);

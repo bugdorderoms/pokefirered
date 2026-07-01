@@ -1,7 +1,6 @@
 #include "global.h"
 #include "gflib.h"
 #include "event_data.h"
-#include "strings.h"
 #include "menu.h"
 #include "battle.h"
 #include "text_window.h"

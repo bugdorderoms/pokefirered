@@ -4,7 +4,6 @@
 #include "menu.h"
 #include "data.h"
 #include "graphics.h"
-#include "strings.h"
 #include "list_menu.h"
 #include "new_menu_helpers.h"
 #include "party_menu.h"
@@ -133,11 +132,16 @@ static void BuyMenuReturnToItemList(u32 taskId);
 static void ExitBuyMenu(u32 taskId);
 static void Task_ExitBuyMenu(u32 taskId);
 
+const u8 gText_OhNoICantBuyThat[] = _("{STR_VAR_1}? Oh, no.\nI can't buy that.{PAUSE_UNTIL_PRESS}");
+const u8 gText_HowManyWouldYouLikeToSell[] = _("{STR_VAR_1}?\nHow many would you like to sell?");
+const u8 gText_ICanPayThisMuch_WouldThatBeOkay[] = _("I can pay ¥{STR_VAR_3}.\nWould that be okay?");
+const u8 gText_TurnedOverItemsWorthYen[] = _("Turned over the {STR_VAR_1}シSス\nworth ¥{STR_VAR_3}.");
+
 static const struct MenuAction sShopMenuActions_BuySellQuit[] =
 {
-    {gText_ShopBuy, {.void_u32 = Task_HandleShopMenuBuy}},
-    {gText_ShopSell, {.void_u32 = Task_HandleShopMenuSell}},
-    {gText_ShopQuit, {.void_u32 = Task_HandleShopMenuQuit}}
+    {COMPOUND_STRING("Buy"),     {.void_u32 = Task_HandleShopMenuBuy}},
+    {COMPOUND_STRING("Sell"),    {.void_u32 = Task_HandleShopMenuSell}},
+    {COMPOUND_STRING("See Ya!"), {.void_u32 = Task_HandleShopMenuQuit}}
 };
 
 static const u16 sShopInventory_ZeroBadges[] = {
@@ -497,7 +501,7 @@ static void MapPostLoadHook_ReturnToShopMenu(void)
 static void Task_ReturnToShopMenu(u32 taskId)
 {
     if (IsWeatherNotFadingIn())
-        DisplayItemMessageOnField(taskId, GetMartUnk16_4(), gText_CanIHelpWithAnythingElse, ShowShopMenuAfterExitingBuyOrSellMenu);
+        DisplayItemMessageOnField(taskId, GetMartUnk16_4(), COMPOUND_STRING("Is there anything else I can do?"), ShowShopMenuAfterExitingBuyOrSellMenu);
 }
 
 static void ShowShopMenuAfterExitingBuyOrSellMenu(u32 taskId)
@@ -691,7 +695,7 @@ static bool32 BuyMenuBuildListMenuTemplate(void)
     for (i = 0; i < gShopData.itemCount; i++)
         PokeMartWriteNameAndIdAt(&sShopMenuListMenu[i], gShopData.itemList[i], sShopMenuItemStrings[i]);
 
-    StringCopy(sShopMenuItemStrings[i], gFameCheckerText_Cancel);
+    StringCopy(sShopMenuItemStrings[i], gMenuText_Cancel);
     sShopMenuListMenu[i].label = sShopMenuItemStrings[i];    
     sShopMenuListMenu[i].index = -2;
     
@@ -744,7 +748,7 @@ static void BuyMenuPrintItemDescriptionAndShowItemIcon(s32 item, bool32 onInit, 
     if (item != INDEX_CANCEL)
         description = ItemId_GetDescription(item);
     else
-        description = gText_QuitShopping;
+        description = COMPOUND_STRING("Quit shopping.");
     
     FillWindowPixelBuffer(5, PIXEL_FILL(0));
     
@@ -776,7 +780,7 @@ static void BuyMenuPrintPriceInList(u32 windowId, u32 item, u32 y)
     if (item != INDEX_CANCEL)
     {
         if (ItemId_GetPocket(item) == POCKET_TM_CASE && CheckBagHasItem(item, 1))
-            BuyMenuPrint(windowId, 0, gText_TmPurchased, 0x58, y, 0, 0, TEXT_SPEED_FF, 1);
+            BuyMenuPrint(windowId, 0, COMPOUND_STRING("Purchased"), 0x58, y, 0, 0, TEXT_SPEED_FF, 1);
         else
         {
             ConvertIntToDecimalStringN(gStringVar1, ItemId_GetPrice(item), 0, 4);
@@ -795,7 +799,7 @@ static void LoadTmHmNameInMart(s32 item)
     if (item != INDEX_CANCEL)
     {
         ConvertIntToDecimalStringN(gStringVar1, item - FIRST_TM_INDEX + 1, 2, 3);
-        StringCopy(gStringVar4, gOtherText_UnkF9_08_Clear_01);
+        StringCopy(gStringVar4, gText_ListMenuItemNumber);
         StringAppend(gStringVar4, gStringVar1);
         BuyMenuPrint(6, 0, gStringVar4, 0, 0, 0, 0, TEXT_SPEED_FF, 1);
         StringCopy(gStringVar4, gBattleMoves[ItemId_GetHoldEffectParam(item)].name);
@@ -803,8 +807,8 @@ static void LoadTmHmNameInMart(s32 item)
     }
     else
     {
-        BuyMenuPrint(6, 0, gText_ThreeHyphens, 0, 0, 0, 0, TEXT_SPEED_FF, 1);
-        BuyMenuPrint(6, 2, gText_SevenHyphens, 0, 0x10, 0, 0, 0, 1);
+        BuyMenuPrint(6, 0, gText_MoveNoPowerAccuracy, 0, 0, 0, 0, TEXT_SPEED_FF, 1);
+        BuyMenuPrint(6, 2, COMPOUND_STRING("-------"), 0, 0x10, 0, 0, 0, 1);
     }
 }
 
@@ -1048,21 +1052,21 @@ static void Task_BuyMenu(u32 taskId)
             gShopData.itemPrice = ItemId_GetPrice(itemId);
             
             if (!IsEnoughMoney(&gSaveBlock1Ptr->money, gShopData.itemPrice))
-                BuyMenuDisplayMessage(taskId, gText_YouDontHaveMoney, BuyMenuReturnToItemList);
+                BuyMenuDisplayMessage(taskId, COMPOUND_STRING("You don't have enough money.{PAUSE_UNTIL_PRESS}"), BuyMenuReturnToItemList);
             else if (ItemId_GetPocket(itemId) == POCKET_TM_CASE && CheckBagHasItem(itemId, 1))
-                BuyMenuDisplayMessage(taskId, gText_YouAlreadyHaveThis, BuyMenuReturnToItemList);
+                BuyMenuDisplayMessage(taskId, COMPOUND_STRING("You already own that TM.{PAUSE_UNTIL_PRESS}"), BuyMenuReturnToItemList);
             else
             {
                 if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
                 {
                     ConvertIntToDecimalStringN(gStringVar2, ItemId_GetPrice(itemId), 3, 4);
                     StringCopy(gStringVar3, gBattleMoves[ItemId_GetHoldEffectParam(itemId)].name);
-                    BuyMenuDisplayMessage(taskId, gText_SingleTmBuy, CreateBuyMenuConfirmPurchaseWindow);
+                    BuyMenuDisplayMessage(taskId, COMPOUND_STRING("{STR_VAR_1} {STR_VAR_3},\nThat will be ¥{STR_VAR_2}. Okay?"), CreateBuyMenuConfirmPurchaseWindow);
                 }
                 else
                 {
                     CopyItemName(itemId, gStringVar1);
-                    BuyMenuDisplayMessage(taskId, gText_Var1CertainlyHowMany, Task_BuyHowManyDialogueInit);
+                    BuyMenuDisplayMessage(taskId, COMPOUND_STRING("{STR_VAR_1}? Certainly.\nHow many would you like?"), Task_BuyHowManyDialogueInit);
                 }
             }
             break;
@@ -1078,7 +1082,7 @@ static void Task_BuyHowManyDialogueInit(u32 taskId)
     
     DrawStdFrameWithCustomTileAndPalette(1, FALSE, 0xA, 0xF);
     ConvertIntToDecimalStringN(gStringVar1, quantityInBag, STR_CONV_MODE_RIGHT_ALIGN, 3);
-    StringExpandPlaceholders(gStringVar4, gText_InBagVar1);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("In Bag:{FONT_SMALL} {STR_VAR_1}"));
     BuyMenuPrint(1, 2, gStringVar4, 0, 2, 0, 0, 0, 1);
     tItemCount = 1;
     DrawStdFrameWithCustomTileAndPalette(3, FALSE, 0x1, 0xD);
@@ -1119,7 +1123,7 @@ static void Task_BuyHowManyDialogueHandleInput(u32 taskId)
             CopyItemName(tItemId, gStringVar1);
             ConvertIntToDecimalStringN(gStringVar2, tItemCount, STR_CONV_MODE_LEFT_ALIGN, 2);
             ConvertIntToDecimalStringN(gStringVar3, gShopData.itemPrice, STR_CONV_MODE_LEFT_ALIGN, 8);
-            BuyMenuDisplayMessage(taskId, gText_Var1AndYouWantedVar2, CreateBuyMenuConfirmPurchaseWindow);
+            BuyMenuDisplayMessage(taskId, COMPOUND_STRING("{STR_VAR_1}, and you want {STR_VAR_2}.\nThat will be ¥{STR_VAR_3}. Okay?"), CreateBuyMenuConfirmPurchaseWindow);
         }
         else if (JOY_NEW(B_BUTTON))
         {            
@@ -1148,10 +1152,10 @@ static void BuyMenuTryMakePurchase(u32 taskId)
     if (AddBagItem(tItemId, tItemCount))
     {
         GetSetItemObtained(tItemId, FLAG_SET_OBTAINED);
-        BuyMenuDisplayMessage(taskId, gText_HereYouGoThankYou, BuyMenuSubtractMoney);
+        BuyMenuDisplayMessage(taskId, COMPOUND_STRING("Here you are!\nThank you!"), BuyMenuSubtractMoney);
     }
     else
-        BuyMenuDisplayMessage(taskId, gText_NoMoreRoomForThis, BuyMenuReturnToItemList);
+        BuyMenuDisplayMessage(taskId, COMPOUND_STRING("You have no more room for this\nitem.{PAUSE_UNTIL_PRESS}"), BuyMenuReturnToItemList);
 }
 
 static void BuyMenuSubtractMoney(u32 taskId)
@@ -1174,9 +1178,9 @@ static void Task_ReturnToItemListAfterItemPurchase(u32 taskId)
         if (ItemId_GetPocket(tItemId) == POCKET_POKE_BALLS && tItemCount >= 10 && AddBagItem(ITEM_PREMIER_BALL, tItemCount / 10))
         {
             if (tItemCount >= 20)
-                BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBalls, BuyMenuReturnToItemList);
+                BuyMenuDisplayMessage(taskId, COMPOUND_STRING("I'll throw in some Premier Balls, too.{PAUSE_UNTIL_PRESS}"), BuyMenuReturnToItemList);
             else
-                BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBall, BuyMenuReturnToItemList);
+                BuyMenuDisplayMessage(taskId, COMPOUND_STRING("I'll throw in a Premier Ball, too.{PAUSE_UNTIL_PRESS}"), BuyMenuReturnToItemList);
         }
         else
             BuyMenuReturnToItemList(taskId);

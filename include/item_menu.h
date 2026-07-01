@@ -43,4 +43,15 @@ void GoToBagMenu(u32 menuType, u32 pocket, MainCallback callback);
 bool32 UseRegisteredKeyItemOnField(void);
 void ItemUseInBattle(u32 taskId);
 
+extern const u8 gText_ItemMenuUse[];
+extern const u8 gText_ItemMenuGive[];
+extern const u8 gText_ItemMenuToss[];
+
+extern const u8 gText_ThereIsNoPokemon[];
+extern const u8 gText_Var1IsSelected[];
+extern const u8 gOtherText_WhereShouldTheStrVar1BePlaced[];
+extern const u8 gText_TossOutHowManyStrVar1s[];
+extern const u8 gText_ThrewAwayStrVar2StrVar1s[];
+extern const u8 gText_ThrowAwayStrVar2OfThisItemQM[];
+
 #endif //GUARD_ITEM_MENU_H

@@ -45,4 +45,6 @@ static inline u32 GetTrainerPartyMonLevel(const struct TrainerMon *partyIdx)
 #endif
 }
 
+extern const u8 gText_Ghost[];
+
 #endif // GUARD_BATTLE_SETUP_H

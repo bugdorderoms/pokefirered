@@ -2,7 +2,6 @@
 #include "gflib.h"
 #include "task.h"
 #include "new_menu_helpers.h"
-#include "strings.h"
 #include "itemfinder.h"
 #include "event_scripts.h"
 #include "event_object_lock.h"

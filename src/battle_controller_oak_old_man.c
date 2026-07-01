@@ -9,7 +9,6 @@
 #include "link.h"
 #include "party_menu.h"
 #include "sound.h"
-#include "strings.h"
 #include "util.h"
 #include "constants/battle_anim.h"
 #include "constants/songs.h"
@@ -319,27 +318,32 @@ static void PrintOakTextWithMainBgDarkened(u32 battlerId, const u8 *str, u32 del
 
 static void PrintOakText_LoweringStats(u32 battlerId)
 {
-    PrintOakTextWithMainBgDarkened(battlerId, gText_LoweringStats, 64);
+    PrintOakTextWithMainBgDarkened(battlerId, COMPOUND_STRING("Oak: Lowering the foe's stats will put you at an advantage.\p"), 64);
 }
 
 static void PrintOakText_WinEarnsPrizeMoney(u32 battlerId)
 {
-    PrintOakTextWithMainBgDarkened(battlerId, gText_WinEarnsPrizeMoney, 64);
+    PrintOakTextWithMainBgDarkened(battlerId, COMPOUND_STRING("Oak: Hm! Excellent!\nIf you win, you earn prize money, and your Pokémon will grow!\n"
+                                                              "Battle other Trainers and make your Pokémon strong!\p"), 64);
 }
 
 void PrintOakText_HowDisappointing(u32 battlerId)
 {
-    PrintOakTextWithMainBgDarkened(battlerId, gText_HowDissapointing, 64);
+    PrintOakTextWithMainBgDarkened(battlerId, COMPOUND_STRING("Oak: Hm…\nHow disappointing…\nIf you win, you earn prize money, and your Pokémon grow."
+                                                              " But if you lose, {B_PLAYER_NAME}, you end up paying prize money…\n"
+                                                              "However, since you had no warning this time, I'll pay for you.\n"
+                                                              "But things won't be this way once you step outside these doors."
+                                                              " That's why you must strengthen your Pokémon by battling wild Pokémon.\p"), 64);
 }
 
 void PrintOakText_OakNoRunningFromATrainer(u32 battlerId)
 {
-    PrintOakTextWithMainBgDarkened(battlerId, gText_OakNoRunningFromATrainer, 1);
+    PrintOakTextWithMainBgDarkened(battlerId, COMPOUND_STRING("Oak: No! There's no running away from a Trainer Pokémon battle!\p"), 1);
 }
 
 void PrintOakText_InflictingDamageIsKey(u32 battlerId)
 {
-    PrintOakTextWithMainBgDarkened(battlerId, gText_InflictingDamageIsKey, 1);
+    PrintOakTextWithMainBgDarkened(battlerId, COMPOUND_STRING("Oak: Inflicting damage on the foe is the key to any battle.\p"), 1);
 }
 
 void PrintOakText_KeepAnEyeOnHP(u32 battlerId)
@@ -369,7 +373,7 @@ void PrintOakText_KeepAnEyeOnHP(u32 battlerId)
         }
         break;
     case 3:
-        BattleStringExpandPlaceholdersToDisplayedString(gText_KeepAnEyeOnHP);
+        BattleStringExpandPlaceholdersToDisplayedString(COMPOUND_STRING("Oak: Keep your eyes on your Pokémon's HP. It will faint if the HP drops to “0.”\p"));
         BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gBattleStruct->simulatedInputState[0];
         break;
@@ -419,7 +423,9 @@ void PrintOakText_ForPetesSake(u32 battlerId)
         }
         break;
     case 2:
-        BattleStringExpandPlaceholdersToDisplayedString(gText_ForPetesSake);
+        BattleStringExpandPlaceholdersToDisplayedString(COMPOUND_STRING("Oak: Oh, for Pete's sake…\nSo pushy, as always.\p{B_PLAYER_NAME}.\p"
+                                                                        "You've never had a Pokémon battle before, have you?\n"
+                                                                        "A Pokémon battle is when Trainers pit their Pokémon against each other.\p"));
         BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
         ++gBattleStruct->simulatedInputState[0];
         break;
@@ -433,7 +439,7 @@ void PrintOakText_ForPetesSake(u32 battlerId)
     case 4:
         if (!gPaletteFade.active)
         {
-            BattleStringExpandPlaceholdersToDisplayedString(gText_TheTrainerThat);
+            BattleStringExpandPlaceholdersToDisplayedString(COMPOUND_STRING("The Trainer that makes the other Trainer's Pokémon faint by lowering their HP to “0,” wins.\p"));
             BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
             ++gBattleStruct->simulatedInputState[0];
         }
@@ -448,7 +454,7 @@ void PrintOakText_ForPetesSake(u32 battlerId)
     case 6:
         if (!gPaletteFade.active)
         {
-            BattleStringExpandPlaceholdersToDisplayedString(gText_TryBattling);
+            BattleStringExpandPlaceholdersToDisplayedString(COMPOUND_STRING("But rather than talking about it, you'll learn more from experience. Try battling and see for yourself.\p"));
             BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_OAK_OLD_MAN);
             ++gBattleStruct->simulatedInputState[0];
         }

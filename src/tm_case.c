@@ -20,7 +20,6 @@
 #include "party_menu.h"
 #include "data.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "menu_indicators.h"
 #include "constants/items.h"
 #include "constants/songs.h"
@@ -158,9 +157,9 @@ static const TaskFunc sSelectTMActionTasks[] = {
 };
 
 static const struct MenuAction sMenuActions_UseGiveExit[] = {
-    {gOtherText_Use,  TMHMContextMenuAction_Use },
-    {gOtherText_Give, TMHMContextMenuAction_Give},
-    {gOtherText_Exit, TMHMContextMenuAction_Exit},
+    {gText_ItemMenuUse,       TMHMContextMenuAction_Use },
+    {gText_ItemMenuGive,      TMHMContextMenuAction_Give},
+    {COMPOUND_STRING("Exit"), TMHMContextMenuAction_Exit},
 };
 
 static const u8 sMenuActionIndices_Field[] = {0, 1, 2};
@@ -168,7 +167,6 @@ static const u8 sMenuActionIndices_UnionRoom[] = {1, 2};
 static const struct YesNoFuncTable sYesNoFuncTable = {Task_PrintSaleConfirmedText, Task_SaleOfTMsCanceled};
 
 static const u8 sText_ClearTo18[] = _("{CLEAR_TO 18}");
-static const u8 sText_SingleSpace[] = _(" ");
 
 static ALIGNED(4) const u16 sPal3Override[] = {RGB(8, 8, 8), RGB(30, 16, 6)};
 
@@ -509,7 +507,7 @@ static void InitTMCaseListMenuItems(void)
         sListMenuItemsBuffer[i].label = sListMenuStringsBuffer[i];
         sListMenuItemsBuffer[i].index = i;
     }
-    sListMenuItemsBuffer[i].label = gText_Close;
+    sListMenuItemsBuffer[i].label = gMenuText_Close;
     sListMenuItemsBuffer[i].index = -2;
 
     gMultiuseListMenuTemplate.items = sListMenuItemsBuffer;
@@ -534,12 +532,12 @@ static void InitTMCaseListMenuItems(void)
 
 static void GetTMNumberAndMoveString(u8 * dest, u32 itemId)
 {
-    StringCopy(gStringVar4, gText_FontSize0);
-    StringAppend(gStringVar4, gOtherText_UnkF9_08_Clear_01);
+    StringCopy(gStringVar4, COMPOUND_STRING("{FONT_SMALL}"));
+    StringAppend(gStringVar4, gText_ListMenuItemNumber);
     ConvertIntToDecimalStringN(gStringVar1, (itemId - FIRST_TM_INDEX) + 1, STR_CONV_MODE_LEADING_ZEROS, 3);
     StringAppend(gStringVar4, gStringVar1);
-    StringAppend(gStringVar4, sText_SingleSpace);
-    StringAppend(gStringVar4, gText_FontSize2);
+    StringAppend(gStringVar4, COMPOUND_STRING(" "));
+    StringAppend(gStringVar4, COMPOUND_STRING("{FONT_NORMAL}"));
     StringAppend(gStringVar4, gBattleMoves[ItemId_GetHoldEffectParam(itemId)].name);
     StringCopy(dest, gStringVar4);
 }
@@ -571,7 +569,7 @@ static void TMCase_MoveCursor_UpdatePrintedDescription(s32 itemIndex)
     if (itemIndex != -2)
         str = ItemId_GetDescription(BagGetItemIdByPocketPosition(POCKET_TM_CASE, itemIndex));
     else
-        str = gText_TMCaseWillBePutAway;
+        str = COMPOUND_STRING("The TM Case will be\nput away.");
     
     FillWindowPixelBuffer(1, 0);
     AddTextPrinterParameterized_ColorByIndex(1, 2, str, 2, 3, 1, 0, 0, 0);
@@ -1303,8 +1301,9 @@ static void TMCase_PrintMessageWithFollowupTask(u32 taskId, u32 windowId, const 
 
 static void PrintStringTMCaseOnWindow3(void)
 {
-    u32 distance = 104 - GetStringWidth(1, gText_TMCase, 0);
-    AddTextPrinterParameterized3(3, 1, distance / 2, 1, sTextColors[0], 0, gText_TMCase);
+    const u8 *tmCase = COMPOUND_STRING("TM Case");
+    u32 distance = 104 - GetStringWidth(1, tmCase, 0);
+    AddTextPrinterParameterized3(3, 1, distance / 2, 1, sTextColors[0], 0, tmCase);
 }
 
 static void DrawMoveInfoUIMarkers(void)
@@ -1326,7 +1325,7 @@ static void TMCase_MoveCursor_UpdatePrintedTMInfo(u32 itemId)
     if (itemId == ITEM_NONE)
     {
         for (i = 0; i < 4; i++)
-            AddTextPrinterParameterized_ColorByIndex(5, 3, gText_ThreeHyphens, 7, 12 * i, 0, 0, 0xFF, 3);
+            AddTextPrinterParameterized_ColorByIndex(5, 3, gText_MoveNoPowerAccuracy, 7, 12 * i, 0, 0, 0xFF, 3);
 
         CopyWindowToVram(5, COPYWIN_GFX);
     }
@@ -1337,7 +1336,7 @@ static void TMCase_MoveCursor_UpdatePrintedTMInfo(u32 itemId)
         BlitMoveInfoIcon(5, MOVE_INFO_MOVE_TYPE_ICON + gBattleMoves[move].type, 0, 0);
 
         if (gBattleMoves[move].power < 2)
-            str = gText_ThreeHyphens;
+            str = gText_MoveNoPowerAccuracy;
         else
         {
             ConvertIntToDecimalStringN(gStringVar1, gBattleMoves[move].power, STR_CONV_MODE_RIGHT_ALIGN, 3);
@@ -1346,7 +1345,7 @@ static void TMCase_MoveCursor_UpdatePrintedTMInfo(u32 itemId)
         AddTextPrinterParameterized_ColorByIndex(5, 3, str, 7, 12, 0, 0, 0xFF, 3);
 
         if (gBattleMoves[move].accuracy == 0)
-            str = gText_ThreeHyphens;
+            str = gText_MoveNoPowerAccuracy;
         else
         {
             ConvertIntToDecimalStringN(gStringVar1, gBattleMoves[move].accuracy, STR_CONV_MODE_RIGHT_ALIGN, 3);

@@ -15,7 +15,6 @@
 #include "text_window.h"
 #include "pokemon_summary_screen.h"
 #include "graphics.h"
-#include "strings.h"
 #include "constants/songs.h"
 #include "constants/moves.h"
 
@@ -491,7 +490,7 @@ static void MoveRelearnerStateMachine(void)
         case MENU_ACTION_YES:
             if (GiveMoveToMon(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex]) != MON_HAS_MAX_MOVES)
             {
-                StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_MonLearnedMove);
+                StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("{STR_VAR_1} learned\n{STR_VAR_2}."));
                 gSpecialVar_0x8004 = TRUE;
                 sMoveRelearner->state = 31;
             }
@@ -522,7 +521,9 @@ static void MoveRelearnerStateMachine(void)
         }
         break;
     case MENU_STATE_PRINT_TRYING_TO_LEARN_PROMPT:
-        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_MonIsTryingToLearnMove);
+        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("{STR_VAR_1} is trying to learn\n{STR_VAR_2}.\p"
+                                                                            "But {STR_VAR_1} can't learn more\nthan four moves.\p"
+                                                                            "Delete an older move to make\nroom for {STR_VAR_2}?"));
         sMoveRelearner->state++;
         break;
     case MENU_STATE_WAIT_FOR_TRYING_TO_LEARN:
@@ -533,7 +534,7 @@ static void MoveRelearnerStateMachine(void)
         switch (YesNoMenuProcessInput())
         {
         case MENU_ACTION_YES:
-            StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_WhichMoveShouldBeForgotten);
+            StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("Which move should be forgotten?\p"));
             sMoveRelearner->state = 19;
             break;
         case MENU_ACTION_NO:
@@ -543,7 +544,7 @@ static void MoveRelearnerStateMachine(void)
         }
         break;
     case MENU_STATE_PRINT_STOP_TEACHING:
-        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_StopLearningMove);
+        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("Stop learning {STR_VAR_2}?"));
         sMoveRelearner->state++;
         break;
     case MENU_STATE_WAIT_FOR_STOP_TEACHING:
@@ -625,14 +626,14 @@ static void MoveRelearnerStateMachine(void)
                 RemoveMonPPBonus(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->selectedMoveSlot);
                 SetMonMoveSlot(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex], sMoveRelearner->selectedMoveSlot);
                 StringCopy(gStringVar2, gBattleMoves[sMoveRelearner->learnableMoves[sMoveRelearner->selectedIndex]].name);
-                StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_1_2_and_Poof);
+                StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("{PAUSE 0x20}1, {PAUSE 0x0F}2, and {PAUSE 0x0F}‥ {PAUSE 0x0F}‥ {PAUSE 0x0F}‥ {PAUSE 0x0F}{PLAY_SE SE_BALL_BOUNCE_1}Poof!\p"));
                 sMoveRelearner->state = 30;
                 gSpecialVar_0x8004 = TRUE;
             }
         }
         break;
     case MENU_STATE_DOUBLE_FANFARE_FORGOT_MOVE:
-        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_MonForgotOldMoveAndMonLearnedNewMove);
+        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("{STR_VAR_1} forgot {STR_VAR_3}.\pAnd‥\p{STR_VAR_1}\nlearned {STR_VAR_2}."));
         sMoveRelearner->state = 31;
         PlayFanfare(MUS_LEVEL_UP);
         break;
@@ -664,7 +665,7 @@ static void DrawTextBorderOnWindows6and7(void)
 
 static void PrintTeachWhichMoveToStrVar1(void)
 {
-    StringExpandPlaceholders(gStringVar4, gText_TeachWhichMoveToMon);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Teach which move to {STR_VAR_1}?"));
     PrintTextOnWindow(7, gStringVar4, 0, 2, 0, 2);
     PutWindowTilemap(7);
     CopyWindowToVram(7, COPYWIN_BOTH);
@@ -732,7 +733,7 @@ static void MoveRelearnerInitListMenuBuffersEtc(void)
     
     GetMonData(&gPlayerParty[sMoveRelearner->selectedPartyMember], MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
-    sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves] = gFameCheckerText_Cancel;
+    sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves] = gMenuText_Cancel;
     sMoveRelearner->numLearnableMoves++;
     
     for (i = 0; i < count; i++)
@@ -740,7 +741,7 @@ static void MoveRelearnerInitListMenuBuffersEtc(void)
         sMoveRelearner->listMenuItems[i].label = sMoveRelearner->listMenuStrbufs[i];
         sMoveRelearner->listMenuItems[i].index = i;
     }
-    sMoveRelearner->listMenuItems[i].label = gFameCheckerText_Cancel;
+    sMoveRelearner->listMenuItems[i].label = gMenuText_Cancel;
     sMoveRelearner->listMenuItems[i].index = 0xFE;
     gMultiuseListMenuTemplate = sMoveRelearnerListMenuTemplate;
     gMultiuseListMenuTemplate.items = sMoveRelearner->listMenuItems;
@@ -759,19 +760,18 @@ static void MoveRelearnerMenuHandleInput(void)
         {
             sMoveRelearner->state = 8;
             StringCopy(gStringVar2, sMoveRelearner->listMenuStrbufs[sMoveRelearner->selectedIndex]);
-            StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_TeachMoveQues);
+            StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("Teach {STR_VAR_2}?"));
         }
         else
-        {
-            StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_GiveUpTryingToTeachNewMove);
-            sMoveRelearner->state = 12;
-        }
+            goto GIVE_UP_TEACH;
     }
     else if (JOY_NEW(B_BUTTON))
     {
         PlaySE(SE_SELECT);
+        
+        GIVE_UP_TEACH:
         sMoveRelearner->state = 12;
-        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(gText_GiveUpTryingToTeachNewMove);
+        StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("Give up trying to teach a new\nmove to {STR_VAR_1}?"));
     }
     if (sMoveRelearner->numLearnableMoves > 6)
     {
@@ -799,7 +799,7 @@ static void PrintMoveInfo(u32 move)
     BlitMoveInfoIcon(2, MOVE_INFO_MOVE_SPLIT_ICON + gBattleMoves[move].split, 1, 19);
 
     if (gBattleMoves[move].power < 2)
-        PrintTextOnWindow(3, gText_ThreeHyphens, 1, 4, 0, 0);
+        PrintTextOnWindow(3, gText_MoveNoPowerAccuracy, 1, 4, 0, 0);
     else
     {
         ConvertIntToDecimalStringN(buffer, gBattleMoves[move].power, STR_CONV_MODE_RIGHT_ALIGN, 3);
@@ -807,7 +807,7 @@ static void PrintMoveInfo(u32 move)
     }
 
     if (gBattleMoves[move].accuracy == 0)
-        PrintTextOnWindow(3, gText_ThreeHyphens, 1, 18, 0, 1);
+        PrintTextOnWindow(3, gText_MoveNoPowerAccuracy, 1, 18, 0, 1);
     else
     {
         ConvertIntToDecimalStringN(buffer, gBattleMoves[move].accuracy, STR_CONV_MODE_RIGHT_ALIGN, 3);

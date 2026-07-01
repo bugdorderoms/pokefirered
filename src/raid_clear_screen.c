@@ -12,7 +12,6 @@
 #include "pokemon.h"
 #include "raid_intro.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "task.h"
 #include "trainer_pokemon_sprites.h"
 #include "constants/songs.h"

@@ -103,4 +103,9 @@ void ListMenuOverrideSetColors(u32 cursorPal, u32 fillValue, u32 cursorShadowPal
 void ListMenuDefaultCursorMoveFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 void ListMenuSetTemplateField(u32 taskId, u32 field, s32 value);
 
+extern const u8 gMenuText_Cancel[];
+extern const u8 gMenuText_Close[];
+extern const u8 gText_ListMenuItemNumber[];
+extern const u8 gText_TimesStrVar1[];
+
 #endif //GUARD_LIST_MENU_H

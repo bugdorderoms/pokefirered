@@ -25,12 +25,12 @@ EventScript_RepelWoreOff_Chose:
 	getitemname 1, VAR_0x8004
 	removeitem VAR_0x8004, 1
 	playse SE_REPEL
-	msgbox gUnknown_841658C, MSGBOX_SIGN
+	msgbox gText_PlayerUsedItem, MSGBOX_SIGN
 EventScript_RepelWoreOff_End::
 	end
 
 Text_RepelWoreOff:: @ 81BFB6E
-	.string "REPEL's effect wore off…$"
+	.string "Repel's effect wore off…$"
 	
 Text_RepelAskAnother::
 	.string "Would you like to use another one?$"

@@ -6,7 +6,6 @@
 #include "m4a.h"
 #include "dynamic_placeholder_text_util.h"
 #include "overworld.h"
-#include "strings.h"
 #include "menu.h"
 #include "librfu.h"
 #include "link_rfu.h"
@@ -101,18 +100,18 @@ static const struct WindowTemplate sWindowTemplates[] = {
 };
 
 static const u8 *const gUnknown_846FA9C[] = {
-    gUnknown_841E2B4,
-    gUnknown_841E2BF,
-    gUnknown_841E2C9,
-    gUnknown_841E2D4
+    COMPOUND_STRING("{DYNAMIC 0x00} players"),
+    COMPOUND_STRING("{DYNAMIC 0x01} player"),
+    COMPOUND_STRING("{DYNAMIC 0x02} players"),
+    COMPOUND_STRING("{DYNAMIC 0x03} players")
 };
 
 static const u8 *const sHeaderTextPtrs[] = {
-    gText_WirelessCommunicationStatus,
-    gText_PeopleTrading,
-    gText_PeopleBattling,
-    gText_PeopleInUnionRoom,
-    gText_PeopleCommunicating
+    COMPOUND_STRING("Wireless Communication Status"),
+    COMPOUND_STRING("People trading:"),
+    COMPOUND_STRING("People battling:"),
+    COMPOUND_STRING("People in the Union Room:"),
+    COMPOUND_STRING("People communicating:")
 };
 
 static const u8 sCountParams[][3] = {

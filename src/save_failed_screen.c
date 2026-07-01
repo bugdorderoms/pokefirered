@@ -8,7 +8,6 @@
 #include "task.h"
 #include "text_window.h"
 #include "save.h"
-#include "strings.h"
 
 bool32 sIsInSaveFailedScreen;
 
@@ -86,7 +85,7 @@ bool32 RunSaveFailedScreen(void)
         break;
     case 3:
         ClearMapBuffer();
-        PrintTextOnSaveFailedScreen(gText_SaveFailedScreen_CheckingBackupMemory);
+        PrintTextOnSaveFailedScreen(COMPOUND_STRING("Save failed.\nChecking the backup memory‥\nPlease wait.\n“Time required:\nabout 1 minute”"));
         UpdateMapBufferWithText();
         sSaveFailedScreenState = 4;
         break;
@@ -102,12 +101,14 @@ bool32 RunSaveFailedScreen(void)
         if (TryWipeDamagedSectors() == TRUE)
         {
             gSaveSucceeded = SAVE_STATUS_OK;
-            PrintTextOnSaveFailedScreen(gText_SaveFailedScreen_SaveCompleted);
+            PrintTextOnSaveFailedScreen(COMPOUND_STRING("Save completed.\n“Please press the A Button.”"));
         }
         else
         {
             gSaveSucceeded = SAVE_STATUS_ERROR;
-            PrintTextOnSaveFailedScreen(gText_SaveFailedScreen_BackupMemoryDamaged);
+            PrintTextOnSaveFailedScreen(COMPOUND_STRING("The backup memory is damaged or\nthe game's battery has run dry.\n"
+                                                        "The game can be played, but its\nprogress cannot be saved.\n"
+                                                        "“Please press the A Button.”"));
         }
         sSaveFailedScreenState = 6;
         break;

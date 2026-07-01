@@ -33,7 +33,6 @@
 #include "evolution.h"
 #include "item_use.h"
 #include "pokedex.h"
-#include "strings.h"
 #include "test_runner.h"
 #include "recorded_battle.h"
 #include "decompress.h"
@@ -103,6 +102,11 @@ static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species
 #include "data/trainer/encounter_musics.h"
 #include "data/trainer/trainer_slides.h"
 #include "data/trainer/partner_parties.h"
+
+const u8 gText_MaleSymbol[] = _("♂");
+const u8 gText_FemaleSymbol[] = _("♀");
+const u8 gText_GenderlessSymbol[] = _("");
+const u8 gText_MoveNoPowerAccuracy[] = _("---");
 
 struct SpindaSpot
 {

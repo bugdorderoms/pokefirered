@@ -5,11 +5,11 @@
 #include "menu.h"
 #include "rtc.h"
 #include "dns.h"
+#include "field_specials.h"
 #include "event_data.h"
 #include "new_menu_helpers.h"
 #include "text_window.h"
 #include "region_map.h"
-#include "strings.h"
 
 // States and data defines for Task_MapNamePopUpWindow
 enum
@@ -245,7 +245,7 @@ static u8 *MapNamePopupAppendFloorNum(u8 *dest, s8 floorNum)
     *dest++ = CHAR_SPACE;
     
     if (floorNum == 0x7F)
-        return StringCopy(dest, gText_Rooftop2);
+        return StringCopy(dest, gText_Rooftop);
     
     if (floorNum < 0)
     {

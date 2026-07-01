@@ -4,7 +4,6 @@
 #include "task.h"
 #include "menu_indicators.h"
 #include "new_menu_helpers.h"
-#include "strings.h"
 #include "menu.h"
 #include "mail.h"
 #include "mail_data.h"
@@ -64,6 +63,8 @@ static void Task_WaitFadeAndGoToPartyMenu(u32 taskId);
 static void Task_Error_NoPokemon(u32 taskId);
 static void Task_PlayerPcExitMailSubmenu(u32 taskId);
 
+static const u8 sText_WhatWouldYouLikeToDo[] = _("What would you like to do?");
+
 static const u8 *const sItemStorageActionDescriptionPtrs[] = {
     COMPOUND_STRING("Take out items from the PC."),
     COMPOUND_STRING("Store items in the PC."),
@@ -71,18 +72,18 @@ static const u8 *const sItemStorageActionDescriptionPtrs[] = {
 };
 
 static const struct MenuAction sMenuActions_TopMenu[] = {
-    {gText_ItemStorage, Task_PlayerPcItemStorage},
-    {gText_Mailbox, Task_PlayerPcMailbox},
-    {gText_TurnOff, Task_PlayerPcTurnOff}
+    {COMPOUND_STRING("Item Storage"), Task_PlayerPcItemStorage},
+    {COMPOUND_STRING("Mailbox"),      Task_PlayerPcMailbox},
+    {COMPOUND_STRING("Turn Off"),     Task_PlayerPcTurnOff}
 };
 
 static const u8 gUnknown_8402200[] = { 0, 1, 2 };
 static const u8 gUnknown_8402203[] = { 0, 1, 2 };
 
 static const struct MenuAction sMenuActions_ItemPc[] = {
-    {gText_WithdrawItem2, Task_PlayerPcWithdrawItem},
-    {gText_DepositItem2, Task_PlayerPcDepositItem},
-    {gFameCheckerText_Cancel, Task_PlayerPcCancel}
+    {COMPOUND_STRING("Withdraw Item"), Task_PlayerPcWithdrawItem},
+    {COMPOUND_STRING("Deposit Item"),  Task_PlayerPcDepositItem},
+    {gMenuText_Cancel,                 Task_PlayerPcCancel}
 };
 
 static const struct ItemSlot gNewGamePCItems[] = {
@@ -91,10 +92,10 @@ static const struct ItemSlot gNewGamePCItems[] = {
 };
 
 static const struct MenuAction sMenuActions_MailSubmenu[] = {
-    {gOtherText_Read, Task_PlayerPcReadMail},
-    {gOtherText_MoveToBag, Task_PlayerPcMoveMailToBag},
-    {gOtherText_Give2, Task_PlayerPcGiveMailToMon},
-    {gOtherText_Exit, Task_PlayerPcExitMailSubmenu}
+    {COMPOUND_STRING("Read"),        Task_PlayerPcReadMail},
+    {COMPOUND_STRING("Move To Bag"), Task_PlayerPcMoveMailToBag},
+    {gText_ItemMenuGive,             Task_PlayerPcGiveMailToMon},
+    {COMPOUND_STRING("Exit"),        Task_PlayerPcExitMailSubmenu}
 };
 
 static const struct WindowTemplate sWindowTemplate_TopMenu_3Items = {
@@ -141,7 +142,7 @@ void BedroomPC(void)
     gPlayerPcMenuManager.notInRoom = FALSE;
     sItemOrder = gUnknown_8402200;
     sTopMenuItemCount = 3;
-    DisplayItemMessageOnField(CreateTask(TaskDummy, 0), 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
+    DisplayItemMessageOnField(CreateTask(TaskDummy, 0), 2, sText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
 }
 
 void PlayerPC(void)
@@ -149,7 +150,7 @@ void PlayerPC(void)
     gPlayerPcMenuManager.notInRoom = TRUE;
     sItemOrder = gUnknown_8402203;
     sTopMenuItemCount = 3;
-    DisplayItemMessageOnField(CreateTask(TaskDummy, 0), 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
+    DisplayItemMessageOnField(CreateTask(TaskDummy, 0), 2, sText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
 }
 
 #define tCount          data[2]
@@ -199,7 +200,7 @@ static void Task_TopMenuHandleInput(u32 taskId)
 
 static void Task_ReturnToTopMenu(u32 taskId)
 {
-    DisplayItemMessageOnField(taskId, 2, gText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
+    DisplayItemMessageOnField(taskId, 2, sText_WhatWouldYouLikeToDo, Task_DrawPlayerPcTopMenu);
 }
 
 static void Task_PlayerPcItemStorage(u32 taskId)
@@ -210,10 +211,12 @@ static void Task_PlayerPcItemStorage(u32 taskId)
 
 static void Task_PlayerPcMailbox(u32 taskId)
 {
+    const u8 *noMailMsg = COMPOUND_STRING("There's no Mail here.{PAUSE_UNTIL_PRESS}");
+    
     gPlayerPcMenuManager.count = CountPCMail();
     
     if (gPlayerPcMenuManager.count == 0)
-        DisplayItemMessageOnField(taskId, 2, gText_TheresNoMailHere, Task_ReturnToTopMenu);
+        DisplayItemMessageOnField(taskId, 2, noMailMsg, Task_ReturnToTopMenu);
     else
     {
         gPlayerPcMenuManager.itemsAbove = 0;
@@ -229,7 +232,7 @@ static void Task_PlayerPcMailbox(u32 taskId)
             gTasks[taskId].func = Task_MailboxPcHandleInput;
         }
         else
-            DisplayItemMessageOnField(taskId, 2, gText_TheresNoMailHere, Task_ReturnToTopMenu);
+            DisplayItemMessageOnField(taskId, 2, noMailMsg, Task_ReturnToTopMenu);
     }
 }
 
@@ -341,7 +344,7 @@ static void Task_PlayerPcWithdrawItem(u32 taskId)
         ClearStdWindowAndFrameToTransparent(tWindowId, FALSE);
         ClearWindowTilemap(tWindowId);
         RemoveWindow(tWindowId);
-        DisplayItemMessageOnField(taskId, 2, gText_ThereAreNoItems, Task_PlayerPcItemStorage);
+        DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("There are no items.{PAUSE_UNTIL_PRESS}"), Task_PlayerPcItemStorage);
     }
 }
 
@@ -421,11 +424,12 @@ static void PCMailCompaction(void)
 
 static void Task_DrawMailboxPcMenu(u32 taskId)
 {
+    const u8 *str = COMPOUND_STRING("Mailbox");
     u32 windowId = MailboxPC_GetAddWindow(0);
-    s32 width = GetStringWidth(2, gText_Mailbox, 0);
+    s32 width = GetStringWidth(2, str, 0);
     
     MailboxPC_GetAddWindow(1);
-    AddTextPrinterParameterized(windowId, 2, gText_Mailbox, (80 - width) / 2, 2, 0, NULL);
+    AddTextPrinterParameterized(windowId, 2, str, (80 - width) / 2, 2, 0, NULL);
     ScheduleBgCopyTilemapToVram(0);
     
     gTasks[taskId].tListMenuTaskId = MailboxPC_InitListMenu(&gPlayerPcMenuManager);
@@ -484,7 +488,7 @@ static void Task_PrintWhatToDoWithSelectedMail(u32 taskId)
     else
         ConvertInternationalString(gStringVar1, LANGUAGE_JAPANESE);
 
-    StringExpandPlaceholders(gStringVar4, gText_WhatWouldYouLikeToDoWithPlayersMail);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("What would you like to do with\n{STR_VAR_1}'s Mail?"));
     DisplayItemMessageOnField(taskId, 2, gStringVar4, Task_DrawMailSubmenu);
 }
 
@@ -573,7 +577,7 @@ static void CB2_SetCbToReturnToMailbox(void)
 
 static void Task_PlayerPcMoveMailToBag(u32 taskId)
 {
-    DisplayItemMessageOnField(taskId, 2, gText_MessageWillBeLost, Task_DrawYesNoMenuToConfirmMoveToBag);
+    DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("The message will be lost.\nIs that okay?"), Task_DrawYesNoMenuToConfirmMoveToBag);
 }
 
 static void Task_DrawYesNoMenuToConfirmMoveToBag(u32 taskId)
@@ -605,10 +609,10 @@ static void Task_TryPutMailInBag_DestroyMsgIfSuccessful(u32 taskId)
     struct Mail * mail = &SELECTED_MAIL;
     
     if (!AddBagItem(mail->itemId, 1))
-        DisplayItemMessageOnField(taskId, 2, gText_BagIsFull, Task_PlayerPcExitMailSubmenu);
+        DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("The Bag is full.{PAUSE_UNTIL_PRESS}"), Task_PlayerPcExitMailSubmenu);
     else
     {
-        DisplayItemMessageOnField(taskId, 2, gText_MailReturnedToBagMessageErased, Task_PlayerPcExitMailSubmenu);
+        DisplayItemMessageOnField(taskId, 2, COMPOUND_STRING("The Mail was returned to the Bag\nwith its message erased.{PAUSE_UNTIL_PRESS}"), Task_PlayerPcExitMailSubmenu);
         ClearMailStruct(mail);
         PCMailCompaction();
         gPlayerPcMenuManager.count--;

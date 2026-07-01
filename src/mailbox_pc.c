@@ -4,7 +4,6 @@
 #include "new_menu_helpers.h"
 #include "list_menu.h"
 #include "player_pc.h"
-#include "strings.h"
 #include "menu_indicators.h"
 #include "constants/songs.h"
 
@@ -97,7 +96,7 @@ u32 MailboxPC_InitListMenu(struct PlayerPCItemPageStruct * playerPcStruct)
         sListMenuItems[i].label = COMPOUND_STRING("");
         sListMenuItems[i].index = i;
     }
-    sListMenuItems[i].label = gFameCheckerText_Cancel;
+    sListMenuItems[i].label = gMenuText_Cancel;
     sListMenuItems[i].index = -2;
 
     gMultiuseListMenuTemplate.items = sListMenuItems;

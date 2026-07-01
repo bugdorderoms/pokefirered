@@ -101,4 +101,6 @@ u32 Save_LoadGameData(u32 saveType);
 void Task_LinkSave(u32 taskId);
 void ResetSaveHeap(void);
 
+extern const u8 gText_SavingDontTurnOffThePower[];
+
 #endif // GUARD_SAVE_H

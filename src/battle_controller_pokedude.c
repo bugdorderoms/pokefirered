@@ -10,7 +10,6 @@
 #include "link.h"
 #include "event_data.h"
 #include "item_menu.h"
-#include "strings.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"

@@ -7,7 +7,6 @@
 #include "overworld.h"
 #include "pokedex.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "task.h"
 #include "constants/sound.h"
 

@@ -45,6 +45,7 @@ void GetOnOffBike(u32 flags);
 s16 GetPlayerSpeed(void);
 void MovePlayerOnBike(u32 direction, u16 newKeys, u16 heldKeys);
 bool32 MetatileBehaviorForbidsBiking(u32 metatileBehavior);
+bool32 CanPlayerDismountOfBike(u32 metatileBehavior);
 void Bike_HandleBumpySlopeJump(void);
 void Bike_UpdateBikeCounterSpeed(u8 counter);
 bool32 IsPlayerNotUsingAcroBikeOnBumpySlope(void);

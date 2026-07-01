@@ -9,7 +9,6 @@
 #include "script.h"
 #include "battle_setup.h"
 #include "script_pokemon_util.h"
-#include "strings.h"
 #include "string_util.h"
 #include "event_data.h"
 #include "event_object_movement.h"
@@ -89,6 +88,8 @@ static EWRAM_DATA u8 *sTrainerCannotBattleSpeech = NULL;
 static EWRAM_DATA u8 *sTrainerBattleEndScript = NULL;
 static EWRAM_DATA u8 *sTrainerABattleScriptRetAddr = NULL;
 static EWRAM_DATA u16 sRivalBattleFlags = 0;
+
+const u8 gText_Ghost[] = _("Ghost");
 
 static const u8 sBattleTransitionTable_Wild[][MAX_RANDOM_BATTLE_TRANSITIONS] =
 {
@@ -839,7 +840,7 @@ void StartRematchBattle(void)
 
 static const u8 *ReturnEmptyStringIfNull(const u8 *string)
 {
-    return string == NULL ? gString_Dummy : string;
+    return string == NULL ? COMPOUND_STRING("") : string;
 }
 
 void ShowTrainerIntroSpeech(void)

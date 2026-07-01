@@ -7,6 +7,20 @@ EWRAM_DATA u8 gStringVar3[20] = {};
 EWRAM_DATA u8 gStringVar4[1000] = {};
 EWRAM_DATA u8 gUnknownStringVar[16] = {0};
 
+static const u8 sExpandedPlaceholder_Empty[] = _("");
+static const u8 sExpandedPlaceholder_Kun[] = _("");
+static const u8 sExpandedPlaceholder_Chan[] = _("");
+static const u8 sExpandedPlaceholder_Sapphire[] = _("Sapphire");
+static const u8 sExpandedPlaceholder_Ruby[] = _("Ruby");
+static const u8 sExpandedPlaceholder_Aqua[] = _("Aqua");
+static const u8 sExpandedPlaceholder_Magma[] = _("Magma");
+static const u8 sExpandedPlaceholder_Archie[] = _("Archie");
+static const u8 sExpandedPlaceholder_Maxie[] = _("Maxie");
+static const u8 sExpandedPlaceholder_Kyogre[] = _("Kyogre");
+static const u8 sExpandedPlaceholder_Groudon[] = _("Groudon");
+static const u8 sExpandedPlaceholder_Red[] = _("Red");
+static const u8 sExpandedPlaceholder_Green[] = _("Green");
+
 static const u8 sDigits[] = __("0123456789ABCDEF");
 
 static const s32 sPowersOfTen[] =
@@ -22,20 +36,6 @@ static const s32 sPowersOfTen[] =
      100000000,
     1000000000,
 };
-
-extern u8 gExpandedPlaceholder_Empty[];
-extern u8 gExpandedPlaceholder_Kun[];
-extern u8 gExpandedPlaceholder_Chan[];
-extern u8 gExpandedPlaceholder_Sapphire[];
-extern u8 gExpandedPlaceholder_Ruby[];
-extern u8 gExpandedPlaceholder_Aqua[];
-extern u8 gExpandedPlaceholder_Magma[];
-extern u8 gExpandedPlaceholder_Archie[];
-extern u8 gExpandedPlaceholder_Maxie[];
-extern u8 gExpandedPlaceholder_Kyogre[];
-extern u8 gExpandedPlaceholder_Groudon[];
-extern u8 gExpandedPlaceholder_Red[];
-extern u8 gExpandedPlaceholder_Green[];
 
 static u8 *StringCopy_WithLimit(u8 *dest, const u8 *src, u32 limit)
 {
@@ -228,18 +228,16 @@ u8 *ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode,
 
 u8 *StringExpandPlaceholders(u8 *dest, const u8 *src)
 {
-    for (;;)
+    while (TRUE)
     {
         u32 c = *src++;
         u32 placeholderId;
-        u8 *expandedString;
 
         switch (c)
         {
             case PLACEHOLDER_BEGIN:
                 placeholderId = *src++;
-                expandedString = GetExpandedPlaceholder(placeholderId);
-                dest = StringExpandPlaceholders(dest, expandedString);
+                dest = StringExpandPlaceholders(dest, GetExpandedPlaceholder(placeholderId));
                 break;
             case EXT_CTRL_CODE_BEGIN:
                 *dest++ = c;
@@ -285,7 +283,7 @@ u8 *StringBraille(u8 *dest, const u8 *src)
 
     dest = StringCopy(dest, setBrailleFont);
 
-    for (;;)
+    while (TRUE)
     {
         u32 c = *src++;
 
@@ -305,118 +303,118 @@ u8 *StringBraille(u8 *dest, const u8 *src)
     }
 }
 
-static u8 *ExpandPlaceholder_UnknownStringVar(void)
+static const u8 *ExpandPlaceholder_UnknownStringVar(void)
 {
     return gUnknownStringVar;
 }
 
-static u8 *ExpandPlaceholder_PlayerName(void)
+static const u8 *ExpandPlaceholder_PlayerName(void)
 {
     return gSaveBlock2Ptr->playerName;
 }
 
-static u8 *ExpandPlaceholder_StringVar1(void)
+static const u8 *ExpandPlaceholder_StringVar1(void)
 {
     return gStringVar1;
 }
 
-static u8 *ExpandPlaceholder_StringVar2(void)
+static const u8 *ExpandPlaceholder_StringVar2(void)
 {
     return gStringVar2;
 }
 
-static u8 *ExpandPlaceholder_StringVar3(void)
+static const u8 *ExpandPlaceholder_StringVar3(void)
 {
     return gStringVar3;
 }
 
-static u8 *ExpandPlaceholder_KunChan(void)
+static const u8 *ExpandPlaceholder_KunChan(void)
 {
     if (gSaveBlock2Ptr->playerGender == MALE)
-        return gExpandedPlaceholder_Kun;
+        return sExpandedPlaceholder_Kun;
     else
-        return gExpandedPlaceholder_Chan;
+        return sExpandedPlaceholder_Chan;
 }
 
-static u8 *ExpandPlaceholder_RivalName(void)
+static const u8 *ExpandPlaceholder_RivalName(void)
 {
     if (gSaveBlock1Ptr->rivalName[0] == EOS)
     {
         if (gSaveBlock2Ptr->playerGender == MALE)
-            return gExpandedPlaceholder_Green;
+            return sExpandedPlaceholder_Green;
         else
-            return gExpandedPlaceholder_Red;
+            return sExpandedPlaceholder_Red;
     }
     else
         return gSaveBlock1Ptr->rivalName;
 }
 
-static u8 *ExpandPlaceholder_Version(void)
+static const u8 *ExpandPlaceholder_Version(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Ruby;
+    return sExpandedPlaceholder_Ruby;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Sapphire;
+    return sExpandedPlaceholder_Sapphire;
 #endif
 }
 
-static u8 *ExpandPlaceholder_Magma(void)
+static const u8 *ExpandPlaceholder_Magma(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Magma;
+    return sExpandedPlaceholder_Magma;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Aqua;
+    return sExpandedPlaceholder_Aqua;
 #endif
 }
 
-static u8 *ExpandPlaceholder_Aqua(void)
+static const u8 *ExpandPlaceholder_Aqua(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Aqua;
+    return sExpandedPlaceholder_Aqua;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Magma;
+    return sExpandedPlaceholder_Magma;
 #endif
 }
 
-static u8 *ExpandPlaceholder_Maxie(void)
+static const u8 *ExpandPlaceholder_Maxie(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Maxie;
+    return sExpandedPlaceholder_Maxie;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Archie;
+    return sExpandedPlaceholder_Archie;
 #endif
 }
 
-static u8 *ExpandPlaceholder_Archie(void)
+static const u8 *ExpandPlaceholder_Archie(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Archie;
+    return sExpandedPlaceholder_Archie;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Maxie;
+    return sExpandedPlaceholder_Maxie;
 #endif
 }
 
-static u8 *ExpandPlaceholder_Groudon(void)
+static const u8 *ExpandPlaceholder_Groudon(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Groudon;
+    return sExpandedPlaceholder_Groudon;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Kyogre;
+    return sExpandedPlaceholder_Kyogre;
 #endif
 }
 
-static u8 *ExpandPlaceholder_Kyogre(void)
+static const u8 *ExpandPlaceholder_Kyogre(void)
 {
 #if defined(FIRERED)
-    return gExpandedPlaceholder_Kyogre;
+    return sExpandedPlaceholder_Kyogre;
 #elif defined(LEAFGREEN)
-    return gExpandedPlaceholder_Groudon;
+    return sExpandedPlaceholder_Groudon;
 #endif
 }
 
-u8 *GetExpandedPlaceholder(u32 id)
+const u8 *GetExpandedPlaceholder(u32 id)
 {
-    typedef u8 *(*ExpandPlaceholderFunc)(void);
+    typedef const u8 *(*ExpandPlaceholderFunc)(void);
 
     static const ExpandPlaceholderFunc funcs[] =
     {
@@ -437,7 +435,7 @@ u8 *GetExpandedPlaceholder(u32 id)
     };
 
     if (id >= ARRAY_COUNT(funcs))
-        return gExpandedPlaceholder_Empty;
+        return sExpandedPlaceholder_Empty;
     else
         return funcs[id]();
 }

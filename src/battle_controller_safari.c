@@ -6,7 +6,6 @@
 #include "link.h"
 #include "palette.h"
 #include "sound.h"
-#include "strings.h"
 #include "util.h"
 #include "constants/battle.h"
 #include "constants/battle_anim.h"

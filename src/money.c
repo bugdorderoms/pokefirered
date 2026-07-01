@@ -4,11 +4,13 @@
 #include "menu.h"
 #include "money.h"
 #include "text_window.h"
-#include "strings.h"
 
 #define MAX_MONEY 999999
 
 EWRAM_DATA static u8 sMoneyBoxWindowId = 0;
+
+const u8 gText_PokedollarSymbol[] = _("¥");
+const u8 gText_PokedollarVar1[] = _("¥{STR_VAR_1}");
 
 u32 GetMoney(u32* moneyPtr)
 {
@@ -93,7 +95,7 @@ void PrintMoneyAmount(u32 windowId, s32 x, u32 y, u32 amount, u32 speed)
 void PrintMoneyAmountInMoneyBoxWithBorder(u32 windowId, u32 tileStart, u32 pallete, u32 amount)
 {
     DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, tileStart, pallete);
-    AddTextPrinterParameterized(windowId, 2, gText_TrainerCardMoney, 0, 0, 0xFF, 0);
+    AddTextPrinterParameterized(windowId, 2, COMPOUND_STRING("Money"), 0, 0, 0xFF, 0);
     PrintMoneyAmountInMoneyBox(windowId, amount, 0);
 }
 

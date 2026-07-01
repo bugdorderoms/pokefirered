@@ -4,7 +4,6 @@
 #include "event_data.h"
 #include "menu.h"
 #include "overworld.h"
-#include "strings.h"
 #include "task.h"
 #include "constants/songs.h"
 
@@ -241,10 +240,10 @@ static const struct EasyChatScreenTemplate sEasyChatScreenTemplates[] = {
         .numRows = 5,
         .frameId = 2,
         .titleText =  NULL,
-        .instructionsText1 = gUnknown_8418780,
-        .instructionsText2 = gUnknown_841879E,
-        .confirmText1 = gUnknown_841888C,
-        .confirmText2 = gUnknown_8418902
+        .instructionsText1 = COMPOUND_STRING("Combine nine words or phrases"),
+        .instructionsText2 = COMPOUND_STRING("and make a message."),
+        .confirmText1 = COMPOUND_STRING("The Mail message"),
+        .confirmText2 = COMPOUND_STRING("is as shown. Okay?")
     },
 };
 
@@ -1016,7 +1015,7 @@ static bool8 WordSelectCursorXPosTooFarRight(void)
     return GetSelectWordCursorPos() >= GetNumDisplayedWords() ? TRUE : FALSE;
 }
 
-u8 GetEasyChatScreenFrameId(void)
+u32 GetEasyChatScreenFrameId(void)
 {
     return sEasyChatScreenTemplates[sEasyChatScreen->templateId].frameId;
 }
@@ -1068,11 +1067,11 @@ void GetEasyChatConfirmCancelText(const u8 **str1, const u8 **str2)
     switch (sEasyChatScreen->type)
     {
     case EASY_CHAT_TYPE_MAIL:
-        *str1 = gUnknown_84189EE;
+        *str1 = COMPOUND_STRING("Stop giving the Pokémon Mail?");
         *str2 = NULL;
         break;
     default:
-        *str1 = gUnknown_84189E0;
+        *str1 = COMPOUND_STRING("Quit editing?");
         *str2 = NULL;
         break;
     }
@@ -1080,8 +1079,8 @@ void GetEasyChatConfirmCancelText(const u8 **str1, const u8 **str2)
 
 void GetEasyChatConfirmDeletionText(const u8 **str1, const u8 **str2)
 {
-    *str1 = gUnknown_8418937;
-    *str2 = gUnknown_8418956;
+    *str1 = COMPOUND_STRING("All the text being edited will");
+    *str2 = COMPOUND_STRING("be deleted. Is that okay?");
 }
 
 void GetECSelectGroupCursorCoords(u8 *Xp, u8 *Yp)

@@ -11,9 +11,6 @@ static void sub_80E583C(u32 taskId);
 static void sub_80E58A0(u32 taskId);
 static void sub_80E5934(u32 taskId);
 
-extern const u8 gUnknown_84169F8[];
-extern const u8 gText_PkmnHPRestoredByVar2[];
-
 bool32 SetUpFieldMove_SoftBoiled(void)
 {
     u32 partyId = GetCursorSelectionMonId();
@@ -64,7 +61,7 @@ static void sub_80E57E8(u32 taskId)
 static void sub_80E583C(u32 taskId)
 {
     GetMonNickname(&gPlayerParty[gPartyMenu.slotId2], gStringVar1);
-    StringExpandPlaceholders(gStringVar4, gText_PkmnHPRestoredByVar2);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{STR_VAR_1}'s HP was restored\nby {STR_VAR_2} point(s).{PAUSE_UNTIL_PRESS}"));
     DisplayPartyMenuMessage(gStringVar4, 0);
     ScheduleBgCopyTilemapToVram(2);
     gTasks[taskId].func = sub_80E58A0;
@@ -97,7 +94,7 @@ static void sub_80E5900(u32 taskId)
 static void sub_80E5934(u32 taskId)
 {
     PlaySE(SE_SELECT);
-    DisplayPartyMenuMessage(gUnknown_84169F8, 0);
+    DisplayPartyMenuMessage(COMPOUND_STRING("This can't be used on\nthat Pokémon.{PAUSE_UNTIL_PRESS}"), 0);
     ScheduleBgCopyTilemapToVram(2);
     gTasks[taskId].func = sub_80E5900;
 }

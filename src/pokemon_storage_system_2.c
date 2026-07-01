@@ -8,7 +8,6 @@
 #include "overworld.h"
 #include "pokemon_storage_system_internal.h"
 #include "script.h"
-#include "strings.h"
 #include "task.h"
 #include "constants/songs.h"
 #include "constants/field_weather.h"
@@ -36,11 +35,11 @@ static const u16 sBoxSelectionPopupCenterTiles[] = INCBIN_U16("graphics/interfac
 static const u16 sBoxSelectionPopupSidesTiles[] = INCBIN_U16("graphics/interface/pss_unk_83CE2B8.4bpp");
 
 static const struct PSS_MenuStringPtrs sUnknown_83CDA20[] = {
-    {gText_WithdrawPokemon, gText_WithdrawMonDescription},
-    {gText_DepositPokemon,  gText_DepositMonDescription },
-    {gText_MovePokemon,     gText_MoveMonDescription    },
-    {gText_MoveItems,       gText_MoveItemsDescription  },
-    {gText_SeeYa,           gText_SeeYaDescription      }
+    {COMPOUND_STRING("Withdraw Pokémon"), COMPOUND_STRING("You can withdraw a Pokémon if you\nhave any in a Box.")           },
+    {COMPOUND_STRING("Deposit Pokémon"),  COMPOUND_STRING("You can deposit your party\nPokémon in any Box.")                 },
+    {COMPOUND_STRING("Move Pokémon"),     COMPOUND_STRING("You can move Pokémon that are\nstored in any Box.")               },
+    {COMPOUND_STRING("Move Items"),       COMPOUND_STRING("You can move items held by any\nPokémon in a Box or your party.") },
+    {COMPOUND_STRING("See Ya!"),          COMPOUND_STRING("See you later!")                                                  }
 };
 
 static const union AnimCmd gUnknown_83CDA50[] = {
@@ -270,13 +269,13 @@ static void Task_PokemonStorageSystemPC(u32 taskId)
             if (task->data[2] == 0 && CountPartyMons() == PARTY_SIZE)
             {
                 FillWindowPixelBuffer(0, PIXEL_FILL(1));
-                AddTextPrinterParameterized2(0, 2, gText_PartyFull, 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+                AddTextPrinterParameterized2(0, 2, COMPOUND_STRING("Can't take any more Pokémon."), 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
                 task->data[0] = 3;
             }
             else if (task->data[2] == 1 && CountPartyMons() == 1)
             {
                 FillWindowPixelBuffer(0, PIXEL_FILL(1));
-                AddTextPrinterParameterized2(0, 2, gText_JustOnePkmn, 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+                AddTextPrinterParameterized2(0, 2, COMPOUND_STRING("Can't deposit the last Pokémon!"), 0, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
                 task->data[0] = 3;
             }
             else
@@ -395,7 +394,7 @@ void ResetPokemonStorageSystem(void)
     
     for (boxId = 0; boxId < TOTAL_BOXES_COUNT; boxId++)
     {
-        u8 *dest = StringCopy(GetBoxNamePtr(boxId), gText_Box);
+        u8 *dest = StringCopy(GetBoxNamePtr(boxId), COMPOUND_STRING("Box"));
         ConvertIntToDecimalStringN(dest, boxId + 1, STR_CONV_MODE_LEFT_ALIGN, 2);
     }
     

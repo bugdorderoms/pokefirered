@@ -9,7 +9,6 @@
 #include "text_window.h"
 #include "random.h"
 #include "trig.h"
-#include "strings.h"
 #include "constants/songs.h"
 
 #define SLOT_IMAGE_7         0
@@ -174,6 +173,10 @@ static void InitReelButtonTileMem(void);
 static void SetReelButtonPressed(u32 reel);
 static void ReleaseReelButtons(void);
 static void PressReelButton(u32 reel, u32 taskId);
+
+static const u8 sString_SlotMachineControls[] = _("{DPAD_LEFTRIGHT}Combos {DPAD_DOWN}Wager {A_BUTTON}Stop {B_BUTTON}Exit");
+static const u8 sString_OutOfCoins[] = _("You've run out of Coins.\nGame over!");
+static const u8 sString_QuitPlaying[] = _("Quit playing?");
 
 static const u8 sSecondReelBiasCheckIndices[][2] = {
     {0x00, 0x03},
@@ -2015,11 +2018,11 @@ static bool32 SlotsTask_GraphicsInit(u8 * state, struct SlotMachineSetupTaskData
         FillWindowPixelBuffer(1, 0xFF);
         PutWindowTilemap(1);
 
-        x = 236 - GetStringWidth(0, gString_SlotMachineControls, 0);
+        x = 236 - GetStringWidth(0, sString_SlotMachineControls, 0);
         textColor[0] = TEXT_DYNAMIC_COLOR_6;
         textColor[1] = TEXT_COLOR_WHITE;
         textColor[2] = TEXT_COLOR_DARK_GRAY;
-        AddTextPrinterParameterized3(1, 0, x, 0, textColor, 0, gString_SlotMachineControls);
+        AddTextPrinterParameterized3(1, 0, x, 0, textColor, 0, sString_SlotMachineControls);
         CopyBgTilemapBufferToVram(0);
 
         SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_MODE_0 | 0x20 | DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON);
@@ -2145,7 +2148,7 @@ static bool32 SlotsTask_MessageOutOfCoins(u8 * state, struct SlotMachineSetupTas
     switch (*state)
     {
     case 0:
-        Slot_PrintOnWindow0(gString_OutOfCoins);
+        Slot_PrintOnWindow0(sString_OutOfCoins);
         CopyWindowToVram(0, COPYWIN_BOTH);
         (*state)++;
         break;
@@ -2162,7 +2165,7 @@ static bool32 SlotsTask_AskQuitPlaying(u8 * state, struct SlotMachineSetupTaskDa
     switch (*state)
     {
     case 0:
-        Slot_PrintOnWindow0(gString_QuitPlaying);
+        Slot_PrintOnWindow0(sString_QuitPlaying);
         Slot_CreateYesNoMenu(0);
         CopyWindowToVram(0, COPYWIN_BOTH);
         (*state)++;

@@ -266,10 +266,10 @@ static void BufferFanClubTrainerName(struct LinkBattleRecords *linkRecords, u32 
             StringCopy(gStringVar1, gSaveBlock1Ptr->rivalName);
             break;
         case 1:
-            StringCopy(gStringVar1, gText_LtSurge);
+            StringCopy(gStringVar1, COMPOUND_STRING("Lt. Surge"));
             break;
         case 2:
-            StringCopy(gStringVar1, gText_Koga);
+            StringCopy(gStringVar1, COMPOUND_STRING("Koga"));
             break;
         default:
             StringCopy(gStringVar1, gSaveBlock1Ptr->rivalName);

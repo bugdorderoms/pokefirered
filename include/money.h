@@ -17,4 +17,7 @@ void DrawMoneyBox(u32 amount, u32 x, u32 y);
 void HideMoneyBox(void);
 void PrintMoneyAmount(u32 windowId, s32 x, u32 y, u32 amount, u32 speed);
 
+extern const u8 gText_PokedollarSymbol[];
+extern const u8 gText_PokedollarVar1[];
+
 #endif // GUARD_MONEY_H

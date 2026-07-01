@@ -5,7 +5,6 @@
 #include "new_menu_helpers.h"
 #include "pokemon_icon.h"
 #include "pokemon_storage_system_internal.h"
-#include "strings.h"
 #include "task.h"
 #include "trig.h"
 

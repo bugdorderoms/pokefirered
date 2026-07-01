@@ -377,6 +377,12 @@ SECTIONS {
         *libc.a:lseekr.o(.text);
         *libc.a:readr.o(.text);
     } =0
+	
+	.rodata.compound_string :
+    SUBALIGN(0)
+    {
+        *.o(.rodata.compound_string.*);
+    } =0
 
     .rodata :
     SUBALIGN(4)
@@ -506,7 +512,6 @@ SECTIONS {
         src/hall_of_fame.o(.rodata);
         src/credits.o(.rodata);
         src/diploma.o(.rodata);
-        src/strings.o(.rodata);
         src/save_failed_screen.o(.rodata);
         src/clear_save_data_screen.o(.rodata);
         src/evolution_graphics.o(.rodata);
@@ -594,6 +599,7 @@ SECTIONS {
 		src/raid_intro.o(.rodata);
 		src/raid_clear_screen.o(.rodata);
 		src/battle_raid.o(.rodata);
+		src/money.o(.rodata);
 
         /* These should not be moved to C files */
         src/m4a_tables.o(.rodata);

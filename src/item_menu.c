@@ -31,7 +31,6 @@
 #include "scanline_effect.h"
 #include "script.h"
 #include "shop.h"
-#include "strings.h"
 #include "teachy_tv.h"
 #include "tm_case.h"
 #include "text_window.h"
@@ -186,6 +185,18 @@ static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSl
 void BagMenu_Print(u32 windowId, u32 fontId, const u8 *str, u32 left, u32 top, u32 letterSpacing, u32 lineSpacing, u32 speed, u32 colorIndex);
 void GoToBagMenu(u32 location, u32 pocket, MainCallback bagCallback);
 
+const u8 gText_ItemMenuUse[] = _("Use");
+const u8 gText_ItemMenuGive[] = _("Give");
+const u8 gText_ItemMenuToss[] = _("Toss");
+
+const u8 gText_ThereIsNoPokemon[] = _("There is no\nPokémon.");
+const u8 gText_Var1IsSelected[] = _("{STR_VAR_1} is\nselected.");
+const u8 gOtherText_WhereShouldTheStrVar1BePlaced[] = _("Where should the {STR_VAR_1}\nbe placed?");
+const u8 gText_TossOutHowManyStrVar1s[] = _("Toss out how many\n{STR_VAR_1}(s)?");
+const u8 gText_ThrewAwayStrVar2StrVar1s[] = _("Threw away {STR_VAR_2}\n{STR_VAR_1}(s).");
+const u8 gText_ThrowAwayStrVar2OfThisItemQM[] = _("Throw away {STR_VAR_2} of\nthis item?");
+static const u8 sText_CantWriteMailHere[] = _("You can't write\nMail here.");
+
 static const struct BgTemplate sBgTemplates[2] = {
     {
         .bg = 0,
@@ -207,9 +218,9 @@ static const struct BgTemplate sBgTemplates[2] = {
 };
 
 static const u8 *const sPocketNames[] = {
-    gText_Items2,
-    gText_KeyItems2,
-    gText_PokeBalls2
+    COMPOUND_STRING("Items"),
+    COMPOUND_STRING("Key Items"),
+    COMPOUND_STRING("Poké Balls")
 };
 
 static const u16 sBagListBgTiles[][18] = {
@@ -228,21 +239,21 @@ static const u16 sBagListBgTiles[][18] = {
 };
 
 static const struct MenuAction sItemMenuContextActions[] = {
-    [ITEMMENUACTION_USE] =          {gOtherText_Use, {.void_u32 = Task_ItemMenuAction_Use}},
-    [ITEMMENUACTION_TOSS] =         {gOtherText_Toss, {.void_u32 = Task_ItemMenuAction_Toss}},
-    [ITEMMENUACTION_REGISTER] =     {gOtherText_Register, {.void_u32 = Task_ItemMenuAction_Register}},
-    [ITEMMENUACTION_GIVE] =         {gOtherText_Give, {.void_u32 = Task_ItemMenuAction_Give}},
-    [ITEMMENUACTION_CANCEL] =       {gFameCheckerText_Cancel, {.void_u32 = Task_ItemMenuAction_Cancel}},
-    [ITEMMENUACTION_BATTLE_USE] =   {gOtherText_Use, {.void_u32 = Task_ItemMenuAction_BattleUse}},
-    [ITEMMENUACTION_CHECK] =        {gOtherText_Check, {.void_u32 = Task_ItemMenuAction_Use}},
-    [ITEMMENUACTION_OPEN] =         {gOtherText_Open, {.void_u32 = Task_ItemMenuAction_Use}},
-    [ITEMMENUACTION_OPEN_BERRIES] = {gOtherText_Open, {.void_u32 = Task_ItemMenuAction_BattleUse}},
-    [ITEMMENUACTION_WALK] =         {gOtherText_Walk, {.void_u32 = Task_ItemMenuAction_Use}},
-    [ITEMMENUACTION_DESELECT] =     {gOtherText_Deselect, {.void_u32 = Task_ItemMenuAction_Deselect}},
-    [ITEMMENUACTION_BY_NAME] =      {COMPOUND_STRING("Name"), {.void_u32 = ItemMenu_SortByName}},
-    [ITEMMENUACTION_BY_TYPE] =      {COMPOUND_STRING("Type"), {.void_u32 = ItemMenu_SortByType}},
-    [ITEMMENUACTION_BY_AMOUNT] =    {COMPOUND_STRING("Amount"), {.void_u32 = ItemMenu_SortByAmount}},
-    [ITEMMENUACTION_DUMMY] =        {gString_Dummy, {.void_u32 = NULL}}
+    [ITEMMENUACTION_USE] =          {gText_ItemMenuUse,           {.void_u32 = Task_ItemMenuAction_Use}},
+    [ITEMMENUACTION_TOSS] =         {gText_ItemMenuToss,          {.void_u32 = Task_ItemMenuAction_Toss}},
+    [ITEMMENUACTION_REGISTER] =     {COMPOUND_STRING("Register"), {.void_u32 = Task_ItemMenuAction_Register}},
+    [ITEMMENUACTION_GIVE] =         {gText_ItemMenuGive,          {.void_u32 = Task_ItemMenuAction_Give}},
+    [ITEMMENUACTION_CANCEL] =       {gMenuText_Cancel,            {.void_u32 = Task_ItemMenuAction_Cancel}},
+    [ITEMMENUACTION_BATTLE_USE] =   {gText_ItemMenuUse,           {.void_u32 = Task_ItemMenuAction_BattleUse}},
+    [ITEMMENUACTION_CHECK] =        {COMPOUND_STRING("Check"),    {.void_u32 = Task_ItemMenuAction_Use}},
+    [ITEMMENUACTION_OPEN] =         {COMPOUND_STRING("Open"),     {.void_u32 = Task_ItemMenuAction_Use}},
+    [ITEMMENUACTION_OPEN_BERRIES] = {COMPOUND_STRING("Open"),     {.void_u32 = Task_ItemMenuAction_BattleUse}},
+    [ITEMMENUACTION_WALK] =         {COMPOUND_STRING("Walk"),     {.void_u32 = Task_ItemMenuAction_Use}},
+    [ITEMMENUACTION_DESELECT] =     {COMPOUND_STRING("Deselect"), {.void_u32 = Task_ItemMenuAction_Deselect}},
+    [ITEMMENUACTION_BY_NAME] =      {COMPOUND_STRING("Name"),     {.void_u32 = ItemMenu_SortByName}},
+    [ITEMMENUACTION_BY_TYPE] =      {COMPOUND_STRING("Type"),     {.void_u32 = ItemMenu_SortByType}},
+    [ITEMMENUACTION_BY_AMOUNT] =    {COMPOUND_STRING("Amount"),   {.void_u32 = ItemMenu_SortByAmount}},
+    [ITEMMENUACTION_DUMMY] =        {COMPOUND_STRING(""),         {.void_u32 = NULL}}
 };
 
 static const u8 sContextMenuItems_Field[][4] = {
@@ -447,10 +458,11 @@ static void CB2_OpenBagMenu(void)
 
 static void DrawDepositItemTextBox(void)
 {
-    u32 x = 0x40 - GetStringWidth(0, gText_DepositItem, 0);
+    const u8 *text = COMPOUND_STRING("Deposit Item");
+    u32 x = 0x40 - GetStringWidth(0, text, 0);
     
     DrawStdFrameWithCustomTileAndPalette(2, FALSE, 0x081, 0x0C);
-    AddTextPrinterParameterized(2, 0, gText_DepositItem, x / 2, 1, 0, NULL);
+    AddTextPrinterParameterized(2, 0, text, x / 2, 1, 0, NULL);
 }
 
 static bool32 LoadBagMenuGraphics(void)
@@ -714,7 +726,7 @@ static void Bag_BuildListMenuTemplate(u32 pocket)
         sListMenuItems[i].index = i;
     }
     StringCopy(sListMenuItemStrings[i], sListItemTextColor_RegularItem);
-    StringAppend(sListMenuItemStrings[i], gFameCheckerText_Cancel);
+    StringAppend(sListMenuItemStrings[i], gMenuText_Cancel);
     sListMenuItems[i].label = sListMenuItemStrings[i];
     sListMenuItems[i].index = i;
     gMultiuseListMenuTemplate.items = sListMenuItems;
@@ -822,7 +834,7 @@ static void PrintItemDescriptionOnMessageWindow(s32 itemIndex)
     if (itemIndex != sBagMenuDisplay->nItems[gBagMenuState.pocket])
         description = ItemId_GetDescription(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, itemIndex));
     else
-        description = gText_CloseBag;
+        description = COMPOUND_STRING("Close Bag");
     
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
     BagPrintTextOnWindow(1, 2, description, 0, 3, 2, 0, 0, 0);
@@ -1709,7 +1721,7 @@ static void Task_ItemMenuAction_Give(u32 taskId)
     CopyWindowToVram(0, COPYWIN_MAP);
     
     if (!CanWriteMailHere(itemId))
-        DisplayItemMessageInBag(taskId, 2, gText_CantWriteMailHere, Task_WaitAButtonAndCloseContextMenu);
+        DisplayItemMessageInBag(taskId, 2, sText_CantWriteMailHere, Task_WaitAButtonAndCloseContextMenu);
     else
     {
         if (CalculatePlayerPartyCount() == 0)
@@ -1730,7 +1742,7 @@ static void Task_PrintThereIsNoPokemon(u32 taskId)
 static void Task_PrintItemCantBeHeld(u32 taskId)
 {
     CopyItemName(gSpecialVar_ItemId, gStringVar1);
-    StringExpandPlaceholders(gStringVar4, gText_ItemCantBeHeld);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("The {STR_VAR_1} can't be held."));
     DisplayItemMessageInBag(taskId, 2, gStringVar4, Task_WaitAButtonAndCloseContextMenu);
 }
 
@@ -1803,7 +1815,7 @@ static void Task_ItemContext_FieldGive(u32 taskId)
     u32 itemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
     
     if (!CanWriteMailHere(itemId))
-        DisplayItemMessageInBag(taskId, 2, gText_CantWriteMailHere, Task_WaitAButtonAndCloseContextMenu);
+        DisplayItemMessageInBag(taskId, 2, sText_CantWriteMailHere, Task_WaitAButtonAndCloseContextMenu);
     else if (itemId == ITEM_TM_CASE)
     {
         ItemMenu_SetExitCallback(GoToTMCase_Give);
@@ -1839,7 +1851,7 @@ static void Task_ItemContext_PcBoxGive(u32 taskId)
     u32 itemId = BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, data[1]);
     
     if (ItemIsMail(itemId))
-        DisplayItemMessageInBag(taskId, 2, gText_CantWriteMailHere, Task_WaitAButtonAndCloseContextMenu);
+        DisplayItemMessageInBag(taskId, 2, sText_CantWriteMailHere, Task_WaitAButtonAndCloseContextMenu);
     else if (itemId == ITEM_TM_CASE)
     {
         ItemMenu_SetExitCallback(GoToTMCase_PCBox);
@@ -2059,7 +2071,7 @@ static void Task_ItemContext_Deposit(u32 taskId)
         Task_TryDoItemDeposit(taskId);
     else
     {
-        InitQuantityToTossOrDeposit(data[1], gText_DepositHowManyStrVars1);
+        InitQuantityToTossOrDeposit(data[1], COMPOUND_STRING("Deposit how many\n{STR_VAR_1}(s)?"));
         gTasks[taskId].func = Task_SelectQuantityToDeposit;
     }
 }
@@ -2101,12 +2113,12 @@ static void Task_TryDoItemDeposit(u32 taskId)
     {
         CopyItemName(gSpecialVar_ItemId, gStringVar1);
         ConvertIntToDecimalStringN(gStringVar2, data[8], STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringExpandPlaceholders(gStringVar4, gText_DepositedStrVar2StrVar1s);
+        StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Deposited {STR_VAR_2}\n{STR_VAR_1}(s)."));
         BagPrintTextOnWindow(ShowBagWindow(6, 3), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
         gTasks[taskId].func = Task_WaitAB_RedrawAndReturnToBag;
     }
     else
-        DisplayItemMessageInBag(taskId, 2, gText_NoRoomToStoreItems, Task_WaitAButtonAndCloseContextMenu);
+        DisplayItemMessageInBag(taskId, 2, COMPOUND_STRING("There's no room to\nstore items."), Task_WaitAButtonAndCloseContextMenu);
 }
 
 bool32 UseRegisteredKeyItemOnField(void)

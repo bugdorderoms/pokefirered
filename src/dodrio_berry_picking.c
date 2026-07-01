@@ -4,13 +4,13 @@
 #include "item.h"
 #include "link.h"
 #include "link_rfu.h"
+#include "menu.h"
 #include "minigame_countdown.h"
 #include "m4a.h"
 #include "new_menu_helpers.h"
 #include "random.h"
 #include "save.h"
 #include "script.h"
-#include "strings.h"
 #include "text_window.h"
 #include "text_window_graphics.h"
 #include "constants/songs.h"
@@ -3035,8 +3035,8 @@ static void Msg_WantToPlayAgain(void)
             FillWindowPixelBuffer(sGame->gfx.windowIds[WIN_YES_NO], PIXEL_FILL(1));
             
             AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_PLAY_AGAIN], FONT_NORMAL, gText_WantToPlayAgain, 0, 6, 0xFF, NULL);
-            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gText_Yes, 8, 2, 0xFF, NULL);
-            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gText_No, 8, 16, 0xFF, NULL);
+            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gMenuText_Yes, 8, 2, 0xFF, NULL);
+            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gMenuText_No, 8, 16, 0xFF, NULL);
             AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gText_SelectorArrow2, 0, 2, 0xFF, NULL);
             
             CopyWindowToVram(sGame->gfx.windowIds[WIN_PLAY_AGAIN], COPYWIN_GFX);
@@ -3060,8 +3060,8 @@ static void Msg_WantToPlayAgain(void)
                 y = PLAY_AGAIN_YES;
             
             FillWindowPixelBuffer(sGame->gfx.windowIds[WIN_YES_NO], PIXEL_FILL(1));
-            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gText_Yes, 8, 2, 0xFF, NULL);
-            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gText_No, 8, 16, 0xFF, NULL);
+            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gMenuText_Yes, 8, 2, 0xFF, NULL);
+            AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gMenuText_No, 8, 16, 0xFF, NULL);
             AddTextPrinterParameterized(sGame->gfx.windowIds[WIN_YES_NO], FONT_NORMAL, gText_SelectorArrow2, 0, y == PLAY_AGAIN_YES ? 2 : 16, 0xFF, NULL);
             CopyWindowToVram(sGame->gfx.windowIds[WIN_YES_NO], COPYWIN_BOTH);
             

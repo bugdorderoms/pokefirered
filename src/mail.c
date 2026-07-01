@@ -16,7 +16,6 @@
 #include "graphics.h"
 #include "pokemon_icon.h"
 #include "string_util.h"
-#include "strings.h"
 #include "constants/items.h"
 
 enum MailIconParam
@@ -82,6 +81,8 @@ static void CB2_RunShowMailCB(void);
 static void ShowMailCB_WaitFadeIn(void);
 static void ShowMailCB_WaitButton(void);
 static void ShowMailCB_Teardown(void);
+
+static const u8 sText_From[] = _("From ");
 
 static const struct BgTemplate sBgTemplates[] = {
     {
@@ -638,7 +639,7 @@ static void BufferMailMessage(void)
     
     if (sMailViewResources->mailArrangementType == 0)
     {
-        StringCopy(StringCopy(sMailViewResources->authorNameBuffer, sMailViewResources->mail->playerName), gText_From); // ???
+        StringCopy(StringCopy(sMailViewResources->authorNameBuffer, sMailViewResources->mail->playerName), sText_From); // ???
         sMailViewResources->nameX = sMailViewResources->messageLayout->nameX + 0x60 - 8 * StringLength(sMailViewResources->authorNameBuffer);
     }
     else
@@ -671,8 +672,8 @@ static void AddMailMessagePrinters(void)
             y += sMailViewResources->messageLayout->linesLayout[i].lineHeight;
         }
     }
-    AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX, sMailViewResources->messageLayout->nameY, sTextColor, 0, gText_From);
-    AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX + GetStringWidth(1, gText_From, 0), sMailViewResources->messageLayout->nameY, sTextColor, 0, sMailViewResources->authorNameBuffer);
+    AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX, sMailViewResources->messageLayout->nameY, sTextColor, 0, sText_From);
+    AddTextPrinterParameterized3(1, 1, sMailViewResources->nameX + GetStringWidth(1, sText_From, 0), sMailViewResources->messageLayout->nameY, sTextColor, 0, sMailViewResources->authorNameBuffer);
     
     CopyWindowToVram(0, COPYWIN_BOTH);
     CopyWindowToVram(1, COPYWIN_BOTH);

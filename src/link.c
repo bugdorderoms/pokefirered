@@ -18,7 +18,6 @@
 #include "new_menu_helpers.h"
 #include "link.h"
 #include "graphics.h"
-#include "strings.h"
 #include "constants/battle.h"
 #include "constants/songs.h"
 
@@ -123,6 +122,10 @@ static void SendRecvDone(void);
 static const u16 sWirelessLinkDisplayPal[] = INCBIN_U16("graphics/interface/wireless_link_display.gbapal");
 static const u16 sWirelessLinkDisplay4bpp[] = INCBIN_U16("graphics/interface/wireless_link_display.4bpp.lz");
 static const u16 sWirelessLinkDisplayBin[] = INCBIN_U16("graphics/interface/wireless_link_display.bin.lz");
+
+const u8 gText_WantToPlayAgain[] = _("Want to play again?");
+const u8 gText_SomeoneDroppedOut[] = _("Somebody dropped out.\nThe link will be canceled.");
+const u8 gText_CommunicationStandby[] = _("Communication standby…");
 
 static const struct BlockRequest sBlockRequests[] = {
     {gBlockSendBuffer, 200},
@@ -1091,8 +1094,8 @@ void sub_800AE1C(void)
     LoadPalette(sWirelessLinkDisplayPal, 0, 0x20);
     FillWindowPixelBuffer(0, PIXEL_FILL(0));
     FillWindowPixelBuffer(2, PIXEL_FILL(0));
-    AddTextPrinterParameterized3(0, 3, 2, 5, sLinkErrorTextColor, 0, gText_CommErrorEllipsis);
-    AddTextPrinterParameterized3(2, 3, 2, 2, sLinkErrorTextColor, 0, gText_MoveCloserToLinkPartner);
+    AddTextPrinterParameterized3(0, 3, 2, 5, sLinkErrorTextColor, 0, COMPOUND_STRING("Communication error…"));
+    AddTextPrinterParameterized3(2, 3, 2, 2, sLinkErrorTextColor, 0, COMPOUND_STRING("Move closer to your link partner(s).\nAvoid obstacles between partners."));
     PutWindowTilemap(0);
     PutWindowTilemap(2);
     CopyWindowToVram(0, 0);
@@ -1105,7 +1108,7 @@ void sub_800AED0(void)
 {
     FillWindowPixelBuffer(1, PIXEL_FILL(0));
     FillWindowPixelBuffer(2, PIXEL_FILL(0));
-    AddTextPrinterParameterized3(1, 3, 2, 0, sLinkErrorTextColor, 0, gText_CommErrorCheckConnections);
+    AddTextPrinterParameterized3(1, 3, 2, 0, sLinkErrorTextColor, 0, COMPOUND_STRING("Communication error…\nPlease check all connections,\nthen turn the power Off and On."));
     PutWindowTilemap(1);
     PutWindowTilemap(2);
     CopyWindowToVram(1, 0);
@@ -1138,13 +1141,10 @@ static void CB2_PrintErrorMessage(void)
         break;
     case 130:
         if (gWirelessCommType == 2)
-        {
-            AddTextPrinterParameterized3(0, 3, 2, 20, sLinkErrorTextColor, 0, gText_ABtnTitleScreen);
-        }
+            AddTextPrinterParameterized3(0, 3, 2, 20, sLinkErrorTextColor, 0, COMPOUND_STRING("A Button: Title Screen"));
         else if (gWirelessCommType == 1)
-        {
-            AddTextPrinterParameterized3(0, 3, 2, 20, sLinkErrorTextColor, 0, gText_ABtnRegistrationCounter);
-        }
+            AddTextPrinterParameterized3(0, 3, 2, 20, sLinkErrorTextColor, 0, COMPOUND_STRING("A Button: Registration Counter"));
+
         break;
     }
     if (gMain.state == 160)

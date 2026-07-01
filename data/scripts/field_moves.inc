@@ -104,7 +104,7 @@ EventScript_CantUseRideHere::
 	
 EventScript_CantUseRideToSurfHere::
         lockall
-	msgbox gText_CantSurfHere
+	msgbox Text_CantSurfHere
 	releaseall
 	end
 
@@ -140,6 +140,9 @@ Text_UseWaterfall:: @ 81BE33F
 
 Text_MonUsedWaterfall:: @ 81BE378
 	.string "{STR_VAR_1} used WATERFALL.$"
+
+Text_CantSurfHere::
+	.string "No Surfing here!$"
 
 @ Unused leftover from R/S
 EventScript_DeepWater:: @ 81BE38B

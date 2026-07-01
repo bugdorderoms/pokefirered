@@ -1,6 +1,5 @@
 #include "global.h"
 #include "gflib.h"
-#include "strings.h"
 #include "task.h"
 #include "field_message_box.h"
 #include "script.h"

@@ -16,7 +16,6 @@
 #include "script.h"
 #include "script_pokemon_util.h"
 #include "start_menu.h"
-#include "strings.h"
 #include "task.h"
 #include "trade.h"
 #include "trainer_card.h"
@@ -54,10 +53,10 @@ static const struct WindowTemplate gUnknown_83C6AB0 = {
 };
 
 static const u8 *const sStarsMessagePtrs[] = {
-    gUnknown_841DF8B,
-    gUnknown_841DF92,
-    gUnknown_841DF99,
-    gUnknown_841DFA0
+    COMPOUND_STRING("Bronze"),
+    COMPOUND_STRING("Copper"),
+    COMPOUND_STRING("Silver"),
+    COMPOUND_STRING("Gold")
 };
 
 static void CreateLinkupTask(u32 lower, u32 higher)
@@ -76,7 +75,7 @@ static void PrintNewCountOnLinkPlayerCountDisplayWindow(u32 windowId, s32 num)
 {
     ConvertIntToDecimalStringN(gStringVar1, num, STR_CONV_MODE_LEFT_ALIGN, 1);
     SetStdWindowBorderStyle(windowId, FALSE);
-    StringExpandPlaceholders(gStringVar4, gUnknown_841DF82);
+    StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{STR_VAR_1}P Link"));
     AddTextPrinterParameterized(windowId, 2, gStringVar4, 0, 0, TEXT_SPEED_FF, NULL);
     CopyWindowToVram(windowId, COPYWIN_BOTH);
 }

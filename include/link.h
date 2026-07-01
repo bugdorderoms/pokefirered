@@ -277,4 +277,8 @@ void SetLocalLinkPlayerId(u32 playerId);
 bool32 IsSendingKeysToLink(void);
 u32 GetLinkRecvQueueLength(void);
 
+extern const u8 gText_WantToPlayAgain[];
+extern const u8 gText_CommunicationStandby[];
+extern const u8 gText_SomeoneDroppedOut[];
+
 #endif // GUARD_LINK_H

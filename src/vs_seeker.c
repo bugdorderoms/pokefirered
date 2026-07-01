@@ -20,7 +20,6 @@
 #include "field_player_avatar.h"
 #include "vs_seeker.h"
 #include "ride_pager.h"
-#include "strings.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
 #include "constants/maps.h"

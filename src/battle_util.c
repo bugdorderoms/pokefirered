@@ -18,7 +18,6 @@
 #include "mail_data.h"
 #include "party_menu.h"
 #include "pokedex.h"
-#include "strings.h"
 #include "sprite.h"
 #include "malloc.h"
 #include "battle.h"
@@ -416,11 +415,8 @@ u32 GetBattlerForBattleScript(u32 caseId)
         ret = gBattleScripting.battler;
         break;
     case BS_FAINTED:
-    case 5:
+    case BS_FAINTED_LINK_MULTIPLE_1:
         ret = gBattlerFainted;
-        break;
-    case BS_PLAYER1:
-        ret = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
         break;
     case BS_OPPONENT1:
         ret = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);

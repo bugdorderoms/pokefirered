@@ -29,7 +29,6 @@
 #include "script.h"
 #include "script_pokemon_util.h"
 #include "start_menu.h"
-#include "strings.h"
 #include "task.h"
 #include "trade.h"
 #include "trade_scene.h"
@@ -127,28 +126,28 @@ static void ViewURoomPartnerTrainerCard(struct UnkStruct_URoom * uRoom, bool8 pa
 
 static const u8 *const sUnionRoomActivityStringPtrs[] = {
     gUnionRoomActivity_Blank,
-    gUnionRoomActivity_SingleBattle,
-    gUnionRoomActivity_DoubleBattle,
-    gUnionRoomActivity_MultiBattle,
-    gUnionRoomActivity_PokemonTrades,
-    gUnionRoomActivity_Chat,
-    gUnionRoomActivity_WonderCards,
-    gunionRoomActivity_WonderNews,
-    gUnionRoomActivity_Cards,
-    gUnionRoomActivity_PokemonJump,
-    gUnionRoomActivity_BerryCrush,
-    gUnionRoomActivity_BerryPicking,
-    gUnionRoomActivity_Search,
-    gUnionRoomActivity_SpinTradeJP,
-    gUnionRoomActivity_ItemTradeJP,
+    COMPOUND_STRING("Single Battle"),
+    COMPOUND_STRING("Double Battle"),
+    COMPOUND_STRING("Multi Battle"),
+    COMPOUND_STRING("Pokémon Trades"),
+    COMPOUND_STRING("Chat"),
+    COMPOUND_STRING("Wonder Cards"),
+    COMPOUND_STRING("Wonder News"),
+    COMPOUND_STRING("Cards"),
+    COMPOUND_STRING("Pokémon Jump"),
+    COMPOUND_STRING("Berry Crush"),
+    COMPOUND_STRING("Berry-Picking"),
+    COMPOUND_STRING("Search"),
+    COMPOUND_STRING("ぐるぐるこうかん"),
+    COMPOUND_STRING("アイテムトレード"),
     gUnionRoomActivity_Blank,
     gUnionRoomActivity_Blank,
     gUnionRoomActivity_Blank,
     gUnionRoomActivity_Blank,
     gUnionRoomActivity_Blank,
     gUnionRoomActivity_Blank,
-    gUnionRoomActivity_WonderCards,
-    gunionRoomActivity_WonderNews
+    COMPOUND_STRING("Wonder Cards"),
+    COMPOUND_STRING("Wonder News")
 };
 
 static const struct WindowTemplate sWindowTemplate_BButtonCancel = {
@@ -293,10 +292,10 @@ static const struct WindowTemplate sWindowTemplate_InviteToActivity = {
 };
 
 static const struct ListMenuItem sListMenuItems_InviteToActivity[] = {
-    {gUnknown_8459354,  _8456CD8( ACTIVITY_CARD, 2)},
-    {gUnknown_8459344,  _8456CD8(ACTIVITY_BATTLE | IN_UNION_ROOM, 2)},
-    {gUnknown_845934C,  _8456CD8(ACTIVITY_CHAT | IN_UNION_ROOM, 2)},
-    {gUnknown_8459360,  _8456CD8(ACTIVITY_NONE | IN_UNION_ROOM, 0)}
+    {gUnknown_8459354,        _8456CD8( ACTIVITY_CARD, 2)},
+    {gUnknown_8459344,        _8456CD8(ACTIVITY_BATTLE | IN_UNION_ROOM, 2)},
+    {gUnknown_845934C,        _8456CD8(ACTIVITY_CHAT | IN_UNION_ROOM, 2)},
+    {COMPOUND_STRING("Exit"), _8456CD8(ACTIVITY_NONE | IN_UNION_ROOM, 0)}
 };
 
 static const struct ListMenuTemplate sListMenuTemplate_InviteToActivity = {
@@ -331,9 +330,9 @@ static const struct WindowTemplate sWindowTemplate_TradeBoardRegisterInfoExit = 
 };
 
 static const struct ListMenuItem gUnknown_8456E3C[] = {
-    {gText_Register,   1},
-    {gUnknown_8459370, 2},
-    {gUnknown_8459360, 3}
+    {COMPOUND_STRING("Register"), 1},
+    {COMPOUND_STRING("Info"),     2},
+    {COMPOUND_STRING("Exit"),     3}
 };
 
 static const struct ListMenuTemplate sListMenuTemplate_TradeBoardRegisterInfoExit = {
@@ -368,25 +367,25 @@ static const struct WindowTemplate sWindowTemplate_TypeNames = {
 };
 
 static const struct ListMenuItem sListMenuItems_TypeNames[] = {
-    {gTypesInfo[TYPE_NORMAL].name,     TYPE_NORMAL},
-    {gTypesInfo[TYPE_FIRE].name,         TYPE_FIRE},
-    {gTypesInfo[TYPE_WATER].name,       TYPE_WATER},
-    {gTypesInfo[TYPE_ELECTRIC].name, TYPE_ELECTRIC},
-    {gTypesInfo[TYPE_GRASS].name,       TYPE_GRASS},
-    {gTypesInfo[TYPE_ICE].name,           TYPE_ICE},
-    {gTypesInfo[TYPE_GROUND].name,     TYPE_GROUND},
-    {gTypesInfo[TYPE_ROCK].name,         TYPE_ROCK},
-    {gTypesInfo[TYPE_FLYING].name,     TYPE_FLYING},
-    {gTypesInfo[TYPE_PSYCHIC].name,   TYPE_PSYCHIC},
-    {gTypesInfo[TYPE_FIGHTING].name, TYPE_FIGHTING},
-    {gTypesInfo[TYPE_POISON].name,     TYPE_POISON},
-    {gTypesInfo[TYPE_BUG].name,           TYPE_BUG},
-    {gTypesInfo[TYPE_GHOST].name,       TYPE_GHOST},
-    {gTypesInfo[TYPE_DRAGON].name,     TYPE_DRAGON},
-    {gTypesInfo[TYPE_STEEL].name,       TYPE_STEEL},
-    {gTypesInfo[TYPE_DARK].name,         TYPE_DARK},
-    {gTypesInfo[TYPE_FAIRY].name,       TYPE_FAIRY},
-    {gUnknown_8459360,           NUMBER_OF_MON_TYPES - 1} // Excludes Stellar type
+    {gTypesInfo[TYPE_NORMAL].name,        TYPE_NORMAL},
+    {gTypesInfo[TYPE_FIRE].name,            TYPE_FIRE},
+    {gTypesInfo[TYPE_WATER].name,          TYPE_WATER},
+    {gTypesInfo[TYPE_ELECTRIC].name,    TYPE_ELECTRIC},
+    {gTypesInfo[TYPE_GRASS].name,          TYPE_GRASS},
+    {gTypesInfo[TYPE_ICE].name,              TYPE_ICE},
+    {gTypesInfo[TYPE_GROUND].name,        TYPE_GROUND},
+    {gTypesInfo[TYPE_ROCK].name,            TYPE_ROCK},
+    {gTypesInfo[TYPE_FLYING].name,        TYPE_FLYING},
+    {gTypesInfo[TYPE_PSYCHIC].name,      TYPE_PSYCHIC},
+    {gTypesInfo[TYPE_FIGHTING].name,    TYPE_FIGHTING},
+    {gTypesInfo[TYPE_POISON].name,        TYPE_POISON},
+    {gTypesInfo[TYPE_BUG].name,              TYPE_BUG},
+    {gTypesInfo[TYPE_GHOST].name,          TYPE_GHOST},
+    {gTypesInfo[TYPE_DRAGON].name,        TYPE_DRAGON},
+    {gTypesInfo[TYPE_STEEL].name,          TYPE_STEEL},
+    {gTypesInfo[TYPE_DARK].name,            TYPE_DARK},
+    {gTypesInfo[TYPE_FAIRY].name,          TYPE_FAIRY},
+    {COMPOUND_STRING("Exit"), NUMBER_OF_MON_TYPES - 1} // Excludes Stellar type
 };
 
 static const struct ListMenuTemplate sListMenuTemplate_TypeNames = {
@@ -440,7 +439,7 @@ static const struct ListMenuItem sTradeBoardListMenuItems[] = {
     {gUnionRoomActivity_Blank, 5},
     {gUnionRoomActivity_Blank, 6},
     {gUnionRoomActivity_Blank, 7},
-    {gUnknown_8459368, 8}
+    {COMPOUND_STRING("Exit"),  8}
 };
 
 static const struct ListMenuTemplate sTradeBoardListMenuTemplate = {
@@ -1086,7 +1085,7 @@ static void GetYouDeclinedTheOfferMessage(u8 *dst, u8 activity)
         break;
     case ACTIVITY_CHAT | IN_UNION_ROOM:
     case ACTIVITY_CARD | IN_UNION_ROOM:
-        StringExpandPlaceholders(dst, gUnknown_8457E44);
+        StringExpandPlaceholders(dst, gUnknown_8457E28);
         break;
     }
 }
@@ -3501,7 +3500,7 @@ static void PrintUnionRoomGroupOnWindow(u32 windowId, u8 x, u32 y, struct UnkStr
     u8 uname[30];
 
     ConvertIntToDecimalStringN(gStringVar4, id + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
-    StringAppend(gStringVar4, gUnknown_84571B0);
+    StringAppend(gStringVar4, COMPOUND_STRING(":"));
     UR_AddTextPrinterParameterized(windowId, 0, gStringVar4, x, y, UR_COLOR_DKE_WHT_LTE);
     x += 18;
     activity = group->gname_uname.gname.activity;

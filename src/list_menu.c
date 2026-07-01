@@ -7,7 +7,6 @@
 #include "text_window.h"
 #include "task.h"
 #include "graphics.h"
-#include "strings.h"
 #include "pokemon_icon.h"
 #include "constants/songs.h"
 
@@ -38,6 +37,11 @@ static void ListMenuPrintEntries(struct ListMenu *list, u16 startIndex, u16 yOff
 static void ListMenuDrawCursor(struct ListMenu *list);
 static void ListMenuCallSelectionChangedCallback(struct ListMenu *list, bool32 onInit);
 static u32 ListMenuAddCursorObject(struct ListMenu *list, u32 cursorKind);
+
+const u8 gMenuText_Cancel[] = _("Cancel");
+const u8 gMenuText_Close[] = _("Close");
+const u8 gText_ListMenuItemNumber[] = _("{NO}{CLEAR 0x01}");
+const u8 gText_TimesStrVar1[] = _("×{STR_VAR_1}");
 
 static const struct MoveMenuInfoIcon sMoveMenuInfoIcons[] =
 {

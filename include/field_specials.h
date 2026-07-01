@@ -61,4 +61,21 @@ void EnablePlayerBag(void);
 
 extern const struct CapeBrinkTutor gCapeBrinkCompatibleSpecies[3];
 
+extern const u8 gText_1F[];
+extern const u8 gText_2F[];
+extern const u8 gText_3F[];
+extern const u8 gText_4F[];
+extern const u8 gText_5F[];
+extern const u8 gText_6F[];
+extern const u8 gText_7F[];
+extern const u8 gText_8F[];
+extern const u8 gText_9F[];
+extern const u8 gText_10F[];
+extern const u8 gText_11F[];
+extern const u8 gText_B1F[];
+extern const u8 gText_B2F[];
+extern const u8 gText_B3F[];
+extern const u8 gText_B4F[];
+extern const u8 gText_Rooftop[];
+
 #endif // GUARD_FIELD_SPECIALS_H

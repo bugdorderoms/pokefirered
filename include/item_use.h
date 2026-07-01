@@ -45,4 +45,8 @@ bool32 CanUseEscapeRopeOnCurrMap(void);
 bool32 CanUseItemInBattle(bool32 fromBagMenu, u32 itemId);
 bool32 ExecuteTableBasedItemEffect(u32 partyMonIndex, u32 item);
 
+extern const u8 gText_PlayerUsedItem[];
+extern const u8 gText_WontHaveEffect[];
+extern const u8 gText_OakForbidsUseOfItemHere[];
+
 #endif //GUARD_ITEM_USE_H

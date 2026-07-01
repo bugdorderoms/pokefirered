@@ -48,17 +48,17 @@ enum
 
 static const struct MenuAction sStartMenuOptions[] =
 {
-    [START_MENU_DEXNAV]      = START_MENU_CALLBACK(StartMenuDexnavCallback, COMPOUND_STRING("Dexnav")),
-    [START_MENU_POKEDEX]     = START_MENU_CALLBACK(StartMenuPokedexCallback, COMPOUND_STRING("Pokedex")),
-    [START_MENU_POKEMON]     = START_MENU_CALLBACK(StartMenuPokemonCallback, COMPOUND_STRING("Pokémon")),
-    [START_MENU_BAG]         = START_MENU_CALLBACK(StartMenuBagCallback, gStartMenuText_Bag),
-    [START_MENU_PLAYER]      = START_MENU_CALLBACK(StartMenuPlayerCallback, NULL), // Name are handled separated
+    [START_MENU_DEXNAV]      = START_MENU_CALLBACK(StartMenuDexnavCallback,     COMPOUND_STRING("Dexnav")),
+    [START_MENU_POKEDEX]     = START_MENU_CALLBACK(StartMenuPokedexCallback,    COMPOUND_STRING("Pokedex")),
+    [START_MENU_POKEMON]     = START_MENU_CALLBACK(StartMenuPokemonCallback,    COMPOUND_STRING("Pokémon")),
+    [START_MENU_BAG]         = START_MENU_CALLBACK(StartMenuBagCallback,        COMPOUND_STRING("Bag")),
+    [START_MENU_PLAYER]      = START_MENU_CALLBACK(StartMenuPlayerCallback,     NULL), // Name are handled separated
     [START_MENU_PLAYER_LINK] = START_MENU_CALLBACK(StartMenuPlayerLinkCallback, NULL), // Name are handled separated
-    [START_MENU_SAVE]        = START_MENU_CALLBACK(StartMenuSaveCallback, COMPOUND_STRING("Save")),
-    [START_MENU_OPTIONS]     = START_MENU_CALLBACK(StartMenuOptionCallback, gStartMenuText_Options),
-    [START_MENU_EXIT]        = START_MENU_CALLBACK(StartMenuExitCallback, COMPOUND_STRING("Exit")),
-    [START_MENU_RETIRE]      = START_MENU_CALLBACK(StartMenuRetireCallback, COMPOUND_STRING("Retire")),
-    [START_MENU_RIDE_PAGER]  = START_MENU_CALLBACK(StartMenuRidePagerCallback, COMPOUND_STRING("Ride Pager"))
+    [START_MENU_SAVE]        = START_MENU_CALLBACK(StartMenuSaveCallback,       COMPOUND_STRING("Save")),
+    [START_MENU_OPTIONS]     = START_MENU_CALLBACK(StartMenuOptionCallback,     COMPOUND_STRING("Options")),
+    [START_MENU_EXIT]        = START_MENU_CALLBACK(StartMenuExitCallback,       COMPOUND_STRING("Exit")),
+    [START_MENU_RETIRE]      = START_MENU_CALLBACK(StartMenuRetireCallback,     COMPOUND_STRING("Retire")),
+    [START_MENU_RIDE_PAGER]  = START_MENU_CALLBACK(StartMenuRidePagerCallback,  COMPOUND_STRING("Ride Pager"))
 };
 
 #undef START_MENU_CALLBACK

@@ -71,4 +71,8 @@ void DrawDialogFrameWithCustomTileAndPalette(u32 windowId, bool32 copyToVram, u3
 struct WindowTemplate SetWindowTemplateFields(u32 bg, u32 left, u32 top, u32 width, u32 height, u32 paletteNum, u32 baseBlock);
 void Menu_PrintFormatIntlPlayerName(u32 windowId, const u8 * src, u32 x, u32 y);
 
+extern const u8 gMenuText_Yes[];
+extern const u8 gMenuText_No[];
+extern const u8 gText_SelectorArrow2[];
+
 #endif // GUARD_MENU_H

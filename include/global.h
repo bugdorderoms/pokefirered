@@ -29,6 +29,8 @@
 // We define these when using certain IDEs to fool preproc
 #define _(x)        (x)
 #define __(x)       (x)
+// Converts a string to a compound literal, essentially making it a pointer to const u8
+#define COMPOUND_STRING(x) 0
 #define INCBIN(...) {0}
 #define INCBIN_U8   INCBIN
 #define INCBIN_U16  INCBIN
@@ -247,9 +249,6 @@ extern u8 gStringVar4[];
 #define ROUND_BITS_TO_BYTES(numBits) DIV_ROUND_UP(numBits, 8)
 
 #define DEX_FLAGS_NO ROUND_BITS_TO_BYTES(NUM_SPECIES)
-
-// Converts a string to a compound literal, essentially making it a pointer to const u8
-#define COMPOUND_STRING(str) (const u8[]) _(str)
 
 // This produces an error at compile-time if expr is zero.
 // It looks like file.c:line: size of array `id' is negative

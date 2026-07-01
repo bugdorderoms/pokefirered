@@ -9,7 +9,6 @@
 #include "link.h"
 #include "menu.h"
 #include "overworld.h"
-#include "strings.h"
 #include "trainer_card.h"
 #include "constants/battle.h"
 #include "constants/songs.h"

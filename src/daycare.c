@@ -15,7 +15,6 @@
 #include "new_menu_helpers.h"
 #include "script.h"
 #include "item.h"
-#include "strings.h"
 #include "party_menu.h"
 #include "list_menu.h"
 #include "overworld.h"
@@ -94,10 +93,10 @@ static struct EggHatchData *sEggHatchData;
 
 static const u8 *const sCompatibilityMessages[] =
 {
-    gDaycareText_GetAlongVeryWell,
-    gDaycareText_GetAlong,
-    gDaycareText_DontLikeOther,
-    gDaycareText_PlayOther
+    COMPOUND_STRING("The two seem to get along\nvery well."),
+    COMPOUND_STRING("The two seem to get along."),
+    COMPOUND_STRING("The two don't seem to like\neach other much."),
+    COMPOUND_STRING("The two prefer to play with other\nPokémon than each other.")
 };
 
 static const u16 sEggPalette[] = INCBIN_U16("graphics/pokemon/egg/normal.gbapal");
@@ -305,9 +304,9 @@ static const struct WindowTemplate sDaycareLevelMenuWindowTemplate =
 
 static const struct ListMenuItem sLevelMenuItems[] =
 {
-    {gExpandedPlaceholder_Empty, 0},
-    {gExpandedPlaceholder_Empty, 1},
-    {gOtherText_Exit, DAYCARE_LEVEL_MENU_EXIT}
+    {COMPOUND_STRING(""), 0},
+    {COMPOUND_STRING(""), 1},
+    {COMPOUND_STRING("Exit"), DAYCARE_LEVEL_MENU_EXIT}
 };
 
 static const struct ListMenuTemplate sDaycareListMenuLevelTemplate =
@@ -574,12 +573,12 @@ static u8 *AppendMonGenderSymbol(u8 *name, struct BoxPokemon *boxMon)
     if (gender == MON_MALE)
     {
         if (!NameHasGenderSymbol(name, MON_MALE))
-            return StringAppend(name, gText_MaleSymbol4);
+            return StringAppend(name, gText_MaleSymbol);
     }
     else if (gender == MON_FEMALE)
     {
         if (!NameHasGenderSymbol(name, MON_FEMALE))
-            return StringAppend(name, gText_FemaleSymbol4);
+            return StringAppend(name, gText_FemaleSymbol);
     }
     return StringAppend(name, gText_GenderlessSymbol);
 }
@@ -621,11 +620,7 @@ static void DaycarePrintMonInfo(u32 windowId, u32 daycareSlotId, u32 y)
         DaycareAddTextPrinter(windowId, nickname, 8, y);
 
         // Level
-#if REVISION == 0
-        strcpy((char *)lvlText, (const char *)gText_Lv);
-#else
-        StringCopy(lvlText, gText_Lv);
-#endif
+        StringCopy(lvlText, COMPOUND_STRING("{LV_2}"));
 
         ConvertIntToDecimalStringN(intText, GetLevelAfterDaycareSteps(&daycare->mons[daycareSlotId].mon, daycare->mons[daycareSlotId].steps), STR_CONV_MODE_LEFT_ALIGN, 3);
         StringAppend(lvlText, intText);
@@ -1716,7 +1711,7 @@ static void CB2_EggHatch_1(void)
         break;
     case 5:
         GetMonNickname(&gPlayerParty[sEggHatchData->eggPartyID], gStringVar1);
-        StringExpandPlaceholders(gStringVar4, gText_HatchedFromEgg);
+        StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("{STR_VAR_1} hatched from the Egg!"));
         EggHatchPrintMessage(sEggHatchData->windowId, gStringVar4, 0, 3, 0xFF);
         PlayFanfare(MUS_EVOLVED);
         sEggHatchData->CB2_state++;
@@ -1733,7 +1728,7 @@ static void CB2_EggHatch_1(void)
         break;
     case 8:
         GetMonNickname(&gPlayerParty[sEggHatchData->eggPartyID], gStringVar1);
-        StringExpandPlaceholders(gStringVar4, gText_NickHatchPrompt);
+        StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Would you like to nickname the newly\nhatched {STR_VAR_1}?"));
         EggHatchPrintMessage(sEggHatchData->windowId, gStringVar4, 0, 2, 1);
         sEggHatchData->CB2_state++;
         break;

@@ -19,4 +19,9 @@ void BuyMenuPrint(u32 windowId, u32 font, const u8 *text, u32 x, u32 y, u32 lett
 void BuyMenuDisplayMessage(u32 taskId, const u8 *text, TaskFunc callback);
 void BuyMenuConfirmPurchase(u32 taskId, const struct YesNoFuncTable *yesNo);
 
+extern const u8 gText_OhNoICantBuyThat[];
+extern const u8 gText_HowManyWouldYouLikeToSell[];
+extern const u8 gText_ICanPayThisMuch_WouldThatBeOkay[];
+extern const u8 gText_TurnedOverItemsWorthYen[];
+
 #endif // GUARD_SHOP_H

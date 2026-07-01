@@ -23,7 +23,7 @@
 #define CHATDISPLAYROUTINE_PRINTLEADERLEFT 19
 #define CHATDISPLAYROUTINE_SHOWCONFIRMLEADERLEAVEDIALOG 20
 
-bool8 UnionRoomChat_TryAllocGraphicsWork(void);
+void UnionRoomChat_TryAllocGraphicsWork(void);
 bool32 UnionRoomChat_RunDisplaySubtask0(void);
 void UnionRoomChat_FreeGraphicsWork(void);
 void UnionRoomChat_RunDisplaySubtasks(void);

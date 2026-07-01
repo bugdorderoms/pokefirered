@@ -34,4 +34,6 @@ void UpdatePokemonSpeciesOnPicbox(u32 species, u8 x, u8 y);
 // Item pic
 bool32 ScriptMenu_ShowItemPic(u32 itemId, u8 x, u8 y);
 
+extern const u8 Text_AccessWhichPC[];
+
 #endif //GUARD_SCRIPT_MENU_H

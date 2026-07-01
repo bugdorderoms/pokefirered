@@ -20,7 +20,6 @@
 #include "pokedex.h"
 #include "pokemon_summary_screen.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "task.h"
 #include "text_window.h"
 #include "trig.h"
@@ -65,6 +64,11 @@ static const u32 sMovingBackgroundMap1[] = INCBIN_U32("graphics/evolution_scene/
 static const u32 sMovingBackgroundMap2[] = INCBIN_U32("graphics/evolution_scene/bg2.bin.lz");
 static const u16 sBlackPalette[] = INCBIN_U16("graphics/evolution_scene/gray_transition_intro.gbapal");
 static const u16 sMovingBgPals[] = INCBIN_U16("graphics/evolution_scene/transition.gbapal");
+
+static const u8 sText_PkmnIsEvolving[] = _("What?\n{STR_VAR_1} is evolving!");
+static const u8 sText_CongratsPkmnEvolved[] = _("Congratulations! Your {STR_VAR_1}\nevolved into {STR_VAR_2}!{WAIT_SE}\p");
+static const u8 sText_PkmnStoppedEvolving[] = _("Huh? {STR_VAR_1}\nstopped evolving!\p");
+static const u8 sText_EllipsisQuestionMark[] = _("……?\p");
 
 // start frame, stop frame, loop count, delay
 static const u8 sMovingBackgroundTimers[][4] =
@@ -554,7 +558,7 @@ static void Task_EvolutionScene(u32 taskId)
     case 1: // print 'whoa, poke is evolving!!!' msg
         if (!gPaletteFade.active)
         {
-            StringExpandPlaceholders(gStringVar4, gText_PkmnIsEvolving);
+            StringExpandPlaceholders(gStringVar4, sText_PkmnIsEvolving);
             BattlePutTextOnWindow(gStringVar4, B_WIN_MSG);
             gTasks[taskId].tState++;
         }
@@ -650,7 +654,7 @@ static void Task_EvolutionScene(u32 taskId)
     case 14: // congratulations string and rename prompt
         if (IsCryFinished())
         {
-            StringExpandPlaceholders(gStringVar4, gText_CongratsPkmnEvolved);
+            StringExpandPlaceholders(gStringVar4, sText_CongratsPkmnEvolved);
             BattlePutTextOnWindow(gStringVar4, B_WIN_MSG);
             PlayBGM(MUS_EVOLVED);
             gTasks[taskId].tState++;
@@ -730,7 +734,7 @@ static void Task_EvolutionScene(u32 taskId)
     case 19: // after the animation, print the string 'WHOA IT DId NOT EVOLVE!!!'
         if (IsCryFinished())
         {
-            StringExpandPlaceholders(gStringVar4, gTasks[taskId].tEvoWasStopped ? gText_EllipsisQuestionMark : gText_PkmnStoppedEvolving);
+            StringExpandPlaceholders(gStringVar4, gTasks[taskId].tEvoWasStopped ? sText_EllipsisQuestionMark : sText_PkmnStoppedEvolving);
             BattlePutTextOnWindow(gStringVar4, B_WIN_MSG);
             gTasks[taskId].tEvoWasStopped = TRUE;
             gTasks[taskId].tState = 15;
@@ -901,7 +905,7 @@ static void Task_TradeEvolutionScene(u32 taskId)
     switch (gTasks[taskId].tState)
     {
     case 0:
-        StringExpandPlaceholders(gStringVar4, gText_PkmnIsEvolving);
+        StringExpandPlaceholders(gStringVar4, sText_PkmnIsEvolving);
         DrawTextOnTradeWindow(0, gStringVar4, 1);
         gTasks[taskId].tState++;
         break;
@@ -990,7 +994,7 @@ static void Task_TradeEvolutionScene(u32 taskId)
     case 12:
         if (IsCryFinished())
         {
-            StringExpandPlaceholders(gStringVar4, gText_CongratsPkmnEvolved);
+            StringExpandPlaceholders(gStringVar4, sText_CongratsPkmnEvolved);
             DrawTextOnTradeWindow(0, gStringVar4, 1);
             PlayFanfare(MUS_EVOLVED);
             gTasks[taskId].tState++;
@@ -1060,7 +1064,7 @@ static void Task_TradeEvolutionScene(u32 taskId)
     case 17:
         if (IsCryFinished())
         {
-            StringExpandPlaceholders(gStringVar4, gText_EllipsisQuestionMark);
+            StringExpandPlaceholders(gStringVar4, sText_EllipsisQuestionMark);
             DrawTextOnTradeWindow(0, gStringVar4, 1);
             gTasks[taskId].tEvoWasStopped = TRUE;
             gTasks[taskId].tState = 13;

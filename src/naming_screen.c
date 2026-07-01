@@ -17,7 +17,6 @@
 #include "menu_helpers.h"
 #include "mystery_gift_menu.h"
 #include "pokemon_storage_system.h"
-#include "strings.h"
 #include "save.h"
 #include "task.h"
 #include "text_window.h"
@@ -755,7 +754,7 @@ static void MainState_UpdateTextAndSaveGame(void)
     if (!IsTextPrinterActive(0) && JOY_NEW(A_BUTTON))
     {
         PlaySE(SE_SELECT);
-        NamingScreenMessagePrint(gText_DataWillBeSaved);
+        NamingScreenMessagePrint(COMPOUND_STRING("Data will be saved.\nPlease wait."));
         sNamingScreenData->state = MAIN_STATE_UPDATE_SAVE_GAME_TEXT;
     }
 }
@@ -768,7 +767,7 @@ static void MainState_UpdateSaveGameText(void)
     {
         PlaySE(SE_SELECT);
         TrySavingData(SAVE_NORMAL);
-        NamingScreenMessagePrint(gText_SaveCompletedPressA);
+        NamingScreenMessagePrint(COMPOUND_STRING("Save completed.\nPlease press the A Button."));
         sNamingScreenData->state = MAIN_STATE_UPDATE_TEXT_BEGIN_FADE_OUT;
     }
 }
@@ -1825,6 +1824,7 @@ static void PrintBufferCharactersOnScreen(void)
 {
     u32 i, xoff;
     u8 temp[2];
+    const u8 *empty = COMPOUND_STRING("");
     u32 maxChars = sNamingScreenData->template->maxChars;
     u16 xpos = sNamingScreenData->inputCharBaseXPos - 0x40;
 
@@ -1833,7 +1833,7 @@ static void PrintBufferCharactersOnScreen(void)
     for (i = 0; i < maxChars; i++)
     {
         temp[0] = sNamingScreenData->textBuffer[i];
-        temp[1] = gExpandedPlaceholder_Empty[0];
+        temp[1] = empty[0];
         xoff = (IsLetter(temp[0]) == TRUE) ? 2 : 0;
 
         AddTextPrinterParameterized(sNamingScreenData->windows[2], 2, temp, i * 8 + xpos + xoff, 1, TEXT_SPEED_FF, NULL);
@@ -1909,10 +1909,11 @@ static void sub_809FA60(void)
 
 static void sub_809FAE4(void)
 {
+    const u8 *instructions = COMPOUND_STRING("{DPAD_ANY}Move {A_BUTTON}Ok {B_BUTTON}Back {L_BUTTON}Case");
     const u8 color[3] = { TEXT_DYNAMIC_COLOR_6, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY };
 
     FillWindowPixelBuffer(sNamingScreenData->windows[4], PIXEL_FILL(15));
-    AddTextPrinterParameterized3(sNamingScreenData->windows[4], 0, 236 - GetStringWidth(0, gText_MoveOkBack, 0), 0, color, 0, gText_MoveOkBack);
+    AddTextPrinterParameterized3(sNamingScreenData->windows[4], 0, 236 - GetStringWidth(0, instructions, 0), 0, color, 0, instructions);
     PutWindowTilemap(sNamingScreenData->windows[4]);
     CopyWindowToVram(sNamingScreenData->windows[4], COPYWIN_BOTH);
 }
@@ -1954,10 +1955,11 @@ static void ShowAllBgs(void)
 static bool32 IsLetter(u32 character)
 {
     u32 i;
+    u8 txt[1] = _("");
 
-    for (i = 0; gText_AlphabetUpperLower[i] != EOS; i++)
+    for (i = 0; txt[i] != EOS; i++)
     {
-        if (character == gText_AlphabetUpperLower[i])
+        if (character == txt[i])
             return TRUE;
     }
     return FALSE;
@@ -1973,7 +1975,7 @@ static const struct NamingScreenTemplate sPlayerNamingScreenTemplate = {
     .iconFunction = 1,
     .addGenderIcon = 0,
     .initialPage = KBPAGE_LETTERS_UPPER,
-    .title = gText_YourName,
+    .title = COMPOUND_STRING("Your Name?"),
 };
 
 static const struct NamingScreenTemplate sPcBoxNamingScreenTemplate = {
@@ -1982,7 +1984,7 @@ static const struct NamingScreenTemplate sPcBoxNamingScreenTemplate = {
     .iconFunction = 2,
     .addGenderIcon = 0,
     .initialPage = KBPAGE_LETTERS_UPPER,
-    .title = gText_BoxName,
+    .title = COMPOUND_STRING("Box Name?"),
 };
 
 static const struct NamingScreenTemplate sMonNamingScreenTemplate = {
@@ -1991,7 +1993,7 @@ static const struct NamingScreenTemplate sMonNamingScreenTemplate = {
     .iconFunction = 3,
     .addGenderIcon = 1,
     .initialPage = KBPAGE_LETTERS_UPPER,
-    .title = gText_PkmnsNickname,
+    .title = COMPOUND_STRING("'s nickname?"),
 };
 
 static const struct NamingScreenTemplate sRivalNamingScreenTemplate = {
@@ -2000,7 +2002,7 @@ static const struct NamingScreenTemplate sRivalNamingScreenTemplate = {
     .iconFunction = 4,
     .addGenderIcon = 0,
     .initialPage = KBPAGE_LETTERS_UPPER,
-    .title = gText_RivalsName,
+    .title = COMPOUND_STRING("Rival's Name?"),
 };
 
 static const struct NamingScreenTemplate sMysteryGiftNamingScreenTemplate = {
@@ -2009,12 +2011,12 @@ static const struct NamingScreenTemplate sMysteryGiftNamingScreenTemplate = {
     .iconFunction = 5,
     .addGenderIcon = 0,
     .initialPage = KBPAGE_LETTERS_UPPER,
-    .title = gText_MysteryGift,
+    .title = COMPOUND_STRING("Mystery Gift"),
 };
 
 static const struct NamingScreenTemplate *const sNamingScreenTemplates[] = {
     [NAMING_SCREEN_PLAYER]       = &sPlayerNamingScreenTemplate,
-    [NAMING_SCREEN_BOX]             = &sPcBoxNamingScreenTemplate,
+    [NAMING_SCREEN_BOX]          = &sPcBoxNamingScreenTemplate,
     [NAMING_SCREEN_CAUGHT_MON]   = &sMonNamingScreenTemplate,
     [NAMING_SCREEN_NAME_RATER]   = &sMonNamingScreenTemplate,
     [NAMING_SCREEN_RIVAL]        = &sRivalNamingScreenTemplate,

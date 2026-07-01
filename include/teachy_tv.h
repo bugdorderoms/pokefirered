@@ -15,4 +15,7 @@ void InitTeachyTvController(u32 mode, void (*cb)());
 void CB2_ReturnToTeachyTV(void);
 void SetTeachyTvControllerModeToResume(void);
 
+extern const u8 gPokedudeText_TMTypes[];
+extern const u8 gPokedudeText_ReadTMDescription[];
+
 #endif //GUARD_TEACHY_TV_H

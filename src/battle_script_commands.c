@@ -15,7 +15,6 @@
 #include "mail_data.h"
 #include "event_data.h"
 #include "battle_move_effects.h"
-#include "strings.h"
 #include "wild_encounter.h"
 #include "pokemon_special_anim.h"
 #include "pokemon_storage_system.h"
@@ -4071,7 +4070,7 @@ static void atk50_openpartyscreen(void)
     const u8 *jumpPtr = cmd->ptr;
     u32 i, battlerId, flags = 0;
 
-    if (cmd->battler == BS_UNKNOWN_5)
+    if (cmd->battler == BS_FAINTED_LINK_MULTIPLE_1)
     {
         if ((gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_MULTI)) != BATTLE_TYPE_DOUBLE)
         {
@@ -4226,7 +4225,7 @@ static void atk50_openpartyscreen(void)
         }
         gBattlescriptCurrInstr = cmd->nextInstr;
     }
-    else if (cmd->battler == BS_UNKNOWN_6)
+    else if (cmd->battler == BS_FAINTED_LINK_MULTIPLE_2)
     {
         if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
         {
@@ -4529,7 +4528,7 @@ static void atk52_switchineffects(void)
                 
                 gBattleStruct->sides[GetBattlerSide(i)].hpOnSwitchout = gBattleMons[i].hp;
             }
-            if (cmd->battler == BS_UNKNOWN_5)
+            if (cmd->battler == BS_FAINTED_LINK_MULTIPLE_1)
             {
                 u32 hitmarkerFaintBits = gHitMarker >> 0x1C;
                 
@@ -5691,24 +5690,6 @@ static void atk6E_updatestatusicon(void)
                 for (battlerId = gBattleControllerExecFlags; battlerId < gBattlersCount; ++battlerId)
                 {
                     if (IsBattlerAlive(battlerId))
-                    {
-                        BtlController_EmitStatusIconUpdate(battlerId, BUFFER_A, gBattleMons[battlerId].status1.id, gBattleMons[battlerId].status2);
-                        MarkBattlerForControllerExec(battlerId);
-                    }
-                }
-                break;
-            case BS_ATTACKER_WITH_PARTNER:
-                if (!(gAbsentBattlerFlags & Bit(gBattlerAttacker)))
-                {
-                    BtlController_EmitStatusIconUpdate(gBattlerAttacker, BUFFER_A, gBattleMons[gBattlerAttacker].status1.id, gBattleMons[gBattlerAttacker].status2);
-                    MarkBattlerForControllerExec(gBattlerAttacker);
-                }
-
-                if (IsDoubleBattleForBattler(gBattlerAttacker))
-                {
-                    battlerId = BATTLE_PARTNER(gBattlerAttacker);
-                    
-                    if (!(gAbsentBattlerFlags & Bit(battlerId)))
                     {
                         BtlController_EmitStatusIconUpdate(battlerId, BUFFER_A, gBattleMons[battlerId].status1.id, gBattleMons[battlerId].status2);
                         MarkBattlerForControllerExec(battlerId);

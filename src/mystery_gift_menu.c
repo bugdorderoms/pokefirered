@@ -17,7 +17,6 @@
 #include "constants/moves.h"
 #include "link.h"
 #include "event_data.h"
-#include "strings.h"
 #include "constants/songs.h"
 #include "constants/union_room.h"
 #include "constants/region_map_sections.h"

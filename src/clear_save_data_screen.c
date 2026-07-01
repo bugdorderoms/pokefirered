@@ -2,7 +2,6 @@
 #include "gflib.h"
 #include "menu.h"
 #include "save.h"
-#include "strings.h"
 #include "task.h"
 #include "text_window.h"
 #include "constants/songs.h"

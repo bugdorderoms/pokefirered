@@ -1,13 +1,3 @@
-static const u8 sCloudNineDescription[]     = _("Eliminates the effects of weather.");
-static const u8 sClearBodyDescription[]     = _("Prevents other Pokémon's moves or Abilities\nfrom lowering the Pokémon's stats.");
-static const u8 sPlusAndMinusDescription[]  = _("Boosts the Pokémon's Sp. Atk stat if an ally\nwith the Plus or Minus Ability is in battle.");
-static const u8 sFilterDescription[]        = _("Reduces the power of “super effective”\nattacks taken.");
-static const u8 sMultiscaleDescription[]    = _("Reduces the amount of damage the Pokémon\ntakes while its HP is full.");
-static const u8 sTurboblazeDescription[]    = _("The Pokémon's moves are unimpeded by the\nAbility of the target.");
-static const u8 sProteanDescription[]       = _("Changes the Pokémon's type to the type of the\nmove it's about to use.");
-static const u8 sReceiverDescription[]      = _("The Pokémon copies the Ability of a defeated\nally.");
-static const u8 sPropellerTailDescription[] = _("Ignores the effects of opposing Pokémon's\nAbilities and moves that draw in moves.");
-
 const struct Ability gAbilities[ABILITIES_COUNT] =
 {
     [ABILITY_NONE] =
@@ -86,7 +76,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_CLOUD_NINE] =
     {
         .name = _("Cloud Nine"),
-        .description = sCloudNineDescription,
+        .description = COMPOUND_STRING("Eliminates the effects of weather."),
     },
     [ABILITY_COMPOUND_EYES] =
     {
@@ -177,7 +167,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_CLEAR_BODY] =
     {
         .name = _("Clear Body"),
-        .description = sClearBodyDescription,
+        .description = COMPOUND_STRING("Prevents other Pokémon's moves or Abilities\nfrom lowering the Pokémon's stats."),
         .breakable = TRUE,
     },
     [ABILITY_NATURAL_CURE] =
@@ -331,12 +321,12 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_PLUS] =
     {
         .name = _("Plus"),
-        .description = sPlusAndMinusDescription,
+        .description = COMPOUND_STRING("Boosts the Pokémon's Sp. Atk stat if an ally\nwith the Plus or Minus Ability is in battle."),
     },
     [ABILITY_MINUS] =
     {
         .name = _("Minus"),
-        .description = sPlusAndMinusDescription,
+        .description = COMPOUND_STRING("Boosts the Pokémon's Sp. Atk stat if an ally\nwith the Plus or Minus Ability is in battle."),
     },
     [ABILITY_FORECAST] =
     {
@@ -433,7 +423,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_AIR_LOCK] =
     {
         .name = _("Air Lock"),
-        .description = sCloudNineDescription,
+        .description = COMPOUND_STRING("Eliminates the effects of weather."),
     },
     [ABILITY_TANGLED_FEET] =
     {
@@ -619,7 +609,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_FILTER] =
     {
         .name = _("Filter"),
-        .description = sFilterDescription,
+        .description = COMPOUND_STRING("Reduces the power of “super effective”\nattacks taken."),
         .breakable = TRUE,
     },
     [ABILITY_SLOW_START] =
@@ -646,7 +636,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_SOLID_ROCK] =
     {
         .name = _("Solid Rock"),
-        .description = sFilterDescription,
+        .description = COMPOUND_STRING("Reduces the power of “super effective”\nattacks taken."),
         .breakable = TRUE,
     },
     [ABILITY_SNOW_WARNING] =
@@ -760,7 +750,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_MULTISCALE] =
     {
         .name = _("Multiscale"),
-        .description = sMultiscaleDescription,
+        .description = COMPOUND_STRING("Reduces the amount of damage the Pokémon\ntakes while its HP is full."),
         .breakable = TRUE,
     },
     [ABILITY_TOXIC_BOOST] =
@@ -912,12 +902,12 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_TURBOBLAZE] =
     {
         .name = _("Turboblaze"),
-        .description = sTurboblazeDescription,
+        .description = COMPOUND_STRING("The Pokémon's moves are unimpeded by the\nAbility of the target."),
     },
     [ABILITY_TERAVOLT] =
     {
         .name = _("Teravolt"),
-        .description = sTurboblazeDescription,
+        .description = COMPOUND_STRING("The Pokémon's moves are unimpeded by the\nAbility of the target."),
     },
     [ABILITY_AROMA_VEIL] =
     {
@@ -939,7 +929,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_PROTEAN] =
     {
         .name = _("Protean"),
-        .description = sProteanDescription,
+        .description = COMPOUND_STRING("Changes the Pokémon's type to the type of the\nmove it's about to use."),
     },
     [ABILITY_FUR_COAT] =
     {
@@ -1260,14 +1250,14 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_RECEIVER] =
     {
         .name = _("Receiver"),
-        .description = sReceiverDescription,
+        .description = COMPOUND_STRING("The Pokémon copies the Ability of a defeated\nally."),
         .cantBeCopied = TRUE,
         .cantBeTraced = TRUE,
     },
     [ABILITY_POWER_OF_ALCHEMY] =
     {
         .name = _("Power of Alchemy"),
-        .description = sReceiverDescription,
+        .description = COMPOUND_STRING("The Pokémon copies the Ability of a defeated\nally."),
         .cantBeCopied = TRUE,
         .cantBeTraced = TRUE,
     },
@@ -1309,17 +1299,17 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_FULL_METAL_BODY] =
     {
         .name = _("Full Metal Body"),
-        .description = sClearBodyDescription,
+        .description = COMPOUND_STRING("Prevents other Pokémon's moves or Abilities\nfrom lowering the Pokémon's stats."),
     },
     [ABILITY_SHADOW_SHIELD] =
     {
         .name = _("Shadow Shield"),
-        .description = sMultiscaleDescription,
+        .description = COMPOUND_STRING("Reduces the amount of damage the Pokémon\ntakes while its HP is full."),
     },
     [ABILITY_PRISM_ARMOR] =
     {
         .name = _("Prism Armor"),
-        .description = sFilterDescription,
+        .description = COMPOUND_STRING("Reduces the power of “super effective”\nattacks taken."),
     },
     [ABILITY_NEUROFORCE] =
     {
@@ -1339,7 +1329,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_LIBERO] =
     {
         .name = _("Libero"),
-        .description = sProteanDescription,
+        .description = COMPOUND_STRING("Changes the Pokémon's type to the type of the\nmove it's about to use."),
     },
     [ABILITY_BALL_FETCH] =
     {
@@ -1354,7 +1344,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_PROPELLER_TAIL] =
     {
         .name = _("Propeller Tail"),
-        .description = sPropellerTailDescription,
+        .description = COMPOUND_STRING("Ignores the effects of opposing Pokémon's\nAbilities and moves that draw in moves."),
     },
     [ABILITY_MIRROR_ARMOR] =
     {
@@ -1372,7 +1362,7 @@ const struct Ability gAbilities[ABILITIES_COUNT] =
     [ABILITY_STALWART] =
     {
         .name = _("Stalwart"),
-        .description = sPropellerTailDescription,
+        .description = COMPOUND_STRING("Ignores the effects of opposing Pokémon's\nAbilities and moves that draw in moves."),
     },
     [ABILITY_STEAM_ENGINE] =
     {

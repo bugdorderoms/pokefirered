@@ -10,7 +10,6 @@
 #include "overworld.h"
 #include "constants/songs.h"
 #include "constants/sound.h"
-#include "strings.h"
 #include "new_menu_helpers.h"
 #include "menu.h"
 #include "constants/items.h"
@@ -295,6 +294,37 @@ static const u16 sMoveSelectionCursorPals[] = INCBIN_U16("graphics/interface/pok
 static const u32 sMoveSelectionCursorTiles_Left[] = INCBIN_U32("graphics/interface/pokesummary_unk_8463740.4bpp.lz");
 static const u32 sMoveSelectionCursorTiles_Right[] = INCBIN_U32("graphics/interface/pokesummary_unk_846386C.4bpp.lz");
 
+static const u8 sText_PokeSum_NoData[] = _("No data");
+static const u8 sText_PokeSum_PageName_KnownMoves[] = _("Known Moves");
+static const u8 sText_PokeSum_Controls_PickSwitch[] = _("{DPAD_UPDOWN}Pick {A_BUTTON}Switch");
+static const u8 sText_PokeSum_Controls_Pick[] = _("{DPAD_UPDOWN}Pick");
+static const u8 sText_PokeSum_PageName_PokemonInfo[] = _("Pokémon Info");
+static const u8 sText_PokeSum_Controls_PageCancel[] = _("{DPAD_RIGHT}Page {A_BUTTON}Cancel");
+static const u8 sText_PokeSum_Controls_Cancel[] = _("{A_BUTTON}Cancel");
+static const u8 sText_PokeSum_PageName_PokemonSkills[] = _("Pokémon Skills");
+static const u8 sText_PokeSum_Controls_Page[] = _("{DPAD_LEFTRIGHT}Page");
+static const u8 sText_PokeSum_Controls_PickDelete[] = _("{DPAD_UPDOWN}Pick {A_BUTTON}Delete");
+static const u8 sText_PokeSum_Controls_PageDetail[] = _("{DPAD_LEFT}Page {A_BUTTON}Detail");
+
+static const u8 sText_Somewhere[] = _("Somewhere");
+static const u8 sText_PokeSum_ATrade[] = _("a trade");
+static const u8 sText_PokeSum_Hatched[] = _("{DYNAMIC 0x00} nature.\nHatched: {DYNAMIC 0x02}\nat {LV_2} {DYNAMIC 0x01}.");
+static const u8 sText_PokeSum_FatefulEncounterMet[] = _("{DYNAMIC 0x00} nature.\nMet in a fateful encounter when\nat {LV_2} {DYNAMIC 0x01}.");
+static const u8 sText_PokeSum_Met[] = _("{DYNAMIC 0x00} nature.\nMet in {DYNAMIC 0x02} at {LV_2} {DYNAMIC 0x01}.");
+static const u8 sText_PokeSum_MetInATrade[] = _("{DYNAMIC 0x00} nature.\nMet in a trade.");
+static const u8 sText_PokeSum_ApparentlyMet[] = _("{DYNAMIC 0x00} nature.\nApparently met in {DYNAMIC 0x02}\nat {LV_2} {DYNAMIC 0x01}.");
+
+static const u8 sText_PokeSum_EggOrigin_DayCare[] = _("An odd Pokémon Egg found by the\nDay-Care couple.");
+static const u8 sText_PokeSum_EggOrigin_Trade[] = _("A peculiar Pokémon Egg obtained\nin a trade.");
+static const u8 sText_PokeSum_EggOrigin_TravelingMan[] = _("An odd Pokémon Egg obtained from\nthe traveling man.");
+static const u8 sText_PokeSum_EggOrigin_NicePlace[] = _("A wondrously peculiar Pokémon Egg\nobtained at a nice place.");
+static const u8 sText_PokeSum_EggOrigin_Spa[] = _("An odd Pokémon Egg obtained from\nan old woman at the Spa.");
+
+static const u8 sText_PokeSum_EggHatch_LongTime[] = _("It looks like this\nEgg will take a\nlong time to hatch.");
+static const u8 sText_PokeSum_EggHatch_SomeTime[] = _("What will hatch\nfrom this? It will\ntake some time.");
+static const u8 sText_PokeSum_EggHatch_Soon[] = _("It occasionally\nmoves. It should\nhatch soon.");
+static const u8 sText_PokeSum_EggHatch_AlmostReady[] = _("It's making sounds.\nIt's almost ready\nto hatch!");
+
 static const struct OamData sMoveSelectionCursorOamData =
 {
     .y = 0,
@@ -543,20 +573,20 @@ static const u32 sBgTilemap_MovesInfoPage[] = INCBIN_U32( "graphics/interface/po
 static const u32 sBgTilemap_MovesPage[] = INCBIN_U32( "graphics/interface/pokesummary_unk_8463C80.bin.lz");
 
 static const u8 * const sEggHatchTimeTexts[] = {
-    gText_PokeSum_EggHatch_LongTime,
-    gText_PokeSum_EggHatch_SomeTime,
-    gText_PokeSum_EggHatch_Soon, 
-    gText_PokeSum_EggHatch_AlmostReady
+    sText_PokeSum_EggHatch_LongTime,
+    sText_PokeSum_EggHatch_SomeTime,
+    sText_PokeSum_EggHatch_Soon, 
+    sText_PokeSum_EggHatch_AlmostReady
 };
 
 static const u8 * const sEggOriginTexts[] = {
-    gText_PokeSum_EggOrigin_DayCare,      
-    gText_PokeSum_EggOrigin_Trade,
-    gText_PokeSum_EggOrigin_TravelingMan, 
-    gText_PokeSum_EggOrigin_Trade,
-    gText_PokeSum_EggOrigin_NicePlace,
-    gText_PokeSum_EggOrigin_Spa,
-    gText_PokeSum_EggOrigin_Trade
+    sText_PokeSum_EggOrigin_DayCare,      
+    sText_PokeSum_EggOrigin_Trade,
+    sText_PokeSum_EggOrigin_TravelingMan, 
+    sText_PokeSum_EggOrigin_Trade,
+    sText_PokeSum_EggOrigin_NicePlace,
+    sText_PokeSum_EggOrigin_Spa,
+    sText_PokeSum_EggOrigin_Trade
 };
 
 static const u8 sPrintMoveTextColors[][3] = {
@@ -1239,8 +1269,8 @@ static void Task_FlipPages_FromInfo(u32 taskId)
         PokeSum_CopyNewBgTilemapBeforePageFlip_2();
         break;
     case 3:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_KnownMoves);
-        PokeSum_PrintControlsString((gMain.inBattle || gReceivedRemoteLinkPlayers) ? gText_PokeSum_Controls_Pick : gText_PokeSum_Controls_PickSwitch);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_KnownMoves);
+        PokeSum_PrintControlsString((gMain.inBattle || gReceivedRemoteLinkPlayers) ? sText_PokeSum_Controls_Pick : sText_PokeSum_Controls_PickSwitch);
         break;
     case 4:
         CopyWindowToVram(sMonSummaryScreen->windowIds[POKESUM_WIN_PAGE_NAME], 2);
@@ -1276,7 +1306,7 @@ static void Task_FlipPages_FromInfo(u32 taskId)
         break;
     case 9:
         PokeSum_PrintMonTypeIcons();
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     case 10:
         PokeSum_ShowSpritesBeforePageFlip();
@@ -1337,8 +1367,8 @@ static void Task_BackOutOfSelectMove(u32 taskId)
         CopyBgTilemapBufferToVram(0);
         break;
     case 4:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_KnownMoves);
-        PokeSum_PrintControlsString(gText_PokeSum_Controls_PageDetail);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_KnownMoves);
+        PokeSum_PrintControlsString(sText_PokeSum_Controls_PageDetail);
         break;
     case 5:
         CopyWindowToVram(sMonSummaryScreen->windowIds[POKESUM_WIN_PAGE_NAME], 2);
@@ -1359,7 +1389,7 @@ static void Task_BackOutOfSelectMove(u32 taskId)
         if (!PokeSum_IsPageFlipFinished())
             return;
 
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     case 9:
         CopyWindowToVram(sMonSummaryScreen->windowIds[6], 2);
@@ -1947,7 +1977,7 @@ static void BufferMonInfo(void)
         else if (gender == MON_MALE)
             StringCopy(sMonSummaryScreen->summary.genderSymbolStrBuf, gText_MaleSymbol);
         else
-            StringCopy(sMonSummaryScreen->summary.genderSymbolStrBuf, gString_Dummy);
+            StringCopy(sMonSummaryScreen->summary.genderSymbolStrBuf, COMPOUND_STRING(""));
         
         GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_OT_NAME, tempStr);
         StringCopyN_Multibyte(sMonSummaryScreen->summary.otNameStrBuf, tempStr, PLAYER_NAME_LENGTH);
@@ -1958,13 +1988,13 @@ static void BufferMonInfo(void)
         ConvertIntToDecimalStringN(sMonSummaryScreen->summary.otIdBuf, otId, STR_CONV_MODE_LEADING_ZEROS, 5);
         
         ConvertIntToDecimalStringN(tempStr, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_LEVEL), STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringCopy(sMonSummaryScreen->summary.levelStrBuf, gText_Lv);
+        StringCopy(sMonSummaryScreen->summary.levelStrBuf, COMPOUND_STRING("{LV_2}"));
         StringAppendN(sMonSummaryScreen->summary.levelStrBuf, tempStr, 4);
         
         heldItem = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HELD_ITEM);
         
         if (heldItem == ITEM_NONE)
-            StringCopy(sMonSummaryScreen->summary.itemNameStrBuf, gText_PokeSum_Item_None);
+            StringCopy(sMonSummaryScreen->summary.itemNameStrBuf, COMPOUND_STRING("None"));
         else
             CopyItemName(heldItem, sMonSummaryScreen->summary.itemNameStrBuf);
     }
@@ -1979,7 +2009,7 @@ static void BufferMonSkills(void)
     u32 i, ability, species;
 
     ConvertIntToDecimalStringN(sMonSummaryScreen->summary.curHpStrBuf, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP), STR_CONV_MODE_LEFT_ALIGN, 4);
-    StringAppend(sMonSummaryScreen->summary.curHpStrBuf, gText_Slash);
+    StringAppend(sMonSummaryScreen->summary.curHpStrBuf, COMPOUND_STRING("/"));
 
     ConvertIntToDecimalStringN(tempStr, GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MAX_HP), STR_CONV_MODE_LEFT_ALIGN, 4);
     StringAppend(sMonSummaryScreen->summary.curHpStrBuf, tempStr);
@@ -2025,10 +2055,10 @@ static void BufferMonMoveI(u32 i)
 
     if (!sMonSummaryScreen->moveIds[i])
     {
-        sMonSummaryScreen->summary.moveNameStrBufs[i] = gText_PokeSum_OneHyphen;
-        StringCopy(sMonSummaryScreen->summary.moveCurPpStrBufs[i], gText_PokeSum_TwoHyphens);
-        StringCopy(sMonSummaryScreen->summary.movePowerStrBufs[i], gText_ThreeHyphens);
-        StringCopy(sMonSummaryScreen->summary.moveAccuracyStrBufs[i], gText_ThreeHyphens);
+        sMonSummaryScreen->summary.moveNameStrBufs[i] = COMPOUND_STRING("-");
+        StringCopy(sMonSummaryScreen->summary.moveCurPpStrBufs[i], COMPOUND_STRING("--"));
+        StringCopy(sMonSummaryScreen->summary.movePowerStrBufs[i], gText_MoveNoPowerAccuracy);
+        StringCopy(sMonSummaryScreen->summary.moveAccuracyStrBufs[i], gText_MoveNoPowerAccuracy);
         sMonSkillsPrinterXpos->curPp[i] = 0xFF;
         sMonSkillsPrinterXpos->maxPp[i] = 0xFF;
     }
@@ -2059,12 +2089,12 @@ static void BufferMonMoveI(u32 i)
         sMonSkillsPrinterXpos->maxPp[i] = GetRightAlignXpos_NDigits(2, sMonSummaryScreen->summary.moveMaxPpStrBufs[i]);
         
         if (gBattleMoves[move].power <= 1)
-            StringCopy(sMonSummaryScreen->summary.movePowerStrBufs[i], gText_ThreeHyphens);
+            StringCopy(sMonSummaryScreen->summary.movePowerStrBufs[i], gText_MoveNoPowerAccuracy);
         else
             ConvertIntToDecimalStringN(sMonSummaryScreen->summary.movePowerStrBufs[i], gBattleMoves[move].power, STR_CONV_MODE_RIGHT_ALIGN, 3);
         
         if (gBattleMoves[move].accuracy == 0)
-            StringCopy(sMonSummaryScreen->summary.moveAccuracyStrBufs[i], gText_ThreeHyphens);
+            StringCopy(sMonSummaryScreen->summary.moveAccuracyStrBufs[i], gText_MoveNoPowerAccuracy);
         else
             ConvertIntToDecimalStringN(sMonSummaryScreen->summary.moveAccuracyStrBufs[i], gBattleMoves[move].accuracy, STR_CONV_MODE_RIGHT_ALIGN, 3);
     }
@@ -2281,7 +2311,7 @@ static void PrintMovesPage(void)
             PokeSum_PrintMoveName(MAX_MON_MOVES);
         else
             AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 3, GetMoveNamePrinterYpos(MAX_MON_MOVES),
-                                         sPrintMoveTextColors[0], TEXT_SPEED_FF, gFameCheckerText_Cancel);
+                                         sPrintMoveTextColors[0], TEXT_SPEED_FF, COMPOUND_STRING("Cancel"));
     }
 }
 
@@ -2319,12 +2349,12 @@ static void PokeSum_PrintMoveName(u32 i)
         else if (curPP <= (maxPP / 2))
             colorIdx = 1;
     }
-    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 36, GetMovePpPinterYpos(i), sPrintMoveTextColors[colorIdx], TEXT_SPEED_FF, gText_PokeSum_PP);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 36, GetMovePpPinterYpos(i), sPrintMoveTextColors[colorIdx], TEXT_SPEED_FF, COMPOUND_STRING("{PP}"));
     AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 46 + sMonSkillsPrinterXpos->curPp[i], GetMovePpPinterYpos(i), sPrintMoveTextColors[colorIdx], TEXT_SPEED_FF, sMonSummaryScreen->summary.moveCurPpStrBufs[i]);
 
     if (sMonSummaryScreen->moveIds[i])
     {
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 58, GetMovePpPinterYpos(i), sPrintMoveTextColors[colorIdx], TEXT_SPEED_FF, gText_Slash);
+        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 58, GetMovePpPinterYpos(i), sPrintMoveTextColors[colorIdx], TEXT_SPEED_FF, COMPOUND_STRING("/"));
         AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2, 64 + sMonSkillsPrinterXpos->maxPp[i], GetMovePpPinterYpos(i), sPrintMoveTextColors[colorIdx], TEXT_SPEED_FF, sMonSummaryScreen->summary.moveMaxPpStrBufs[i]);
     }
 }
@@ -2384,18 +2414,18 @@ static void PokeSum_PrintTrainerMemo_Mon_HeldByOT(void)
     else
     {
         if (sMonSummaryScreen->isEnemyParty || IsMultiBattlePartner())
-            StringCopy(mapNameStr, gText_Somewhere);
+            StringCopy(mapNameStr, sText_Somewhere);
         else
-            StringCopy(mapNameStr, gText_PokeSum_ATrade);
+            StringCopy(mapNameStr, sText_PokeSum_ATrade);
     }
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(2, mapNameStr);
 
     if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_LEVEL) == 0) // Hatched
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_Hatched);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, sText_PokeSum_Hatched);
     else if (metLocation == METLOC_SPECIAL_ENCOUNTER)
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterMet);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, sText_PokeSum_FatefulEncounterMet);
     else
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_Met);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, sText_PokeSum_Met);
     
     AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2, 0, 3, 0, 0, sLevelNickTextColors[0], TEXT_SPEED_FF, natureMetOrHatchedAtLevelStr);
 }
@@ -2427,7 +2457,7 @@ static void PokeSum_PrintTrainerMemo_Mon_NotHeldByOT(void)
             PokeSum_PrintTrainerMemo_Mon_HeldByOT();
         else
         {
-            DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, metLocation == METLOC_SPECIAL_ENCOUNTER ? gText_PokeSum_FatefulEncounterMet : gText_PokeSum_MetInATrade);
+            DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, metLocation == METLOC_SPECIAL_ENCOUNTER ? sText_PokeSum_FatefulEncounterMet : sText_PokeSum_MetInATrade);
             AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2, 0, 3, 0, 0, sLevelNickTextColors[0], TEXT_SPEED_FF, natureMetOrHatchedAtLevelStr);
         }
         return;
@@ -2436,16 +2466,16 @@ static void PokeSum_PrintTrainerMemo_Mon_NotHeldByOT(void)
     if (MapSecIsInKantoOrSevii(metLocation))
         GetMapName(mapNameStr, metLocation);
     else
-        StringCopy(mapNameStr, gText_PokeSum_ATrade);
+        StringCopy(mapNameStr, sText_PokeSum_ATrade);
 
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(2, mapNameStr);
 
     if (GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_MET_LEVEL) == 0) // hatched from an EGG
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyMet);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, sText_PokeSum_ApparentlyMet);
     else if (metLocation == METLOC_SPECIAL_ENCOUNTER)
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_FatefulEncounterMet);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, sText_PokeSum_FatefulEncounterMet);
     else
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, gText_PokeSum_ApparentlyMet);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(natureMetOrHatchedAtLevelStr, sText_PokeSum_ApparentlyMet);
 
     AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2, 0, 3, 0, 0, sLevelNickTextColors[0], TEXT_SPEED_FF, natureMetOrHatchedAtLevelStr);
 }
@@ -2592,29 +2622,29 @@ static void PokeSum_PrintPageHeaderText(u32 curPageIndex)
     switch (curPageIndex)
     {
     case PSS_PAGE_INFO:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_PokemonInfo);
-        PokeSum_PrintControlsString(sMonSummaryScreen->isEgg ? gText_PokeSum_Controls_Cancel : gText_PokeSum_Controls_PageCancel);
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_PokemonInfo);
+        PokeSum_PrintControlsString(sMonSummaryScreen->isEgg ? sText_PokeSum_Controls_Cancel : sText_PokeSum_Controls_PageCancel);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     case PSS_PAGE_SKILLS:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_PokemonSkills);
-        PokeSum_PrintControlsString(gText_PokeSum_Controls_Page);
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_PokemonSkills);
+        PokeSum_PrintControlsString(sText_PokeSum_Controls_Page);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     case PSS_PAGE_MOVES:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_KnownMoves);
-        PokeSum_PrintControlsString(gText_PokeSum_Controls_PageDetail);
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_KnownMoves);
+        PokeSum_PrintControlsString(sText_PokeSum_Controls_PageDetail);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     case PSS_PAGE_MOVES_INFO:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_KnownMoves);
-        PokeSum_PrintControlsString(gMain.inBattle ? gText_PokeSum_Controls_Pick : gText_PokeSum_Controls_PickSwitch);
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_KnownMoves);
+        PokeSum_PrintControlsString(gMain.inBattle ? sText_PokeSum_Controls_Pick : sText_PokeSum_Controls_PickSwitch);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     case PSS_PAGE_MOVE_DELETER:
-        PokeSum_PrintPageName(gText_PokeSum_PageName_KnownMoves);
-        PokeSum_PrintControlsString(gText_PokeSum_Controls_PickDelete);
-        PrintMonLevelNickOnWindow2(gText_PokeSum_NoData);
+        PokeSum_PrintPageName(sText_PokeSum_PageName_KnownMoves);
+        PokeSum_PrintControlsString(sText_PokeSum_Controls_PickDelete);
+        PrintMonLevelNickOnWindow2(sText_PokeSum_NoData);
         break;
     default:
         break;

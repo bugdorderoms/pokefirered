@@ -9,7 +9,6 @@
 #include "random.h"
 #include "new_menu_helpers.h"
 #include "pokemon_special_anim_internal.h"
-#include "strings.h"
 #include "text_window.h"
 #include "trig.h"
 #include "constants/songs.h"
@@ -92,9 +91,9 @@ static const struct WindowTemplate sWindowTemplates[] = {
 };
 
 static const u8 *const s1_2_and_Poof_textPtrs[] = {
-    gUnknown_841B2ED, // 1,
-    gUnknown_841B2F1, // 2, and ‥ ‥ ‥
-    gUnknown_841B2FF, // Poof!
+    COMPOUND_STRING("1, "),
+    COMPOUND_STRING("2, and ‥ ‥ ‥ "),
+    COMPOUND_STRING("Poof!\p"),
 };
 
 static const u16 sAffineScales[] = {
@@ -385,30 +384,30 @@ void PSA_PrintMessage(u32 messageId)
     {
     case 0: // Item was used on Mon
         str = CopyItemName(itemId, scene->textBuf);
-        str = StringCopy(str, gUnknown_841B285);
+        str = StringCopy(str, COMPOUND_STRING(" was used on\n"));
         GetMonData(pokemon, MON_DATA_NICKNAME, str);
-        StringAppend(scene->textBuf, gUnknown_841B293);
+        StringAppend(scene->textBuf, COMPOUND_STRING("."));
         break;
     case 1: // Mon's level was elevated to level
         level = GetMonData(pokemon, MON_DATA_LEVEL);
         GetMonData(pokemon, MON_DATA_NICKNAME, scene->textBuf);
-        str = StringAppend(scene->textBuf, gUnknown_841B295);
+        str = StringAppend(scene->textBuf, COMPOUND_STRING("'s level rose to\n"));
         if (level < MAX_LEVEL)
             level++;
         str = ConvertIntToDecimalStringN(str, level, STR_CONV_MODE_LEFT_ALIGN, level < MAX_LEVEL ? 2 : 3);
-        StringAppend(str, gUnknown_841B2A7);
+        StringAppend(str, COMPOUND_STRING("."));
         break;
     case 9: // Mon learned move
         DynamicPlaceholderTextUtil_Reset();
         DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, PSA_GetMonNickname());
         DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, PSA_GetNameOfMoveToTeach());
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(scene->textBuf, gUnknown_841B32E);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(scene->textBuf, COMPOUND_STRING("{DYNAMIC 0x00} learned\n{DYNAMIC 0x01}!"));
         break;
     case 4: //  poof!
-        strWidth += GetStringWidth(2, gUnknown_841B2F1, -1);
+        strWidth += GetStringWidth(2, s1_2_and_Poof_textPtrs[1], -1);
         // fallthrough
     case 3: // 2 and...
-        strWidth += GetStringWidth(2, gUnknown_841B2ED, -1);
+        strWidth += GetStringWidth(2, s1_2_and_Poof_textPtrs[0], -1);
         // fallthrough
     case 2: // 1
         StringCopy(scene->textBuf, s1_2_and_Poof_textPtrs[messageId - 2]);
@@ -418,16 +417,16 @@ void PSA_PrintMessage(u32 messageId)
         DynamicPlaceholderTextUtil_Reset();
         DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, PSA_GetMonNickname());
         DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, PSA_GetNameOfMoveForgotten());
-        DynamicPlaceholderTextUtil_ExpandPlaceholders(scene->textBuf, gUnknown_841B306);
+        DynamicPlaceholderTextUtil_ExpandPlaceholders(scene->textBuf, COMPOUND_STRING("{DYNAMIC 0x00} forgot\n{DYNAMIC 0x01}.\p"));
         break;
     case 6: // And...
-        StringCopy(scene->textBuf, gUnknown_841B315);
+        StringCopy(scene->textBuf, COMPOUND_STRING("And‥\p"));
         break;
     case 7: // Machine set!
-        StringCopy(scene->textBuf, gUnknown_841B31B);
+        StringCopy(scene->textBuf, COMPOUND_STRING("Machine set!\p"));
         break;
     case 8: // Huh?
-        StringCopy(scene->textBuf, gUnknown_841B329);
+        StringCopy(scene->textBuf, COMPOUND_STRING("Huh?"));
         break;
     default:
         return;
@@ -1425,12 +1424,12 @@ static void SpriteCB_LevelUpVertical(struct Sprite * sprite)
 // ========================================================
 
 static const u8 *const sLevelUpWindowStatNames[] = {
-    gUnknown_841B2A9,
-    gUnknown_841B2B7,
-    gUnknown_841B2BE,
-    gUnknown_841B2CC,
-    gUnknown_841B2D4,
-    gUnknown_841B2C6
+    COMPOUND_STRING("{FONT_SMALL}Max.{FONT_NORMAL} HP"),
+    COMPOUND_STRING("Attack"),
+    COMPOUND_STRING("Defense"),
+    COMPOUND_STRING("Sp. Atk"),
+    COMPOUND_STRING("Sp. Def"),
+    COMPOUND_STRING("Speed")
 };
 
 void DrawLevelUpWindowPg1(u32 windowId, u16 *beforeStats, u16 *afterStats, u32 bgColor, u32 fgColor, u32 shadowColor)
@@ -1456,7 +1455,7 @@ void DrawLevelUpWindowPg1(u32 windowId, u16 *beforeStats, u16 *afterStats, u32 b
     for (i = 0; i < NUM_STATS; i++)
     {
         AddTextPrinterParameterized3(windowId, 2, 0, i * 15, textColor, TEXT_SPEED_FF, sLevelUpWindowStatNames[i]);
-        StringCopy(textbuf, diffStats[i] >= 0 ? gUnknown_841B2DC : gUnknown_841B2E5);
+        StringCopy(textbuf, diffStats[i] >= 0 ? COMPOUND_STRING("{FONT_SMALL}{PLUS}{FONT_NORMAL}") : COMPOUND_STRING("{FONT_SMALL}-{FONT_NORMAL}"));
         AddTextPrinterParameterized3(windowId, 2, 56, i * 15, textColor, TEXT_SPEED_FF, textbuf);
         textbuf[0] = CHAR_SPACE;
         x = abs(diffStats[i]) < 10 ? 12 : 6;

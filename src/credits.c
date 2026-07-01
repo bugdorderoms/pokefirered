@@ -7,7 +7,6 @@
 #include "new_menu_helpers.h"
 #include "decompress.h"
 #include "graphics.h"
-#include "strings.h"
 #include "trainer_pokemon_sprites.h"
 #include "menu.h"
 #include "field_weather.h"
@@ -154,7 +153,6 @@ struct CreditsTextHeader
 {
     const u8 * unk_0;
     const u8 * unk_4;
-    bool8 unk_8;
 };
 
 struct CompressedGraphicsHeader
@@ -642,49 +640,175 @@ static const struct CreditsOverworldCmd *const sOverworldMapScenes[] = {
 };
 
 static const struct CreditsTextHeader sCreditsTexts[] = {
-    { gCreditsString_Director, gCreditsString_Junichi_Masuda, FALSE },
-    { gCreditsString_Art_Director_Battle_Director, gCreditsString_Ken_Sugimori_Shigeki_Morimoto, FALSE },
-    { gCreditsString_Program_Leader_Planning_Leader_Graphic_Design_Leader, gCreditsString_Tetsuya_Watanabe_Koji_Nishino_Takao_Unno, FALSE },
-    { gCreditsString_Programmers, gCreditsString_Hiroyuki_Nakamura_Masao_Taya_Satoshi_Nohara_Miyuki_Iwasawa_Daisuke_Goto, FALSE },
-    { gCreditsString_System_Programmers, gCreditsString_Tetsuya_Watanabe_Akito_Mori_Hisashi_Sogabe_Sousuke_Tamada, TRUE  },
-    { gCreditsString_Graphic_Designers, gCreditsString_Takao_Unno_Asuka_Iwashita_Kanako_Eo_Hiroki_Fuchino, TRUE  },
-    { gCreditsString_Graphic_Designers_2, gCreditsString_Ken_Sugimori_Hironobu_Yoshida, TRUE  },
-    { gCreditsString_Music_Composition, gCreditsString_Go_Ichinose_Junichi_Masuda, TRUE  },
-    { gCreditsString_Sound_Effects, gCreditsString_Go_Ichinose, FALSE },
-    { gCreditsString_Game_Designers, gCreditsString_Junichi_Masuda_Koji_Nishino_Tetsuji_Ohta, FALSE },
-    { gCreditsString_Game_Designers_2, gCreditsString_Hitomi_Sato_Shigeru_Ohmori_Tadashi_Takahashi, FALSE },
-    { gCreditsString_Game_Scenario, gCreditsString_Hitomi_Sato_Satoshi_Tajiri, TRUE  },
-    { gCreditsString_Script_Designer_Map_Designer, gCreditsString_Satoshi_Nohara_Shigeru_Ohmori, FALSE },
-    { gCreditsString_Parametric_Designers, gCreditsString_Koji_Nishino_Tetsuji_Ohta_Shigeki_Morimoto, FALSE },
-    { gCreditsString_POKeDEX_Text, gCreditsString_Kenji_Matsushima, FALSE },
-    { gCreditsString_POKeMON_Designers, gCreditsString_Ken_Sugimori_Motofumi_Fujiwara_Shigeki_Morimoto_Hironobu_Yoshida, TRUE  },
-    { gCreditsString_POKeMON_Designers_2, gCreditsString_Satoshi_Ohta_Asuka_Iwashita_Takao_Unno_Kanako_Eo_Aimi_Tomita, FALSE },
-    { gCreditsString_POKeMON_Designers_3, gCreditsString_Atsuko_Nishida_Muneo_Saito_Rena_Yoshikawa_Jun_Okutani, TRUE  },
-    { gCreditsString_Supporting_Programmers, gCreditsString_Teruyuki_Yoshioka_Takao_Nakano_Satoshi_Mitsuhara_Daisuke_Hoshino, FALSE },
-    { gCreditsString_NCL_Product_Testing, gCreditsString_NCL_Super_Mario_Club, FALSE },
-    { gCreditsString_Special_Thanks, gCreditsString_Hiro_Nakamura_Hiroyuki_Uesugi_Teruki_Murakawa_Kazuya_Suyama, FALSE },
-    { gCreditsString_Special_Thanks_2, gCreditsString_Kenji_Tominaga_Kenjiro_Ito_Tomotaka_Komura_Michiko_Takizawa, FALSE },
-    { gCreditsString_Special_Thanks_3, gCreditsString_Makiko_Takada_Mikiko_Ohashi_Shusaku_Egami_Takanao_Kondo_Rui_Kawaguchi, FALSE },
-    { gCreditsString_Braille_Code_Check, gCreditsString_Japan_Braille_Library, FALSE },
-    { gCreditsString_Information_Supervisors, gCreditsString_Hiroki_Enomoto_Kazuyuki_Terada_Yuri_Sakurai_Yumi_Funasaka_Naoko_Yanase, FALSE },
-    { gCreditsString_Coordinators, gCreditsString_Azusa_Tajima_Akira_Kinashi_Kazuki_Yoshihara_Retsuji_Nomoto, FALSE },
-    { gCreditsString_Task_Managers, gCreditsString_Hitoshi_Yamagami_Gakuji_Nomoto, TRUE  },
-    { gCreditsString_Producers, gCreditsString_Hiroyuki_Jinnai_Takehiro_Izushi_Hiroaki_Tsuru, FALSE },
-    { gCreditsString_Executive_Director, gCreditsString_Satoshi_Tajiri, FALSE },
-    { gCreditsString_Executive_Producer, gCreditsString_Satoru_Iwata, FALSE },
-    { gCreditsString_Executive_Producer_2, gCreditsString_Tsunekaz_Ishihara, FALSE },
-    { gCreditsString_English_Version_Coordinators, gCreditsString_Hiro_Nakamura_Seth_McMahill, FALSE },
-    { gCreditsString_Translator_Text_Editor, gCreditsString_Nob_Ogasawara_Teresa_Lillygren, FALSE },
-    { gCreditsString_Programmers_2, gCreditsString_Teruki_Murakawa_Souichi_Yamamoto_Yuichiro_Ito_Akira_Kinashi, FALSE },
-    { gCreditsString_Environment_Tool_Programmers, gCreditsString_Teruki_Murakawa_Souichi_Yamamoto_Kimiko_Nakamichi, TRUE  },
-    { gCreditsString_NOA_Product_Testing, gCreditsString_Thomas_Hertzog_Kathy_Huguenard_Mika_Kurosawa, TRUE  },
-    { gCreditsString_Braille_Code_Check_2, gCreditsString_National_Federation_of_the_Blind_Patricia_A_Maurer_Japan_Braille_Library_European_Blind_Union, TRUE  },
-    { gCreditsString_Braille_Code_Check_3, gCreditsString_National_Information_Library_Service_Margaret_Campion, TRUE  },
-    { gCreditsString_Special_Thanks_4, gCreditsString_Takehiro_Izushi_Motoyasu_Tojima_Hitoshi_Yamagami_Hiroyuki_Uesugi, FALSE },
-    { gCreditsString_Special_Thanks_5, gCreditsString_Nicola_Pratt_Barlow_Shellie_Dow_Anthony_Howitt_Naoko_Saeki_Kyoko_Onishi, FALSE },
-    { gCreditsString_Braille_Code_Check_4, gCreditsString_The_Royal_New_Zealand_Foundation_of_the_Blind_Greg_Moran, FALSE },
-    { gCreditsString_Graphic_Designer, gCreditsString_Akira_Kinashi, FALSE },
-    { gString_Dummy, gString_Dummy, FALSE }
+    {
+        COMPOUND_STRING("\n\nDirector\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nJunichi Masuda\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nArt Director\n\nBattle Director\n\n\n"),
+        COMPOUND_STRING("\n\nKen Sugimori\n\nShigeki Morimoto\n\n")
+    },
+    {
+        COMPOUND_STRING("Program Leader\n\nPlanning Leader\n\nGraphic Design Leader\n\n"),
+        COMPOUND_STRING("\nTetsuya Watanabe\n\nKoji Nishino\n\nTakao Unno\n")
+    },
+    {
+        COMPOUND_STRING("Programmers\n\n\n\n\n"),
+        COMPOUND_STRING("\nHiroyuki Nakamura\nMasao Taya\nSatoshi Nohara\nMiyuki Iwasawa\nDaisuke Goto\n")
+    },
+    {
+        COMPOUND_STRING("System Programmers\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nTetsuya Watanabe\nAkito Mori\nHisashi Sogabe\nSousuke Tamada\n\n")
+    },
+    {
+        COMPOUND_STRING("Graphic Designers\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nTakao Unno\nAsuka Iwashita\nKanako Eo\nHiroki Fuchino\n\n")
+    },
+    {
+        COMPOUND_STRING("\nGraphic Designers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nKen Sugimori\nHironobu Yoshida\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nMusic Composition\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nGo Ichinose\nJunichi Masuda\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\n\nSound Effects\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nGo Ichinose\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nGame Designers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nJunichi Masuda\nKoji Nishino\nTetsuji Ohta\n\n")
+    },
+    {
+        COMPOUND_STRING("\nGame Designers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nHitomi Sato\nShigeru Ohmori\nTadashi Takahashi\n\n")
+    },
+    {
+        COMPOUND_STRING("\nGame Scenario\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nHitomi Sato\nSatoshi Tajiri\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nScript Designer\n\nMap Designer\n\n\n"),
+        COMPOUND_STRING("\n\nSatoshi Nohara\n\nShigeru Ohmori\n\n")
+    },
+    {
+        COMPOUND_STRING("\nParametric Designers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nKoji Nishino\nTetsuji Ohta\nShigeki Morimoto\n\n")
+    },
+    {
+        COMPOUND_STRING("\n\nPokédex Text\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nKenji Matsushima\n\n\n")
+    },
+    {
+        COMPOUND_STRING("Pokémon Designers\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nKen Sugimori\nMotofumi Fujiwara\nShigeki Morimoto\nHironobu Yoshida\n\n")
+    },
+    {
+        COMPOUND_STRING("Pokémon Designers\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nSatoshi Ohta\nAsuka Iwashita\nTakao Unno\nKanako Eo\nAimi Tomita\n")
+    },
+    {
+        COMPOUND_STRING("Pokémon Designers\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nAtsuko Nishida\nMuneo Saito\nRena Yoshikawa\nJun Okutani\n\n")
+    },
+    {
+        COMPOUND_STRING("Supporting Programmers\n\n\n\n"),
+        COMPOUND_STRING("\nTeruyuki Yoshioka\nTakao Nakano\n\nSatoshi Mitsuhara\nDaisuke Hoshino\n")
+    },
+    {
+        COMPOUND_STRING("\n\nNCL Product Testing\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nNCL Super Mario Club\n\n\n")
+    },
+    {
+        COMPOUND_STRING("Special Thanks\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nHiro Nakamura\nHiroyuki Uesugi\nTeruki Murakawa\n\nKazuya Suyama\n")
+    },
+    {
+        COMPOUND_STRING("Special Thanks\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nKenji Tominaga\n\nKenjiro Ito\nTomotaka Komura\nMichiko Takizawa\n")
+    },
+    {
+        COMPOUND_STRING("Special Thanks\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nMakiko Takada\nMikiko Ohashi\nShusaku Egami\nTakanao Kondo\nRui Kawaguchi\n")
+    },
+    {
+        COMPOUND_STRING("\n\nBraille Code Check\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nJapan Braille Library\n\n\n")
+    },
+    {
+        COMPOUND_STRING("Information Supervisors\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nHiroki Enomoto\nKazuyuki Terada\nYuri Sakurai\nYumi Funasaka\nNaoko Yanase\n")
+    },
+    {
+        COMPOUND_STRING("Coordinators\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nAzusa Tajima\nAkira Kinashi\nKazuki Yoshihara\n\nRetsuji Nomoto\n")
+    },
+    {
+        COMPOUND_STRING("\nTask Managers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nHitoshi Yamagami\nGakuji Nomoto\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nProducers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nHiroyuki Jinnai\nTakehiro Izushi\nHiroaki Tsuru\n\n")
+    },
+    {
+        COMPOUND_STRING("\n\nExecutive Director\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nSatoshi Tajiri\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\n\nExecutive Producer\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nSatoru Iwata\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\n\nExecutive Producer\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nTsunekaz Ishihara\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nEnglish Version Coordinators\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nHiro Nakamura\nSeth McMahill\n\n\n")
+    },
+    {
+        COMPOUND_STRING("\nTranslator\n\nText Editor\n\n\n"),
+        COMPOUND_STRING("\n\nNob Ogasawara\n\nTeresa Lillygren\n\n")
+    },
+    {
+        COMPOUND_STRING("Programmers\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nTeruki Murakawa\nSouichi Yamamoto\nYuichiro Ito\nAkira Kinashi\n\n")
+    },
+    {
+        COMPOUND_STRING("\nEnvironment & Tool Programmers\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nTeruki Murakawa\nSouichi Yamamoto\nKimiko Nakamichi\n\n")
+    },
+    {
+        COMPOUND_STRING("NOA Product Testing\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nThomas Hertzog\nKathy Huguenard\nMika Kurosawa\n\n\n")
+    },
+    {
+        COMPOUND_STRING("Braille Code Check\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nNational Federation\n{CLEAR_TO 0x13}of the Blind\nPatricia A. Maurer\nJapan Braille Library\nEuropean Blind Union\n")
+    },
+    {
+        COMPOUND_STRING("\nBraille Code Check\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nNational Information Library\n{CLEAR_TO 0x2D}Service\nMargaret Campion\n\n")
+    },
+    {
+        COMPOUND_STRING("Special Thanks\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nTakehiro Izushi\nMotoyasu Tojima\nHitoshi Yamagami\nHiroyuki Uesugi\n\n")
+    },
+    {
+        COMPOUND_STRING("Special Thanks\n\n\n\n\n\n"),
+        COMPOUND_STRING("\nNicola Pratt-Barlow\nShellie Dow\nAnthony Howitt\nNaoko Saeki\nKyoko Onishi\n")
+    },
+    {
+        COMPOUND_STRING("\nBraille Code Check\n\n\n\n\n"),
+        COMPOUND_STRING("\n\nThe Royal New Zealand\nFoundation of the Blind\nGreg Moran\n\n")
+    },
+    {
+        COMPOUND_STRING("\n\nGraphic Designer\n\n\n\n"),
+        COMPOUND_STRING("\n\n\nAkira Kinashi\n\n\n")
+    },
+    { COMPOUND_STRING(""), COMPOUND_STRING("") }
 };
 
 void DoCredits(void)
@@ -841,7 +965,7 @@ static s32 RollCredits(void)
             
         }
         sCreditsMgr->timer = 360;
-        AddTextPrinterParameterized4(sCreditsMgr->windowId, 1, 0x08, 0x29, 1, 2, sTextColor_Header, 0, gString_PokemonFireRed_Staff);
+        AddTextPrinterParameterized4(sCreditsMgr->windowId, 1, 0x08, 0x29, 1, 2, sTextColor_Header, 0, COMPOUND_STRING("Pokémon FireRed Version\nStaff"));
         sCreditsMgr->mainseqno = CREDITSSCENE_WAIT_TITLE_STAFF;
         return 0;
     case CREDITSSCENE_WAIT_TITLE_STAFF:
@@ -897,12 +1021,10 @@ static s32 RollCredits(void)
     case CREDITSSCENE_PRINT_ADDPRINTER1:
         if (gPaletteFade.active)
             return sCreditsMgr->canSpeedThrough;
-        win0v[0] = sCreditsTexts[sCreditsScript[sCreditsMgr->scrcmdidx].param].unk_8; // unused
         AddTextPrinterParameterized4(sCreditsMgr->windowId, 1, 2, 6, 0, 0, sTextColor_Header, -1, sCreditsTexts[sCreditsScript[sCreditsMgr->scrcmdidx].param].unk_0);
         sCreditsMgr->mainseqno = CREDITSSCENE_PRINT_ADDPRINTER2;
         return sCreditsMgr->canSpeedThrough;
     case CREDITSSCENE_PRINT_ADDPRINTER2:
-        win0v[0] = sCreditsTexts[sCreditsScript[sCreditsMgr->scrcmdidx].param].unk_8;
         AddTextPrinterParameterized4(sCreditsMgr->windowId, 2, 8, 6, 0, 0, sTextColor_Regular, -1, sCreditsTexts[sCreditsScript[sCreditsMgr->scrcmdidx].param].unk_4);
         sCreditsMgr->mainseqno = CREDITSSCENE_PRINT_DELAY;
         return sCreditsMgr->canSpeedThrough;

@@ -16,7 +16,6 @@
 #include "pokemon_icon.h"
 #include "pokemon_storage_system_internal.h"
 #include "pokemon_summary_screen.h"
-#include "strings.h"
 #include "task.h"
 #include "text_window.h"
 #include "trig.h"
@@ -236,37 +235,37 @@ static const struct SpriteTemplate sSpriteTemplate_CursorMon = {
 };
 
 static const struct StorageAction sPCStorageActionTexts[] = {
-    [PC_TEXT_EXIT_BOX] = {gText_ExitFromBox, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_WHAT_YOU_DO] = {gText_WhatDoYouWantToDo, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_PICK_A_THEME] = {gText_PleasePickATheme, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_PICK_A_WALLPAPER] = {gText_PickTheWallpaper, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_IS_SELECTED] = {gText_PkmnIsSelected, PC_TEXT_FMT_MON_NAME_1},
-    [PC_TEXT_JUMP_TO_WHICH_BOX] = {gText_JumpToWhichBox, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_DEPOSIT_IN_WHICH_BOX] = {gText_DepositInWhichBox, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_WAS_DEPOSITED] = {gText_PkmnWasDeposited, PC_TEXT_FMT_MON_NAME_1},
-    [PC_TEXT_BOX_IS_FULL] = {gText_BoxIsFull2, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_RELEASE_POKE] = {gText_ReleaseThisPokemon, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_WAS_RELEASED] = {gText_PkmnWasReleased, PC_TEXT_FMT_MON_NAME_4},
-    [PC_TEXT_BYE_BYE] = {gText_ByeByePkmn, PC_TEXT_FMT_MON_NAME_6},
-    [PC_TEXT_MARK_POKE] = {gText_MarkYourPkmn, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_LAST_POKE] = {gText_ThatsYourLastPkmn, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_PARTY_FULL] = {gText_YourPartysFull, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_HOLDING_POKE] = {gText_YoureHoldingAPkmn, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_WHICH_ONE_WILL_TAKE] = {gText_WhichOneWillYouTake, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_CANT_RELEASE_EGG] = {gText_YouCantReleaseAnEgg, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_CONTINUE_BOX] = {gText_ContinueBoxOperations, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_CAME_BACK] = {gText_PkmnCameBack, PC_TEXT_FMT_MON_NAME_1},
-    [PC_TEXT_WORRIED] = {gText_WasItWorriedAboutYou, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_SURPRISE] = {gText_FourEllipsesExclamation, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_PLEASE_REMOVE_MAIL] = {gText_PleaseRemoveTheMail, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_IS_SELECTED2] = {gText_PkmnIsSelected, PC_TEXT_FMT_ITEM_NAME},
-    [PC_TEXT_GIVE_TO_MON] = {gText_GiveToAPkmn, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_PLACED_IN_BAG] = {gText_PlacedItemInBag, PC_TEXT_FMT_ITEM_NAME},
-    [PC_TEXT_BAG_FULL] = {gText_BagIsFull2, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_PUT_IN_BAG] = {gText_PutItemInBag, PC_TEXT_FMT_NORMAL},
-    [PC_TEXT_ITEM_IS_HELD] = {gText_ItemIsNowHeld, PC_TEXT_FMT_ITEM_NAME},
-    [PC_TEXT_CHANGED_TO_ITEM] = {gText_ChangedToNewItem, PC_TEXT_FMT_ITEM_NAME},
-    [PC_TEXT_CANT_STORE_MAIL] = {gText_MailCantBeStored, PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_EXIT_BOX]             = {COMPOUND_STRING("Exit from the Box."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_WHAT_YOU_DO]          = {COMPOUND_STRING("What do you want to do?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_PICK_A_THEME]         = {COMPOUND_STRING("Please pick a theme."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_PICK_A_WALLPAPER]     = {COMPOUND_STRING("Pick the wallpaper."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_IS_SELECTED]          = {COMPOUND_STRING("{DYNAMIC 0x00} is selected."), PC_TEXT_FMT_MON_NAME_1},
+    [PC_TEXT_JUMP_TO_WHICH_BOX]    = {COMPOUND_STRING("Jump to which Box?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_DEPOSIT_IN_WHICH_BOX] = {COMPOUND_STRING("Deposit in which Box?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_WAS_DEPOSITED]        = {COMPOUND_STRING("{DYNAMIC 0x00} was deposited."), PC_TEXT_FMT_MON_NAME_1},
+    [PC_TEXT_BOX_IS_FULL]          = {COMPOUND_STRING("The Box is full."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_RELEASE_POKE]         = {COMPOUND_STRING("Release this Pokémon?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_WAS_RELEASED]         = {COMPOUND_STRING("{DYNAMIC 0x00} was released."), PC_TEXT_FMT_MON_NAME_4},
+    [PC_TEXT_BYE_BYE]              = {COMPOUND_STRING("Bye-bye, {DYNAMIC 0x00}!"), PC_TEXT_FMT_MON_NAME_6},
+    [PC_TEXT_MARK_POKE]            = {COMPOUND_STRING("Mark your Pokémon."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_LAST_POKE]            = {COMPOUND_STRING("That's your last Pokémon!"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_PARTY_FULL]           = {COMPOUND_STRING("Your party's full!"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_HOLDING_POKE]         = {COMPOUND_STRING("You're holding a Pokémon!"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_WHICH_ONE_WILL_TAKE]  = {COMPOUND_STRING("Which one will you take?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_CANT_RELEASE_EGG]     = {COMPOUND_STRING("You can't release an Egg."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_CONTINUE_BOX]         = {COMPOUND_STRING("Continue Box operations?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_CAME_BACK]            = {COMPOUND_STRING("{DYNAMIC 0x00} came back!"), PC_TEXT_FMT_MON_NAME_1},
+    [PC_TEXT_WORRIED]              = {COMPOUND_STRING("Was it worried about you?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_SURPRISE]             = {COMPOUND_STRING("‥ ‥ ‥ ‥ ‥!"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_PLEASE_REMOVE_MAIL]   = {COMPOUND_STRING("Please remove the Mail."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_IS_SELECTED2]         = {COMPOUND_STRING("{DYNAMIC 0x00} is selected."), PC_TEXT_FMT_ITEM_NAME},
+    [PC_TEXT_GIVE_TO_MON]          = {COMPOUND_STRING("Give to a Pokémon?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_PLACED_IN_BAG]        = {COMPOUND_STRING("Placed item in the Bag."), PC_TEXT_FMT_ITEM_NAME},
+    [PC_TEXT_BAG_FULL]             = {COMPOUND_STRING("The Bag is full."), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_PUT_IN_BAG]           = {COMPOUND_STRING("Put this item in the Bag?"), PC_TEXT_FMT_NORMAL},
+    [PC_TEXT_ITEM_IS_HELD]         = {COMPOUND_STRING("{DYNAMIC 0x00} is now held."), PC_TEXT_FMT_ITEM_NAME},
+    [PC_TEXT_CHANGED_TO_ITEM]      = {COMPOUND_STRING("Changed to {DYNAMIC 0x00}."), PC_TEXT_FMT_ITEM_NAME},
+    [PC_TEXT_CANT_STORE_MAIL]      = {COMPOUND_STRING("Mail can't be stored!"), PC_TEXT_FMT_NORMAL},
 };
 
 // Yes/No menu

@@ -6,7 +6,6 @@
 #include "graphics.h"
 #include "menu.h"
 #include "new_menu_helpers.h"
-#include "strings.h"
 #include "text_window.h"
 
 struct ECWork
@@ -47,36 +46,36 @@ struct EasyChatPhraseFrameDimensions
 
 static EWRAM_DATA struct ECWork * sEasyChatGraphicsResources = NULL;
 
-static bool8 ECInterfaceCmd_01(void);
-static bool8 ECInterfaceCmd_02(void);
-static bool8 ECInterfaceCmd_03(void);
-static bool8 ECInterfaceCmd_05(void);
-static bool8 ECInterfaceCmd_06(void);
-static bool8 ECInterfaceCmd_04(void);
-static bool8 ECInterfaceCmd_07(void);
-static bool8 ECInterfaceCmd_08(void);
-static bool8 ECInterfaceCmd_09(void);
-static bool8 ECInterfaceCmd_10(void);
-static bool8 ECInterfaceCmd_22(void);
-static bool8 ECInterfaceCmd_14(void);
-static bool8 ECInterfaceCmd_15(void);
-static bool8 ECInterfaceCmd_16(void);
-static bool8 ECInterfaceCmd_11(void);
-static bool8 ECInterfaceCmd_12(void);
-static bool8 ECInterfaceCmd_13(void);
-static bool8 ECInterfaceCmd_17(void);
-static bool8 ECInterfaceCmd_19(void);
-static bool8 ECInterfaceCmd_18(void);
-static bool8 ECInterfaceCmd_21(void);
-static bool8 ECInterfaceCmd_20(void);
-static bool8 InitEasyChatGraphicsWork_Internal(void);
+static bool32 ECInterfaceCmd_01(void);
+static bool32 ECInterfaceCmd_02(void);
+static bool32 ECInterfaceCmd_03(void);
+static bool32 ECInterfaceCmd_05(void);
+static bool32 ECInterfaceCmd_06(void);
+static bool32 ECInterfaceCmd_04(void);
+static bool32 ECInterfaceCmd_07(void);
+static bool32 ECInterfaceCmd_08(void);
+static bool32 ECInterfaceCmd_09(void);
+static bool32 ECInterfaceCmd_10(void);
+static bool32 ECInterfaceCmd_22(void);
+static bool32 ECInterfaceCmd_14(void);
+static bool32 ECInterfaceCmd_15(void);
+static bool32 ECInterfaceCmd_16(void);
+static bool32 ECInterfaceCmd_11(void);
+static bool32 ECInterfaceCmd_12(void);
+static bool32 ECInterfaceCmd_13(void);
+static bool32 ECInterfaceCmd_17(void);
+static bool32 ECInterfaceCmd_19(void);
+static bool32 ECInterfaceCmd_18(void);
+static bool32 ECInterfaceCmd_21(void);
+static bool32 ECInterfaceCmd_20(void);
+static bool32 InitEasyChatGraphicsWork_Internal(void);
 static void SetGpuRegsForEasyChatInit(void);
 static void LoadEasyChatPals(void);
 static void PrintTitleText(void);
-static void EC_AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 left, u8 top, u8 speed, u8 bg, u8 fg, u8 shadow);
+static void EC_AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u8 left, u8 top, u8 speed, u32 bg, u32 fg, u32 shadow);
 static void PrintECInstructionsText(void);
-static void PrintECInterfaceTextById(u8 a0);
-static void EC_CreateYesNoMenuWithInitialCursorPos(u8 initialCursorPos);
+static void PrintECInterfaceTextById(u32 a0);
+static void EC_CreateYesNoMenuWithInitialCursorPos(u32 initialCursorPos);
 static void CreatePhraseFrameWindow(void);
 static void PrintECFields(void);
 static void DrawECFrameInTilemapBuffer(u16 *buffer);
@@ -92,13 +91,13 @@ static void UpdateWin2PrintWordsScrollPageUp(void);
 static void PrintECRowsWin2(u8 row, u8 remrow);
 static void ClearECRowsWin2(u8 row, u8 remrow);
 static void ClearWin2AndCopyToVram(void);
-static void StartWin2FrameAnim(int a0);
-static bool8 AnimateFrameResize(void);
-static void RedrawFrameByIndex(u8 a0);
+static void StartWin2FrameAnim(u32 a0);
+static bool32 AnimateFrameResize(void);
+static void RedrawFrameByIndex(u32 a0);
 static void RedrawFrameByRect(int left, int top, int width, int height);
 static void InitBg2Scroll(void);
-static void ScheduleBg2VerticalScroll(s16 direction, u8 speed);
-static bool8 AnimateBg2VerticalScroll(void);
+static void ScheduleBg2VerticalScroll(s16 direction, u32 speed);
+static bool32 AnimateBg2VerticalScroll(void);
 static int GetBg2ScrollRow(void);
 static void SetRegWin0Coords(u8 left, u8 top, u8 right, u8 bottom);
 static void LoadSpriteGfx(void);
@@ -118,11 +117,11 @@ static void SetSelectWordCursorSpritePos(void);
 static void SetSelectWordCursorSpritePosExplicit(u8 x, u8 y);
 static void DestroySelectWordCursorSprite(void);
 static void CreateSelectGroupHelpSprite(void);
-static bool8 AnimateSeletGroupModeAndHelpSpriteEnter(void);
+static bool32 AnimateSeletGroupModeAndHelpSpriteEnter(void);
 static void StartModeIconHidingAnimation(void);
-static bool8 RunModeIconHidingAnimation(void);
+static bool32 RunModeIconHidingAnimation(void);
 static void ShowModeIconsSprite(void);
-static bool8 ModeIconsSpriteAnimIsEnded(void);
+static bool32 ModeIconsSpriteAnimIsEnded(void);
 static void CreateVerticalScrollArrowSprites(void);
 static void UpdateVerticalScrollArrowVisibility(void);
 static void HideVerticalScrollArrowSprites(void);
@@ -539,7 +538,7 @@ static const struct SpriteTemplate sSpriteTemplate_UpTriangleCursor = {
     .callback = SpriteCallbackDummy,
 };
 
-bool8 InitEasyChatGraphicsWork(void)
+bool32 InitEasyChatGraphicsWork(void)
 {
     if (!InitEasyChatGraphicsWork_Internal())
         return FALSE;
@@ -547,7 +546,7 @@ bool8 InitEasyChatGraphicsWork(void)
         return TRUE;
 }
 
-bool8 LoadEasyChatGraphics(void)
+bool32 LoadEasyChatGraphics(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -605,7 +604,6 @@ bool8 LoadEasyChatGraphics(void)
     default:
         return FALSE;
     }
-
     sEasyChatGraphicsResources->state++;
     return TRUE;
 }
@@ -616,14 +614,14 @@ void DestroyEasyChatGraphicsResources(void)
         Free(sEasyChatGraphicsResources);
 }
 
-void EasyChatInterfaceCommand_Setup(u16 id)
+void EasyChatInterfaceCommand_Setup(u32 id)
 {
     sEasyChatGraphicsResources->id = id;
     sEasyChatGraphicsResources->state = 0;
     EasyChatInterfaceCommand_Run();
 }
 
-bool8 EasyChatInterfaceCommand_Run(void)
+bool32 EasyChatInterfaceCommand_Run(void)
 {
     switch (sEasyChatGraphicsResources->id)
     {
@@ -654,7 +652,7 @@ bool8 EasyChatInterfaceCommand_Run(void)
     }
 }
 
-static bool8 ECInterfaceCmd_01(void)
+static bool32 ECInterfaceCmd_01(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -665,16 +663,15 @@ static bool8 ECInterfaceCmd_01(void)
     case 1:
         return IsDma3ManagerBusyWithBgCopy();
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_02(void)
+static bool32 ECInterfaceCmd_02(void)
 {
-    u8 i;
+    u32 i;
     u16 *ecWordBuffer;
     u16 *ecWord;
-    u8 frameId;
+    u32 frameId;
     u8 cursorColumn, cursorRow, numColumns;
     s16 var1;
     int stringWidth;
@@ -689,6 +686,7 @@ static bool8 ECInterfaceCmd_02(void)
     numColumns = GetNumColumns();
     ecWord = &ecWordBuffer[cursorRow * numColumns];
     var1 = 8 * sPhraseFrameDimensions[frameId].left + 13;
+    
     for (i = 0; i < cursorColumn; i++)
     {
         if (*ecWord == 0xFFFF)
@@ -705,15 +703,15 @@ static bool8 ECInterfaceCmd_02(void)
         var1 += trueStringWidth;
         ecWord++;
     }
-
     var2 = 8 * (sPhraseFrameDimensions[frameId].top + cursorRow * 2 + 1) + 1;
     SetSelectDestFieldCursorSpritePosAndResetAnim(var1, var2);
     return FALSE;
 }
 
-static bool8 ECInterfaceCmd_03(void)
+static bool32 ECInterfaceCmd_03(void)
 {
-    u8 xOffset;
+    u32 xOffset;
+    
     switch (GetMainCursorColumn())
     {
     case 0:
@@ -732,7 +730,7 @@ static bool8 ECInterfaceCmd_03(void)
     return FALSE;
 }
 
-static bool8 ECInterfaceCmd_05(void)
+static bool32 ECInterfaceCmd_05(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -745,11 +743,10 @@ static bool8 ECInterfaceCmd_05(void)
     case 1:
         return IsDma3ManagerBusyWithBgCopy();
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_06(void)
+static bool32 ECInterfaceCmd_06(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -762,11 +759,10 @@ static bool8 ECInterfaceCmd_06(void)
     case 1:
         return IsDma3ManagerBusyWithBgCopy();
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_04(void)
+static bool32 ECInterfaceCmd_04(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -779,11 +775,10 @@ static bool8 ECInterfaceCmd_04(void)
     case 1:
         return IsDma3ManagerBusyWithBgCopy();
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_07(void)
+static bool32 ECInterfaceCmd_07(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -796,11 +791,10 @@ static bool8 ECInterfaceCmd_07(void)
     case 1:
         return IsDma3ManagerBusyWithBgCopy();
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_08(void)
+static bool32 ECInterfaceCmd_08(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -813,11 +807,10 @@ static bool8 ECInterfaceCmd_08(void)
     case 1:
         return IsDma3ManagerBusyWithBgCopy();
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_09(void)
+static bool32 ECInterfaceCmd_09(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -859,11 +852,10 @@ static bool8 ECInterfaceCmd_09(void)
     default:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_10(void)
+static bool32 ECInterfaceCmd_10(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -895,11 +887,10 @@ static bool8 ECInterfaceCmd_10(void)
     case 4:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_22(void)
+static bool32 ECInterfaceCmd_22(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -937,17 +928,16 @@ static bool8 ECInterfaceCmd_22(void)
     case 4:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_14(void)
+static bool32 ECInterfaceCmd_14(void)
 {
     EC_MoveCursor();
     return FALSE;
 }
 
-static bool8 ECInterfaceCmd_15(void)
+static bool32 ECInterfaceCmd_15(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -964,11 +954,10 @@ static bool8 ECInterfaceCmd_15(void)
         }
         break;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_16(void)
+static bool32 ECInterfaceCmd_16(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -987,11 +976,10 @@ static bool8 ECInterfaceCmd_16(void)
     case 2:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_11(void)
+static bool32 ECInterfaceCmd_11(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1036,11 +1024,10 @@ static bool8 ECInterfaceCmd_11(void)
     case 5:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_12(void)
+static bool32 ECInterfaceCmd_12(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1080,11 +1067,10 @@ static bool8 ECInterfaceCmd_12(void)
     case 5:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_13(void)
+static bool32 ECInterfaceCmd_13(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1127,17 +1113,16 @@ static bool8 ECInterfaceCmd_13(void)
         }
         break;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_17(void)
+static bool32 ECInterfaceCmd_17(void)
 {
     SetSelectWordCursorSpritePos();
     return FALSE;
 }
 
-static bool8 ECInterfaceCmd_19(void)
+static bool32 ECInterfaceCmd_19(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1169,7 +1154,7 @@ static bool8 ECInterfaceCmd_19(void)
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_18(void)
+static bool32 ECInterfaceCmd_18(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1196,11 +1181,10 @@ static bool8 ECInterfaceCmd_18(void)
     case 3:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_21(void)
+static bool32 ECInterfaceCmd_21(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1229,11 +1213,10 @@ static bool8 ECInterfaceCmd_21(void)
     case 3:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 ECInterfaceCmd_20(void)
+static bool32 ECInterfaceCmd_20(void)
 {
     switch (sEasyChatGraphicsResources->state)
     {
@@ -1261,11 +1244,10 @@ static bool8 ECInterfaceCmd_20(void)
     case 3:
         return FALSE;
     }
-
     return TRUE;
 }
 
-static bool8 InitEasyChatGraphicsWork_Internal(void)
+static bool32 InitEasyChatGraphicsWork_Internal(void)
 {
     sEasyChatGraphicsResources = Alloc(sizeof(*sEasyChatGraphicsResources));
     if (sEasyChatGraphicsResources == NULL)
@@ -1317,13 +1299,13 @@ static void PrintTitleText(void)
     CopyWindowToVram(0, COPYWIN_BOTH);
 }
 
-static void EC_AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+static void EC_AddTextPrinterParameterized(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
 {
     if (fontId == 1) y += 2;
     AddTextPrinterParameterized(windowId, fontId, str, x, y, speed, callback);
 }
 
-static void EC_AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, u8 bg, u8 fg, u8 shadow)
+static void EC_AddTextPrinterParameterized2(u32 windowId, u32 fontId, const u8 *str, u8 x, u8 y, u8 speed, u32 bg, u32 fg, u32 shadow)
 {
     u8 color[3];
     if (fontId == 1) y += 2;
@@ -1343,10 +1325,11 @@ static void PrintECInstructionsText(void)
     CopyBgTilemapBufferToVram(0);
 }
 
-static void PrintECInterfaceTextById(u8 direction)
+static void PrintECInterfaceTextById(u32 direction)
 {
     const u8 *text2 = NULL;
     const u8 *text1 = NULL;
+    
     switch (direction)
     {
     case 0:
@@ -1373,14 +1356,14 @@ static void PrintECInterfaceTextById(u8 direction)
     CopyWindowToVram(1, COPYWIN_BOTH);
 }
 
-static void EC_CreateYesNoMenuWithInitialCursorPos(u8 initialCursorPos)
+static void EC_CreateYesNoMenuWithInitialCursorPos(u32 initialCursorPos)
 {
     CreateYesNoMenu(&sEasyChatYesNoWindowTemplate, 1, 0, 2, 0x001, 14, initialCursorPos);
 }
 
 static void CreatePhraseFrameWindow(void)
 {
-    u8 frameId;
+    u32 frameId;
     struct WindowTemplate template;
 
     frameId = GetEasyChatScreenFrameId();
@@ -1400,7 +1383,7 @@ static void PrintECFields(void)
     u16 *ecWord;
     u8 numColumns, numRows;
     u8 *str;
-    u8 frameId;
+    u32 frameId;
     int i, j, k;
 
     ecWord = GetEasyChatWordBuffer();
@@ -1450,7 +1433,7 @@ static void PrintECFields(void)
 
 static void DrawECFrameInTilemapBuffer(u16 *tilemap)
 {
-    u8 frameId;
+    u32 frameId;
     int right, bottom;
     int x, y;
 
@@ -1679,7 +1662,7 @@ static void ClearWin2AndCopyToVram(void)
     CopyWindowToVram(2, COPYWIN_GFX);
 }
 
-static void StartWin2FrameAnim(int animNo)
+static void StartWin2FrameAnim(u32 animNo)
 {
     switch (animNo)
     {
@@ -1712,11 +1695,10 @@ static void StartWin2FrameAnim(int animNo)
         sEasyChatGraphicsResources->frameAnimTarget = 18;
         break;
     }
-
     sEasyChatGraphicsResources->frameAnimDelta = sEasyChatGraphicsResources->frameAnimIdx < sEasyChatGraphicsResources->frameAnimTarget ? 1 : -1;
 }
 
-static bool8 AnimateFrameResize(void)
+static bool32 AnimateFrameResize(void)
 {
     if (sEasyChatGraphicsResources->frameAnimIdx == sEasyChatGraphicsResources->frameAnimTarget)
         return FALSE;
@@ -1726,9 +1708,10 @@ static bool8 AnimateFrameResize(void)
     return sEasyChatGraphicsResources->frameAnimIdx != sEasyChatGraphicsResources->frameAnimTarget;
 }
 
-static void RedrawFrameByIndex(u8 direction)
+static void RedrawFrameByIndex(u32 direction)
 {
     FillBgTilemapBufferRect_Palette0(1, 0, 0, 10, 30, 10);
+    
     switch (direction)
     {
     case 0:
@@ -1800,7 +1783,6 @@ static void RedrawFrameByIndex(u8 direction)
         RedrawFrameByRect(1, 14, 23, 2);
         break;
     }
-
     CopyBgTilemapBufferToVram(1);
 }
 
@@ -1848,7 +1830,7 @@ static void InitBg2Scroll(void)
     sEasyChatGraphicsResources->bg2ScrollRow = 0;
 }
 
-static void ScheduleBg2VerticalScroll(s16 direction, u8 speed)
+static void ScheduleBg2VerticalScroll(s16 direction, u32 speed)
 {
     int bgY;
     s16 totalDelta;
@@ -1857,6 +1839,7 @@ static void ScheduleBg2VerticalScroll(s16 direction, u8 speed)
     sEasyChatGraphicsResources->bg2ScrollRow += direction;
     totalDelta = direction * 16;
     bgY += totalDelta << 8;
+    
     if (speed)
     {
         sEasyChatGraphicsResources->tgtBgY = bgY;
@@ -1865,20 +1848,15 @@ static void ScheduleBg2VerticalScroll(s16 direction, u8 speed)
             sEasyChatGraphicsResources->deltaBgY = -sEasyChatGraphicsResources->deltaBgY;
     }
     else
-    {
         ChangeBgY(2, bgY, 0);
-    }
 }
 
-static bool8 AnimateBg2VerticalScroll(void)
+static bool32 AnimateBg2VerticalScroll(void)
 {
-    int bgY;
-
-    bgY = GetBgY(2);
+    int bgY = GetBgY(2);
+    
     if (bgY == sEasyChatGraphicsResources->tgtBgY)
-    {
         return FALSE;
-    }
     else
     {
         ChangeBgY(2, sEasyChatGraphicsResources->deltaBgY, 1);
@@ -1905,16 +1883,17 @@ static void LoadSpriteGfx(void)
 
     LoadSpriteSheets(sEasyChatSpriteSheets);
     LoadSpritePalettes(sEasyChatSpritePalettes);
+    
     for (i = 0; i < ARRAY_COUNT(sEasyChatCompressedSpriteSheets); i++)
         LoadCompressedSpriteSheet(&sEasyChatCompressedSpriteSheets[i]);
 }
 
 static void CreateSelectDestFieldCursorSprite(void)
 {
-    u8 frameId = GetEasyChatScreenFrameId();
+    u32 frameId = GetEasyChatScreenFrameId();
     s16 x = sPhraseFrameDimensions[frameId].left * 8 + 13;
     s16 y = (sPhraseFrameDimensions[frameId].top + 1) * 8 + 1;
-    u8 spriteId = CreateSprite(&sSpriteTemplate_RightTriangleCursor, x, y, 2);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_RightTriangleCursor, x, y, 2);
     sEasyChatGraphicsResources->selectDestFieldCursorSprite = &gSprites[spriteId];
     gSprites[spriteId].data[1] = 1;
 }
@@ -1954,7 +1933,7 @@ static void UnfreezeSelectDestFieldCursorSprite(void)
 
 static void CreateRedRectangularCursorSpritePair(void)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_RedRectangularCursor, 0, 0, 3);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_RedRectangularCursor, 0, 0, 3);
     sEasyChatGraphicsResources->rectCursorSpriteRight = &gSprites[spriteId];
     sEasyChatGraphicsResources->rectCursorSpriteRight->x2 = 32;
 
@@ -2055,7 +2034,7 @@ static void MoveCursor_Alpha(s8 cursorX, s8 cursorY)
 
 static void CreateSelectWordCursorSprite(void)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_RightTriangleCursor, 0, 0, 4);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_RightTriangleCursor, 0, 0, 4);
     sEasyChatGraphicsResources->selectWordCursorSprite = &gSprites[spriteId];
     sEasyChatGraphicsResources->selectWordCursorSprite->callback = SpriteCB_SelectWordCursorSprite;
     sEasyChatGraphicsResources->selectWordCursorSprite->oam.priority = 2;
@@ -2105,7 +2084,7 @@ static void DestroySelectWordCursorSprite(void)
 
 static void CreateSelectGroupHelpSprite(void)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_SelectGroupHelp, 208, 128, 6);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_SelectGroupHelp, 208, 128, 6);
     sEasyChatGraphicsResources->selectGroupHelpSprite = &gSprites[spriteId];
     sEasyChatGraphicsResources->selectGroupHelpSprite->x2 = -64;
 
@@ -2114,7 +2093,7 @@ static void CreateSelectGroupHelpSprite(void)
     sEasyChatGraphicsResources->modeIconState = 0;
 }
 
-static bool8 AnimateSeletGroupModeAndHelpSpriteEnter(void)
+static bool32 AnimateSeletGroupModeAndHelpSpriteEnter(void)
 {
     switch (sEasyChatGraphicsResources->modeIconState)
     {
@@ -2140,7 +2119,6 @@ static bool8 AnimateSeletGroupModeAndHelpSpriteEnter(void)
             return FALSE;
         }
     }
-
     return TRUE;
 }
 
@@ -2150,7 +2128,7 @@ static void StartModeIconHidingAnimation(void)
     StartSpriteAnim(sEasyChatGraphicsResources->modeIconsSprite, 3);
 }
 
-static bool8 RunModeIconHidingAnimation(void)
+static bool32 RunModeIconHidingAnimation(void)
 {
     switch (sEasyChatGraphicsResources->modeIconState)
     {
@@ -2172,7 +2150,6 @@ static bool8 RunModeIconHidingAnimation(void)
             return FALSE;
         }
     }
-
     return TRUE;
 }
 
@@ -2184,14 +2161,14 @@ static void ShowModeIconsSprite(void)
         StartSpriteAnim(sEasyChatGraphicsResources->modeIconsSprite, 2);
 }
 
-static bool8 ModeIconsSpriteAnimIsEnded(void)
+static bool32 ModeIconsSpriteAnimIsEnded(void)
 {
     return !sEasyChatGraphicsResources->modeIconsSprite->animEnded;
 }
 
 static void CreateVerticalScrollArrowSprites(void)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_UpTriangleCursor, 96, 80, 0);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_UpTriangleCursor, 96, 80, 0);
     if (spriteId != MAX_SPRITES)
         sEasyChatGraphicsResources->upTriangleCursorSprite = &gSprites[spriteId];
 
@@ -2235,7 +2212,7 @@ static void UpdateVerticalScrollArrowSpriteXPos(int direction)
 
 static void CreateStartSelectButtonsSprites(void)
 {
-    u8 spriteId = CreateSprite(&sSpriteTemplate_StartSelectButtons, 220, 84, 1);
+    u32 spriteId = CreateSprite(&sSpriteTemplate_StartSelectButtons, 220, 84, 1);
     if (spriteId != MAX_SPRITES)
         sEasyChatGraphicsResources->startPgUpButtonSprite = &gSprites[spriteId];
 
@@ -2263,7 +2240,7 @@ static void HideStartSelectButtonSprites(void)
 
 static void CreateFooterWindow(void)
 {
-    u16 windowId;
+    u32 windowId;
     struct WindowTemplate template;
     template.bg = 3;
     template.tilemapLeft = 4;
@@ -2274,6 +2251,6 @@ static void CreateFooterWindow(void)
     template.baseBlock = 0x030;
     windowId = AddWindow(&template);
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
-    EC_AddTextPrinterParameterized(windowId, 1, gUnknown_841EE2B, 0, 0, 0, NULL);
+    EC_AddTextPrinterParameterized(windowId, 1, COMPOUND_STRING("Del. All{CLEAR_TO 0x57}Cancel{CLEAR_TO 0xA4}Ok"), 0, 0, 0, NULL);
     PutWindowTilemap(windowId);
 }

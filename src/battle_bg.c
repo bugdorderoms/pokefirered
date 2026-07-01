@@ -10,7 +10,6 @@
 #include "menu_indicators.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
-#include "strings.h"
 #include "text_window.h"
 #include "trig.h"
 #include "constants/maps.h"

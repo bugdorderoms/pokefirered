@@ -8,7 +8,6 @@
 #include "overworld.h"
 #include "save.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "task.h"
 #include "union_room_chat.h"
 #include "union_room_chat_display.h"
@@ -1283,7 +1282,7 @@ static bool32 ProcessReceivedChatMessage(u8 *dest, u8 *recvMessage)
         {
             DynamicPlaceholderTextUtil_Reset();
             DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, name);
-            DynamicPlaceholderTextUtil_ExpandPlaceholders(dest, gText_F700JoinedChat);
+            DynamicPlaceholderTextUtil_ExpandPlaceholders(dest, COMPOUND_STRING("{DYNAMIC 0x00} joined the chat!"));
             return TRUE;
         }
         break;
@@ -1303,12 +1302,11 @@ static bool32 ProcessReceivedChatMessage(u8 *dest, u8 *recvMessage)
         {
             DynamicPlaceholderTextUtil_Reset();
             DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, name);
-            DynamicPlaceholderTextUtil_ExpandPlaceholders(dest, gText_F700LeftChat);
+            DynamicPlaceholderTextUtil_ExpandPlaceholders(dest, COMPOUND_STRING("{DYNAMIC 0x00} left the chat."));
             return TRUE;
         }
         break;
     }
-
     return FALSE;
 }
 
@@ -1417,16 +1415,16 @@ u8 *UnionRoomChat_GetNameOfPlayerWhoDisbandedChat(void)
 
 void UnionRoomChat_InitializeRegisteredTexts(void)
 {
-    StringCopy(gSaveBlock1Ptr->registeredTexts[0], gText_Hello);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[1], gText_Pokemon2);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[2], gText_Trade);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[3], gText_Battle);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[4], gText_Lets);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[5], gText_Ok);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[6], gText_Sorry);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[7], gText_YaySmileEmoji);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[8], gText_ThankYou);
-    StringCopy(gSaveBlock1Ptr->registeredTexts[9], gText_ByeBye);
+    StringCopy(gSaveBlock1Ptr->registeredTexts[0], COMPOUND_STRING("Hello"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[1], COMPOUND_STRING("Pokémon"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[2], COMPOUND_STRING("Trade"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[3], COMPOUND_STRING("Battle"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[4], COMPOUND_STRING("Let's"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[5], COMPOUND_STRING("Ok!"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[6], COMPOUND_STRING("Sorry"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[7], COMPOUND_STRING("Yay{EXTRA 0xF9}"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[8], COMPOUND_STRING("Thank You"));
+    StringCopy(gSaveBlock1Ptr->registeredTexts[9], COMPOUND_STRING("Bye-Bye!"));
 }
 
 #define tState               data[0]

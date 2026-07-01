@@ -2,7 +2,6 @@
 #include "gflib.h"
 #include "menu.h"
 #include "menu_helpers.h"
-#include "strings.h"
 #include "text_window.h"
 #include "constants/songs.h"
 
@@ -32,6 +31,10 @@ static void WindowFunc_DrawDialogFrameWithCustomTileAndPalette(u32 bg, u32 tilem
 static void WindowFunc_ClearDialogWindowAndFrameNullPalette(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
 static void WindowFunc_DrawStdFrameWithCustomTileAndPalette(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
 static void WindowFunc_ClearStdWindowAndFrameToTransparent(u32 bg, u32 tilemapLeft, u32 tilemapTop, u32 width, u32 height, u32 paletteNum);
+
+const u8 gMenuText_Yes[] = _("Yes");
+const u8 gMenuText_No[] = _("No");
+const u8 gText_SelectorArrow2[] = _("▶");
 
 static const u8 gUnknown_8456618[3] = {15, 1, 2};
 
@@ -492,7 +495,7 @@ void CreateYesNoMenu(const struct WindowTemplate *window, u32 fontId, u32 left, 
 
     sYesNoWindowId = AddWindow(window);
     DrawStdFrameWithCustomTileAndPalette(sYesNoWindowId, 1, baseTileNum, paletteNum);
-    textSubPrinter.currentChar = gUnknown_841623D;
+    textSubPrinter.currentChar = COMPOUND_STRING("Yes\nNo");
     textSubPrinter.windowId = sYesNoWindowId;
     textSubPrinter.fontId = fontId;
     textSubPrinter.x = GetMenuCursorDimensionByFont(fontId, 0) + left;

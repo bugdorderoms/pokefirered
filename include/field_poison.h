@@ -11,4 +11,7 @@ enum {
 
 u32 DoPoisonFieldEffect(void);
 
+extern const u8 gText_PkmnPoisonFainted[];
+extern const u8 gText_PkmnPoisonSurvived[];
+
 #endif //GUARD_FIELD_POISON_H

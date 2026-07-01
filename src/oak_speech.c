@@ -97,11 +97,9 @@ static void CreateFadeOutTask(u32 taskId, u32 state);
 static void PrintNameChoiceOptions(u32 taskId, bool32 hasPlayerBeenNamed);
 static void GetDefaultName(bool32 hasPlayerBeenNamed, u32 rivalNameChoice);
 
-extern const u8 gText_Controls[];
-extern const u8 gText_ABUTTONNext[];
-extern const u8 gText_ABUTTONNext_BBUTTONBack[];
-extern const u8 gText_Boy[];
-extern const u8 gText_Girl[];
+static const u8 sText_Controls[] = _("Controls");
+static const u8 sText_ABUTTONNext[] = _("{A_BUTTON}Next");
+static const u8 sText_ABUTTONNext_BBUTTONBack[] = _("{A_BUTTON}Next {B_BUTTON}Back");
 
 ALIGNED(4) static const u16 sHelpDocsPalette[] = INCBIN_U16("graphics/oak_speech/help_docs_palette.gbapal");
 static const u32 sOakSpeechGfx_GameStartHelpUI[] = INCBIN_U32("graphics/oak_speech/game_start_help_ui.4bpp.lz");
@@ -585,7 +583,7 @@ static void Task_OaksSpeech1(u32 taskId)
 
 static void CreateHelpDocsPage1(void)
 {
-    TopBarWindowPrintTwoStrings(gText_Controls, gText_ABUTTONNext, FALSE, TRUE);
+    TopBarWindowPrintTwoStrings(sText_Controls, sText_ABUTTONNext, FALSE, TRUE);
     sOakSpeechResources->windowIds[0] = AddWindow(sHelpDocsWindowTemplatePtrs[sOakSpeechResources->currentPage]);
     PutWindowTilemap(sOakSpeechResources->windowIds[0]);
     FillWindowPixelBuffer(sOakSpeechResources->windowIds[0], 0x00);
@@ -603,7 +601,7 @@ static void Task_OakSpeech4(u32 taskId)
         CreateHelpDocsPage1();
     else
     {
-        TopBarWindowPrintString(gText_ABUTTONNext_BBUTTONBack, TRUE);
+        TopBarWindowPrintString(sText_ABUTTONNext_BBUTTONBack, TRUE);
         
         for (i = 0; i < 3; i++)
         {
@@ -720,7 +718,7 @@ static void Task_OakSpeech6(u32 taskId)
     {
         PlayBGM(MUS_NEW_GAME_INTRO);
         ClearTopBarWindow();
-        TopBarWindowPrintString(gText_ABUTTONNext, TRUE);
+        TopBarWindowPrintString(sText_ABUTTONNext, TRUE);
         sOakSpeechResources->pikachuIntroTilemap = MallocAndDecompress(sNewGameAdventureIntroTilemap, &sp14);
         CopyToBgTilemapBufferRect(1, sOakSpeechResources->pikachuIntroTilemap, 0, 2, 30, 19);
         CopyBgTilemapBufferToVram(1);
@@ -794,12 +792,12 @@ static void Task_OakSpeech7(u32 taskId)
             if (sOakSpeechResources->currentPage == 0)
             {
                 ClearTopBarWindow();
-                TopBarWindowPrintString(gText_ABUTTONNext, TRUE);
+                TopBarWindowPrintString(sText_ABUTTONNext, TRUE);
             }
             else
             {
                 ClearTopBarWindow();
-                TopBarWindowPrintString(gText_ABUTTONNext_BBUTTONBack, TRUE);
+                TopBarWindowPrintString(sText_ABUTTONNext_BBUTTONBack, TRUE);
             }
             gMain.state++;
         }
@@ -1058,8 +1056,8 @@ static void Task_OakSpeech19(u32 taskId)
         sOakSpeechResources->textColor[0] = 1;
         sOakSpeechResources->textColor[1] = 2;
         sOakSpeechResources->textColor[2] = 3;
-        AddTextPrinterParameterized3(gTasks[taskId].data[13], 2, 8, 1, sOakSpeechResources->textColor, 0, gText_Boy);
-        AddTextPrinterParameterized3(gTasks[taskId].data[13], 2, 8, 17, sOakSpeechResources->textColor, 0, gText_Girl);
+        AddTextPrinterParameterized3(gTasks[taskId].data[13], 2, 8, 1, sOakSpeechResources->textColor, 0, COMPOUND_STRING("Boy"));
+        AddTextPrinterParameterized3(gTasks[taskId].data[13], 2, 8, 17, sOakSpeechResources->textColor, 0, COMPOUND_STRING("Girl"));
         Menu_InitCursor(gTasks[taskId].data[13], 2, 0, 1, GetFontAttribute(2, 1) + 2, 2, 0);
         CopyWindowToVram(gTasks[taskId].data[13], COPYWIN_BOTH);
         gTasks[taskId].func = Task_OakSpeech20;

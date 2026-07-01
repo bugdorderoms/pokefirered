@@ -19,7 +19,6 @@
 #include "script.h"
 #include "sound.h"
 #include "sprite.h"
-#include "strings.h"
 #include "string_util.h"
 #include "task.h"
 #include "text.h"
@@ -459,7 +458,7 @@ static void PrintMonStats(u32 taskId)
     
     // Print The Current Mon Num
     ConvertIntToDecimalStringN(gStringVar4, tCurrMonId + 1, STR_CONV_MODE_LEFT_ALIGN, 1);
-    StringAppend(gStringVar4, gText_Slash);
+    StringAppend(gStringVar4, COMPOUND_STRING("/"));
     ConvertIntToDecimalStringN(gStringVar1, gPlayerPartyCount, STR_CONV_MODE_LEFT_ALIGN, 1);
     StringAppend(gStringVar4, gStringVar1);
     AddTextPrinterParameterized3(WIN_POKEMON_NAME, 2, POKEMON_NUM_PRINTER_X_POS, PRINTER_Y_POS - 2, sWhiteTextColor, 0, gStringVar4);

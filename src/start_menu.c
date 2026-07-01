@@ -36,7 +36,6 @@
 #include "script.h"
 #include "sound.h"
 #include "start_menu.h"
-#include "strings.h"
 #include "string_util.h"
 #include "task.h"
 #include "text_window.h"
@@ -596,14 +595,15 @@ static inline bool32 CanShowCurrentLevelCapOnClockBox(u32 levelCap)
 static void Task_UpdateTimeInClockBox(u32 taskId)
 {
     s16 *data = gTasks[taskId].data;
+    const u8 *timeColonStr = COMPOUND_STRING("{FONT_NORMAL}:{FONT_SMALL}");
     
-    StringCopy(gStringVar4, gStartMenu_TimeBoxClock);
+    StringCopy(gStringVar4, COMPOUND_STRING("Time: "));
     ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.hour, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
-    StringAppend(gStringVar4, gText_Font2Colon);
+    StringAppend(gStringVar4, timeColonStr);
     ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.minute, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
-    StringAppend(gStringVar4, tShowSecondsColon ? gText_Font2Colon : gText_Space);
+    StringAppend(gStringVar4, tShowSecondsColon ? timeColonStr : COMPOUND_STRING(" "));
     ConvertIntToDecimalStringN(gStringVar1, gRtcLocation.second, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
     AddTextPrinterParameterized(tWindowId, 0, gStringVar4, 4, 0, 0xFF, NULL);
@@ -646,13 +646,13 @@ static void DrawClockBox(void)
             ConvertIntToDecimalStringN(gStringVar1, gSafariZoneStepCounter, STR_CONV_MODE_LEFT_ALIGN, 3);
             ConvertIntToDecimalStringN(gStringVar2, MAX_SAFARI_STEPS, STR_CONV_MODE_LEFT_ALIGN, 3);
             ConvertIntToDecimalStringN(gStringVar3, gNumSafariBalls, STR_CONV_MODE_LEFT_ALIGN, 2);
-            StringExpandPlaceholders(gStringVar4, gUnknown_84162A9);
+            StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Steps: {STR_VAR_1}/{STR_VAR_2}\nBalls: {STR_VAR_3}"));
             AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
         }
         else if (canShowLevelCap) // Display level cap
         {
             ConvertIntToDecimalStringN(gStringVar1, levelCap, STR_CONV_MODE_LEFT_ALIGN, 3);
-            StringExpandPlaceholders(gStringVar4, gText_CurrentLevelCap);
+            StringExpandPlaceholders(gStringVar4, COMPOUND_STRING("Lv. Cap: {STR_VAR_1}"));
             AddTextPrinterParameterized(windowId, 0, gStringVar4, 4, 12, 0xFF, NULL);
         }
         CopyWindowToVram(windowId, COPYWIN_GFX);
@@ -730,12 +730,12 @@ static void PrintSaveStats(void)
     AddTextPrinterParameterized3(windowId, 2, x, 0, sTextColor_LocationHeader, -1, gStringVar4);
     
     // Print name
-    AddTextPrinterParameterized3(windowId, 0, 2, 14, sTextColor_StatName, -1, gSaveStatName_Player);
+    AddTextPrinterParameterized3(windowId, 0, 2, 14, sTextColor_StatName, -1, COMPOUND_STRING("Player"));
     SaveStatToString(SAVE_STAT_NAME, gStringVar4, 2);
     Menu_PrintFormatIntlPlayerName(windowId, gStringVar4, 60, 14);
     
     // Print badges
-    AddTextPrinterParameterized3(windowId, 0, 2, 28, sTextColor_StatName, -1, gSaveStatName_Badges);
+    AddTextPrinterParameterized3(windowId, 0, 2, 28, sTextColor_StatName, -1, COMPOUND_STRING("Badges"));
     SaveStatToString(SAVE_STAT_BADGES, gStringVar4, 2);
     AddTextPrinterParameterized3(windowId, 0, 60, 28, sTextColor_StatValue, -1, gStringVar4);
     
@@ -743,12 +743,12 @@ static void PrintSaveStats(void)
     if (FlagGet(FLAG_SYS_POKEDEX_GET))
     {
         // Seen
-        AddTextPrinterParameterized3(windowId, 0, 2, 42, sTextColor_StatName, -1, gSaveStatName_Seen);
+        AddTextPrinterParameterized3(windowId, 0, 2, 42, sTextColor_StatName, -1, COMPOUND_STRING("Seen"));
         SaveStatToString(SAVE_STAT_SEEN, gStringVar4, 2);
         AddTextPrinterParameterized3(windowId, 0, 60, 42, sTextColor_StatValue, -1, gStringVar4);
         
         // Caught
-        AddTextPrinterParameterized3(windowId, 0, 2, 56, sTextColor_StatName, -1, gSaveStatName_Caught);
+        AddTextPrinterParameterized3(windowId, 0, 2, 56, sTextColor_StatName, -1, COMPOUND_STRING("Caught"));
         SaveStatToString(SAVE_STAT_CAUGHT, gStringVar4, 2);
         AddTextPrinterParameterized3(windowId, 0, 60, 56, sTextColor_StatValue, -1, gStringVar4);
         
@@ -758,7 +758,7 @@ static void PrintSaveStats(void)
         y = 42;
     
     // Print date
-    AddTextPrinterParameterized3(windowId, 0, 2, y, sTextColor_StatName, -1, gSaveStatName_Date);
+    AddTextPrinterParameterized3(windowId, 0, 2, y, sTextColor_StatName, -1, COMPOUND_STRING("Date"));
     SaveStatToString(SAVE_STAT_DATE, gStringVar4, 2);
     AddTextPrinterParameterized3(windowId, 0, 60, y, sTextColor_StatValue, -1, gStringVar4);
     
@@ -912,7 +912,7 @@ static u32 SaveDialogCB_PrintSaveResult(void)
     if (gSaveSucceeded)
         PrintSaveTextWithFollowupFunc(gText_PlayerSavedTheGame, SaveDialogCB_WaitPrintSuccessAndPlaySE);
     else
-        PrintSaveTextWithFollowupFunc(gText_SaveError_PleaseExchangeBackupMemory, SaveDialogCB_WaitPrintErrorAndPlaySE);
+        PrintSaveTextWithFollowupFunc(COMPOUND_STRING("Save error.\pPlease exchange the\nbackup memory."), SaveDialogCB_WaitPrintErrorAndPlaySE);
     
     sStartMenu.saveDialogDelay = 60;
     

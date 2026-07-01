@@ -6,7 +6,6 @@
 #include "new_menu_helpers.h"
 #include "overworld.h"
 #include "party_menu.h"
-#include "strings.h"
 #include "text_window.h"
 #include "union_room.h"
 #include "constants/union_room.h"
@@ -62,7 +61,7 @@ static void SetUpPartiesAndStartBattle(void)
     SetMainCallback2(CB2_InitBattle);
 }
 
-static void UnionRoomBattle_CreateTextPrinter(u8 windowId, const u8 * str, u8 x, u8 y, s32 speed)
+static void UnionRoomBattle_CreateTextPrinter(u32 windowId, const u8 * str, u32 x, u32 y, s32 speed)
 {
     s32 letterSpacing = 1;
     s32 lineSpacing = 1;
@@ -127,7 +126,7 @@ void CB2_UnionRoomBattle(void)
         gMain.state++;
         break;
     case 1:
-        if (UnionRoomBattle_PrintTextOnWindow0(&sWork->textState, gText_CommStandbyAwaitingOtherPlayer, 0))
+        if (UnionRoomBattle_PrintTextOnWindow0(&sWork->textState, COMPOUND_STRING("Communication standby‥\nAwaiting another player to choose."), 0))
         {
             gMain.state++;
         }
@@ -196,7 +195,7 @@ void CB2_UnionRoomBattle(void)
         }
         break;
     case 7:
-        if (UnionRoomBattle_PrintTextOnWindow0(&sWork->textState, gText_RefusedBattle, 1))
+        if (UnionRoomBattle_PrintTextOnWindow0(&sWork->textState, COMPOUND_STRING("Refused the battle.{PAUSE 0x3C}"), 1))
         {
             SetMainCallback2(CB2_ReturnToField);
         }
@@ -208,7 +207,7 @@ void CB2_UnionRoomBattle(void)
         }
         break;
     case 9:
-        if (UnionRoomBattle_PrintTextOnWindow0(&sWork->textState, gText_BattleWasRefused, 1))
+        if (UnionRoomBattle_PrintTextOnWindow0(&sWork->textState, COMPOUND_STRING("The battle was refused.{PAUSE 0x3C}"), 1))
         {
             SetMainCallback2(CB2_ReturnToField);
         }

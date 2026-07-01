@@ -3,7 +3,6 @@
 #include "string_util.h"
 #include "menu.h"
 #include "text_window.h"
-#include "strings.h"
 #include "constants/coins.h"
 
 EWRAM_DATA static u8 sCoinsWindowId = 0;
@@ -64,7 +63,7 @@ void ShowCoinsWindow(u32 coinAmount, u32 x, u32 y)
     PutWindowTilemap(sCoinsWindowId);
     TextWindow_SetStdFrame0_WithPal(sCoinsWindowId, 0x21D, 0xD0);
     DrawStdFrameWithCustomTileAndPalette(sCoinsWindowId, FALSE, 0x21D, 0xD);
-    AddTextPrinterParameterized(sCoinsWindowId, 2, gText_Coins, 0, 0, 0xFF, 0);
+    AddTextPrinterParameterized(sCoinsWindowId, 2, COMPOUND_STRING("Coins"), 0, 0, 0xFF, 0);
     PrintCoinsString(coinAmount);
 }
 

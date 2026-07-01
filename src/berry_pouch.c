@@ -17,7 +17,6 @@
 #include "item_use.h"
 #include "party_menu.h"
 #include "text_window.h"
-#include "strings.h"
 #include "string_util.h"
 #include "sound.h"
 #include "link.h"
@@ -171,11 +170,11 @@ static const struct YesNoFuncTable sYesNoFuncs_Sell = {
 };
 
 static const struct MenuAction sContextMenuActions[] = {
-    {gOtherText_Use,  Task_BerryPouch_Use},
-    {gOtherText_Toss, Task_BerryPouch_Toss},
-    {gOtherText_Give, Task_BerryPouch_Give},
-    {gOtherText_Exit, Task_BerryPouch_Exit},
-    {gString_Dummy,   NULL}
+    {gText_ItemMenuUse,       Task_BerryPouch_Use},
+    {gText_ItemMenuToss,      Task_BerryPouch_Toss},
+    {gText_ItemMenuGive,      Task_BerryPouch_Give},
+    {COMPOUND_STRING("Exit"), Task_BerryPouch_Exit},
+    {COMPOUND_STRING(""),     NULL}
 };
 
 static const u8 sOptions_UseGiveTossExit[] = {
@@ -640,7 +639,7 @@ static void SetUpListMenuTemplate(void)
         sListMenuItems[i].label = &sListMenuStrbuf[i * 27];
         sListMenuItems[i].index = i;
     }
-    sListMenuItems[i].label = gText_Close;
+    sListMenuItems[i].label = gMenuText_Close;
     sListMenuItems[i].index = i;
     gMultiuseListMenuTemplate.items = sListMenuItems;
     gMultiuseListMenuTemplate.totalItems = sResources->listMenuNumItems + 1;
@@ -664,13 +663,13 @@ static void SetUpListMenuTemplate(void)
 
 static void GetBerryNameAndIndexForMenu(u8 * dest, u32 itemId)
 {
-    StringCopy(gStringVar4, gText_FontSize0);
-    StringAppend(gStringVar4, gOtherText_UnkF9_08_Clear_01);
+    StringCopy(gStringVar4, COMPOUND_STRING("{FONT_SMALL}"));
+    StringAppend(gStringVar4, gText_ListMenuItemNumber);
     ConvertIntToDecimalStringN(gStringVar1, ITEM_TO_BERRY(itemId) + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
     StringAppend(gStringVar4, gStringVar1);
     CopyItemName(itemId, gStringVar1);
     StringAppend(gStringVar4, COMPOUND_STRING(" "));
-    StringAppend(gStringVar4, gText_FontSize2);
+    StringAppend(gStringVar4, COMPOUND_STRING("{FONT_NORMAL}"));
     StringAppend(gStringVar4, gStringVar1);
     StringCopy(dest, gStringVar4);
 }
@@ -762,8 +761,9 @@ static void DestroyScrollIndicatorArrows(void)
 
 static void PrintBerryPouchHeaderCentered(void)
 {
-    u32 slack = 72 - GetStringWidth(1, gText_BerryPouch, 0);
-    BerryPouchPrint(2, 1, gText_BerryPouch, slack / 2, 1, 0, 0, 0, 0);
+    const u8 *headerText = COMPOUND_STRING("Berry Pouch");
+    u32 slack = 72 - GetStringWidth(1, headerText, 0);
+    BerryPouchPrint(2, 1, headerText, slack / 2, 1, 0, 0, 0, 0);
 }
 
 void BerryPouch_CursorResetToTop(void)

@@ -17,7 +17,6 @@
 #include "menu_indicators.h"
 #include "text_window.h"
 #include "fame_checker.h"
-#include "strings.h"
 #include "constants/event_objects.h"
 
 #define SPRITETAG_SELECTOR_CURSOR 1000
@@ -1482,7 +1481,7 @@ static u32 FC_PopulateListMenu(void)
             nitems++;
         }
     }
-    sListMenuItems[nitems].label = gFameCheckerText_Cancel;
+    sListMenuItems[nitems].label = gMenuText_Cancel;
     sListMenuItems[nitems].index = nitems;
     sFameCheckerData->unlockedPersons[nitems] = 0xFF;
     nitems++;

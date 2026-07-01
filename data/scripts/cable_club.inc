@@ -1279,14 +1279,6 @@ CableClub_Text_WhichService:: @ 81BC35E
 	.string "Which of our services do you wish\n"
 	.string "to use?$"
 
-CableClub_Text_TradeMonsUsingLinkCable:: @ 81BC388
-	.string "Trade Pokémon with another player\n"
-	.string "using a GBA Game Link cable.$"
-
-CableClub_Text_BattleUsingLinkCable:: @ 81BC3C7
-	.string "You may battle another TRAINER\n"
-	.string "using a GBA Game Link cable.$"
-
 CableClub_Text_NeedTwoMonsForDoubleBattle:: @ 81BC409
 	.string "For a DOUBLE BATTLE, you must\n"
 	.string "have at least two Pokémon.$"
@@ -1408,21 +1400,6 @@ CableClub_Text_AdapterNotConnected:: @ 81BCA13
 CableClub_Text_ParticipantsStepUpToCounter:: @ 81BCA43
 	.string "Participants are asked to step up\n"
 	.string "to the reception counter.$"
-
-CableClub_Text_YouMayTradeHere:: @ 81BCA95
-	.string "You may trade your Pokémon here\n"
-	.string "with another TRAINER.$"
-
-CableClub_Text_YouMayBattleHere:: @ 81BCACB
-	.string "You may battle with your friends\n"
-	.string "here.$"
-
-CableClub_Text_CanMakeBerryPowder:: @ 81BCAF2
-	.string "Two to five TRAINERS can make\n"
-	.string "BERRY POWDER together.$"
-
-CableClub_Text_CancelSelectedItem:: @ 81BCB42
-	.string "Cancels the selected MENU item.$"
 
 CableClub_Text_NeedTwoMonsForUnionRoom:: @ 81BCBC3
 	.string "To enter the UNION ROOM, you must\n"

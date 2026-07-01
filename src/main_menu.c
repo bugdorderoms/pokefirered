@@ -15,7 +15,6 @@
 #include "pokemon_icon.h"
 #include "save.h"
 #include "scanline_effect.h"
-#include "strings.h"
 #include "task.h"
 #include "text_window.h"
 #include "text_window_graphics.h"
@@ -125,6 +124,14 @@ static const struct MainMenuBgScroll sMainMenuBgScrollData[] =
         .scrollDown = FALSE, // Press up
         .endPosition = 0, // Go to position
     },
+};
+
+static const u8 *const sMainMenuActionNames[] =
+{
+    [MAIN_MENU_ACTION_NEWGAME]     = COMPOUND_STRING("New Game"),
+    [MAIN_MENU_ACTION_CONTINUE]    = COMPOUND_STRING("Continue"),
+    [MAIN_MENU_ACTION_OPTIONS]     = COMPOUND_STRING("Options"),
+    [MAIN_MENU_ACTION_MYSTERYGIFT] = COMPOUND_STRING("Mystery Gift")
 };
 
 static const struct WindowTemplate sMainMenuWinTemplates[MAIN_MENU_WINDOWS_COUNT + 1] =
@@ -353,6 +360,19 @@ static void PrintMainMenuHeaderTextCentered(u32 windowId, const u8 *str)
     AddTextPrinterParameterized3(windowId, 2, x / 2, 2, sTextColor1, -1, str);
 }
 
+static void DrawMainMenuWindow(u32 windowId, u32 action, bool32 copyWinBoth)
+{
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(10));
+    PrintMainMenuHeaderTextCentered(windowId, sMainMenuActionNames[action]);
+    MainMenu_DrawWindow(&sMainMenuWinTemplates[windowId]);
+    
+    if (windowId == CONTINUE_WINDOW_CONTINUE)
+        PrintContinueStats();
+    
+    PutWindowTilemap(windowId);
+    CopyWindowToVram(windowId, copyWinBoth ? COPYWIN_BOTH : COPYWIN_GFX);
+}
+
 static void Task_PrintMainMenuText(u32 taskId)
 {
     u16 pal = gSaveBlock2Ptr->playerGender == MALE ? RGB(4, 16, 31) : RGB(31, 3, 21);
@@ -364,46 +384,21 @@ static void Task_PrintMainMenuText(u32 taskId)
     {
         case MAIN_MENU_NEWGAME:
             // New Game
-            FillWindowPixelBuffer(NEWGAME_WINDOW_NEWGAME, PIXEL_FILL(10));
-            PrintMainMenuHeaderTextCentered(NEWGAME_WINDOW_NEWGAME, gText_NewGame);
-            MainMenu_DrawWindow(&sMainMenuWinTemplates[NEWGAME_WINDOW_NEWGAME]);
-            PutWindowTilemap(NEWGAME_WINDOW_NEWGAME);
-            CopyWindowToVram(NEWGAME_WINDOW_NEWGAME, COPYWIN_GFX);
+            DrawMainMenuWindow(NEWGAME_WINDOW_NEWGAME, MAIN_MENU_ACTION_NEWGAME, FALSE);
             // Option
-            FillWindowPixelBuffer(NEWGAME_WINDOW_OPTIONS, PIXEL_FILL(10));
-            PrintMainMenuHeaderTextCentered(NEWGAME_WINDOW_OPTIONS, gStartMenuText_Options);
-            MainMenu_DrawWindow(&sMainMenuWinTemplates[NEWGAME_WINDOW_OPTIONS]);
-            PutWindowTilemap(NEWGAME_WINDOW_OPTIONS);
-            CopyWindowToVram(NEWGAME_WINDOW_OPTIONS, COPYWIN_BOTH);
+            DrawMainMenuWindow(NEWGAME_WINDOW_OPTIONS, MAIN_MENU_ACTION_OPTIONS, TRUE);
             
             gTasks[taskId].tNumOptions = 2;
             break;
         case MAIN_MENU_CONTINUE:
             // Continue
-            FillWindowPixelBuffer(CONTINUE_WINDOW_CONTINUE, PIXEL_FILL(10));
-            PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_CONTINUE, COMPOUND_STRING("Continue"));
-            MainMenu_DrawWindow(&sMainMenuWinTemplates[CONTINUE_WINDOW_CONTINUE]);
-            PrintContinueStats();
-            PutWindowTilemap(CONTINUE_WINDOW_CONTINUE);
-            CopyWindowToVram(CONTINUE_WINDOW_CONTINUE, COPYWIN_GFX);
+            DrawMainMenuWindow(CONTINUE_WINDOW_CONTINUE, MAIN_MENU_ACTION_CONTINUE, FALSE);
             // New Game
-            FillWindowPixelBuffer(CONTINUE_WINDOW_NEWGAME, PIXEL_FILL(10));
-            PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_NEWGAME, gText_NewGame);
-            MainMenu_DrawWindow(&sMainMenuWinTemplates[CONTINUE_WINDOW_NEWGAME]);
-            PutWindowTilemap(CONTINUE_WINDOW_NEWGAME);
-            CopyWindowToVram(CONTINUE_WINDOW_NEWGAME, COPYWIN_GFX);
+            DrawMainMenuWindow(CONTINUE_WINDOW_NEWGAME, MAIN_MENU_ACTION_NEWGAME, FALSE);
             // Option
-            FillWindowPixelBuffer(CONTINUE_WINDOW_OPTIONS, PIXEL_FILL(10));
-            PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_OPTIONS, gStartMenuText_Options);
-            MainMenu_DrawWindow(&sMainMenuWinTemplates[CONTINUE_WINDOW_OPTIONS]);
-            PutWindowTilemap(CONTINUE_WINDOW_OPTIONS);
-            CopyWindowToVram(CONTINUE_WINDOW_OPTIONS, COPYWIN_GFX);
+            DrawMainMenuWindow(CONTINUE_WINDOW_OPTIONS, MAIN_MENU_ACTION_OPTIONS, FALSE);
             // Mystery Gift
-            FillWindowPixelBuffer(CONTINUE_WINDOW_MYSTERYGIFT, PIXEL_FILL(10));
-            PrintMainMenuHeaderTextCentered(CONTINUE_WINDOW_MYSTERYGIFT, gText_MysteryGift);
-            MainMenu_DrawWindow(&sMainMenuWinTemplates[CONTINUE_WINDOW_MYSTERYGIFT]);
-            PutWindowTilemap(CONTINUE_WINDOW_MYSTERYGIFT);
-            CopyWindowToVram(CONTINUE_WINDOW_MYSTERYGIFT, COPYWIN_BOTH);
+            DrawMainMenuWindow(CONTINUE_WINDOW_MYSTERYGIFT, MAIN_MENU_ACTION_MYSTERYGIFT, TRUE);
             
             gTasks[taskId].tNumOptions = 4;
             break;

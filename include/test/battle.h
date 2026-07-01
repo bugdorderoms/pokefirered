@@ -858,10 +858,9 @@ void SendOut(u32 sourceLine, struct BattlePokemon *, u32 partyIndex);
 
 #define MESSAGE(pattern, ...) \
     do { \
-        static const u8 msg[] = _(pattern); \
         struct CAT(Message, __LINE__) { u16 args[NARG_8(__VA_ARGS__)]; }; \
         struct CAT(Message, __LINE__) CAT(sMessage_, __LINE__) = { { __VA_ARGS__ } }; \
-        QueueMessage(__LINE__, msg, &CAT(sMessage_, __LINE__)); \
+        QueueMessage(__LINE__, COMPOUND_STRING(pattern), &CAT(sMessage_, __LINE__)); \
     } while (0)
 
 enum QueueGroupType

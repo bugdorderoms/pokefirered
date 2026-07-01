@@ -1,5 +1,6 @@
 #include "global.h"
 #include "bike.h"
+#include "event_data.h"
 #include "field_player_avatar.h"
 #include "metatile_behavior.h"
 #include "event_object_movement.h"
@@ -22,6 +23,15 @@ static u32 BikeInputHandler_Normal(u32 *, u16, u16);
 static u32 BikeInputHandler_Turning(u32 *, u16, u16);
 static u32 BikeInputHandler_Slope(u32 *, u16, u16);
 static void PlayerOnBikeNoCollision(u32 direction);
+
+static const MetatileFunc sBikeDismountBlockersMetatileFuncs[] =
+{
+    MetatileBehavior_IsVerticalRail,
+    MetatileBehavior_IsHorizontalRail,
+    MetatileBehavior_IsIsolatedVerticalRail,
+    MetatileBehavior_IsIsolatedHorizontalRail,
+    MetatileBehavior_IsGroundRocks,
+};
 
 static void (*const sBikeTransitions[])(u32) =
 {
@@ -274,6 +284,21 @@ bool32 IsBikingDisallowedByPlayer(void)
         PlayerGetDestCoords(&x, &y);
 
         if (!MetatileBehaviorForbidsBiking(MapGridGetMetatileBehaviorAt(x, y)))
+            return FALSE;
+    }
+    return TRUE;
+}
+
+bool32 CanPlayerDismountOfBike(u32 metatileBehavior)
+{
+    u32 i;
+    
+    if (FlagGet(FLAG_SYS_ON_CYCLING_ROAD))
+        return FALSE;
+    
+    for (i = 0; i < ARRAY_COUNT(sBikeDismountBlockersMetatileFuncs); i++)
+    {
+        if (sBikeDismountBlockersMetatileFuncs[i](metatileBehavior))
             return FALSE;
     }
     return TRUE;

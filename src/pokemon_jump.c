@@ -14,7 +14,6 @@
 #include "save.h"
 #include "script.h"
 #include "sound.h"
-#include "strings.h"
 #include "text_window.h"
 #include "trig.h"
 #include "constants/songs.h"

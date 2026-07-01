@@ -7,7 +7,6 @@
 #include "link.h"
 #include "link_rfu.h"
 #include "graphics.h"
-#include "strings.h"
 #include "menu.h"
 #include "data.h"
 #include "battle.h"
@@ -162,6 +161,11 @@ static const u16 sWirelessSignalAnimPals_Inbound[] = INCBIN_U16("graphics/trade/
 static const u16 sWirelessSignalAnimPals_Off[] = INCBIN_U16("graphics/trade/black.gbapal");
 static const u32 sWirelessSignal4bpp[] = INCBIN_U32("graphics/trade/wireless_signal.4bpp.lz");
 static const u32 sWirelessSignalTilemap[] = INCBIN_U32("graphics/trade/wireless_signal.bin.lz");
+
+static const u8 sText_XWillBeSentToY[] = _("{STR_VAR_2} will be\nsent to {STR_VAR_1}.");
+static const u8 sText_ByeByeVar1[] = _("Bye-bye, {STR_VAR_2}!");
+static const u8 sText_XSentOverY[] = _("{STR_VAR_1} sent over {STR_VAR_3}.");
+static const u8 sText_TakeGoodCareOfX[] = _("Take good care of {STR_VAR_3}!");
 
 static const struct OamData gOamData_826CD00 = {
     .affineMode = ST_OAM_AFFINE_NORMAL,
@@ -1249,7 +1253,7 @@ static bool32 DoTradeAnim_Cable(void)
         }
         break;
     case 10:
-        StringExpandPlaceholders(gStringVar4, gText_XWillBeSentToY);
+        StringExpandPlaceholders(gStringVar4, sText_XWillBeSentToY);
         DrawTextOnTradeWindow(0, gStringVar4, 0);
 
         if (sTradeData->tradeSpecies[0] != SPECIES_EGG)
@@ -1265,7 +1269,7 @@ static bool32 DoTradeAnim_Cable(void)
         {
             sTradeData->pokeballSpriteId = CreateTradePokeballSprite(sTradeData->pokePicSpriteIdxs[0], gSprites[sTradeData->pokePicSpriteIdxs[0]].oam.paletteNum, 120, 32, 2, 1, 0x14, 0xfffff);
             sTradeData->state++;
-            StringExpandPlaceholders(gStringVar4, gText_ByeByeVar1);
+            StringExpandPlaceholders(gStringVar4, sText_ByeByeVar1);
             DrawTextOnTradeWindow(0, gStringVar4, 0);
         }
         break;
@@ -1615,7 +1619,7 @@ static bool32 DoTradeAnim_Cable(void)
                                       DISPCNT_BG0_ON |
                                       DISPCNT_BG2_ON |
                                       DISPCNT_OBJ_ON);
-        StringExpandPlaceholders(gStringVar4, gText_XSentOverY);
+        StringExpandPlaceholders(gStringVar4, sText_XSentOverY);
         DrawTextOnTradeWindow(0, gStringVar4, 0);
         sTradeData->state = 167;
         sTradeData->timer = 0;
@@ -1646,7 +1650,7 @@ static bool32 DoTradeAnim_Cable(void)
         if (sTradeData->timer == 250)
         {
             sTradeData->state++;
-            StringExpandPlaceholders(gStringVar4, gText_TakeGoodCareOfX);
+            StringExpandPlaceholders(gStringVar4, sText_TakeGoodCareOfX);
             DrawTextOnTradeWindow(0, gStringVar4, 0);
             sTradeData->timer = 0;
         }
@@ -1733,7 +1737,7 @@ static bool32 DoTradeAnim_Wireless(void)
         }
         break;
     case 10:
-        StringExpandPlaceholders(gStringVar4, gText_XWillBeSentToY);
+        StringExpandPlaceholders(gStringVar4, sText_XWillBeSentToY);
         DrawTextOnTradeWindow(0, gStringVar4, 0);
 
         if (sTradeData->tradeSpecies[0] != SPECIES_EGG)
@@ -1749,7 +1753,7 @@ static bool32 DoTradeAnim_Wireless(void)
         {
             sTradeData->pokeballSpriteId = CreateTradePokeballSprite(sTradeData->pokePicSpriteIdxs[0], gSprites[sTradeData->pokePicSpriteIdxs[0]].oam.paletteNum, 120, 32, 2, 1, 0x14, 0xfffff);
             sTradeData->state++;
-            StringExpandPlaceholders(gStringVar4, gText_ByeByeVar1);
+            StringExpandPlaceholders(gStringVar4, sText_ByeByeVar1);
             DrawTextOnTradeWindow(0, gStringVar4, 0);
         }
         break;
@@ -2123,7 +2127,7 @@ static bool32 DoTradeAnim_Wireless(void)
                                       DISPCNT_BG0_ON |
                                       DISPCNT_BG2_ON |
                                       DISPCNT_OBJ_ON);
-        StringExpandPlaceholders(gStringVar4, gText_XSentOverY);
+        StringExpandPlaceholders(gStringVar4, sText_XSentOverY);
         DrawTextOnTradeWindow(0, gStringVar4, 0);
         sTradeData->state = 167;
         sTradeData->timer = 0;
@@ -2154,7 +2158,7 @@ static bool32 DoTradeAnim_Wireless(void)
         if (sTradeData->timer == 250)
         {
             sTradeData->state++;
-            StringExpandPlaceholders(gStringVar4, gText_TakeGoodCareOfX);
+            StringExpandPlaceholders(gStringVar4, sText_TakeGoodCareOfX);
             DrawTextOnTradeWindow(0, gStringVar4, 0);
             sTradeData->timer = 0;
         }

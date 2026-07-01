@@ -5172,12 +5172,12 @@ BattleScript_FaintedMonTryChooseAnother::
 	jumpifbattletype BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE | BATTLE_TYPE_RECORDED, BattleScript_FaintedMonChooseAnother
 	jumpifword CMP_COMMON_BITS, gHitMarker, HITMARKER_PLAYER_FAINTED, BattleScript_FaintedMonChooseAnother
 	jumpifbyte CMP_EQUAL, sBATTLE_STYLE, OPTIONS_BATTLE_STYLE_SET, BattleScript_FaintedMonChooseAnother
-	jumpifcantswitch BS_PLAYER1, BattleScript_FaintedMonChooseAnother
-	setbyte sILLUSION_NICK_HACK, TRUE
-	yesnobox BS_FAINTED, STRINGID_ENEMYABOUTTOSWITCHPKMN
-	waitstate
-	jumpbasedchosenselection BS_FAINTED, 1, BattleScript_FaintedMonChooseAnother
 	setatktoplayer0
+	jumpifcantswitch BS_ATTACKER, BattleScript_FaintedMonChooseAnother
+	setbyte sILLUSION_NICK_HACK, TRUE
+	yesnobox BS_ATTACKER, STRINGID_ENEMYABOUTTOSWITCHPKMN
+	waitstate
+	jumpbasedchosenselection BS_ATTACKER, 1, BattleScript_FaintedMonChooseAnother
 	openpartyscreen BS_ATTACKER | OPEN_PARTY_ALLOW_CANCEL, BattleScript_FaintedMonChooseAnother
 	switchhandleorder BS_ATTACKER, 2
 	jumpifbyte CMP_EQUAL, sMULTIUSE_STATE, PARTY_SIZE, BattleScript_FaintedMonChooseAnother
@@ -5219,10 +5219,10 @@ BattleScript_FaintedMonEnd::
 	end2
 
 BattleScript_LinkBattleHandleFaint::
-	openpartyscreen BS_UNKNOWN_5, BattleScript_LinkBattleHandleFaintStart
+	openpartyscreen BS_FAINTED_LINK_MULTIPLE_1, BattleScript_LinkBattleHandleFaintStart
 BattleScript_LinkBattleHandleFaintStart::
 	switchhandleorder BS_FAINTED, 0
-	openpartyscreen BS_UNKNOWN_6, BattleScript_LinkBattleFaintedMonEnd
+	openpartyscreen BS_FAINTED_LINK_MULTIPLE_2, BattleScript_LinkBattleFaintedMonEnd
 	switchhandleorder BS_FAINTED, 0
 BattleScript_LinkBattleFaintedMonLoop::
 	switchhandleorder BS_FAINTED, 2
@@ -5234,7 +5234,7 @@ BattleScript_LinkBattleFaintedMonLoop::
 	hidepartystatussummary BS_FAINTED
 	switchinanim BS_FAINTED, 0
 	waitstate
-	switchineffects BS_UNKNOWN_5
+	switchineffects BS_FAINTED_LINK_MULTIPLE_1
 	jumpifbytenotequal gBattlerFainted, gBattlersCount, BattleScript_LinkBattleFaintedMonLoop
 BattleScript_LinkBattleFaintedMonEnd::
 	end2

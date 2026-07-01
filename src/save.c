@@ -89,6 +89,8 @@ u16 gSaveSucceeded;
 
 EWRAM_DATA struct SaveSection gSaveDataBuffer = {0};
 
+const u8 gText_SavingDontTurnOffThePower[] = _("Saving…\nDon't turn off the power.");
+
 void ClearSaveData(void)
 {
     u32 i;

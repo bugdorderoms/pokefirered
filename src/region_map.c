@@ -11,7 +11,6 @@
 #include "new_menu_helpers.h"
 #include "menu.h"
 #include "menu_helpers.h"
-#include "strings.h"
 #include "map_preview_screen.h"
 #include "ride_pager.h"
 #include "constants/songs.h"
@@ -389,6 +388,15 @@ static const u32 sDungeonIcon[] = INCBIN_U32("graphics/region_map/dungeon_icon.4
 static const u32 sFlyIcon[] = INCBIN_U32("graphics/region_map/fly_icon.4bpp.lz");
 static const u32 sBackground_Gfx[] = INCBIN_U32("graphics/region_map/background.4bpp.lz");
 static const u32 sBackground_Tilemap[] = INCBIN_U32("graphics/region_map/background.bin.lz");
+
+static const u8 sText_RegionMap_Space[] = _(" ");
+static const u8 sText_RegionMap_AButtonGuide[] = _("{A_BUTTON}Guide");
+static const u8 sText_RegionMap_AButtonCancel[] = _("{A_BUTTON}Cancel");
+static const u8 sText_RegionMap_AButtonSwitch[] = _("{A_BUTTON}Switch");
+static const u8 sText_RegionMap_AButtonOK[] = _("{A_BUTTON}Ok");
+static const u8 sText_RegionMap_DPadMove[] = _("{DPAD_ANY}Move");
+static const u8 sText_RegionMap_UpDownPick[] = _("{DPAD_UPDOWN}Pick");
+static const u8 sText_RegionMap_NoData[] = _("No data");
 
 static const struct BgTemplate sRegionMapBgTemplates[] = {
     {
@@ -1079,8 +1087,8 @@ static void Task_RegionMap(u32 taskId)
             ShowBg(0);
             ShowBg(3);
             ShowBg(1);
-            PrintTopBarTextLeft(gText_RegionMap_DPadMove);
-            PrintTopBarTextRight(gText_RegionMap_Space);
+            PrintTopBarTextLeft(sText_RegionMap_DPadMove);
+            PrintTopBarTextRight(sText_RegionMap_Space);
             ClearOrDrawTopBar(FALSE);
             SetPlayerIconInvisibility(FALSE);
             SetMapCursorInvisibility(FALSE);
@@ -1116,16 +1124,16 @@ static void Task_RegionMap(u32 taskId)
             if (GetDungeonMapsecUnderCursor() != MAPSEC_NONE)
             {
                 if (GetRegionMapPermission(MAPPERM_HAS_MAP_PREVIEW))
-                    PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) == MAPSECTYPE_VISITED ? gText_RegionMap_AButtonGuide : gText_RegionMap_Space);
+                    PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) == MAPSECTYPE_VISITED ? sText_RegionMap_AButtonGuide : sText_RegionMap_Space);
             }
             else
             {
                 if (sMapCursor->x == SWITCH_BUTTON_X && sMapCursor->y == SWITCH_BUTTON_Y && GetRegionMapPermission(MAPPERM_HAS_SWITCH_BUTTON))
-                    PrintTopBarTextRight(gText_RegionMap_AButtonSwitch);
+                    PrintTopBarTextRight(sText_RegionMap_AButtonSwitch);
                 else if (sMapCursor->x == CANCEL_BUTTON_X && sMapCursor->y == CANCEL_BUTTON_Y)
-                    PrintTopBarTextRight(gText_RegionMap_AButtonCancel);
+                    PrintTopBarTextRight(sText_RegionMap_AButtonCancel);
                 else
-                    PrintTopBarTextRight(gText_RegionMap_Space);
+                    PrintTopBarTextRight(sText_RegionMap_Space);
             }
             break;
         case MAP_INPUT_A_BUTTON:
@@ -1380,7 +1388,7 @@ static void InitSwitchMapMenu(u32 whichMap, u32 taskId, TaskFunc taskFunc)
     sSwitchMapMenu->exitTask = taskFunc;
     sSwitchMapMenu->chosenRegion = GetRegionMapPlayerIsOn();
     SaveRegionMapGpuRegs(0);
-    PrintTopBarTextRight(gText_RegionMap_AButtonOK);
+    PrintTopBarTextRight(sText_RegionMap_AButtonOK);
     gTasks[taskId].func = Task_SwitchMapMenu;
 }
 
@@ -1419,7 +1427,7 @@ static void Task_SwitchMapMenu(u32 taskId)
     {
     case 0:
         SetVBlankHBlankCallbacksToNull();
-        PrintTopBarTextLeft(gText_RegionMap_UpDownPick);
+        PrintTopBarTextLeft(sText_RegionMap_UpDownPick);
         sSwitchMapMenu->mainState++;
         break;
     case 1:
@@ -1499,8 +1507,8 @@ static void FreeSwitchMapMenu(u32 taskId)
 {
     gTasks[taskId].func = sSwitchMapMenu->exitTask;
     HideBg(2);
-    PrintTopBarTextLeft(gText_RegionMap_DPadMove);
-    PrintTopBarTextRight(gText_RegionMap_AButtonSwitch);
+    PrintTopBarTextLeft(sText_RegionMap_DPadMove);
+    PrintTopBarTextRight(sText_RegionMap_AButtonSwitch);
     UpdateMapsecNameBox();
     DrawDungeonNameBox();
     SetGpuWindowDims(WIN_MAP_NAME, &sMapsecNameWindowDims[CLEAR_NAME]);
@@ -1606,7 +1614,7 @@ static bool32 HandleSwitchMapInput(void)
     if (changedSelection)
     {
         BufferRegionMapBg(0, sRegionMap->layouts[sSwitchMapMenu->currentSelection]);
-        PrintTopBarTextRight(gText_RegionMap_AButtonOK);
+        PrintTopBarTextRight(sText_RegionMap_AButtonOK);
         CopyBgTilemapBufferToVram(0);
         CopyBgTilemapBufferToVram(3);
         SetFlyIconInvisibility(0xFF, ARRAY_COUNT(sMapIcons->flyIcons), TRUE);
@@ -1699,7 +1707,7 @@ static const u8 *GetDungeonFlavorText(u32 mapsec)
     if (gMapSectionsInfo[mapsec].desc != NULL)
         return gMapSectionsInfo[mapsec].desc;
     else
-        return gText_RegionMap_NoData;
+        return sText_RegionMap_NoData;
 }
 
 static const u8 *GetDungeonName(u32 mapsec)
@@ -1707,7 +1715,7 @@ static const u8 *GetDungeonName(u32 mapsec)
     if (gMapSectionsInfo[mapsec].name != NULL)
         return gMapSectionsInfo[mapsec].name;
     else
-        return gText_RegionMap_NoData;
+        return sText_RegionMap_NoData;
 }
 
 static void InitDungeonMapPreview(u32 taskId, TaskFunc taskFunc)
@@ -1772,7 +1780,7 @@ static void Task_DungeonMapPreview(u32 taskId)
         break;
     case 2:
         InitScreenForDungeonMapPreview();
-        PrintTopBarTextRight(gText_RegionMap_AButtonCancel2);
+        PrintTopBarTextRight(sText_RegionMap_AButtonCancel);
         sDungeonMapPreview->mainState++;
         break;
     case 3:
@@ -1876,7 +1884,7 @@ static void FreeDungeonMapPreview(u32 taskId)
     DisplayCurrentDungeonName();
     UpdateMapsecNameBox();
     DrawDungeonNameBox();
-    PrintTopBarTextRight(gText_RegionMap_AButtonGuide);
+    PrintTopBarTextRight(sText_RegionMap_AButtonGuide);
     FREE_IF_NOT_NULL(sDungeonMapPreview);
 }
 
@@ -2172,8 +2180,8 @@ static void Task_MapOpenAnim(u32 taskId)
         sMapOpenCloseAnim->openState++;
         break;
     case 9:
-        PrintTopBarTextLeft(gText_RegionMap_DPadMove);
-        PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_VISITED ? gText_RegionMap_Space : gText_RegionMap_AButtonGuide);
+        PrintTopBarTextLeft(sText_RegionMap_DPadMove);
+        PrintTopBarTextRight(GetSelectedMapsecType(LAYER_DUNGEON) != MAPSECTYPE_VISITED ? sText_RegionMap_Space : sText_RegionMap_AButtonGuide);
         ClearOrDrawTopBar(FALSE);
         sMapOpenCloseAnim->openState++;
         break;
@@ -3579,14 +3587,14 @@ static void Task_FlyMap(u32 taskId)
             ShowBg(0);
             ShowBg(3);
             ShowBg(1);
-            PrintTopBarTextLeft(gText_RegionMap_DPadMove);
+            PrintTopBarTextLeft(sText_RegionMap_DPadMove);
             SetFlyIconInvisibility(GetSelectedRegionMap(), ARRAY_COUNT(sMapIcons->flyIcons), FALSE);
             SetDungeonIconInvisibility(GetSelectedRegionMap(), ARRAY_COUNT(sMapIcons->dungeonIcons), FALSE);
         }
         sFlyMap->state++;
         break;
     case 2:
-        PrintTopBarTextRight(gText_RegionMap_AButtonOK);
+        PrintTopBarTextRight(sText_RegionMap_AButtonOK);
         ClearOrDrawTopBar(FALSE);
         sFlyMap->state++;
         break;
@@ -3623,12 +3631,12 @@ static void Task_FlyMap(u32 taskId)
             if (sMapCursor->x == CANCEL_BUTTON_X && sMapCursor->y == CANCEL_BUTTON_Y)
             {
                 PlaySE(SE_M_SPIT_UP);
-                PrintTopBarTextRight(gText_RegionMap_AButtonCancel);
+                PrintTopBarTextRight(sText_RegionMap_AButtonCancel);
             }
             else if (GetSelectedMapsecType(LAYER_MAP) == MAPSECTYPE_VISITED)
-                PrintTopBarTextRight(gText_RegionMap_AButtonOK);
+                PrintTopBarTextRight(sText_RegionMap_AButtonOK);
             else
-                PrintTopBarTextRight(gText_RegionMap_Space);
+                PrintTopBarTextRight(sText_RegionMap_Space);
             break;
         case MAP_INPUT_A_BUTTON:
             if (GetSelectedMapsecType(LAYER_MAP) == MAPSECTYPE_VISITED && GetRegionMapPermission(MAPPERM_HAS_FLY_DESTINATIONS))

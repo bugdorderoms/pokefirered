@@ -371,14 +371,10 @@ static void DestroyRidePagerWindow(u32 taskId, bool32 useRide)
 static void PlayerToPokeRideCallback(u32 taskId)
 {
     s16 x, y, *data = gTasks[taskId].data;
-    u32 behavior;
     
     PlayerGetDestCoords(&x, &y);
-    behavior = MapGridGetMetatileBehaviorAt(x, y);
     
-    if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER | PLAYER_AVATAR_FLAG_SURFING) && !InUnionRoom() && !FlagGet(FLAG_SYS_ON_CYCLING_ROAD)
-    && !MetatileBehavior_IsVerticalRail(behavior) && !MetatileBehavior_IsHorizontalRail(behavior) && !MetatileBehavior_IsIsolatedVerticalRail(behavior)
-    && !MetatileBehavior_IsIsolatedHorizontalRail(behavior) && !MetatileBehavior_IsGroundRocks(behavior)
+    if (CanPlayerDismountOfBike(MapGridGetMetatileBehaviorAt(x, y)) && !TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_UNDERWATER | PLAYER_AVATAR_FLAG_SURFING) && !InUnionRoom()
 #if RIDE_INDOORS == FALSE
     && Overworld_IsBikingAllowed()
 #endif

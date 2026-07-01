@@ -11,7 +11,6 @@
 #include "link_rfu.h"
 #include "cable_club.h"
 #include "data.h"
-#include "strings.h"
 #include "menu.h"
 #include "pokedex.h"
 #include "overworld.h"
@@ -113,6 +112,10 @@ static const u16 sTradeMovesBoxTilemap[] = INCBIN_U16("graphics/trade/moves_box_
 static const u16 sTradePartyBoxTilemap[] = INCBIN_U16("graphics/trade/party_box_map.bin");
 static const u8 sTradeStripesBG2Tilemap[] = INCBIN_U8("graphics/trade/stripes_bg2_map.bin");
 static const u8 sTradeStripesBG3Tilemap[] = INCBIN_U8("graphics/trade/stripes_bg3_map.bin");
+
+const u8 gText_PkmnCantBeTradedNow[] = _("That Pokémon can't be traded\nnow.");
+const u8 gText_EggCantBeTradedNow[] = _("An Egg can't be traded now.");
+const u8 gText_OtherTrainersPkmnCantBeTraded[] = _("The other Trainer's Pokémon\ncan't be traded now.");
 
 static const struct OamData gOamData_8261C30 = {
     .shape = SPRITE_SHAPE(32x16),
@@ -395,15 +398,6 @@ static const u8 gUnknown_8261E92[] = {
     0x07, 0x07, 0x17, 0x0c
 };
 
-const u8 sText_Dummy[] = _("");
-const u8 sText_ClrWhtHltTranspShdwDrkGry[] = _("{COLOR WHITE}{HIGHLIGHT TRANSPARENT}{SHADOW DARK_GRAY}");
-const u8 gText_MaleSymbol4[] = _("♂");
-const u8 gText_FemaleSymbol4[] = _("♀");
-const u8 gText_GenderlessSymbol[] = _("");
-const u8 sText_Dummy2[] = _("");
-const u8 sText_Newline[] = _("\n");
-const u8 sText_Slash[] = _("/");
-
 enum TradeUIText
 {
     TRADEUITEXT_CANCEL = 0,
@@ -415,29 +409,29 @@ enum TradeUIText
 };
 
 static const u8 *const sTradeUITextPtrs[] = {
-    gTradeText_Cancel,
-    gTradeText_ChooseAPokemon,
-    gTradeText_Summary,
-    gTradeText_Trade,
-    gTradeText_CancelTrade,
-    gTradeText_PressBButtonToExit
+    COMPOUND_STRING("Cancel"),
+    COMPOUND_STRING("Choose a Pokémon."),
+    COMPOUND_STRING("Summary"),
+    COMPOUND_STRING("Trade"),
+    COMPOUND_STRING("Cancel trade?"),
+    COMPOUND_STRING("Press the B Button to exit.")
 };
 
 static const struct MenuAction sMenuAction_SummaryTrade[] = {
-    {gUnknown_841E10A, { .void_u32 = TradeMenuAction_Summary }},
-    {gUnknown_841E112, { .void_u32 = TradeMenuAction_Trade }}
+    {COMPOUND_STRING("Summary"), { .void_u32 = TradeMenuAction_Summary }},
+    {COMPOUND_STRING("Trade"),   { .void_u32 = TradeMenuAction_Trade }}
 };
 
 static const u8 *const sTradeErrorOrStatusMessagePtrs[] = {
-    gUnknown_841E118, // Communication standby
-    gUnknown_841E145, // The trade has been canceled.
-    gUnknown_841E16B, // That's your only Pokémon for battle
-    gUnknown_8417094, // That's your only Pokémon for battle
-    gUnknown_841E199, // Waiting for your friend to finish
-    gUnknown_841E1C5, // Your friend wants to trade Pokémon
-    gText_PkmnCantBeTradedNow, // That Pokémon can't be traded now
-    gText_EggCantBeTradedNow, // An EGG can't be traded now
-    gText_OtherTrainersPkmnCantBeTraded  // The other TRAINER's Pokémon can't be traded now
+    COMPOUND_STRING("{COLOR DARK_GRAY}{HIGHLIGHT WHITE}{SHADOW LIGHT_GRAY}Communication standby…\nPlease wait."),
+    COMPOUND_STRING("{COLOR DARK_GRAY}{HIGHLIGHT WHITE}{SHADOW LIGHT_GRAY}The trade has been canceled."),
+    COMPOUND_STRING("{COLOR DARK_GRAY}{HIGHLIGHT WHITE}{SHADOW LIGHT_GRAY}That's your only Pokémon\nfor battle."),
+    COMPOUND_STRING("That's your only\nPokémon for battle."),
+    COMPOUND_STRING("{COLOR DARK_GRAY}{HIGHLIGHT WHITE}{SHADOW LIGHT_GRAY}Waiting for your friend\nto finish…"),
+    COMPOUND_STRING("Your friend wants\nto trade Pokémon."),
+    gText_PkmnCantBeTradedNow,
+    gText_EggCantBeTradedNow,
+    gText_OtherTrainersPkmnCantBeTraded,
 };
 
 static const u8 sTextColor_PartyMonNickname[] = { TEXT_COLOR_TRANSPARENT, TEXT_COLOR_WHITE, TEXT_COLOR_DARK_GRAY };
@@ -1421,7 +1415,7 @@ static bool32 shedinja_maker_maybe(void)
 
 static void PrintIsThisTradeOkay(void)
 {
-    RenderTextToVramViaBuffer(gText_IsThisTradeOkay, (u8 *)OBJ_VRAM0 + sTradeMenuResourcesPtr->cursorStartTile * 32);
+    RenderTextToVramViaBuffer(COMPOUND_STRING("Is this trade okay?"), (u8 *)OBJ_VRAM0 + sTradeMenuResourcesPtr->cursorStartTile * 32);
 }
 
 static void Master_HandleBlockReceivedStatus(u32 blockReceivedFlags)
@@ -2116,6 +2110,8 @@ static void BuildMovesString(u8 *movesString, u32 whichParty, u32 whichMon)
 {
     u16 moves[MAX_MON_MOVES];
     u32 i;
+    
+    StringCopy(movesString, COMPOUND_STRING(""));
 
     if (!sTradeMenuResourcesPtr->eggFlags[whichParty][whichMon])
     {
@@ -2127,21 +2123,16 @@ static void BuildMovesString(u8 *movesString, u32 whichParty, u32 whichMon)
                 moves[i] = GetMonData(&gEnemyParty[whichMon], i + MON_DATA_MOVE1, NULL);
         }
 
-        StringCopy(movesString, sText_Dummy);
-
         for (i = 0; i < MAX_MON_MOVES; i++)
         {
             if (moves[i] != MOVE_NONE)
                 StringAppend(movesString, gBattleMoves[moves[i]].name);
 
-            StringAppend(movesString, sText_Newline);
+            StringAppend(movesString, COMPOUND_STRING("\n"));
         }
     }
     else
-    {
-        StringCopy(movesString, sText_Dummy);
-        StringAppend(movesString, gText_4Qmark);
-    }
+        StringAppend(movesString, COMPOUND_STRING("????"));
 }
 
 static void PrintPartyMonNickname(u32 whichParty, u32 windowId, const u8 *str)

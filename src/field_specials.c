@@ -11,7 +11,6 @@
 #include "hall_of_fame.h"
 #include "field_message_box.h"
 #include "event_data.h"
-#include "strings.h"
 #include "load_save.h"
 #include "learn_move.h"
 #include "script_pokemon_util.h"
@@ -122,6 +121,24 @@ static void Task_DoDeoxysTriangleInteraction(u32 taskId);
 static void MoveDeoxysObject(u32 num);
 static void Task_WaitDeoxysFieldEffect(u32 taskId);
 static void Task_WingFlapSound(u32 taskId);
+
+const u8 gText_1F[] = _("1F");
+const u8 gText_2F[] = _("2F");
+const u8 gText_3F[] = _("3F");
+const u8 gText_4F[] = _("4F");
+const u8 gText_5F[] = _("5F");
+const u8 gText_6F[] = _("6F");
+const u8 gText_7F[] = _("7F");
+const u8 gText_8F[] = _("8F");
+const u8 gText_9F[] = _("9F");
+const u8 gText_10F[] = _("10F");
+const u8 gText_11F[] = _("11F");
+const u8 gText_B1F[] = _("B1F");
+const u8 gText_B2F[] = _("B2F");
+const u8 gText_B3F[] = _("B3F");
+const u8 gText_B4F[] = _("B4F");
+const u8 gText_Rooftop[] = _("Rooftop");
+static const u8 sText_DefaultForm[] = _("Default Form");
 
 static const u32 s8x8SymbolsGfx[] = INCBIN_U32("graphics/interface/8_8_symbols.4bpp.lz");
 static const u16 s8x8SymbolsPal[] = INCBIN_U16("graphics/interface/8_8_symbols_pal.gbapal");
@@ -1007,7 +1024,7 @@ void DrawElevatorCurrentFloorWindow(void)
     sElevatorCurrentFloorWindowId = AddWindow(&sElevatorCurrentFloorWindowTemplate);
     TextWindow_SetStdFrame0_WithPal(sElevatorCurrentFloorWindowId, 0x21D, 0xD0);
     DrawStdFrameWithCustomTileAndPalette(sElevatorCurrentFloorWindowId, FALSE, 0x21D, 0xD);
-    AddTextPrinterParameterized(sElevatorCurrentFloorWindowId, 2, gText_NowOn, 0, 2, 0xFF, NULL);
+    AddTextPrinterParameterized(sElevatorCurrentFloorWindowId, 2, COMPOUND_STRING("Now on:"), 0, 2, 0xFF, NULL);
     floorname = sFloorNamePointers[gSpecialVar_0x8005];
     strwidth = GetStringWidth(2, floorname, 0);
     AddTextPrinterParameterized(sElevatorCurrentFloorWindowId, 2, floorname, 56 - strwidth, 16, 0xFF, NULL);
@@ -1071,15 +1088,15 @@ static void Task_AnimateElevatorWindowView(u32 taskId)
 }
 
 static const struct ListMenuLabels sBadgesListMenu[] = {
-    { gText_BoulderBadge },
-    { gText_CascadeBadge },
-    { gText_ThunderBadge },
-    { gText_RainbowBadge },
-    { gText_SoulBadge },
-    { gText_MarshBadge },
-    { gText_VolcanoBadge },
-    { gText_EarthBadge },
-    { gOtherText_Exit },
+    { COMPOUND_STRING("Boulderbadge") },
+    { COMPOUND_STRING("Cascadebadge") },
+    { COMPOUND_STRING("Thunderbadge") },
+    { COMPOUND_STRING("Rainbowbadge") },
+    { COMPOUND_STRING("Soulbadge") },
+    { COMPOUND_STRING("Marshbadge") },
+    { COMPOUND_STRING("Volcanobadge") },
+    { COMPOUND_STRING("Earthbadge") },
+    { COMPOUND_STRING("Exit") },
 };
 
 static const struct ListMenuLabels sSilphcoFloorsListMenu[] = {
@@ -1094,35 +1111,35 @@ static const struct ListMenuLabels sSilphcoFloorsListMenu[] = {
     { gText_3F },
     { gText_2F },
     { gText_1F },
-    { gOtherText_Exit },
+    { COMPOUND_STRING("Exit") },
 };
 
 static const struct ListMenuLabels sBerryPowderListMenu[] = {
-    { gText_Energypowder_50 },
-    { gText_EnergyRoot_80 },
-    { gText_HealPowder_50 },
-    { gText_RevivalHerb_300 },
-    { gText_Protein_1000 },
-    { gText_Iron_1000 },
-    { gText_Carbos_1000 },
-    { gText_Calcium_1000 },
-    { gText_Zinc_1000 },
-    { gText_HpUp_1000 },
-    { gText_PpUp_3000 },
-    { gOtherText_Exit },
+    { COMPOUND_STRING("Energypowder{CLEAR_TO 0x74}{FONT_SMALL}50") },
+    { COMPOUND_STRING("Energy Root{CLEAR_TO 0x74}{FONT_SMALL}80") },
+    { COMPOUND_STRING("Heal Powder{CLEAR_TO 0x74}{FONT_SMALL}50") },
+    { COMPOUND_STRING("Revival Herb{CLEAR_TO 0x6F}{FONT_SMALL}300") },
+    { COMPOUND_STRING("Protein{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
+    { COMPOUND_STRING("Iron{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
+    { COMPOUND_STRING("Carbos{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
+    { COMPOUND_STRING("Calcium{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
+    { COMPOUND_STRING("Zinc{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
+    { COMPOUND_STRING("HP Up{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
+    { COMPOUND_STRING("PP Up{CLEAR_TO 0x65}{FONT_SMALL}3,000") },
+    { COMPOUND_STRING("Exit") },
 };
 
 static const struct ListMenuActions sListMenuLabels[] = {
-    [LISTMENU_BADGES] = {sBadgesListMenu},
+    [LISTMENU_BADGES]         = {sBadgesListMenu},
     [LISTMENU_SILPHCO_FLOORS] = {sSilphcoFloorsListMenu},
-    [LISTMENU_BERRY_POWDER] = {sBerryPowderListMenu},
+    [LISTMENU_BERRY_POWDER]   = {sBerryPowderListMenu},
 };
 
 static const struct ListMenuLabels sDeoxysListMenu[] = {
-    { gText_DeoxysFormAttack },
-    { gText_DeoxysFormDefense },
-    { gText_DeoxysFormSpeed },
-    { gOtherText_DefaultForm }
+    { COMPOUND_STRING("Attack Form") },
+    { COMPOUND_STRING("Defense Form") },
+    { COMPOUND_STRING("Speed Form") },
+    { sText_DefaultForm }
 };
 
 static const u16 sDeoxysForms[] =
@@ -1134,12 +1151,12 @@ static const u16 sDeoxysForms[] =
 };
 
 static const struct ListMenuLabels sRotomListMenu[] = {
-    { gText_RotomFormHeat },
-    { gText_RotomFormWash },
-    { gText_RotomFormFrost },
-    { gText_RotomFormFan },
-    { gText_RotomFormMow },
-    { gOtherText_DefaultForm }
+    { COMPOUND_STRING("Heat Form") },
+    { COMPOUND_STRING("Wash Form") },
+    { COMPOUND_STRING("Frost Form") },
+    { COMPOUND_STRING("Fan Form") },
+    { COMPOUND_STRING("Mow Form") },
+    { sText_DefaultForm }
 };
 
 static const u16 sRotomForms[] =
@@ -1153,12 +1170,12 @@ static const u16 sRotomForms[] =
 };
 
 static const struct ListMenuLabels sPikachuListMenu[] = {
-    { gText_PikachuFormRockStar },
-    { gText_PikachuFormBelle },
-    { gText_PikachuFormPopStar },
-    { gText_PikachuFormPhd },
-    { gText_PikachuFormLibre },
-    { gOtherText_DefaultForm }
+    { COMPOUND_STRING("Rock Star") },
+    { COMPOUND_STRING("Belle") },
+    { COMPOUND_STRING("Pop Star") },
+    { COMPOUND_STRING("Ph. D.") },
+    { COMPOUND_STRING("Libre") },
+    { sText_DefaultForm }
 };
 
 static const u16 sPikachuForms[] =
@@ -1172,15 +1189,15 @@ static const u16 sPikachuForms[] =
 };
 
 static const struct ListMenuLabels sFurfrouListMenu[] = {
-    { gText_FurfrouFormHeartTrim },
-    { gText_FurfrouFormStarTrim },
-    { gText_FurfrouFormDiamondTrim },
-    { gText_FurfrouFormDebutanteTrim },
-    { gText_FurfrouFormMatronTrim },
-    { gText_FurfrouFormDandyTrim },
-    { gText_FurfrouFormLaReineTrim },
-    { gText_FurfrouFormKabukiTrim },
-    { gText_FurfrouFormPharaohTrim }
+    { COMPOUND_STRING("Heart Trim") },
+    { COMPOUND_STRING("Star Trim") },
+    { COMPOUND_STRING("Diamond Trim") },
+    { COMPOUND_STRING("Debutante Trim") },
+    { COMPOUND_STRING("Matron Trim") },
+    { COMPOUND_STRING("Dandy Trim") },
+    { COMPOUND_STRING("La Reine Trim") },
+    { COMPOUND_STRING("Kabuki Trim") },
+    { COMPOUND_STRING("Pharaoh Trim") }
     // No default form, if changed its trim it will only returns after 5 days
 };
 
