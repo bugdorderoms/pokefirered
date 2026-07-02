@@ -242,18 +242,28 @@ static const struct SpriteTemplate sItemTemplate =
 };
 
 // functions that makes the game load more than 1 registered item
-bool32 IsAllRegisteredItemSlotsFree(void)
+u32 GetTotalRegisteredItems(void)
+{
+    u32 i, count = 0;
+
+    for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
+    {
+        if (gSaveBlock1Ptr->registeredItem[i])
+            count++;
+    }
+    return count;
+}
+
+u32 GetFirstRegisteredItemId(void)
 {
     u32 i;
-
-    TryRemoveRegisteredItems();
     
     for (i = 0; i < REGISTERED_ITEMS_COUNT; i++)
     {
         if (gSaveBlock1Ptr->registeredItem[i])
-            return FALSE;
+            return gSaveBlock1Ptr->registeredItem[i];
     }
-    return TRUE;
+    return ITEM_NONE;
 }
 
 u32 FindRegisteredItemSlot(u32 itemId)
@@ -268,7 +278,8 @@ u32 FindRegisteredItemSlot(u32 itemId)
     return REGISTERED_ITEMS_COUNT;
 }
 
-void TryRemoveRegisteredItems(void)
+// Try remove registered items that aren't currently in the bag
+void CompactRegisteredItems(void)
 {
     u32 i;
     
@@ -419,10 +430,7 @@ static void SpriteCB_SelectItem_ReturnToOverworld(struct Sprite *sprite)
         ScriptContext2_Disable();
     }
     else // Use the selected item
-    {
-        ScriptContext2_Enable();
-        gTasks[CreateTask(ItemId_GetFieldFunc(gSpecialVar_ItemId), 8)].data[3] = 1;
-    }
+        StartKeyItemUseOnField(gSpecialVar_ItemId);
 }
 
 static void SpriteCB_SelectItem_Register(struct Sprite *sprite)

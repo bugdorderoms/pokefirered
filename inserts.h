@@ -206,3 +206,6 @@
 // If this setting is enabled, in a wild battle pressing the R button while choosing an action will throw the last used ball.
 // If holding the R button you can choose which ball use.
 #define LAST_USED_BALL_THROW TRUE
+
+// If this setting is enabled, pressing the Select button while only one Key Item is registered, that item will be used automatically without opening the menu.
+#define SINGLE_REGISTERED_ITEM_USE FALSE

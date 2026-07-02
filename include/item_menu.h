@@ -41,6 +41,7 @@ void Pocket_CalculateNItemsAndMaxShowed(u32 pocketId);
 void PocketCalculateInitialCursorPosAndItemsAbove(u32 pocketId);
 void GoToBagMenu(u32 menuType, u32 pocket, MainCallback callback);
 bool32 UseRegisteredKeyItemOnField(void);
+void StartKeyItemUseOnField(u32 itemId);
 void ItemUseInBattle(u32 taskId);
 
 extern const u8 gText_ItemMenuUse[];

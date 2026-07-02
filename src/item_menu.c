@@ -407,7 +407,7 @@ void GoToBagMenu(u32 location, u32 pocket, MainCallback bagCallback)
         
         gTextFlags.autoScroll = FALSE;
         gSpecialVar_ItemId = ITEM_NONE;
-        TryRemoveRegisteredItems();
+        CompactRegisteredItems();
         SetMainCallback2(CB2_OpenBagMenu);
     }
 }
@@ -2125,10 +2125,15 @@ bool32 UseRegisteredKeyItemOnField(void)
 {
     if (!InUnionRoom())
     {
+        u32 numRegisteredItems;
+        
         DismissMapNamePopup();
         ChangeBgY(0, 0, 0);
+        CompactRegisteredItems();
         
-        if (IsAllRegisteredItemSlotsFree())
+        numRegisteredItems = GetTotalRegisteredItems();
+        
+        if (numRegisteredItems == 0)
             ScriptContext1_SetupScript(EventScript_BagItemCanBeRegistered);
         else if (Overworld_GetFlashLevel() > 0)
             ScriptContext1_SetupScript(EventScript_RegisteredItemsCantBeOpenedHere);
@@ -2137,11 +2142,26 @@ bool32 UseRegisteredKeyItemOnField(void)
             FreezeObjectEvents();
             HandleEnforcedLookDirectionOnPlayerStopMoving();
             StopPlayerAvatar();
-            InitRegisteredItemsToChoose(REGISTERITEM_LOCATION_OVERWORLD);
+
+#if SINGLE_REGISTERED_ITEM_USE
+            if (numRegisteredItems == 1)
+            {
+                gSpecialVar_ItemId = GetFirstRegisteredItemId();
+                StartKeyItemUseOnField(gSpecialVar_ItemId);
+            }
+            else
+#endif
+                InitRegisteredItemsToChoose(REGISTERITEM_LOCATION_OVERWORLD);
         }
         return TRUE;
     }
     return FALSE;
+}
+
+void StartKeyItemUseOnField(u32 itemId)
+{
+    ScriptContext2_Enable();
+    gTasks[CreateTask(ItemId_GetFieldFunc(itemId), 8)].data[3] = TRUE;
 }
 
 static bool32 BagIsTutorial(void)
