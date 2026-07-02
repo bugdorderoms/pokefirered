@@ -1002,8 +1002,6 @@ static void InitItemIconSpriteState(struct PokemonSpecialAnimScene * scene, stru
         sprite->x = 120;
         sprite->y = scene->monSpriteY1;
     }
-    sprite->x -= 4;
-    sprite->y -= 4;
     
     switch (PSA_GetAnimType())
     {

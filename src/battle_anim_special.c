@@ -1664,13 +1664,13 @@ void AnimTask_ItemThrow(u32 taskId)
     
     if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER) // Get initial coords
     {
-        x = 241;
-        y = 21;
+        x = 245;
+        y = 25;
     }
     else
     {
-        x = -8;
-        y = 73;
+        x = -4;
+        y = 77;
     }
     CreateItemBagSprite(&sItemThrowSpriteTemplate, x, y, 0xFF);
     gAnimVisualTaskCount++;

@@ -301,12 +301,33 @@ static bool32 TryAllocItemIconTilesBuffers(void)
     return TRUE;
 }
 
-static void CopyItemIconPicTo4x4Buffer(const void * src, void * dest)
+static void CopyItemIconPicTo4x4Buffer(const u32 * src, u32 * dest)
 {
-    u32 i;
+    u32 tileX, tileY, row;
+    u32 destOffset1, destOffset2;
 
-    for (i = 0; i < 3; i++)
-        CpuCopy16(src + 0x60 * i, dest + 0xA0 + 0x80 * i, 0x60);
+    for (tileY = 0; tileY < 3; tileY++)
+    {
+        for (tileX = 0; tileX < 3; tileX++)
+        {
+            const u32 *srcTile = &src[(tileY * 3 + tileX) * 8];
+
+            for (row = 0; row < 8; row++)
+            {
+                u32 pixelRow = srcTile[row];
+                u32 destY = (tileY * 8) + row + 4;
+                
+                u32 destTileY = destY >> 3;
+                u32 destRow = destY & 7;
+
+                destOffset1 = (destTileY * 4 + tileX) * 8 + destRow;
+                dest[destOffset1] |= (pixelRow << 16);
+
+                destOffset2 = (destTileY * 4 + (tileX + 1)) * 8 + destRow;
+                dest[destOffset2] |= (pixelRow >> 16);
+            }
+        }
+    }
 }
 
 u32 AddItemIconObject(u32 tilesTag, u32 paletteTag, u32 itemId)
@@ -366,8 +387,8 @@ void CreateItemMenuIcon(u32 itemId, u32 idx)
         if (spriteId != MAX_SPRITES)
         {
             ptr[idx] = spriteId;
-            gSprites[spriteId].x2 = 16;
-            gSprites[spriteId].y2 = 132;
+            gSprites[spriteId].x2 = 20;
+            gSprites[spriteId].y2 = 136;
         }
     }
 }
@@ -426,14 +447,11 @@ void sub_80989A0(u32 itemId, u32 idx)
         if (spriteId != MAX_SPRITES)
         {
             ptr[idx] = spriteId;
-            gSprites[spriteId].x2 = 16;
-            gSprites[spriteId].y2 = 139;
+            gSprites[spriteId].x2 = 20;
+            gSprites[spriteId].y2 = 143;
         }
     }
 }
-
-#define ITEM_ICON_X 18
-#define ITEM_ICON_Y 16
 
 #define IS_KEY_ITEM_TM(pocket) ((pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE))
 
@@ -500,8 +518,8 @@ void CreateItemIconOnFindMessage(void)
 
         if (IS_KEY_ITEM_TM(ItemId_GetPocket(itemId)))
         {
-            x = 96;
-            y = 48;
+            x = 100;
+            y = 52;
             
             sprite->oam.affineMode = ST_OAM_AFFINE_DOUBLE;
             sprite->oam.matrixNum = AllocOamMatrix();
@@ -516,13 +534,13 @@ void CreateItemIconOnFindMessage(void)
         {
             if (itemObtained)
             {
-                x = 205;
-                y = 132;
+                x = 209;
+                y = 136;
             }
             else
             {
-                x = ITEM_ICON_X;
-                y = ITEM_ICON_Y;
+                x = 22;
+                y = 20;
                 
                 windowId = ShowObtainedItemDescription(itemId);
             }

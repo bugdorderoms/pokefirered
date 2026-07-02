@@ -2249,7 +2249,7 @@ static void ScriptCmd_createsprite(void)
     
     // Replaces ANIM_TAG_ITEM_BAG with the real item icon.
     if (template->tileTag == ANIM_TAG_ITEM_BAG)
-        CreateItemBagSprite(template, x, y, subpriority);
+        CreateItemBagSprite(template, x + 4, y + 4, subpriority);
     else
         CreateSpriteAndAnimate(template, x, y, subpriority);
     

@@ -911,8 +911,8 @@ static u32 CreateMenuItemPic(u32 itemId, u16 x, u16 y)
 {
     u32 spriteId = AddItemIconObject(ITEMICON_TAG, ITEMICON_TAG, itemId);
     
-    x = 8 * x + 16;
-    y = 8 * y + 16;
+    x = 8 * x + 20;
+    y = 8 * y + 20;
     
     gSprites[spriteId].x = x;
     gSprites[spriteId].y = y;

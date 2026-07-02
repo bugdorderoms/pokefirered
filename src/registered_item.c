@@ -314,9 +314,8 @@ static void CreateItemSpriteAndLinkToBox(struct Sprite *cursorSprite, u32 direct
         
         spriteId = AddItemIconObjectWithCustomObjectTemplate(&sItemTemplate, tag, tag, gSaveBlock1Ptr->registeredItem[direction]);
         
-        // icon X and Y positions = box position - 4 (center of the box image)
-        gSprites[spriteId].x = gSprites[boxSpriteId].x - 4;
-        gSprites[spriteId].y = gSprites[boxSpriteId].y - 4;
+        gSprites[spriteId].x = gSprites[boxSpriteId].x;
+        gSprites[spriteId].y = gSprites[boxSpriteId].y;
     }
     else
         spriteId = MAX_SPRITES;

@@ -1820,8 +1820,8 @@ static void CreatePartyMonHeldItemSpriteParameterized(u32 slot, u32 species, u32
         u32 tag = GET_ITEM_SPRITE_TAG(slot);
         
         menuBox->itemSpriteId = AddItemIconObjectWithCustomObjectTemplate(&sSpriteTemplate_ItemIcon, tag, tag, item);
-        gSprites[menuBox->itemSpriteId].x = menuBox->spriteCoords[2] - 4;
-        gSprites[menuBox->itemSpriteId].y = menuBox->spriteCoords[3] - 4;
+        gSprites[menuBox->itemSpriteId].x = menuBox->spriteCoords[2];
+        gSprites[menuBox->itemSpriteId].y = menuBox->spriteCoords[3];
         gSprites[menuBox->itemSpriteId].oam.priority = priority;
         gSprites[menuBox->itemSpriteId].invisible = (item == ITEM_NONE);
     }

@@ -2008,8 +2008,8 @@ void ShowOrHideTeamPreviewTrigger(bool32 hide)
 #define LAST_BALL_WIN_POS_X -16
 #define LAST_BALL_WIN_POS_Y 70
 
-#define LAST_USED_BALL_X     (LAST_BALL_WIN_POS_X - 8)
-#define LAST_USED_BALL_Y     (LAST_BALL_WIN_POS_Y)
+#define LAST_USED_BALL_X     (LAST_BALL_WIN_POS_X - 4)
+#define LAST_USED_BALL_Y     (LAST_BALL_WIN_POS_Y + 4)
 #define LAST_USED_BALL_Y_BNC (LAST_USED_BALL_Y - 2)
 
 void TryAddLastUsedBallTrigger(void)
