@@ -305,7 +305,7 @@ bool32 AI_BadIdeaToBurn(struct AIScript *data)
                 return TRUE;
             break;
         case ABILITY_HYDRATION:
-            if (IsBattlerWeatherAffected(data->target, B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration != 1) // Not expire this turn
+            if ((GetBattlerWeatherFlags(data->target) & B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration != 1) // Not expire this turn
                 return TRUE;
             break;
     }
@@ -426,7 +426,7 @@ bool32 AI_BadIdeaToParalyze(struct AIScript *data)
                 return TRUE;
             break;
         case ABILITY_HYDRATION:
-            if (IsBattlerWeatherAffected(data->target, B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration != 1) // Not expire this turn
+            if ((GetBattlerWeatherFlags(data->target) & B_WEATHER_RAIN_ANY) && gBattleStruct->weatherDuration != 1) // Not expire this turn
                 return TRUE;
             break;
     }

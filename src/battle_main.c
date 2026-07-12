@@ -3750,25 +3750,26 @@ s8 GetMovePriority(u32 battler, u32 move)
 u32 GetBattlerTotalSpeed(u32 battler)
 {
     u32 holdEffectParam, monSpeed;
+    u32 weatherFlags = GetBattlerWeatherFlags(battler);
     
     APPLY_MON_STAT_MOD(monSpeed, &gBattleMons[battler], gBattleMons[battler].speed, STAT_SPEED);
 
     switch (GetBattlerAbility(battler))
     {
         case ABILITY_SWIFT_SWIM:
-            if (IsBattlerWeatherAffected(battler, B_WEATHER_RAIN_ANY))
+            if (weatherFlags & B_WEATHER_RAIN_ANY)
                 monSpeed *= 2;
             break;
         case ABILITY_CHLOROPHYLL:
-            if (IsBattlerWeatherAffected(battler, B_WEATHER_SUN_ANY))
+            if (weatherFlags & B_WEATHER_SUN_ANY)
                 monSpeed *= 2;
             break;
         case ABILITY_SAND_RUSH:
-            if (IsBattlerWeatherAffected(battler, B_WEATHER_SANDSTORM))
+            if (weatherFlags & B_WEATHER_SANDSTORM)
                 monSpeed *= 2;
             break;
         case ABILITY_SLUSH_RUSH:
-            if (IsBattlerWeatherAffected(battler, B_WEATHER_HAIL))
+            if (weatherFlags & B_WEATHER_HAIL)
                 monSpeed *= 2;
             break;
         case ABILITY_QUICK_FEET:
@@ -3793,12 +3794,12 @@ u32 GetBattlerTotalSpeed(u32 battler)
         monSpeed = (monSpeed * 110) / 100;
 
 #if SUN_BOOST_SPEED
-    if (IsBattlerWeatherAffected(battler, B_WEATHER_SUN_ANY) && IsBattlerOfType(battler, TYPE_GRASS))
+    if ((weatherFlags & B_WEATHER_SUN_ANY) && IsBattlerOfType(battler, TYPE_GRASS))
         monSpeed += (monSpeed / 3);
 #endif
 
 #if HAIL_BOOST_SPEED
-    if (IsBattlerWeatherAffected(battler, B_WEATHER_HAIL) && IsBattlerOfType(battler, TYPE_ICE))
+    if ((weatherFlags & B_WEATHER_HAIL) && IsBattlerOfType(battler, TYPE_ICE))
         monSpeed += (monSpeed / 3);
 #endif
 

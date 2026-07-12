@@ -150,7 +150,7 @@ u16 *GetUsedHeldItemPtr(u32 battler);
 bool32 NoAliveMonsForParty(struct Pokemon *party);
 bool32 NoAliveMonsForEitherParty(void);
 bool32 IsBattlerAlive(u32 battlerId);
-bool32 IsBattlerWeatherAffected(u32 battlerId, u32 weatherFlags);
+u32 GetBattlerWeatherFlags(u32 battlerId);
 bool32 TryChangeBattleWeather(u32 battlerId, u32 weatherEnumId);
 u32 GetCurrentWeatherEnumId(u32 weatherFlags);
 bool32 CalcMoveIsCritical(u32 battlerAtk, u32 battlerDef, u32 move);

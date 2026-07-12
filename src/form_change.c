@@ -96,8 +96,13 @@ u32 GetSpeciesForm(u32 formChangeType, u32 species, u32 personality, u32 ability
                             if (!param)
                                 targetSpecies = formsTable[i].targetSpecies;
                         }
-                        else if ((!param && !IsBattlerWeatherAffected(battlerId, B_WEATHER_ANY)) || IsBattlerWeatherAffected(battlerId, param))
-                            targetSpecies = formsTable[i].targetSpecies;
+                        else
+                        {
+                            u32 weatherFlags = GetBattlerWeatherFlags(battlerId);
+                            
+                            if (((!param && weatherFlags == B_WEATHER_NONE) || (weatherFlags & param)))
+                                targetSpecies = formsTable[i].targetSpecies;
+                        }
                         break;
                     case FORM_CHANGE_SWITCH_OUT:
                     case FORM_CHANGE_START_BATTLE:

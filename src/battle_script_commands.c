@@ -1004,7 +1004,7 @@ u32 AccuracyCalcHelper(u32 battlerIdAtk, u32 battlerIdDef, u32 move, const u8 *n
         || (!gBattleMoves[move].flags.hitUnderwater && (gStatuses3[battlerIdDef] & STATUS3_UNDERWATER))
         || (gStatuses3[battlerIdDef] & STATUS3_VANISHED))
         state = ACCURACY_STATE_MISSES;
-    else if (gBattleMoves[move].effect == EFFECT_NEVER_MISS_IN_WEATHER && IsBattlerWeatherAffected(battlerIdAtk, gBattleMoves[move].argument.neverMissInWeather.weather))
+    else if (gBattleMoves[move].effect == EFFECT_NEVER_MISS_IN_WEATHER && (GetBattlerWeatherFlags(battlerIdAtk) & gBattleMoves[move].argument.neverMissInWeather.weather))
         state = ACCURACY_STATE_HITS;
     else if ((gStatuses3[battlerIdDef] & STATUS3_MINIMIZED) && gBattleMoves[move].flags.dmgMinimize)
         state = ACCURACY_STATE_HITS;
@@ -1052,7 +1052,7 @@ u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
     
     // Check effects that alter the move's accuracy
     if ((gBattleMoves[move].effect == EFFECT_NEVER_MISS_IN_WEATHER && gBattleMoves[move].argument.neverMissInWeather.debuffWeather
-    && IsBattlerWeatherAffected(attacker, gBattleMoves[move].argument.neverMissInWeather.debuffWeather)) || (defAbility == ABILITY_WONDER_SKIN
+    && (GetBattlerWeatherFlags(attacker) & gBattleMoves[move].argument.neverMissInWeather.debuffWeather)) || (defAbility == ABILITY_WONDER_SKIN
     && GetBattleMoveSplit(move) == SPLIT_STATUS && moveAcc > 50))
         moveAcc = 50;
     
@@ -1092,11 +1092,11 @@ u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
                 totalAccuracy /= 2; // 1/2 loss
             break;
         case ABILITY_SAND_VEIL:
-            if (IsBattlerWeatherAffected(defender, B_WEATHER_SANDSTORM))
+            if (GetBattlerWeatherFlags(defender) & B_WEATHER_SANDSTORM)
                 totalAccuracy = (totalAccuracy * 80) / 100; // 1.2 loss
             break;
         case ABILITY_SNOW_CLOAK:
-            if (IsBattlerWeatherAffected(defender, B_WEATHER_HAIL))
+            if (GetBattlerWeatherFlags(defender) & B_WEATHER_HAIL)
                 totalAccuracy = (totalAccuracy * 80) / 100; // 1.2 loss
             break;
     }
@@ -1112,7 +1112,7 @@ u32 CalcMoveTotalAccuracy(u32 move, u32 attacker, u32 defender)
     }
     
     // General effects
-    if (IsBattlerWeatherAffected(attacker, B_WEATHER_FOG))
+    if (GetBattlerWeatherFlags(attacker) & B_WEATHER_FOG)
         totalAccuracy = (totalAccuracy * 60) / 100; // 0.6 loss
     
     if (gFieldStatus & STATUS_FIELD_GRAVITY)
@@ -2958,7 +2958,7 @@ bool32 CheckIfCanFireTwoTurnMoveNow(u32 battlerId, u32 move, bool32 checkChargeT
         return FALSE;
 
     // Certain two-turn moves may fire on the first turn in the right weather (Solar Beam, Electro Shot)
-    if (gBattleMoves[move].effect == EFFECT_SKIP_CHARGING_IN_WEATHER && IsBattlerWeatherAffected(battlerId, gBattleMoves[move].argument.twoTurns.statusOrweather))
+    if (gBattleMoves[move].effect == EFFECT_SKIP_CHARGING_IN_WEATHER && (GetBattlerWeatherFlags(battlerId) & gBattleMoves[move].argument.twoTurns.statusOrweather))
         return TRUE;
     
     return FALSE;
@@ -6187,7 +6187,7 @@ static void atk76_various(void)
         {
             VARIOUS_ARGS(u16 weatherFlags, const u8 *ptr);
 
-            if (IsBattlerWeatherAffected(battlerId, cmd->weatherFlags))
+            if (GetBattlerWeatherFlags(battlerId) & cmd->weatherFlags)
                 gBattlescriptCurrInstr = cmd->ptr;
             else
                 gBattlescriptCurrInstr = cmd->nextInstr;
@@ -8494,10 +8494,11 @@ static void atkC0_recoverbasedonweather(void)
     else
     {
         u32 maxHP = GetNonDynamaxMaxHP(gBattlerTarget);
+        u32 weatherFlags = GetBattlerWeatherFlags(gBattlerTarget);
         
-        if (IsBattlerWeatherAffected(gBattlerTarget, B_WEATHER_SUN_ANY))
+        if (weatherFlags & B_WEATHER_SUN_ANY)
             gBattleMoveDamage = (20 * maxHP) / 30; // Sun
-        else if (IsBattlerWeatherAffected(gBattlerTarget, B_WEATHER_ANY & ~(B_WEATHER_STRONG_WINDS)))
+        else if ((weatherFlags & (B_WEATHER_ANY & ~(B_WEATHER_STRONG_WINDS))))
             gBattleMoveDamage = maxHP / 4; // Any other weather, except Strong Winds
         else
             gBattleMoveDamage = maxHP / 2; // No Weather or Strong Winds

@@ -58,11 +58,11 @@ s8 BattleAIFunc_CheckBadMove(struct AIScript *data, s8 score)
         switch (data->moveType)
         {
             case TYPE_FIRE:
-                if (IsBattlerWeatherAffected(data->attacker, B_WEATHER_RAIN_PRIMAL))
+                if (GetBattlerWeatherFlags(data->attacker) & B_WEATHER_RAIN_PRIMAL)
                     RETURN_SCORE(-20);
                 break;
             case TYPE_WATER:
-                if (IsBattlerWeatherAffected(data->attacker, B_WEATHER_SUN_PRIMAL))
+                if (GetBattlerWeatherFlags(data->attacker) & B_WEATHER_SUN_PRIMAL)
                     RETURN_SCORE(-20);
                 break;
         }

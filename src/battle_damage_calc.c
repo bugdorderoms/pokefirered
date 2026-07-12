@@ -29,11 +29,13 @@ struct DamageCalc
     u8 moveSplit;
     u8 moveSlot;
     bool8 isCrit;
+    u32 effectiveness;
+    u32 atkWeatherFlags;
+    u32 defWeatherFlags;
     u8 atkHoldEffect;
     u8 defHoldEffect;
     u16 atkHoldEffParam;
     u16 defHoldEffParam;
-    u32 effectiveness;
     u8 flags;
 };
 
@@ -119,6 +121,8 @@ static struct DamageCalc *PopulateDamageStruct(u32 attacker, u32 defender, u32 m
     ctx->defHoldEffect = GetBattlerItemHoldEffect(defender, TRUE);
     ctx->atkHoldEffParam = ItemId_GetHoldEffectParam(gBattleMons[attacker].item);
     ctx->defHoldEffParam = ItemId_GetHoldEffectParam(gBattleMons[defender].item);
+    ctx->atkWeatherFlags = GetBattlerWeatherFlags(attacker);
+    ctx->defWeatherFlags = GetBattlerWeatherFlags(defender);
     ctx->move = move;
     ctx->moveSlot = moveSlot;
     ctx->moveSplit = GetBattleMoveSplit(move);
@@ -207,7 +211,7 @@ static inline u32 CalcBaseAttackStat(struct DamageCalc *ctx, bool32 isConfusionD
                 }
                 break;
             case ABILITY_FLOWER_GIFT:
-                if (ctx->moveSplit == SPLIT_PHYSICAL && IsBattlerWeatherAffected(attacker, B_WEATHER_SUN_ANY))
+                if (ctx->moveSplit == SPLIT_PHYSICAL && (ctx->atkWeatherFlags & B_WEATHER_SUN_ANY))
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                 break;
             case ABILITY_PLUS:
@@ -217,7 +221,7 @@ static inline u32 CalcBaseAttackStat(struct DamageCalc *ctx, bool32 isConfusionD
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                 break;
             case ABILITY_SOLAR_POWER:
-                if (ctx->moveSplit == SPLIT_SPECIAL && IsBattlerWeatherAffected(attacker, B_WEATHER_SUN_ANY))
+                if (ctx->moveSplit == SPLIT_SPECIAL && (ctx->atkWeatherFlags & B_WEATHER_SUN_ANY))
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                 break;
             case ABILITY_OVERGROW:
@@ -268,7 +272,7 @@ static inline u32 CalcBaseAttackStat(struct DamageCalc *ctx, bool32 isConfusionD
             switch (GetBattlerAbility(BATTLE_PARTNER(attacker)))
             {
                 case ABILITY_FLOWER_GIFT:
-                    if (ctx->moveSplit == SPLIT_PHYSICAL && IsBattlerWeatherAffected(attacker, B_WEATHER_SUN_ANY))
+                    if (ctx->moveSplit == SPLIT_PHYSICAL && (ctx->atkWeatherFlags & B_WEATHER_SUN_ANY))
                         modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                     break;
             }
@@ -349,7 +353,7 @@ static inline u32 CalcBaseDefenseStat(struct DamageCalc *ctx, bool32 isConfusion
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(2.0));
                 break;
             case ABILITY_FLOWER_GIFT:
-                if (ctx->moveSplit == SPLIT_SPECIAL && IsBattlerWeatherAffected(defender, B_WEATHER_SUN_ANY))
+                if (ctx->moveSplit == SPLIT_SPECIAL && (ctx->defWeatherFlags & B_WEATHER_SUN_ANY))
                     modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                 break;
         }
@@ -360,7 +364,7 @@ static inline u32 CalcBaseDefenseStat(struct DamageCalc *ctx, bool32 isConfusion
             switch (GetBattlerAbility(BATTLE_PARTNER(defender)))
             {
                 case ABILITY_FLOWER_GIFT:
-                    if (ctx->moveSplit == SPLIT_SPECIAL && IsBattlerWeatherAffected(defender, B_WEATHER_SUN_ANY))
+                    if (ctx->moveSplit == SPLIT_SPECIAL && (ctx->defWeatherFlags & B_WEATHER_SUN_ANY))
                         modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
                     break;
             }
@@ -378,12 +382,12 @@ static inline u32 CalcBaseDefenseStat(struct DamageCalc *ctx, bool32 isConfusion
             modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.1));
         
         // Sandstorm modifier
-        if (ctx->moveSplit == SPLIT_SPECIAL && IsBattlerWeatherAffected(defender, B_WEATHER_SANDSTORM) && IsBattlerOfType(defender, TYPE_ROCK))
+        if (ctx->moveSplit == SPLIT_SPECIAL && (ctx->defWeatherFlags & B_WEATHER_SANDSTORM) && IsBattlerOfType(defender, TYPE_ROCK))
             modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
         
         // Hail modifier
 #if HAIL_BOOST_DEFENSE
-        if (ctx->moveSplit == SPLIT_PHYSICAL && IsBattlerWeatherAffected(defender, B_WEATHER_HAIL) && IsBattlerOfType(defender, TYPE_ICE))
+        if (ctx->moveSplit == SPLIT_PHYSICAL && (ctx->defWeatherFlags & B_WEATHER_HAIL) && IsBattlerOfType(defender, TYPE_ICE))
             modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
 #endif
     }
@@ -605,7 +609,7 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *ctx, u32 basePow
     switch (moveEffect)
     {
         case EFFECT_SKIP_CHARGING_IN_WEATHER:
-            if (IsBattlerWeatherAffected(attacker, (B_WEATHER_ANY & ~(gBattleMoves[move].argument.twoTurns.statusOrweather | B_WEATHER_STRONG_WINDS))))
+            if ((ctx->atkWeatherFlags & (B_WEATHER_ANY & ~(gBattleMoves[move].argument.twoTurns.statusOrweather | B_WEATHER_STRONG_WINDS))))
                 modifier = uq4_12_mul(modifier, UQ_4_12(0.5));
             break;
         case EFFECT_ROLLOUT:
@@ -643,7 +647,7 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *ctx, u32 basePow
                 modifier = uq4_12_mul(modifier, UQ_4_12(1.5));
             break;
         case EFFECT_WEATHER_BALL:
-            if (IsBattlerWeatherAffected(attacker, B_WEATHER_ANY & ~(B_WEATHER_STRONG_WINDS)))
+            if ((ctx->atkWeatherFlags & (B_WEATHER_ANY & ~(B_WEATHER_STRONG_WINDS))))
                 modifier = uq4_12_mul(modifier, UQ_4_12(2.0));
             break;
         case EFFECT_BRINE:
@@ -745,8 +749,7 @@ static inline u32 CalcMoveBasePowerModifiers(struct DamageCalc *ctx, u32 basePow
                 modifier = uq4_12_mul(modifier, UQ_4_12(1.3));
             break;
         case ABILITY_SAND_FORCE:
-            if (IsBattlerWeatherAffected(attacker, B_WEATHER_SANDSTORM) && (ctx->moveType == TYPE_ROCK || ctx->moveType == TYPE_GROUND
-            || ctx->moveType == TYPE_STEEL))
+            if ((ctx->atkWeatherFlags & B_WEATHER_SANDSTORM) && (ctx->moveType == TYPE_ROCK || ctx->moveType == TYPE_GROUND || ctx->moveType == TYPE_STEEL))
                 modifier = uq4_12_mul(modifier, UQ_4_12(1.3));
             break;
         case ABILITY_STRONG_JAW:
@@ -878,14 +881,14 @@ static inline u32 GetParentalBondDamageModifier(struct DamageCalc *ctx)
 
 static inline u32 GetWeatherDamageModifier(struct DamageCalc *ctx)
 {
-    if (IsBattlerWeatherAffected(ctx->attacker, B_WEATHER_SUN_ANY))
+    if (ctx->atkWeatherFlags & B_WEATHER_SUN_ANY)
     {
         if (ctx->moveType == TYPE_FIRE)
             return UQ_4_12(1.5);
         else if (ctx->moveType == TYPE_WATER)
             return UQ_4_12(0.5);
     }
-    else if (IsBattlerWeatherAffected(ctx->attacker, B_WEATHER_RAIN_ANY))
+    else if (ctx->atkWeatherFlags & B_WEATHER_RAIN_ANY)
     {
         if (ctx->moveType == TYPE_WATER)
             return UQ_4_12(1.5);
@@ -1310,7 +1313,7 @@ static void MulByTypeEffectiveness(u32 move, u32 moveType, u32 atkAbility, u32 d
     if (!forAnticipation)
     {
         // Check strong winds
-        if (IsBattlerWeatherAffected(defender, B_WEATHER_STRONG_WINDS) && defenderType == TYPE_FLYING && mod == TYPE_MUL_SUPER_EFFECTIVE)
+        if ((GetBattlerWeatherFlags(defender) & B_WEATHER_STRONG_WINDS) && defenderType == TYPE_FLYING && mod == TYPE_MUL_SUPER_EFFECTIVE)
         {
             mod = TYPE_MUL_NORMAL;
             

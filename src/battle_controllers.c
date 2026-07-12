@@ -858,7 +858,7 @@ void BtlController_EmitMoveAnimation(u32 battlerId, u32 bufferId, u32 move, u32 
     sBattleBuffersTransferData[9] = (dmg & 0xFF000000) >> 24;
     sBattleBuffersTransferData[10] = friendship;
     sBattleBuffersTransferData[11] = gMultiHitCounter;
-    if (IsBattlerWeatherAffected(battlerId, B_WEATHER_ANY))
+    if (GetBattlerWeatherFlags(battlerId) & B_WEATHER_ANY)
     {
         sBattleBuffersTransferData[12] = gBattleWeather;
         sBattleBuffersTransferData[13] = (gBattleWeather & 0xFF00) >> 8;
