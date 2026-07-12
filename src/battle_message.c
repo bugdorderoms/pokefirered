@@ -1555,7 +1555,12 @@ void BufferStringBattle(u32 battlerId, u32 stringId)
         else
         {
             if (gBattleTypeFlags & BATTLE_TYPE_GHOST)
-                stringPtr = (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED) ? COMPOUND_STRING("The Ghost appeared!\p") : COMPOUND_STRING("The Ghost appeared!\pDarn!\nThe Ghost can't be ID'd!\p");
+            {
+                if (gBattleTypeFlags & BATTLE_TYPE_GHOST_UNVEILED)
+                    stringPtr = COMPOUND_STRING("The Ghost appeared!\p");
+                else
+                    stringPtr = COMPOUND_STRING("The Ghost appeared!\pDarn!\nThe Ghost can't be ID'd!\p");
+            }
             else if (IsDoubleBattleForBattler(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
                 stringPtr = COMPOUND_STRING("Wild {B_OPPONENT_MON1_NAME} and {B_OPPONENT_MON2_NAME} appeared!\p");
             else if (gBattleTypeFlags & BATTLE_TYPE_TOTEM)

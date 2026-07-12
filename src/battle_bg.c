@@ -425,17 +425,21 @@ void LoadBattleMenuWindowGfx(void)
 {
     TextWindow_SetUserSelectedFrame(2, 0x012, 0x10);
     TextWindow_SetUserSelectedFrame(2, 0x022, 0x10);
-    gPlttBufferUnfaded[0x5C] = RGB( 9,  9,  9);
-    gPlttBufferUnfaded[0x5D] = RGB( 9,  9,  9);
+    
+    gPlttBufferUnfaded[0x52] = RGB(15, 15, 15);
+    CpuCopy16(&gPlttBufferUnfaded[0x52], &gPlttBufferFaded[0x52], 2);
+    
+    gPlttBufferUnfaded[0x5C] = RGB(9,  9,  9);
+    gPlttBufferUnfaded[0x5D] = RGB(9,  9,  9);
     gPlttBufferUnfaded[0x5E] = RGB(31, 31, 31);
-    gPlttBufferUnfaded[0x5F] = RGB( 26,  26,  25);
+    gPlttBufferUnfaded[0x5F] = RGB(26, 26, 25);
     CpuCopy16(&gPlttBufferUnfaded[0x5C], &gPlttBufferFaded[0x5C], 8);
     
     if (gBattleTypeFlags & (BATTLE_TYPE_FIRST_BATTLE | BATTLE_TYPE_POKEDUDE))
     {
         Menu_LoadStdPalAt(0x70, 0x14);
         TextWindow_LoadResourcesStdFrame0(0, 0x030, 0x70);
-        gPlttBufferUnfaded[0x76] = RGB( 0,  0,  0);
+        gPlttBufferUnfaded[0x76] = RGB(0, 0, 0);
         CpuCopy16(&gPlttBufferUnfaded[0x76], &gPlttBufferFaded[0x76], 2);
     }
 }
