@@ -448,6 +448,10 @@ static u32 FldEff_Shadow(void)
     objectEventId = GetObjectEventIdByLocalIdAndMap(gFieldEffectArguments[0], gFieldEffectArguments[1], gFieldEffectArguments[2]);
     graphicsInfo = GetObjectEventGraphicsInfo(gObjectEvents[objectEventId].graphicsId);
     
+    // Don't create shadow for this obj event
+    if (graphicsInfo->shadowSize == SHADOW_NONE)
+        return 0;
+    
     LoadSpriteSheetByTemplate(sShadowsTemplatePointers[graphicsInfo->shadowSize]);
     spriteId = CreateSpriteAtEnd(sShadowsTemplatePointers[graphicsInfo->shadowSize], 0, 0, 0x94);
     

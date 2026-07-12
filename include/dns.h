@@ -50,5 +50,6 @@ u32 DNSGetCurrentSeason(void);
 u8 *DNSCopyCurrentSeasonName(u8 *dest);
 bool32 IsMapDNSException(void);
 u32 DNSGetMoonPhase(void);
+bool32 IsDNSLightningUpTime(void);
 
 #endif // GUARD_DNS_UTILS_H

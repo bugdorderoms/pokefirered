@@ -30,7 +30,6 @@ extern const u16 gObjectEventPic_RedFish[];
 extern const u16 gObjectEventPic_GreenFish[];
 extern const u16 gObjectEventPic_Pokedex[];
 extern const u16 gObjectEventPic_TownMap[];
-extern const u16 gObjectEventPic_UnusedMan[]; // Unused
 extern const u16 gObjectEventPic_Giovanni[];
 extern const u16 gObjectEventPic_Blaine[];
 extern const u16 gObjectEventPic_Sabrina[];
@@ -86,7 +85,6 @@ extern const u16 gObjectEventPic_Sailor[];
 extern const u16 gObjectEventPic_Captain[];
 extern const u16 gObjectEventPic_Fisher[];
 extern const u16 gObjectEventPic_TeachyTVHost[];
-extern const u16 gObjectEventPic_UnusedWoman[];
 extern const u16 gObjectEventPic_TuberF[];
 extern const u16 gObjectEventPic_TuberMWater[];
 extern const u16 gObjectEventPic_TuberMLand[];
@@ -230,5 +228,6 @@ extern const u32 gFieldEffectObjectPic_Sparkle[];
 extern const u32 gFieldEffectObjectPic_CaveDust[];
 extern const u16 gFieldEffectObjectPic_SnowFootprints[];
 extern const u16 gObjectEventPic_RaidDen[];
+extern const u16 gObjectEventPic_Lightbulb[];
 
 #endif // GUARD_OBJECT_EVENT_GRAPHICS_H

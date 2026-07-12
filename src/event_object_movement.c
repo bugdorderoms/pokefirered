@@ -151,6 +151,7 @@ static void MovementType_VsSeeker4D(struct Sprite *);
 static void MovementType_VsSeeker4E(struct Sprite *);
 static void MovementType_VsSeeker4F(struct Sprite *);
 static void MovementType_WanderAroundSlowest(struct Sprite *);
+static void MovementType_UpdateLightbulb(struct Sprite *);
 
 #define movement_type_def(setup, table)                                                          \
 static bool32 setup##_callback(struct ObjectEvent *, struct Sprite *);                           \
@@ -274,6 +275,7 @@ static void (*const sMovementTypeCallbacks[MOVEMENT_TYPES_COUNT])(struct Sprite 
     [MOVEMENT_TYPE_VS_SEEKER_4E]                          = MovementType_VsSeeker4E,
     [MOVEMENT_TYPE_VS_SEEKER_4F]                          = MovementType_VsSeeker4F,
     [MOVEMENT_TYPE_WANDER_AROUND_SLOWEST]                 = MovementType_WanderAroundSlowest,
+    [MOVEMENT_TYPE_LIGHTBULB]                             = MovementType_UpdateLightbulb,
 };
 
 static const bool8 gRangedMovementTypes[MOVEMENT_TYPES_COUNT] = {
@@ -403,10 +405,12 @@ static const u8 gInitialMovementTypeFacingDirections[MOVEMENT_TYPES_COUNT] = {
     [MOVEMENT_TYPE_VS_SEEKER_4E] = DIR_SOUTH,
     [MOVEMENT_TYPE_VS_SEEKER_4F] = DIR_SOUTH,
     [MOVEMENT_TYPE_WANDER_AROUND_SLOWEST] = DIR_SOUTH,
+    [MOVEMENT_TYPE_LIGHTBULB] = DIR_NORTH,
 };
 
 #include "data/object_events/object_event_pic_tables.h"
 #include "data/object_events/object_event_anims.h"
+#include "data/object_events/object_event_affine_anims.h"
 #include "data/object_events/base_oam.h"
 #include "data/object_events/object_event_subsprites.h"
 #include "data/object_events/object_event_graphics_info.h"
@@ -425,6 +429,7 @@ static const struct SpritePalette sObjectEventSpritePalettes[] = {
     OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_METEORITE,         gObjectEventPal_Meteorite),
     OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_SS_ANNE,           gObjectEventPal_SSAnne),
     OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_SEAGALLOP,         gObjectEventPal_Seagallop),
+    OBJECT_EVENT_PALETTE(OBJ_EVENT_PAL_TAG_LIGHTBULB,         gObjectEventPal_Lightbulb)
 };
 
 #undef OBJECT_EVENT_PALETTE
@@ -1252,7 +1257,7 @@ static void RemoveObjectEvent(struct ObjectEvent *objectEvent)
     image.size = GetObjectEventGraphicsInfo(objectEvent->graphicsId)->size;
     gSprites[objectEvent->spriteId].images = &image;
     paletteNum = gSprites[objectEvent->spriteId].oam.paletteNum;
-    DestroySprite(&gSprites[objectEvent->spriteId]);
+    DestroySpriteAndFreeMatrix(&gSprites[objectEvent->spriteId]);
     FieldEffectFreePaletteIfUnused(paletteNum);
 }
 
@@ -1267,9 +1272,32 @@ void RemoveObjectEventByLocalIdAndMap(u32 localId, u32 mapNum, u32 mapGroup)
     }
 }
 
-static void UpdateRaidDenObjectEvent(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+static bool32 IsLightballTypeObjectEvent(u32 graphicsId)
 {
-    if (objectEvent->graphicsId == OBJ_EVENT_GFX_RAID_DEN)
+    switch (graphicsId)
+    {
+        case OBJ_EVENT_GFX_LIGHTBULB:
+            return TRUE;
+    }
+    return FALSE;
+}
+
+static void UpdateSpecialObjectEvents(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    u32 graphicsId = objectEvent->graphicsId;
+    
+    if (IsLightballTypeObjectEvent(graphicsId))
+    {
+        objectEvent->fixedPriority = TRUE;
+        sprite->oam.priority = 1;
+        
+        sprite->oam.objMode = ST_OAM_OBJ_BLEND;
+        
+        sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+        sprite->subspriteMode = SUBSPRITES_OFF;
+        InitSpriteAffineAnim(sprite);
+    }
+    else if (graphicsId == OBJ_EVENT_GFX_RAID_DEN)
         StartSpriteAnim(sprite, IsRaidClearedFlagSet() ? ANIM_STAY_STILL : ANIM_ACTIVATE_RAID_DEN);
 }
 
@@ -1316,7 +1344,7 @@ static u32 TrySetupObjectEventSprite(struct ObjectEventTemplate *objectEventTemp
         StartSpriteAnim(sprite, GetFaceDirectionAnimNum(objectEvent->facingDirection));
 
     SetObjectSubpriorityByZCoord(objectEvent->previousElevation, sprite, 1);
-    UpdateRaidDenObjectEvent(objectEvent, sprite);
+    UpdateSpecialObjectEvents(objectEvent, sprite);
     UpdateObjectEventVisibility(objectEvent, sprite);
     
     return objectEventId;
@@ -1638,7 +1666,7 @@ static void ReloadMapObjectWithOffset(u32 objectEventId, s16 x, s16 y)
 
         sub_805EFF4(objectEvent);
         SetObjectSubpriorityByZCoord(objectEvent->previousElevation, sprite, 1);
-        UpdateRaidDenObjectEvent(objectEvent, sprite);
+        UpdateSpecialObjectEvents(objectEvent, sprite);
     }
 }
 
@@ -3875,6 +3903,14 @@ static bool32 MovementType_VsSeeker4E_VsSeeker4F_Step1(struct ObjectEvent *objec
     if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
         sprite->data[1] = 0;
     
+    return FALSE;
+}
+
+movement_type_def(MovementType_UpdateLightbulb, gMovementTypeFuncs_UpdateLightbulb)
+
+static bool32 MovementType_UpdateLightbulb_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    objectEvent->invisible = IsDNSLightningUpTime() ^ TRUE;
     return FALSE;
 }
 
@@ -7511,12 +7547,12 @@ void GroundEffect_StepOnLongGrass(struct ObjectEvent *objEvent, struct Sprite *s
 
 void GroundEffect_WaterReflection(struct ObjectEvent *objEvent, struct Sprite *sprite)
 {
-    SetUpReflection(objEvent, sprite, 0);
+    SetUpReflection(objEvent, sprite, FALSE);
 }
 
 void GroundEffect_IceReflection(struct ObjectEvent *objEvent, struct Sprite *sprite)
 {
-    SetUpReflection(objEvent, sprite, 1);
+    SetUpReflection(objEvent, sprite, TRUE);
 }
 
 void GroundEffect_FlowingWater(struct ObjectEvent *objEvent, struct Sprite *sprite)
@@ -7783,7 +7819,7 @@ static void DoGroundEffects_OnFinishStep(struct ObjectEvent *objEvent, struct Sp
 
 bool32 FreezeObjectEvent(struct ObjectEvent * objectEvent)
 {
-    if (objectEvent->heldMovementActive || objectEvent->frozen)
+    if (objectEvent->heldMovementActive || objectEvent->frozen || IsLightballTypeObjectEvent(objectEvent->graphicsId))
         return TRUE;
     
     objectEvent->frozen = TRUE;
@@ -8195,19 +8231,6 @@ void UpdateObjectEventSpriteSubpriorityAndVisibility(struct Sprite *sprite)
     DoObjectUnionRoomWarpYDisplacement(sprite);
     SetObjectSubpriorityByZCoord(sprite->tZCoord, sprite, 1);
     UpdateObjectEventSpriteVisibility(sprite, sprite->tInvisible);
-}
-
-void sub_8068FD0(void)
-{
-    u32 i;
-    
-    for (i = 0; i < MAX_SPRITES; i++)
-    {
-        struct Sprite *sprite = &gSprites[i];
-        
-        if (sprite->inUse && sprite->callback == UpdateObjectEventSpriteSubpriorityAndVisibility)
-            DestroySprite(sprite);
-    }
 }
 
 #define tUnionRoomWarpAnimNo    data[3]

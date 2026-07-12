@@ -763,23 +763,6 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_TeachyTVHost = {
     .affineAnims = gDummySpriteAffineAnimTable
 };
 
-const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_UnusedWoman = {
-    .tileTag = SPRITE_INVALID_TAG,
-    .paletteTag = OBJ_EVENT_PAL_TAG_NPC_PINK,
-    .size = 256,
-    .width = 16,
-    .height = 32,
-    .shadowSize = SHADOW_SIZE_M,
-    .inanimate = FALSE,
-    .disableReflectionPaletteLoad = FALSE,
-    .tracks = TRACKS_FOOT,
-    .oam = &gObjectEventBaseOam_16x32,
-    .subspriteTables = gObjectEventSpriteOamTables_16x32,
-    .anims = sAnimTable_Standard,
-    .images = sPicTable_UnusedWoman,
-    .affineAnims = gDummySpriteAffineAnimTable
-};
-
 const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_TuberF = {
     .tileTag = SPRITE_INVALID_TAG,
     .paletteTag = OBJ_EVENT_PAL_TAG_NPC_WHITE,
@@ -2767,4 +2750,21 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_RaidDen = {
     .anims = sAnimTable_RaidDen,
     .images = sPicTable_RaidDen,
     .affineAnims = gDummySpriteAffineAnimTable
+};
+
+const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Lightbulb = {
+    .tileTag = SPRITE_INVALID_TAG,
+    .paletteTag = OBJ_EVENT_PAL_TAG_LIGHTBULB,
+    .size = 512,
+    .width = 32,
+    .height = 32,
+    .shadowSize = SHADOW_NONE,
+    .inanimate = TRUE,
+    .disableReflectionPaletteLoad = FALSE,
+    .tracks = TRACKS_NONE,
+    .oam = &gObjectEventBaseOam_32x32,
+    .subspriteTables = gObjectEventSpriteOamTables_32x32,
+    .anims = sAnimTable_Inanimate,
+    .images = sPicTable_Lightbulb,
+    .affineAnims = sAffineAnimTable_Lightbulb
 };

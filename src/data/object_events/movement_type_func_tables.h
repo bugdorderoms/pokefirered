@@ -147,6 +147,7 @@ static bool32 MovementType_VsSeeker4D_Step2(struct ObjectEvent *objectEvent, str
 static bool32 MovementType_VsSeeker4E_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
 static bool32 MovementType_VsSeeker4F_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
 static bool32 MovementType_VsSeeker4E_VsSeeker4F_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite);
+static bool32 MovementType_UpdateLightbulb_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite);
 
 static u32 GetVectorDirection(s16 dx, s16 dy, s16 absdx, s16 absdy);
 static u32 GetLimitedVectorDirection_SouthNorth(s16 dx, s16 dy, s16 absdx, s16 absdy);
@@ -610,4 +611,8 @@ bool32 (*const gMovementTypeFuncs_VsSeeker4E[])(struct ObjectEvent *, struct Spr
 bool32 (*const gMovementTypeFuncs_VsSeeker4F[])(struct ObjectEvent *, struct Sprite *) = {
     MovementType_VsSeeker4F_Step0,
     MovementType_VsSeeker4E_VsSeeker4F_Step1,
+};
+
+bool32 (*const gMovementTypeFuncs_UpdateLightbulb[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_UpdateLightbulb_Step0
 };

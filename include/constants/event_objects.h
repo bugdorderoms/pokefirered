@@ -162,8 +162,9 @@
 #define OBJ_EVENT_GFX_GREEN_MUDSDALE 158
 #define OBJ_EVENT_GFX_GREEN_MACHAMP 159
 #define OBJ_EVENT_GFX_RAID_DEN 160
+#define OBJ_EVENT_GFX_LIGHTBULB 161
 
-#define NUM_OBJ_EVENT_GFX     161
+#define NUM_OBJ_EVENT_GFX     162
 
 #define OBJ_EVENT_PAL_TAG_PLAYER_RED                  0x1100
 #define OBJ_EVENT_PAL_TAG_BRIDGE_REFLECTION           0x1101
@@ -175,6 +176,7 @@
 #define OBJ_EVENT_PAL_TAG_METEORITE                   0x1107
 #define OBJ_EVENT_PAL_TAG_SEAGALLOP                   0x1108
 #define OBJ_EVENT_PAL_TAG_SS_ANNE                     0x1109
+#define OBJ_EVENT_PAL_TAG_LIGHTBULB                   0x110A
 
 // These are dynamic object gfx ids.
 // They correspond with the values of the VAR_OBJ_GFX_ID_X vars.
@@ -200,7 +202,8 @@
 #define SHADOW_SIZE_S   0
 #define SHADOW_SIZE_M   1
 #define SHADOW_SIZE_L   2
-#define SHADOW_SIZE_XL  3
+#define SHADOW_SIZE_XL  3 // Battle only
+#define SHADOW_NONE     SHADOW_SIZE_XL
 
 #define TRACKS_NONE       0
 #define TRACKS_FOOT       1

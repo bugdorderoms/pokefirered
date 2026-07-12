@@ -160,4 +160,5 @@ const struct ObjectEventGraphicsInfo *const gObjectEventGraphicsInfoPointers[NUM
     [OBJ_EVENT_GFX_GREEN_MUDSDALE]           = &gObjectEventGraphicsInfo_GreenMudsdale,
     [OBJ_EVENT_GFX_GREEN_MACHAMP]            = &gObjectEventGraphicsInfo_GreenMachamp,
     [OBJ_EVENT_GFX_RAID_DEN]                 = &gObjectEventGraphicsInfo_RaidDen,
+    [OBJ_EVENT_GFX_LIGHTBULB]                = &gObjectEventGraphicsInfo_Lightbulb,
 };
