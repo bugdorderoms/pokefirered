@@ -4376,7 +4376,7 @@ static inline void UseMoveAction_ChooseMove(u32 attacker)
     
     if (gProtectStructs[attacker].noValidMoves) // No moves available
     {
-        gProtectStructs[gBattlerAttacker].noValidMoves = FALSE;
+        gProtectStructs[attacker].noValidMoves = FALSE;
         gHitMarker |= HITMARKER_NO_PPDEDUCT;
         move = MOVE_STRUGGLE;
         gBattleStruct->battlers[attacker].moveTarget = GetMoveTarget(move, 0, TRUE);

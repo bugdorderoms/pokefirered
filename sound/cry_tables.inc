@@ -1061,7 +1061,7 @@ gCryTable::
 	cry Cry_CalyrexShadowRider
 	cry Cry_EternatusEternamax
 	cry Cry_OinkologneFemale
-	cry Cry_MausholdFamilyOfThree
+	cry Cry_MausholdFamilyOfFour
 	cry Cry_PalafinHero
 	cry Cry_TatsugiriDroopy
 	cry Cry_TatsugiriStretchy
@@ -2127,7 +2127,7 @@ gCryTableReverse::
 	cry_reverse Cry_CalyrexShadowRider
 	cry_reverse Cry_EternatusEternamax
 	cry_reverse Cry_OinkologneFemale
-	cry_reverse Cry_MausholdFamilyOfThree
+	cry_reverse Cry_MausholdFamilyOfFour
 	cry_reverse Cry_PalafinHero
 	cry_reverse Cry_TatsugiriDroopy
 	cry_reverse Cry_TatsugiriStretchy

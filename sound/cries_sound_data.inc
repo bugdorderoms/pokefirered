@@ -4229,8 +4229,8 @@ Cry_OinkologneFemale::
 	.incbin "sound/direct_sound_samples/cries/oinkologne_female.bin"
 
 	.align 2
-Cry_MausholdFamilyOfThree::
-	.incbin "sound/direct_sound_samples/cries/maushold_family_of_three.bin"
+Cry_MausholdFamilyOfFour::
+	.incbin "sound/direct_sound_samples/cries/maushold_family_of_four.bin"
 
 	.align 2
 Cry_PalafinHero::
