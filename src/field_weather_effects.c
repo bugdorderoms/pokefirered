@@ -2742,3 +2742,133 @@ static void DestroyLeavesSprites(void)
 #undef tSpeedY
 #undef tState
 #undef tSize
+
+//------------------------------------------------------------------------------
+// WEATHER_CLOUD_SHADOWS
+//------------------------------------------------------------------------------
+
+static void CreateCloudShadowsSprites(void);
+static void DestroyCloudShadowsSprites(void);
+static void UpdateCloudShadowsSprite(struct Sprite *);
+
+static const struct SpriteSheet sCloudShadowsSpriteSheet = {
+    .data = gWeatherCloudShadowsTiles,
+    .size = 0x0800,
+    .tag = GFXTAG_CLOUD_SHADOWS,
+};
+
+static const struct OamData sCloudShadowsSpriteOamData = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_BLEND,
+    .mosaic = FALSE,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(64x64),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x64),
+    .tileNum = 0,
+    .priority = 2,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const struct SpriteTemplate sCloudShadowsSpriteTemplate = {
+    .tileTag = GFXTAG_CLOUD_SHADOWS,
+    .paletteTag = PALTAG_WEATHER,
+    .oam = &sCloudShadowsSpriteOamData,
+    .anims = sCloudSpriteAnimCmds,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = UpdateCloudShadowsSprite,
+};
+
+void CloudShadows_InitVars(void)
+{
+    gWeatherPtr->initStep = 0;
+    gWeatherPtr->noShadows = FALSE;
+    gWeatherPtr->weatherGfxLoaded = FALSE;
+    gWeatherPtr->gammaTargetIndex = 3;
+    gWeatherPtr->gammaStepDelay = 20;
+    if (!gWeatherPtr->cloudShadowsSpritesCreated)
+        Weather_SetBlendCoeffs(8, BASE_SHADOW_INTENSITY);
+}
+
+void CloudShadows_InitAll(void)
+{
+    CloudShadows_InitVars();
+    while (!gWeatherPtr->weatherGfxLoaded)
+        CloudShadows_Main();
+}
+
+void CloudShadows_Main(void)
+{
+    CreateCloudShadowsSprites();
+    gWeatherPtr->weatherGfxLoaded = TRUE;
+}
+
+bool32 CloudShadows_Finish(void)
+{
+    DestroyCloudShadowsSprites();
+    return FALSE;
+}
+
+static void CreateCloudShadowsSprites(void)
+{
+    u32 i, spriteId;
+    struct Sprite *sprite;
+    
+    if (!gWeatherPtr->cloudShadowsSpritesCreated)
+    {
+        gWeatherPtr->cloudShadowsSpritesCreated = TRUE;
+        
+        LoadSpriteSheet(&sCloudShadowsSpriteSheet);
+        LoadWeatherDefaultPalette();
+        
+        for (i = 0; i < NUM_CLOUD_SHADOWS_SPRITES; i++)
+        {
+            spriteId = CreateSprite(&sCloudShadowsSpriteTemplate, 0, 0, 0x94);
+            
+            if (spriteId != MAX_SPRITES)
+            {
+                gWeatherPtr->cloudShadowsSprites[i] = sprite = &gSprites[spriteId];
+                SetSpritePosToMapCoords(sCloudSpriteMapCoords[i].x + 7, sCloudSpriteMapCoords[i].y + 7, &sprite->x, &sprite->y);
+                sprite->coordOffsetEnabled = TRUE;
+            }
+            else
+                gWeatherPtr->cloudShadowsSprites[i] = NULL;
+        }
+    }
+}
+
+static void DestroyCloudShadowsSprites(void)
+{
+    u32 i;
+    
+    if (gWeatherPtr->cloudShadowsSpritesCreated)
+    {
+        gWeatherPtr->cloudShadowsSpritesCreated = FALSE;
+        
+        for (i = 0; i < NUM_CLOUD_SHADOWS_SPRITES; i++)
+        {
+            if (gWeatherPtr->cloudShadowsSprites[i] != NULL)
+                DestroySprite(gWeatherPtr->cloudShadowsSprites[i]);
+        }
+    }
+    FreeSpriteTilesByTag(GFXTAG_CLOUD_SHADOWS);
+}
+
+#define tMovementDelay data[0]
+
+static void UpdateCloudShadowsSprite(struct Sprite *sprite)
+{
+    // Every 15 frames move sprite 1 pixel to right and down.
+    if (++sprite->tMovementDelay == 15)
+    {
+        sprite->tMovementDelay = 0;
+        sprite->x++;
+        sprite->y++;
+    }
+}
+
+#undef tMovementDelay

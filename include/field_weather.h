@@ -18,6 +18,7 @@ enum
     GFXTAG_CLOUD,
     GFXTAG_SNOWSTORM,
     GFXTAG_LEAVE,
+    GFXTAG_CLOUD_SHADOWS,
 };
 
 struct Weather
@@ -43,9 +44,9 @@ struct Weather
     u8 snowstormSpritesCreated:1;
     u8 snowstormSwirlSpritesCreated:1;
     u8 flyingLeavesSpritesCreated:1;
+    u8 cloudShadowsSpritesCreated:1;
     // can be used to add new weathers
-    u8 unused:1;
-    u8 unused2;
+    u8 unused;
     
     u8 palProcessingState;
     u8 fadeScreenCounter;
@@ -145,6 +146,7 @@ struct Weather
     struct Sprite *snowstormSprites1[NUM_SNOWSTORM_SPRITES];
     struct Sprite *snowstormSprites2[NUM_SWIRL_SNOWSTORM_SPRITES];
     struct Sprite *leaveSprites[NUM_LEAVE_SPRITES];
+    struct Sprite *cloudShadowsSprites[NUM_CLOUD_SHADOWS_SPRITES];
 };
 
 extern struct Weather *const gWeatherPtr;
@@ -189,5 +191,6 @@ extern const u8 gWeatherRainTiles[];
 extern const u8 gWeatherSandstormTiles[];
 extern const u8 gWeatherCloudTiles[];
 extern const u8 gWeatherLeavesTiles[];
+extern const u8 gWeatherCloudShadowsTiles[];
 
 #endif // GUARD_WEATHER_H

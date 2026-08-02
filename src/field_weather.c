@@ -58,6 +58,7 @@ const u8 gWeatherRainTiles[] = INCBIN_U8("graphics/weather/rain.4bpp");
 const u8 gWeatherSandstormTiles[] = INCBIN_U8("graphics/weather/sandstorm.4bpp");
 const u8 gWeatherCloudTiles[] = INCBIN_U8("graphics/weather/cloud.4bpp");
 const u8 gWeatherLeavesTiles[] = INCBIN_U8("graphics/weather/leaves.4bpp");
+const u8 gWeatherCloudShadowsTiles[] = INCBIN_U8("graphics/weather/cloud_shadows.4bpp");
 
 static const struct SpritePalette sDefaultWeatherSpritePalette = {gDefaultWeatherSpritePalette, TAG_WEATHER_START};
 
@@ -77,6 +78,7 @@ static const struct WeatherCallbacks sWeatherFuncs[] = {
     [WEATHER_SNOWSTORM]          = {Snowstorm_InitVars, Snowstorm_Main, Snowstorm_InitAll, Snowstorm_Finish},
     [WEATHER_DROUGHT]            = {Drought_InitVars, Drought_Main, Drought_InitAll, Drought_Finish},
     [WEATHER_FLYING_LEAVES]      = {FlyingLeaves_InitVars, FlyingLeaves_Main, FlyingLeaves_InitAll, FlyingLeaves_Finish},
+    [WEATHER_CLOUD_SHADOWS]      = {CloudShadows_InitVars, CloudShadows_Main, CloudShadows_InitAll, CloudShadows_Finish}
 };
 
 static void (*const sWeatherPalStateFuncs[])(void) = {
@@ -179,6 +181,7 @@ void StartWeather(void)
         gWeatherPtr->snowstormSpritesCreated = FALSE;
         gWeatherPtr->snowstormSwirlSpritesCreated = FALSE;
         gWeatherPtr->flyingLeavesSpritesCreated = FALSE;
+        gWeatherPtr->cloudShadowsSpritesCreated = FALSE;
         gWeatherPtr->currWeather = WEATHER_NONE;
         gWeatherPtr->palProcessingState = WEATHER_PAL_STATE_IDLE;
         gWeatherPtr->readyForInit = FALSE;

@@ -16,6 +16,7 @@
 #define WEATHER_SNOWSTORM          12
 #define WEATHER_DROUGHT            13
 #define WEATHER_FLYING_LEAVES      14
+#define WEATHER_CLOUD_SHADOWS      15
 
 // Weathers as bits
 #define BIT_WEATHER_RAIN         Bit(0)

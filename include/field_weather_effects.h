@@ -69,4 +69,9 @@ void FlyingLeaves_InitVars(void);
 void FlyingLeaves_Main(void);
 bool32 FlyingLeaves_Finish(void);
 
+void CloudShadows_InitAll(void);
+void CloudShadows_InitVars(void);
+void CloudShadows_Main(void);
+bool32 CloudShadows_Finish(void);
+
 #endif //GUARD_FIELD_WEATHER_EFFECTS_H

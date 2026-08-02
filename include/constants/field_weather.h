@@ -12,6 +12,7 @@
 #define NUM_SNOWSTORM_SPRITES        20
 #define NUM_SWIRL_SNOWSTORM_SPRITES  5
 #define NUM_LEAVE_SPRITES            8
+#define NUM_CLOUD_SHADOWS_SPRITES    3
 
 // Controls how the weather should be changing the screen palettes.
 #define WEATHER_PAL_STATE_CHANGING_WEATHER   0
