@@ -1201,8 +1201,6 @@
     .growthRate = GROWTH_MEDIUM_FAST,                                          \
     .evYield_SpDefense = 2,                                                    \
     .friendship = 50,                                                          \
-    MON_ICON(AlcremieStrawberry),                                              \
-    .iconPaletteIndex = 1,                                                     \
     .natDexNum = NATIONAL_DEX_ALCREMIE,                                        \
     .cryId = CRY_ID_ALCREMIE,                                                  \
     .formChangeTable = sAlcremieFormChangeTable,                               \
@@ -35721,6 +35719,8 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
     [SPECIES_ALCREMIE] =
     {
         ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberry),
+        .iconPaletteIndex = 0,
         .frontPic = sMonFrontPic_AlcremieStrawberry,
         .backPic = sMonBackPic_AlcremieStrawberry,
         .palette = sMonPalette_AlcremieStrawberryNormal,
@@ -47546,7 +47546,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MagearnaOriginalColorShiny,
     },
     
-    /*[SPECIES_MEOWTH_GALARIAN] =
+    [SPECIES_MEOWTH_GALARIAN] =
     {
         .name = _("Meowth"),
         .categoryName = _("Scratch Cat"),
@@ -47574,6 +47574,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_MEOWTH,
         .evolutions = EVOLUTION(REQ_LEVEL(28), EVO_TARGET(SPECIES_PERRSERKER)),
         .formChangeTable = sMeowthRegionalFormsFormChangeTable,
+        .frontPic = sMonFrontPic_MeowthGalarian,
+        .frontPicSize = MON_COORDS_SIZE(44, 46),
+        .frontPicYOffset = 9,
+        .frontPicElevation = 2,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_MeowthGalarian,
+        .backPicSize = MON_COORDS_SIZE(58, 49),
+        .backPicYOffset = 8,
+        .palette = sMonPalette_MeowthGalarianNormal,
+        .shinyPalette = sMonPalette_MeowthGalarianShiny,
     },
     
     [SPECIES_PONYTA_GALARIAN] =
@@ -47686,6 +47697,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evolutions = EVOLUTION(REQ_ITEM(ITEM_GALARICA_CUFF), EVO_TARGET(SPECIES_SLOWBRO_GALARIAN),
                                 REQ_ITEM(ITEM_GALARICA_WREATH), EVO_TARGET(SPECIES_SLOWKING_GALARIAN)),
         .formChangeTable = sSlowpokeFormChangeTable,
+        .frontPic = sMonFrontPic_SlowpokeGalarian,
+        .frontPicSize = MON_COORDS_SIZE(52, 27),
+        .frontPicYOffset = 19,
+        .frontPicElevation = 0,
+        .shadowXOffset = -2,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_SlowpokeGalarian,
+        .backPicSize = MON_COORDS_SIZE(61, 38),
+        .backPicYOffset = 13,
+        .palette = sMonPalette_SlowpokeGalarianNormal,
+        .shinyPalette = sMonPalette_SlowpokeGalarianShiny,
     },
     
     [SPECIES_SLOWBRO_GALARIAN] =
@@ -47715,6 +47737,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_SLOWBRO,
         .cryId = CRY_ID_SLOWBRO,
         .formChangeTable = sSlowbroRegionalFormsFormChangeTable,
+        .frontPic = sMonFrontPic_SlowbroGalarian,
+        .frontPicSize = MON_COORDS_SIZE(64, 54),
+        .frontPicYOffset = 4,
+        .frontPicElevation = 2,
+        .shadowXOffset = -6,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_SlowbroGalarian,
+        .backPicSize = MON_COORDS_SIZE(50, 47),
+        .backPicYOffset = 9,
+        .palette = sMonPalette_SlowbroGalarianNormal,
+        .shinyPalette = sMonPalette_SlowbroGalarianShiny,
     },
     
     [SPECIES_FARFETCHD_GALARIAN] =
@@ -47746,6 +47779,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_FARFETCHD,
         .evolutions = EVOLUTION(REQ_X_CRITICAL_HITS(3), EVO_TARGET(SPECIES_SIRFETCHD)),
         .formChangeTable = sFarfetchdFormChangeTable,
+        .frontPic = sMonFrontPic_FarfetchdGalarian,
+        .frontPicSize = MON_COORDS_SIZE(63, 47),
+        .frontPicYOffset = 9,
+        .frontPicElevation = 1,
+        .shadowXOffset = -6,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_FarfetchdGalarian,
+        .backPicSize = MON_COORDS_SIZE(59, 48),
+        .backPicYOffset = 8,
+        .palette = sMonPalette_FarfetchdGalarianNormal,
+        .shinyPalette = sMonPalette_FarfetchdGalarianShiny,
     },
     
     [SPECIES_WEEZING_GALARIAN] =
@@ -47775,6 +47819,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_WEEZING,
         .cryId = CRY_ID_WEEZING,
         .formChangeTable = sWeezingFormChangeTable,
+        .frontPic = sMonFrontPic_WeezingGalarian,
+        .frontPicSize = MON_COORDS_SIZE(64, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 5,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_WeezingGalarian,
+        .backPicSize = MON_COORDS_SIZE(64, 64),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_WeezingGalarianNormal,
+        .shinyPalette = sMonPalette_WeezingGalarianShiny,
     },
     
     [SPECIES_MR_MIME_GALARIAN] =
@@ -47805,6 +47860,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_MR_MIME,
         .evolutions = EVOLUTION(REQ_LEVEL(42), EVO_TARGET(SPECIES_MR_RIME)),
         .formChangeTable = sMrMimeFormChangeTable,
+        .frontPic = sMonFrontPic_MrMimeGalarian,
+        .frontPicSize = MON_COORDS_SIZE(49, 50),
+        .frontPicYOffset = 7,
+        .frontPicElevation = 2,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_MrMimeGalarian,
+        .backPicSize = MON_COORDS_SIZE(64, 48),
+        .backPicYOffset = 8,
+        .palette = sMonPalette_MrMimeGalarianNormal,
+        .shinyPalette = sMonPalette_MrMimeGalarianShiny,
     },
     
     [SPECIES_ARTICUNO_GALARIAN] =
@@ -47838,6 +47904,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_ArticunoGalarian,
         .frontPicSize = MON_COORDS_SIZE(64, 50),
         .frontPicYOffset = 7,
+        .frontPicElevation = 13,
+        .shadowXOffset = 2,
+        .shadowSize = SHADOW_SIZE_M,
         .backPic = sMonBackPic_ArticunoGalarian,
         .backPicSize = MON_COORDS_SIZE(61, 50),
         .backPicYOffset = 5,
@@ -47873,6 +47942,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_ZAPDOS,
         .cryId = CRY_ID_ZAPDOS,
         .formChangeTable = sZapdosFormChangeTable,
+        .frontPic = sMonFrontPic_ZapdosGalarian,
+        .frontPicSize = MON_COORDS_SIZE(47, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = -1,
+        .shadowXOffset = -6,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_ZapdosGalarian,
+        .backPicSize = MON_COORDS_SIZE(49, 47),
+        .backPicYOffset = 9,
+        .palette = sMonPalette_ZapdosGalarianNormal,
+        .shinyPalette = sMonPalette_ZapdosGalarianShiny,
     },
     
     [SPECIES_MOLTRES_GALARIAN] =
@@ -47903,6 +47983,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_MOLTRES,
         .cryId = CRY_ID_MOLTRES,
         .formChangeTable = sMoltresFormChangeTable,
+        .frontPic = sMonFrontPic_MoltresGalarian,
+        .frontPicSize = MON_COORDS_SIZE(64, 58),
+        .frontPicYOffset = 1,
+        .frontPicElevation = 2,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_MoltresGalarian,
+        .backPicSize = MON_COORDS_SIZE(56, 55),
+        .backPicYOffset = 5,
+        .palette = sMonPalette_MoltresGalarianNormal,
+        .shinyPalette = sMonPalette_MoltresGalarianShiny,
     },
     
     [SPECIES_SLOWKING_GALARIAN] =
@@ -47932,6 +48023,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_SLOWKING,
         .cryId = CRY_ID_SLOWKING,
         .formChangeTable = sSlowkingFormChangeTable,
+        .frontPic = sMonFrontPic_SlowkingGalarian,
+        .frontPicSize = MON_COORDS_SIZE(41, 62),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 0,
+        .shadowXOffset = -4,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_SlowkingGalarian,
+        .backPicSize = MON_COORDS_SIZE(53, 60),
+        .backPicYOffset = 3,
+        .palette = sMonPalette_SlowkingGalarianNormal,
+        .shinyPalette = sMonPalette_SlowkingGalarianShiny,
     },
     
     [SPECIES_CORSOLA_GALARIAN] =
@@ -47965,6 +48067,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_CorsolaGalarian,
         .frontPicSize = MON_COORDS_SIZE(42, 42),
         .frontPicYOffset = 11,
+        .frontPicElevation = 0,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_S,
         .backPic = sMonBackPic_CorsolaGalarian,
         .backPicSize = MON_COORDS_SIZE(54, 48),
         .backPicYOffset = 8,
@@ -48000,6 +48105,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_ZIGZAGOON,
         .evolutions = EVOLUTION(REQ_LEVEL(20), EVO_TARGET(SPECIES_LINOONE_GALARIAN)),
         .formChangeTable = sZigzagoonFormChangeTable,
+        .frontPic = sMonFrontPic_ZigzagoonGalarian,
+        .frontPicSize = MON_COORDS_SIZE(50, 35),
+        .frontPicYOffset = 13,
+        .frontPicElevation = 0,
+        .shadowXOffset = -5,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_ZigzagoonGalarian,
+        .backPicSize = MON_COORDS_SIZE(53, 43),
+        .backPicYOffset = 12,
+        .palette = sMonPalette_ZigzagoonGalarianNormal,
+        .shinyPalette = sMonPalette_ZigzagoonGalarianShiny,
     },
     
     [SPECIES_LINOONE_GALARIAN] =
@@ -48030,6 +48146,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_LINOONE,
         .evolutions = EVOLUTION(REQ_LEVEL(35), REQ_TIME(TIME_NIGHT), EVO_TARGET(SPECIES_OBSTAGOON)),
         .formChangeTable = sLinooneFormChangeTable,
+        .frontPic = sMonFrontPic_LinooneGalarian,
+        .frontPicSize = MON_COORDS_SIZE(61, 30),
+        .frontPicYOffset = 13,
+        .frontPicElevation = 1,
+        .shadowXOffset = -6,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_LinooneGalarian,
+        .backPicSize = MON_COORDS_SIZE(57, 33),
+        .backPicYOffset = 13,
+        .palette = sMonPalette_LinooneGalarianNormal,
+        .shinyPalette = sMonPalette_LinooneGalarianShiny,
     },
     
     [SPECIES_DARUMAKA_GALARIAN] =
@@ -48060,6 +48187,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_DARUMAKA,
         .evolutions = EVOLUTION(REQ_ITEM(ITEM_ICE_STONE), EVO_TARGET(SPECIES_DARMANITAN_GALARIAN)),
         .formChangeTable = sDarumakaFormChangeTable,
+        .frontPic = sMonFrontPic_DarumakaGalarian,
+        .frontPicSize = MON_COORDS_SIZE(38, 35),
+        .frontPicYOffset = 15,
+        .frontPicElevation = 2,
+        .shadowXOffset = -2,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_DarumakaGalarian,
+        .backPicSize = MON_COORDS_SIZE(51, 42),
+        .backPicYOffset = 11,
+        .palette = sMonPalette_DarumakaGalarianNormal,
+        .shinyPalette = sMonPalette_DarumakaGalarianShiny,
     },
     
     [SPECIES_DARMANITAN_GALARIAN] =
@@ -48089,6 +48227,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_DARMANITAN,
         .cryId = CRY_ID_DARMANITAN,
         .formChangeTable = sDarmanitanRegionalFormsFormChangeTable,
+        .frontPic = sMonFrontPic_DarmanitanGalarian,
+        .frontPicSize = MON_COORDS_SIZE(53, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = -4,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_DarmanitanGalarian,
+        .backPicSize = MON_COORDS_SIZE(56, 60),
+        .backPicYOffset = 2,
+        .palette = sMonPalette_DarmanitanGalarianNormal,
+        .shinyPalette = sMonPalette_DarmanitanGalarianShiny,
     },
     
     [SPECIES_DARMANITAN_GALARIAN_ZEN_MODE] =
@@ -48117,6 +48266,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_DARMANITAN,
         .cryId = CRY_ID_DARMANITAN,
         .formChangeTable = sDarmanitanRegionalFormsFormChangeTable,
+        .frontPic = sMonFrontPic_DarmanitanZenModeGalarian,
+        .frontPicSize = MON_COORDS_SIZE(47, 60),
+        .frontPicYOffset = 2,
+        .frontPicElevation = 3,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_DarmanitanZenModeGalarian,
+        .backPicSize = MON_COORDS_SIZE(59, 63),
+        .backPicYOffset = 1,
+        .palette = sMonPalette_DarmanitanZenModeGalarianNormal,
+        .shinyPalette = sMonPalette_DarmanitanZenModeGalarianShiny,
     },
     
     [SPECIES_YAMASK_GALARIAN] =
@@ -48147,6 +48307,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_YAMASK,
         .evolutions = EVOLUTION(REQ_DAMAGE_HP(49), EVO_TARGET(SPECIES_RUNERIGUS)),
         .formChangeTable = sYamaskFormChangeTable,
+        .frontPic = sMonFrontPic_YamaskGalarian,
+        .frontPicSize = MON_COORDS_SIZE(48, 38),
+        .frontPicYOffset = 13,
+        .frontPicElevation = 14,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_YamaskGalarian,
+        .backPicSize = MON_COORDS_SIZE(36, 38),
+        .backPicYOffset = 13,
+        .palette = sMonPalette_YamaskGalarianNormal,
+        .shinyPalette = sMonPalette_YamaskGalarianShiny,
     },
     
     [SPECIES_STUNFISK_GALARIAN] =
@@ -48175,6 +48346,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_STUNFISK,
         .cryId = CRY_ID_STUNFISK,
         .formChangeTable = sStunfiskFormChangeTable,
+        .frontPic = sMonFrontPic_StunfiskGalarian,
+        .frontPicSize = MON_COORDS_SIZE(47, 36),
+        .frontPicYOffset = 14,
+        .frontPicElevation = 1,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_StunfiskGalarian,
+        .backPicSize = MON_COORDS_SIZE(58, 18),
+        .backPicYOffset = 23,
+        .palette = sMonPalette_StunfiskGalarianNormal,
+        .shinyPalette = sMonPalette_StunfiskGalarianShiny,
     },
     
     [SPECIES_CRAMORANT_GULPING] =
@@ -48186,6 +48368,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_CramorantGulping,
         .frontPicSize = MON_COORDS_SIZE(53, 62),
         .frontPicYOffset = 0,
+        .frontPicElevation = 3,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
         .backPic = sMonBackPic_CramorantGulping,
         .backPicSize = MON_COORDS_SIZE(43, 53),
         .backPicYOffset = 1,
@@ -48202,6 +48387,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_CramorantGorging,
         .frontPicSize = MON_COORDS_SIZE(64, 64),
         .frontPicYOffset = 0,
+        .frontPicElevation = 3,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
         .backPic = sMonBackPic_CramorantGorging,
         .backPicSize = MON_COORDS_SIZE(63, 62),
         .backPicYOffset = 1,
@@ -48217,11 +48405,699 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         MON_ICON(ToxtricityLowKey),
         .cryId = CRY_ID_TOXTRICITY_LOW_KEY,
         .formChangeTable = sToxtricityLowKeyFormChangeTable,
+        .frontPic = sMonFrontPic_ToxtricityLowKey,
+        .frontPicSize = MON_COORDS_SIZE(42, 61),
+        .frontPicYOffset = 2,
+        .frontPicElevation = 3,
+        .shadowXOffset = 1,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_ToxtricityLowKey,
+        .backPicSize = MON_COORDS_SIZE(48, 62),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_ToxtricityLowKeyNormal,
+        .shinyPalette = sMonPalette_ToxtricityLowKeyShiny,
     },
     
-    [SPECIES_ALCREMIE_LOVE_VANILLA_CREAM ... SPECIES_ALCREMIE_RIBBON_RAINBOW_SWIRL] =
+    [SPECIES_ALCREMIE_LOVE_VANILLA_CREAM] =
     {
         ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLove),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_VANILLA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerry),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_VANILLA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieClover),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_VANILLA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlower),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_VANILLA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStar),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_VANILLA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbon),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_RUBY_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonRubyCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonRubyCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_MATCHA_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonMatchaCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonMatchaCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_MINT_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonMintCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonMintCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_LEMON_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonLemonCream),
+        .iconPaletteIndex = 1,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonLemonCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberrySaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberrySaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveSaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveSaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerrySaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerrySaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverSaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverSaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerSaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerSaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarSaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarSaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_SALTED_CREAM] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonSaltedCream),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonSaltedCreamNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_RUBY_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonRubySwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonRubySwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_CARAMEL_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonCaramelSwirl),
+        .iconPaletteIndex = 2,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonCaramelSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STRAWBERRY_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStrawberryRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStrawberry,
+        .backPic = sMonBackPic_AlcremieStrawberry,
+        .palette = sMonPalette_AlcremieStrawberryRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieStrawberryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_LOVE_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieLoveRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieLove,
+        .backPic = sMonBackPic_AlcremieLove,
+        .palette = sMonPalette_AlcremieLoveRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieLoveShiny,
+    },
+    
+    [SPECIES_ALCREMIE_BERRY_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieBerryRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieBerry,
+        .backPic = sMonBackPic_AlcremieBerry,
+        .palette = sMonPalette_AlcremieBerryRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieBerryShiny,
+    },
+    
+    [SPECIES_ALCREMIE_CLOVER_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieCloverRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieClover,
+        .backPic = sMonBackPic_AlcremieClover,
+        .palette = sMonPalette_AlcremieCloverRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieCloverShiny,
+    },
+    
+    [SPECIES_ALCREMIE_FLOWER_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieFlowerRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieFlower,
+        .backPic = sMonBackPic_AlcremieFlower,
+        .palette = sMonPalette_AlcremieFlowerRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieFlowerShiny,
+    },
+    
+    [SPECIES_ALCREMIE_STAR_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieStarRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieStar,
+        .backPic = sMonBackPic_AlcremieStar,
+        .palette = sMonPalette_AlcremieStarRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieStarShiny,
+    },
+    
+    [SPECIES_ALCREMIE_RIBBON_RAINBOW_SWIRL] =
+    {
+        ALCREMIE_MISC_INFO,
+        MON_ICON(AlcremieRibbonRainbowSwirl),
+        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_AlcremieRibbon,
+        .backPic = sMonBackPic_AlcremieRibbon,
+        .palette = sMonPalette_AlcremieRibbonRainbowSwirlNormal,
+        .shinyPalette = sMonPalette_AlcremieRibbonShiny,
     },
     
     [SPECIES_EISCUE_NOICE_FACE] =
@@ -48232,10 +49108,13 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         MON_STATS(75, 80, 70, 130, 65, 50),
         MON_ICON(EiscueNoiceFace),
         .cryId = CRY_ID_EISCUE_NOICE_FACE,
-        .formChangeTable = sEiscueNoiceFormChangeTable
+        .formChangeTable = sEiscueNoiceFormChangeTable,
         .frontPic = sMonFrontPic_EiscueNoiceFace,
         .frontPicSize = MON_COORDS_SIZE(35, 52),
         .frontPicYOffset = 0,
+        .frontPicElevation = 3,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_S,
         .backPic = sMonBackPic_EiscueNoiceFace,
         .backPicSize = MON_COORDS_SIZE(37, 52),
         .backPicYOffset = 0,
@@ -48255,6 +49134,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_IndeedeeFemale,
         .frontPicSize = MON_COORDS_SIZE(36, 47),
         .frontPicYOffset = 9,
+        .frontPicElevation = 3,
+        .shadowXOffset = 2,
+        .shadowSize = SHADOW_SIZE_S,
         .backPic = sMonBackPic_IndeedeeFemale,
         .backPicSize = MON_COORDS_SIZE(59, 45),
         .backPicYOffset = 7,
@@ -48269,6 +49151,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                           "riot until its hunger is appeased."),
         MON_ICON(MorpekoHangry),
         .cryId = CRY_ID_MORPEKO_HANGRY,
+        .frontPic = sMonFrontPic_MorpekoHangry,
+        .frontPicSize = MON_COORDS_SIZE(26, 37),
+        .frontPicYOffset = 14,
+        .frontPicElevation = 3,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_MorpekoHangry,
+        .backPicSize = MON_COORDS_SIZE(45, 49),
+        .backPicYOffset = 8,
+        .palette = sMonPalette_MorpekoHangryNormal,
+        .shinyPalette = sMonPalette_MorpekoHangryShiny,
     },
     
     [SPECIES_ZACIAN_CROWNED_SWORD] =
@@ -48280,6 +49173,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .weight = 3550,
         MON_ICON(ZacianCrownedSword),
         .cryId = CRY_ID_ZACIAN_CROWNED_SWORD,
+        .frontPic = sMonFrontPic_ZacianCrownedSword,
+        .frontPicSize = MON_COORDS_SIZE(64, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 1,
+        .shadowXOffset = -4,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_ZacianCrownedSword,
+        .backPicSize = MON_COORDS_SIZE(62, 54),
+        .backPicYOffset = 6,
+        .palette = sMonPalette_ZacianCrownedSwordNormal,
+        .shinyPalette = sMonPalette_ZacianCrownedSwordShiny,
     },
     
     [SPECIES_ZAMAZENTA_CROWNED_SHIELD] =
@@ -48291,6 +49195,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .weight = 7850,
         MON_ICON(ZamazentaCrownedShield),
         .cryId = CRY_ID_ZAMAZENTA_CROWNED_SHIELD,
+        .frontPic = sMonFrontPic_ZamazentaCrownedShield,
+        .frontPicSize = MON_COORDS_SIZE(56, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 1,
+        .shadowXOffset = 2,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_ZamazentaCrownedShield,
+        .backPicSize = MON_COORDS_SIZE(64, 58),
+        .backPicYOffset = 3,
+        .palette = sMonPalette_ZamazentaCrownedShieldNormal,
+        .shinyPalette = sMonPalette_ZamazentaCrownedShieldShiny,
     },
     
     [SPECIES_URSHIFU_RAPID_STRIKE_STYLE] =
@@ -48321,6 +49236,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_URSHIFU,
         .cryId = CRY_ID_URSHIFU_RAPID_STRIKE_STYLE,
         .formChangeTable = sUrshifuRapidStrikeFormChangeTable,
+        .frontPic = sMonFrontPic_UrshifuRapidStrikeStyle,
+        .frontPicSize = MON_COORDS_SIZE(52, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 3,
+        .shadowXOffset = 2,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_UrshifuRapidStrikeStyle,
+        .backPicSize = MON_COORDS_SIZE(63, 51),
+        .backPicYOffset = 4,
+        .palette = sMonPalette_UrshifuRapidStrikeStyleNormal,
+        .shinyPalette = sMonPalette_UrshifuRapidStrikeStyleShiny,
     },
     
     [SPECIES_CALYREX_ICE_RIDER] =
@@ -48353,6 +49279,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_CalyrexIceRider,
         .frontPicSize = MON_COORDS_SIZE(56, 64),
         .frontPicYOffset = 0,
+        .frontPicElevation = 0,
+        .shadowXOffset = -5,
+        .shadowSize = SHADOW_SIZE_L,
         .backPic = sMonBackPic_CalyrexIceRider,
         .backPicSize = MON_COORDS_SIZE(64, 55),
         .backPicYOffset = 7,
@@ -48390,6 +49319,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_CalyrexShadowRider,
         .frontPicSize = MON_COORDS_SIZE(61, 64),
         .frontPicYOffset = 0,
+        .frontPicElevation = 1,
+        .shadowXOffset = -3,
+        .shadowSize = SHADOW_SIZE_M,
         .backPic = sMonBackPic_CalyrexShadowRider,
         .backPicSize = MON_COORDS_SIZE(64, 50),
         .backPicYOffset = 7,
@@ -48397,7 +49329,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CalyrexShadowRiderShiny,
     },
     
-    [SPECIES_VENUSAUR_GIGA] =
+    /*[SPECIES_VENUSAUR_GIGA] =
     {
         .name = _("Venusaur"),
         .categoryName = _("Seed"),
