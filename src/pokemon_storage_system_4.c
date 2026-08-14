@@ -920,7 +920,6 @@ struct Sprite *CreateMonIconSprite(u32 species, s16 x, s16 y, u32 oamPriority, u
     u32 spriteId;
     struct SpriteTemplate template = gUnknown_83CEBF0;
 
-    species = SanitizeSpeciesId(species);
     template.paletteTag = 0xDAC0 + gSpeciesInfo[species].iconPaletteIndex;
     tileNum = sub_80911D4(species);
     if (tileNum == 0xFFFF)

@@ -584,7 +584,7 @@ static bool32 DoInitMailView(void)
         gPaletteFade.bufferTransferDisabled = TRUE;
         break;
     case 17:
-        iconId = SanitizeSpeciesId(sMailViewResources->mail->species);
+        iconId = sMailViewResources->mail->species;
         
         switch (sMailViewResources->monIconType)
         {

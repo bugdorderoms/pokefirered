@@ -1858,8 +1858,6 @@ bool32 IsPlayerPartyAndPokemonStorageFull(void)
 void GetSpeciesName(u8 *name, u32 species)
 {
     u32 i;
-    
-    species = SanitizeSpeciesId(species);
 
     // Hmm? FRLG has < while Ruby/Emerald has <=
     for (i = 0; i < POKEMON_NAME_LENGTH; i++)
@@ -2831,8 +2829,6 @@ const u32 *GetMonSpritePal(struct Pokemon *mon)
 
 const u32 *GetMonSpritePalFromSpecies(u32 species, bool32 isShiny)
 {
-    species = SanitizeSpeciesId(species);
-    
     if (isShiny)
         return gSpeciesInfo[species].shinyPalette;
     else

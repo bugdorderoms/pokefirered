@@ -561,11 +561,6 @@ static inline u32 FacilityClassToPicIndex(u32 facilityClass)
     return gFacilityClassToPicIndex[facilityClass];
 }
 
-static inline u32 SanitizeSpeciesId(u32 species)
-{
-    return species > NUM_SPECIES ? SPECIES_NONE : species;
-}
-
 extern const u8 gText_MaleSymbol[];
 extern const u8 gText_FemaleSymbol[];
 extern const u8 gText_GenderlessSymbol[];

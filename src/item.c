@@ -495,29 +495,24 @@ u32 BagGetQuantityByItemId(u32 itemId)
     return 0;
 }
 
-static inline u32 SanitizeItemId(u32 itemId)
-{
-    return itemId >= ITEMS_COUNT ? ITEM_NONE : itemId;
-}
-
 const u8 * ItemId_GetName(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].name;
+    return gItems[itemId].name;
 }
 
 u32 ItemId_GetPrice(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].price;
+    return gItems[itemId].price;
 }
 
 u32 ItemId_GetHoldEffect(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].holdEffect;
+    return gItems[itemId].holdEffect;
 }
 
 u32 ItemId_GetHoldEffectParam(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].holdEffectParam;
+    return gItems[itemId].holdEffectParam;
 }
 
 const u8 *ItemId_GetDescription(u32 itemId)
@@ -525,37 +520,37 @@ const u8 *ItemId_GetDescription(u32 itemId)
     if (ItemId_GetPocket(itemId) == POCKET_TM_CASE)
         return gBattleMoves[ItemId_GetHoldEffectParam(itemId)].description;
     else
-        return gItems[SanitizeItemId(itemId)].description;
+        return gItems[itemId].description;
 }
 
 u32 ItemId_GetPocket(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].pocket;
+    return gItems[itemId].pocket;
 }
 
 u32 ItemId_GetType(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].type;
+    return gItems[itemId].type;
 }
 
 TaskFunc ItemId_GetFieldFunc(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].fieldUseFunc;
+    return gItems[itemId].fieldUseFunc;
 }
 
 u32 ItemId_GetBattleUsage(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].battleUsage;
+    return gItems[itemId].battleUsage;
 }
 
 u32 ItemId_GetFlingPower(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].flingPower;
+    return gItems[itemId].flingPower;
 }
 
 u32 ItemId_GetUsageType(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].usageType;
+    return gItems[itemId].usageType;
 }
 
 u32 ItemId_GetBattleEffectUsageType(u32 itemId)
@@ -585,7 +580,7 @@ u32 ItemId_GetBattleEffectUsageType(u32 itemId)
 
 const u8 *ItemId_GetItemEffect(u32 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].itemEffect;
+    return gItems[itemId].itemEffect;
 }
 
 void ResetItemFlags(void)

@@ -809,7 +809,7 @@ void TrainerCard_GenerateCardForLinkPlayer(struct TrainerCard *trainerCard)
     trainerCard->monIconTint = VarGet(VAR_TRAINER_CARD_MON_ICON_TINT_IDX);
 
     for (id = 0; id < PARTY_SIZE; id++)
-        trainerCard->monSpecies[id] = SanitizeSpeciesId(VarGet(VAR_TRAINER_CARD_MON_ICON_1 + id));
+        trainerCard->monSpecies[id] = VarGet(VAR_TRAINER_CARD_MON_ICON_1 + id);
 }
 
 static void SetDataFromTrainerCard(void)

@@ -74,7 +74,6 @@ void LoadMonPaletteFromSpecies(u32 species, bool32 isShiny, u32 paletteTag)
 
 void LoadSpecialPokePic(u32 species, u32 personality, bool32 isFrontPic, void *dest)
 {
-    species = SanitizeSpeciesId(species);
     LZDecompressWram(isFrontPic ? gSpeciesInfo[species].frontPic : gSpeciesInfo[species].backPic, dest);
     DrawSpindaSpots(species, personality, dest, isFrontPic);
 }

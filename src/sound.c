@@ -485,7 +485,7 @@ void PlayCryInternal(u32 species, s8 pan, s8 volume, u32 priority, u32 mode)
     SetPokemonCryChorus(sCrySoundData[mode].chorus);
     SetPokemonCryPriority(priority);
     
-    cryId = gSpeciesInfo[SanitizeSpeciesId(species)].cryId;
+    cryId = gSpeciesInfo[species].cryId;
     gMPlay_PokemonCry = SetPokemonCryTone(sCrySoundData[mode].reverse ? &gCryTableReverse[cryId] : &gCryTable[cryId]);
 }
 

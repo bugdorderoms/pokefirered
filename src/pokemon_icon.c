@@ -194,7 +194,7 @@ void SetPartyHPBarSprite(struct Sprite * sprite, u32 animNum)
 
 const u8 *GetMonIconPtr(u32 species)
 {
-    return gSpeciesInfo[SanitizeSpeciesId(species)].icon;
+    return gSpeciesInfo[species].icon;
 }
 
 void LoadMonIconPalettes(void)
@@ -215,7 +215,7 @@ void FreeMonIconPalettes(void)
 
 void LoadMonIconPalette(u32 species)
 {
-    u32 palIndex = gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
+    u32 palIndex = gSpeciesInfo[species].iconPaletteIndex;
     
     if (IndexOfSpritePaletteTag(gMonIconPaletteTable[palIndex].tag) == 0xFF)
         LoadSpritePalette(&gMonIconPaletteTable[palIndex]);
@@ -247,7 +247,7 @@ void LoadMonIconPalettesAt(u32 offset)
 
 u32 GetMonIconPalIndex(u32 species)
 {
-    return gSpeciesInfo[SanitizeSpeciesId(species)].iconPaletteIndex;
+    return gSpeciesInfo[species].iconPaletteIndex;
 }
 
 const u16 *GetMonIconPalettePtr(u32 species)
