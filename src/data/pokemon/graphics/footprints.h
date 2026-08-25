@@ -410,6 +410,7 @@ static const u8 sMonFootprint_Marshadow[] = INCBIN_U8("graphics/pokemon/marshado
 static const u8 sMonFootprint_Marshtomp[] = INCBIN_U8("graphics/pokemon/marshtomp/footprint.1bpp");
 static const u8 sMonFootprint_Maschiff[] = INCBIN_U8("graphics/pokemon/maschiff/footprint.1bpp");
 static const u8 sMonFootprint_Maushold[] = INCBIN_U8("graphics/pokemon/maushold/footprint.1bpp");
+static const u8 sMonFootprint_MausholdFamilyOfFour[] = INCBIN_U8("graphics/pokemon/maushold/family_of_four/footprint.1bpp");
 static const u8 sMonFootprint_Mawile[] = INCBIN_U8("graphics/pokemon/mawile/footprint.1bpp");
 static const u8 sMonFootprint_Medicham[] = INCBIN_U8("graphics/pokemon/medicham/footprint.1bpp");
 static const u8 sMonFootprint_Meditite[] = INCBIN_U8("graphics/pokemon/meditite/footprint.1bpp");

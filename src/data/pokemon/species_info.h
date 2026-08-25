@@ -1379,10 +1379,11 @@
     .expYield = 165,                                          \
     .growthRate = GROWTH_FAST,                                \
     .evYield_Speed = 2,                                       \
-    FOOTPRINT(Maushold),                                      \
     .friendship = 50,                                         \
     .natDexNum = NATIONAL_DEX_MAUSHOLD,                       \
-    .formChangeTable = sMausholdFormChangeTable
+    .formChangeTable = sMausholdFormChangeTable,              \
+    .palette = sMonPalette_MausholdNormal,                    \
+    .shinyPalette = sMonPalette_MausholdShiny
 
 #define SQUAWKABILLY_MISC_INFO(abilityHidden, desc)    \
     .name = _("Squawkabilly"),                         \
@@ -1405,7 +1406,16 @@
     .friendship = 50,                                  \
     .natDexNum = NATIONAL_DEX_SQUAWKABILLY,            \
     .cryId = CRY_ID_SQUAWKABILLY,                      \
-    .formChangeTable = sSquawkabillyFormChangeTable
+    .formChangeTable = sSquawkabillyFormChangeTable,   \
+    .frontPic = sMonFrontPic_Squawkabilly,             \
+    .frontPicSize = MON_COORDS_SIZE(43, 55),           \
+    .frontPicYOffset = 4,                              \
+    .frontPicElevation = 1,                            \
+    .shadowXOffset = -7,                               \
+    .shadowSize = SHADOW_SIZE_S,                       \
+    .backPic = sMonBackPic_Squawkabilly,               \
+    .backPicSize = MON_COORDS_SIZE(51, 55),            \
+    .backPicYOffset = 4
 
 #define PALAFIN_MISC_INFO(desc)                         \
     .name = _("Palafin"),                               \
@@ -1462,9 +1472,13 @@
     .growthRate = GROWTH_MEDIUM_FAST,                      \
     .evYield_HP = 2,                                       \
     .friendship = 50,                                      \
+    MON_ICON(Dudunsparce),                                 \
+    .iconPaletteIndex = 0,                                 \
     .natDexNum = NATIONAL_DEX_DUDUNSPARCE,                 \
     .cryId = CRY_ID_DUDUNSPARCE,                           \
-    .formChangeTable = sDudunsparceFormChangeTable
+    .formChangeTable = sDudunsparceFormChangeTable,        \
+    .palette = sMonPalette_DudunsparceNormal,              \
+    .shinyPalette = sMonPalette_DudunsparceShiny
 
 #define OGERPON_MISC_INFO(ability, desc)    \
     .name = _("Ogerpon"),                   \
@@ -37798,6 +37812,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                            "that are used for different purposes,\n"
                            "such as eating and sleeping."),
         .weight = 23,
+        FOOTPRINT(Maushold),
         MON_ICON(Maushold),
         .iconPaletteIndex = 1,
         .cryId = CRY_ID_MAUSHOLD,
@@ -37810,8 +37825,6 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPic = sMonBackPic_Maushold,
         .backPicSize = MON_COORDS_SIZE(58, 36),
         .backPicYOffset = 15,
-        .palette = sMonPalette_MausholdNormal,
-        .shinyPalette = sMonPalette_MausholdShiny,
     },
     
     [SPECIES_FIDOUGH] =
@@ -38019,15 +38032,6 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                              "feathers, and they fight over territory."),
         MON_ICON(Squawkabilly),
         .iconPaletteIndex = 1,
-        .frontPic = sMonFrontPic_Squawkabilly,
-        .frontPicSize = MON_COORDS_SIZE(43, 55),
-        .frontPicYOffset = 4,
-        .frontPicElevation = 1,
-        .shadowXOffset = -7,
-        .shadowSize = SHADOW_SIZE_S,
-        .backPic = sMonBackPic_Squawkabilly,
-        .backPicSize = MON_COORDS_SIZE(51, 55),
-        .backPicYOffset = 4,
         .palette = sMonPalette_SquawkabillyNormal,
         .shinyPalette = sMonPalette_SquawkabillyShiny,
     },
@@ -39966,8 +39970,6 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                               "then releasing the air in an blast."),
         .height = 36,
         .weight = 392,
-        MON_ICON(Dudunsparce),
-        .iconPaletteIndex = 0,
         .frontPic = sMonFrontPic_Dudunsparce,
         .frontPicSize = MON_COORDS_SIZE(59, 44),
         .frontPicYOffset = 10,
@@ -39977,8 +39979,6 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPic = sMonBackPic_Dudunsparce,
         .backPicSize = MON_COORDS_SIZE(63, 41),
         .backPicYOffset = 11,
-        .palette = sMonPalette_DudunsparceNormal,
-        .shinyPalette = sMonPalette_DudunsparceShiny,
     },
     
     [SPECIES_KINGAMBIT] =
@@ -50766,7 +50766,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_EternatusEternamaxShiny,
     },
     
-    /*[SPECIES_GROWLITHE_HISUIAN] =
+    [SPECIES_GROWLITHE_HISUIAN] =
     {
         .name = _("Growlithe"),
         .categoryName = _("Scout"),
@@ -50794,6 +50794,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_GROWLITHE,
         .evolutions = EVOLUTION(REQ_ITEM(ITEM_FIRE_STONE), EVO_TARGET(SPECIES_ARCANINE_HISUIAN)),
         .formChangeTable = sGrowlitheFormChangeTable,
+        .frontPic = sMonFrontPic_GrowlitheHisuian,
+        .frontPicSize = MON_COORDS_SIZE(44, 45),
+        .frontPicYOffset = 5,
+        .frontPicElevation = 0,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_GrowlitheHisuian,
+        .backPicSize = MON_COORDS_SIZE(56, 54),
+        .backPicYOffset = 8,
+        .palette = sMonPalette_GrowlitheHisuianNormal,
+        .shinyPalette = sMonPalette_GrowlitheHisuianShiny,
     },
     
     [SPECIES_ARCANINE_HISUIAN] =
@@ -50826,6 +50837,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_ArcanineHisuian,
         .frontPicSize = MON_COORDS_SIZE(64, 64),
         .frontPicYOffset = 0,
+        .frontPicElevation = 0,
+        .shadowXOffset = -2,
+        .shadowSize = SHADOW_SIZE_L,
         .backPic = sMonBackPic_ArcanineHisuian,
         .backPicSize = MON_COORDS_SIZE(64, 61),
         .backPicYOffset = 3,
@@ -50860,6 +50874,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_VOLTORB,
         .evolutions = EVOLUTION(REQ_ITEM(ITEM_LEAF_STONE), EVO_TARGET(SPECIES_ELECTRODE_HISUIAN)),
         .formChangeTable = sVoltorbFormChangeTable,
+        .frontPic = sMonFrontPic_VoltorbHisuian,
+        .frontPicSize = MON_COORDS_SIZE(32, 30),
+        .frontPicYOffset = 17,
+        .frontPicElevation = 3,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_VoltorbHisuian,
+        .backPicSize = MON_COORDS_SIZE(42, 32),
+        .backPicYOffset = 10,
+        .palette = sMonPalette_VoltorbHisuianNormal,
+        .shinyPalette = sMonPalette_VoltorbHisuianShiny,
     },
     
     [SPECIES_ELECTRODE_HISUIAN] =
@@ -50888,6 +50913,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_ELECTRODE,
         .cryId = CRY_ID_ELECTRODE,
         .formChangeTable = sElectrodeFormChangeTable,
+        .frontPic = sMonFrontPic_ElectrodeHisuian,
+        .frontPicSize = MON_COORDS_SIZE(46, 46),
+        .frontPicYOffset = 9,
+        .frontPicElevation = 3,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_ElectrodeHisuian,
+        .backPicSize = MON_COORDS_SIZE(59, 39),
+        .backPicYOffset = 7,
+        .palette = sMonPalette_ElectrodeHisuianNormal,
+        .shinyPalette = sMonPalette_ElectrodeHisuianShiny,
     },
     
     [SPECIES_TYPHLOSION_HISUIAN] =
@@ -50917,6 +50953,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_TYPHLOSION,
         .cryId = CRY_ID_TYPHLOSION,
         .formChangeTable = sTyphlosionFormChangeTable,
+        .frontPic = sMonFrontPic_TyphlosionHisuian,
+        .frontPicSize = MON_COORDS_SIZE(58, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 3,
+        .shadowXOffset = 1,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_TyphlosionHisuian,
+        .backPicSize = MON_COORDS_SIZE(62, 59),
+        .backPicYOffset = 2,
+        .palette = sMonPalette_TyphlosionHisuianNormal,
+        .shinyPalette = sMonPalette_TyphlosionHisuianShiny,
     },
     
     [SPECIES_QWILFISH_HISUIAN] =
@@ -50990,6 +51037,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_SNEASEL,
         .evolutions = EVOLUTION(REQ_LEVEL(), REQ_ITEM_HOLD(ITEM_RAZOR_CLAW), REQ_TIME(TIME_DAY), EVO_TARGET(SPECIES_SNEASLER)),
         .formChangeTable = sSneaselFormChangeTable,
+        .frontPic = sMonFrontPic_SneaselHisuian,
+        .frontPicSize = MON_COORDS_SIZE(48, 53),
+        .frontPicYOffset = 6,
+        .frontPicElevation = 1,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_SneaselHisuian,
+        .backPicSize = MON_COORDS_SIZE(53, 60),
+        .backPicYOffset = 3,
+        .palette = sMonPalette_SneaselHisuianNormal,
+        .shinyPalette = sMonPalette_SneaselHisuianShiny,
     },
     
     [SPECIES_SAMUROTT_HISUIAN] =
@@ -51019,6 +51077,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_SAMUROTT,
         .cryId = CRY_ID_SAMUROTT,
         .formChangeTable = sSamurottFormChangeTable,
+        .frontPic = sMonFrontPic_SamurottHisuian,
+        .frontPicSize = MON_COORDS_SIZE(64, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 2,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_XL,
+        .backPic = sMonBackPic_SamurottHisuian,
+        .backPicSize = MON_COORDS_SIZE(62, 50),
+        .backPicYOffset = 8,
+        .palette = sMonPalette_SamurottHisuianNormal,
+        .shinyPalette = sMonPalette_SamurottHisuianShiny,
     },
     
     [SPECIES_LILLIGANT_HISUIAN] =
@@ -51049,6 +51118,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_LILLIGANT,
         .cryId = CRY_ID_LILLIGANT,
         .formChangeTable = sLilligantFormChangeTable,
+        .frontPic = sMonFrontPic_LilligantHisuian,
+        .frontPicSize = MON_COORDS_SIZE(51, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 1,
+        .shadowXOffset = -3,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_LilligantHisuian,
+        .backPicSize = MON_COORDS_SIZE(54, 56),
+        .backPicYOffset = 5,
+        .palette = sMonPalette_LilligantHisuianNormal,
+        .shinyPalette = sMonPalette_LilligantHisuianShiny,
     },
     
     [SPECIES_ZORUA_HISUIAN] =
@@ -51079,6 +51159,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_ZORUA,
         .evolutions = EVOLUTION(REQ_LEVEL(30), EVO_TARGET(SPECIES_ZOROARK_HISUIAN)),
         .formChangeTable = sZoruaFormChangeTable,
+        .frontPic = sMonFrontPic_ZoruaHisuian,
+        .frontPicSize = MON_COORDS_SIZE(39, 53),
+        .frontPicYOffset = 11,
+        .frontPicElevation = 3,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_ZoruaHisuian,
+        .backPicSize = MON_COORDS_SIZE(57, 57),
+        .backPicYOffset = 3,
+        .palette = sMonPalette_ZoruaHisuianNormal,
+        .shinyPalette = sMonPalette_ZoruaHisuianShiny,
     },
     
     [SPECIES_ZOROARK_HISUIAN] =
@@ -51108,6 +51199,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_ZOROARK,
         .cryId = CRY_ID_ZOROARK,
         .formChangeTable = sZoroarkFormChangeTable,
+        .frontPic = sMonFrontPic_ZoroarkHisuian,
+        .frontPicSize = MON_COORDS_SIZE(57, 63),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 1,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_ZoroarkHisuian,
+        .backPicSize = MON_COORDS_SIZE(64, 64),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_ZoroarkHisuianNormal,
+        .shinyPalette = sMonPalette_ZoroarkHisuianShiny,
     },
     
     [SPECIES_BRAVIARY_HISUIAN] =
@@ -51140,6 +51242,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_BraviaryHisuian,
         .frontPicSize = MON_COORDS_SIZE(62, 62),
         .frontPicYOffset = 1,
+        .frontPicElevation = 7,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_M,
         .backPic = sMonBackPic_BraviaryHisuian,
         .backPicSize = MON_COORDS_SIZE(64, 49),
         .backPicYOffset = 0,
@@ -51174,6 +51279,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_SLIGGOO,
         .evolutions = EVOLUTION(REQ_LEVEL(50), REQ_WEATHER(BIT_WEATHER_RAIN | BIT_WEATHER_FOG), EVO_TARGET(SPECIES_GOODRA_HISUIAN)),
         .formChangeTable = sSliggooFormChangeTable,
+        .frontPic = sMonFrontPic_SliggooHisuian,
+        .frontPicSize = MON_COORDS_SIZE(39, 50),
+        .frontPicYOffset = 7,
+        .frontPicElevation = 1,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_SliggooHisuian,
+        .backPicSize = MON_COORDS_SIZE(46, 62),
+        .backPicYOffset = 1,
+        .palette = sMonPalette_SliggooHisuianNormal,
+        .shinyPalette = sMonPalette_SliggooHisuianShiny,
     },
     
     [SPECIES_GOODRA_HISUIAN] =
@@ -51203,6 +51319,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_GOODRA,
         .cryId = CRY_ID_GOODRA,
         .formChangeTable = sGoodraFormChangeTable,
+        .frontPic = sMonFrontPic_GoodraHisuian,
+        .frontPicSize = MON_COORDS_SIZE(50, 61),
+        .frontPicYOffset = 1,
+        .frontPicElevation = 3,
+        .shadowXOffset = -3,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_GoodraHisuian,
+        .backPicSize = MON_COORDS_SIZE(64, 63),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_GoodraHisuianNormal,
+        .shinyPalette = sMonPalette_GoodraHisuianShiny,
     },
     
     [SPECIES_AVALUGG_HISUIAN] =
@@ -51233,11 +51360,14 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_AVALUGG,
         .formChangeTable = sAvaluggFormChangeTable,
         .frontPic = sMonFrontPic_AvaluggHisuian,
-        .frontPicSize = MON_COORDS_SIZE(61, 41),
-        .frontPicYOffset = 3,
+        .frontPicSize = MON_COORDS_SIZE(61, 45),
+        .frontPicYOffset = 6,
+        .frontPicElevation = -4,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_XL,
         .backPic = sMonBackPic_AvaluggHisuian,
-        .backPicSize = MON_COORDS_SIZE(64, 25),
-        .backPicYOffset = 17,
+        .backPicSize = MON_COORDS_SIZE(64, 31),
+        .backPicYOffset = 16,
         .palette = sMonPalette_AvaluggHisuianNormal,
         .shinyPalette = sMonPalette_AvaluggHisuianShiny,
     },
@@ -51269,6 +51399,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .natDexNum = NATIONAL_DEX_DECIDUEYE,
         .cryId = CRY_ID_DECIDUEYE,
         .formChangeTable = sDecidueyeFormChangeTable,
+        .frontPic = sMonFrontPic_DecidueyeHisuian,
+        .frontPicSize = MON_COORDS_SIZE(47, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 2,
+        .shadowXOffset = -1,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_DecidueyeHisuian,
+        .backPicSize = MON_COORDS_SIZE(58, 64),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_DecidueyeHisuianNormal,
+        .shinyPalette = sMonPalette_DecidueyeHisuianShiny,
     },
     
     [SPECIES_BASCULEGION_FEMALE] =
@@ -51282,6 +51423,9 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .frontPic = sMonFrontPic_BasculegionFemale,
         .frontPicSize = MON_COORDS_SIZE(64, 64),
         .frontPicYOffset = 0,
+        .frontPicElevation = 5,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
         .backPic = sMonBackPic_BasculegionFemale,
         .backPicSize = MON_COORDS_SIZE(62, 35),
         .backPicYOffset = 8,
@@ -51311,11 +51455,22 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evYield_Attack = 2,
         FOOTPRINT(Tauros),
         .friendship = 70,
-        // MON_ICON(TaurosPaldeanCombat),
+        MON_ICON(TaurosPaldeanCombat),
         .iconPaletteIndex = 0,
         .natDexNum = NATIONAL_DEX_TAUROS,
         .cryId = CRY_ID_TAUROS,
         .formChangeTable = sTaurosFormsFormChangeTable,
+        .frontPic = sMonFrontPic_TaurosPaldeanCombat,
+        .frontPicSize = MON_COORDS_SIZE(64, 56),
+        .frontPicYOffset = 5,
+        .frontPicElevation = 1,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_TaurosPaldeanCombat,
+        .backPicSize = MON_COORDS_SIZE(64, 40),
+        .backPicYOffset = 9,
+        .palette = sMonPalette_TaurosPaldeanCombatNormal,
+        .shinyPalette = sMonPalette_TaurosPaldeanCombatShiny,
     },
     
     [SPECIES_TAUROS_PALDEAN_BLAZE] =
@@ -51340,11 +51495,22 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evYield_Attack = 2,
         FOOTPRINT(Tauros),
         .friendship = 70,
-        // MON_ICON(TaurosPaldeanBlaze),
+        MON_ICON(TaurosPaldeanBlaze),
         .iconPaletteIndex = 0,
         .natDexNum = NATIONAL_DEX_TAUROS,
         .cryId = CRY_ID_TAUROS,
         .formChangeTable = sTaurosFormsFormChangeTable,
+        .frontPic = sMonFrontPic_TaurosPaldeanBlaze,
+        .frontPicSize = MON_COORDS_SIZE(64, 58),
+        .frontPicYOffset = 5,
+        .frontPicElevation = 1,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_TaurosPaldeanBlaze,
+        .backPicSize = MON_COORDS_SIZE(64, 46),
+        .backPicYOffset = 9,
+        .palette = sMonPalette_TaurosPaldeanBlazeNormal,
+        .shinyPalette = sMonPalette_TaurosPaldeanBlazeShiny,
     },
     
     [SPECIES_TAUROS_PALDEAN_AQUA] =
@@ -51369,11 +51535,22 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evYield_Attack = 2,
         FOOTPRINT(Tauros),
         .friendship = 70,
-        // MON_ICON(TaurosPaldeanAqua),
+        MON_ICON(TaurosPaldeanAqua),
         .iconPaletteIndex = 0,
         .natDexNum = NATIONAL_DEX_TAUROS,
         .cryId = CRY_ID_TAUROS,
         .formChangeTable = sTaurosFormsFormChangeTable,
+        .frontPic = sMonFrontPic_TaurosPaldeanAqua,
+        .frontPicSize = MON_COORDS_SIZE(63, 55),
+        .frontPicYOffset = 5,
+        .frontPicElevation = 1,
+        .shadowXOffset = 3,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_TaurosPaldeanAqua,
+        .backPicSize = MON_COORDS_SIZE(63, 40),
+        .backPicYOffset = 9,
+        .palette = sMonPalette_TaurosPaldeanAquaNormal,
+        .shinyPalette = sMonPalette_TaurosPaldeanAquaShiny,
     },
     
     [SPECIES_WOOPER_PALDEAN] =
@@ -51404,6 +51581,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .cryId = CRY_ID_WOOPER,
         .evolutions = EVOLUTION(REQ_LEVEL(20), EVO_TARGET(SPECIES_CLODSIRE)),
         .formChangeTable = sWooperFormChangeTable,
+        .frontPic = sMonFrontPic_WooperPaldean,
+        .frontPicSize = MON_COORDS_SIZE(35, 31),
+        .frontPicYOffset = 16,
+        .frontPicElevation = 3,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_WooperPaldean,
+        .backPicSize = MON_COORDS_SIZE(60, 39),
+        .backPicYOffset = 12,
+        .palette = sMonPalette_WooperPaldeanNormal,
+        .shinyPalette = sMonPalette_WooperPaldeanShiny,
     },
     
     [SPECIES_OINKOLOGNE_FEMALE] =
@@ -51412,9 +51600,20 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                                  "about. Well-developed muscles in its legs\n"
                                                  "allow it to leap more than 16 feet."),
         MON_STATS(115, 90, 70, 65, 59, 90),
-        // MON_ICON(OinkologneFemale),
+        MON_ICON(OinkologneFemale),
         .iconPaletteIndex = 0,
         .cryId = CRY_ID_OINKOLOGNE_FEMALE,
+        .frontPic = sMonFrontPic_OinkologneFemale,
+        .frontPicSize = MON_COORDS_SIZE(45, 49),
+        .frontPicYOffset = 7,
+        .frontPicElevation = 2,
+        .shadowXOffset = 6,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_OinkologneFemale,
+        .backPicSize = MON_COORDS_SIZE(47, 41),
+        .backPicYOffset = 12,
+        .palette = sMonPalette_OinkologneFemaleNormal,
+        .shinyPalette = sMonPalette_OinkologneFemaleShiny,
     },
     
     [SPECIES_MAUSHOLD_FAMILY_OF_FOUR] =
@@ -51423,9 +51622,19 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                            "When facing strong opponents, the whole\n"
                            "group will join the fight."),
         .weight = 28,
-        // MON_ICON(MausholdFamilyOfFour),
+        FOOTPRINT(MausholdFamilyOfFour),
+        MON_ICON(MausholdFamilyOfFour),
         .iconPaletteIndex = 0,
         .cryId = CRY_ID_MAUSHOLD_FAMILY_OF_FOUR,
+        .frontPic = sMonFrontPic_MausholdFamilyOfFour,
+        .frontPicSize = MON_COORDS_SIZE(64, 29),
+        .frontPicYOffset = 15,
+        .frontPicElevation = 3,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_L,
+        .backPic = sMonBackPic_MausholdFamilyOfFour,
+        .backPicSize = MON_COORDS_SIZE(61, 36),
+        .backPicYOffset = 15,
     },
     
     [SPECIES_SQUAWKABILLY_BLUE] =
@@ -51433,8 +51642,10 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         SQUAWKABILLY_MISC_INFO(ABILITY_GUTS, "Their flocks can have 50 individuals.\n"
                                             "They fly around towns and forests,\n"
                                             "searching for food and making a racket."),
-        // MON_ICON(SquawkabillyBlue),
+        MON_ICON(SquawkabillyBlue),
         .iconPaletteIndex = 0,
+        .palette = sMonPalette_SquawkabillyBlueNormal,
+        .shinyPalette = sMonPalette_SquawkabillyBlueShiny,
     },
     
     [SPECIES_SQUAWKABILLY_YELLOW] =
@@ -51442,8 +51653,10 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         SQUAWKABILLY_MISC_INFO(ABILITY_SHEER_FORCE, "The yellow Squawkabilly are especially\n"
                                                     "fierce. They've even been known to drive\n"
                                                     "other bird Pokémon out of town."),
-        // MON_ICON(SquawkabillyYellow),
-        .iconPaletteIndex = 0,
+        MON_ICON(SquawkabillyYellow),
+        .iconPaletteIndex = 1,
+        .palette = sMonPalette_SquawkabillyYellowNormal,
+        .shinyPalette = sMonPalette_SquawkabillyYellowShiny,
     },
     
     [SPECIES_SQUAWKABILLY_WHITE] =
@@ -51451,8 +51664,10 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         SQUAWKABILLY_MISC_INFO(ABILITY_SHEER_FORCE, "This Pokémon dislikes being alone. It\n"
                                                     "has a strong sense of community and\n"
                                                     "survives by cooperating with allies."),
-        // MON_ICON(SquawkabillyWhite),
+        MON_ICON(SquawkabillyWhite),
         .iconPaletteIndex = 0,
+        .palette = sMonPalette_SquawkabillyWhiteNormal,
+        .shinyPalette = sMonPalette_SquawkabillyWhiteShiny,
     },
     
     [SPECIES_PALAFIN_HERO] =
@@ -51467,6 +51682,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         MON_ICON(PalafinHero),
         .cryId = CRY_ID_PALAFIN_HERO,
         .formChangeTable = sPalafinHeroFormChangeTable,
+        .frontPic = sMonFrontPic_PalafinHero,
+        .frontPicSize = MON_COORDS_SIZE(57, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 1,
+        .shadowXOffset = 2,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_PalafinHero,
+        .backPicSize = MON_COORDS_SIZE(59, 61),
+        .backPicYOffset = 1,
+        .palette = sMonPalette_PalafinHeroNormal,
+        .shinyPalette = sMonPalette_PalafinHeroShiny,
     },
     
     [SPECIES_TATSUGIRI_DROOPY] =
@@ -51476,6 +51702,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                             "it uses its smarts to survive."),
         MON_ICON(TatsugiriDroopy),
         .cryId = CRY_ID_TATSUGIRI_DROOPY,
+        .frontPic = sMonFrontPic_TatsugiriDroopy,
+        .frontPicSize = MON_COORDS_SIZE(31, 35),
+        .frontPicYOffset = 14,
+        .frontPicElevation = 1,
+        .shadowXOffset = -3,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_TatsugiriDroopy,
+        .backPicSize = MON_COORDS_SIZE(40, 30),
+        .backPicYOffset = 17,
+        .palette = sMonPalette_TatsugiriDroopyNormal,
+        .shinyPalette = sMonPalette_TatsugiriDroopyShiny,
     },
     
     [SPECIES_TATSUGIRI_STRETCHY] =
@@ -51485,6 +51722,17 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                             "inflating its throat sac."),
         MON_ICON(TatsugiriStretchy),
         .cryId = CRY_ID_TATSUGIRI_STRETCHY,
+        .frontPic = sMonFrontPic_TatsugiriStretchy,
+        .frontPicSize = MON_COORDS_SIZE(31, 35),
+        .frontPicYOffset = 14,
+        .frontPicElevation = 1,
+        .shadowXOffset = -3,
+        .shadowSize = SHADOW_SIZE_S,
+        .backPic = sMonBackPic_TatsugiriStretchy,
+        .backPicSize = MON_COORDS_SIZE(40, 30),
+        .backPicYOffset = 17,
+        .palette = sMonPalette_TatsugiriStretchyNormal,
+        .shinyPalette = sMonPalette_TatsugiriStretchyShiny,
     },
     
     [SPECIES_DUDUNSPARCE_THREE_SEGMENT] =
@@ -51494,8 +51742,15 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                               "and carry them to the entrance."),
         .height = 45,
         .weight = 474,
-        // MON_ICON(DudunsparceThreeSegment),
-        .iconPaletteIndex = 0,
+        .frontPic = sMonFrontPic_DudunsparceThreeSegment,
+        .frontPicSize = MON_COORDS_SIZE(63, 44),
+        .frontPicYOffset = 10,
+        .frontPicElevation = 3,
+        .shadowXOffset = 13,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_DudunsparceThreeSegment,
+        .backPicSize = MON_COORDS_SIZE(64, 41),
+        .backPicYOffset = 11,
     },
     
     [SPECIES_URSALUNA_BLOOD_MOON] =
@@ -51520,10 +51775,21 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evYield_SpAttack = 3,
         FOOTPRINT(Ursaluna),
         .friendship = 50,
-        // MON_ICON(UrsalunaBloodMoon),
-        .iconPaletteIndex = 0,
+        MON_ICON(UrsalunaBloodMoon),
+        .iconPaletteIndex = 2,
         .natDexNum = NATIONAL_DEX_URSALUNA,
         .cryId = CRY_ID_URSALUNA,
+        .frontPic = sMonFrontPic_UrsalunaBloodMoon,
+        .frontPicSize = MON_COORDS_SIZE(60, 63),
+        .frontPicYOffset = 0,
+        .frontPicElevation = -1,
+        .shadowXOffset = 6,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_UrsalunaBloodMoon,
+        .backPicSize = MON_COORDS_SIZE(63, 43),
+        .backPicYOffset = 9,
+        .palette = sMonPalette_UrsalunaBloodMoonNormal,
+        .shinyPalette = sMonPalette_UrsalunaBloodMoonShiny,
     },
     
     [SPECIES_OGERPON_TEAL_MASK] =
@@ -51533,9 +51799,20 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                            "type-based energy within its masks."),
         MON_TYPES(TYPE_GRASS),
         .flags = SPECIES_FLAG_LEGENDARY,
-        // MON_ICON(OgerponTealMask),
-        .iconPaletteIndex = 0,
+        MON_ICON(OgerponTealMask),
+        .iconPaletteIndex = 1,
         .formChangeTable = sOgerponMaskedFormChangeTable,
+        .frontPic = sMonFrontPic_OgerponTealMask,
+        .frontPicSize = MON_COORDS_SIZE(60, 60),
+        .frontPicYOffset = 2,
+        .frontPicElevation = 2,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_OgerponTealMask,
+        .backPicSize = MON_COORDS_SIZE(64, 50),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_OgerponTealMaskNormal,
+        .shinyPalette = sMonPalette_OgerponTealMaskShiny,
     },
     
     [SPECIES_OGERPON_WELLSPRING_MASK] =
@@ -51545,9 +51822,20 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                                 "kicks and ivy strikes."),
         MON_TYPES(TYPE_GRASS, TYPE_WATER),
         .flags = SPECIES_FLAG_LEGENDARY,
-        // MON_ICON(OgerponWellspringMask),
+        MON_ICON(OgerponWellspringMask),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponMaskedFormChangeTable,
+        .frontPic = sMonFrontPic_OgerponWellspringMask,
+        .frontPicSize = MON_COORDS_SIZE(63, 60),
+        .frontPicYOffset = 2,
+        .frontPicElevation = 2,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_OgerponWellspringMask,
+        .backPicSize = MON_COORDS_SIZE(64, 50),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_OgerponWellspringMaskNormal,
+        .shinyPalette = sMonPalette_OgerponWellspringMaskShiny,
     },
     
     [SPECIES_OGERPON_HEARTHFLAME_MASK] =
@@ -51557,9 +51845,20 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                                 "thorn-covered ivy."),
         MON_TYPES(TYPE_GRASS, TYPE_FIRE),
         .flags = SPECIES_FLAG_LEGENDARY,
-        // MON_ICON(OgerponHearthflameMask),
+        MON_ICON(OgerponHearthflameMask),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponMaskedFormChangeTable,
+        .frontPic = sMonFrontPic_OgerponHearthflameMask,
+        .frontPicSize = MON_COORDS_SIZE(61, 60),
+        .frontPicYOffset = 2,
+        .frontPicElevation = 2,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_OgerponHearthflameMask,
+        .backPicSize = MON_COORDS_SIZE(64, 55),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_OgerponHearthflameMaskNormal,
+        .shinyPalette = sMonPalette_OgerponHearthflameMaskShiny,
     },
     
     [SPECIES_OGERPON_CORNERSTONE_MASK] =
@@ -51569,18 +51868,29 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                           "it from all manner of attacks."),
         MON_TYPES(TYPE_GRASS, TYPE_ROCK),
         .flags = SPECIES_FLAG_LEGENDARY,
-        // MON_ICON(OgerponCornerstoneMask),
+        MON_ICON(OgerponCornerstoneMask),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponMaskedFormChangeTable,
+        .frontPic = sMonFrontPic_OgerponCornerstoneMask,
+        .frontPicSize = MON_COORDS_SIZE(56, 60),
+        .frontPicYOffset = 2,
+        .frontPicElevation = 2,
+        .shadowXOffset = 5,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_OgerponCornerstoneMask,
+        .backPicSize = MON_COORDS_SIZE(64, 50),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_OgerponCornerstoneMaskNormal,
+        .shinyPalette = sMonPalette_OgerponCornerstoneMaskShiny,
     },
     
-    [SPECIES_OGERPON_TEAL_MASK_TERA] =
+    /*[SPECIES_OGERPON_TEAL_MASK_TERA] =
     {
         OGERPON_MISC_INFO(ABILITY_EMBODY_ASPECT, "This mischief-loving Pokémon is full of\n"
                                                  "curiosity. It battles by drawing out the\n"
                                                  "type-based energy within its masks."),
         MON_TYPES(TYPE_GRASS),
-        .flags = SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_TERASTAL,
+        .flags = SPECIES_FLAG_LEGENDARY,
         // MON_ICON(OgerponTealMaskTera),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponTeraFormChangeTable,
@@ -51592,7 +51902,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                                  "water. It attacks unrelentingly with\n"
                                                  "kicks and ivy strikes."),
         MON_TYPES(TYPE_GRASS, TYPE_WATER),
-        .flags = SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_TERASTAL,
+        .flags = SPECIES_FLAG_LEGENDARY,
         // MON_ICON(OgerponWellspringMaskTera),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponTeraFormChangeTable,
@@ -51604,7 +51914,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                                  "fire. It spears its enemies with\n"
                                                  "thorn-covered ivy."),
         MON_TYPES(TYPE_GRASS, TYPE_FIRE),
-        .flags = SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_TERASTAL,
+        .flags = SPECIES_FLAG_LEGENDARY,
         // MON_ICON(OgerponHearthflameMaskTera),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponTeraFormChangeTable,
@@ -51616,11 +51926,11 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
                                                  "stone. Its body is rock-solid, protecting\n"
                                                  "it from all manner of attacks."),
         MON_TYPES(TYPE_GRASS, TYPE_ROCK),
-        .flags = SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_TERASTAL,
+        .flags = SPECIES_FLAG_LEGENDARY,
         // MON_ICON(OgerponCornerstoneMaskTera),
         .iconPaletteIndex = 0,
         .formChangeTable = sOgerponTeraFormChangeTable,
-    },
+    },*/
     
     [SPECIES_TERAPAGOS_TERA] =
     {
@@ -51645,12 +51955,23 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evYield_SpDefense = 2,
         FOOTPRINT(Terapagos),
         .friendship = 50,
-        .flags = SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_TERASTAL,
-        // MON_ICON(TerapagosTera),
+        .flags = SPECIES_FLAG_LEGENDARY,
+        MON_ICON(TerapagosTera),
         .iconPaletteIndex = 0,
         .natDexNum = NATIONAL_DEX_TERAPAGOS,
         .cryId = CRY_ID_TERAPAGOS,
         .formChangeTable = sTerapagosTeraFormChangeTable,
+        .frontPic = sMonFrontPic_TerapagosTera,
+        .frontPicSize = MON_COORDS_SIZE(53, 50),
+        .frontPicYOffset = 8,
+        .frontPicElevation = 7,
+        .shadowXOffset = -2,
+        .shadowSize = SHADOW_SIZE_M,
+        .backPic = sMonBackPic_TerapagosTera,
+        .backPicSize = MON_COORDS_SIZE(64, 33),
+        .backPicYOffset = 11,
+        .palette = sMonPalette_TerapagosTeraNormal,
+        .shinyPalette = sMonPalette_TerapagosTeraShiny,
     },
     
     [SPECIES_TERAPAGOS_STELLAR] =
@@ -51675,13 +51996,24 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .evYield_HP = 3,
         FOOTPRINT(Terapagos),
         .friendship = 50,
-        .flags = SPECIES_FLAG_LEGENDARY | SPECIES_FLAG_TERASTAL,
-        // MON_ICON(TerapagosStellar),
+        .flags = SPECIES_FLAG_LEGENDARY,
+        MON_ICON(TerapagosStellar),
         .iconPaletteIndex = 0,
         .natDexNum = NATIONAL_DEX_TERAPAGOS,
         .cryId = CRY_ID_TERAPAGOS,
         .formChangeTable = sTerapagosStellarFormChangeTable,
-    },*/
+        .frontPic = sMonFrontPic_TerapagosStellar,
+        .frontPicSize = MON_COORDS_SIZE(63, 64),
+        .frontPicYOffset = 0,
+        .frontPicElevation = 2,
+        .shadowXOffset = 0,
+        .shadowSize = SHADOW_SIZE_XL,
+        .backPic = sMonBackPic_TerapagosStellar,
+        .backPicSize = MON_COORDS_SIZE(61, 63),
+        .backPicYOffset = 0,
+        .palette = sMonPalette_TerapagosStellarNormal,
+        .shinyPalette = sMonPalette_TerapagosStellarShiny,
+    },
     
     [SPECIES_EGG] =
     {
