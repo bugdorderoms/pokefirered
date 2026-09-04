@@ -49,7 +49,6 @@ struct PokedexScreenData
     u32 modeSelectInput;
     u16 modeSelectItemsAbove;
     u16 modeSelectCursorPos;
-    u32 taskId;
     u8 state;
     u8 data[4];
     u8 modeSelectWindowId;
@@ -143,7 +142,7 @@ static void DexScreen_DestroyAreaScreenResources(void);
 static void DexScreen_CreateCategoryPageSpeciesList(u32 category, u32 pageNum);
 static u32 DexScreen_PageNumberToRenderablePages(u32 page);
 static void DexScreen_InputHandler_StartToCry(void);
-static void DexScreen_PrintStringWithAlignment(const u8 *str, s32 mode);
+static void DexScreen_PrintStringWithAlignment(const u8 *str, u32 mode);
 static void MoveCursorFunc_DexModeSelect(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 static void ItemPrintFunc_DexModeSelect(u32 windowId, u32 itemId, u32 y);
 static void ItemPrintFunc_OrderedListMenu(u32 windowId, u32 species, u32 y);
@@ -892,7 +891,7 @@ void CB2_PokedexScreen(void)
         UpdatePaletteFade();
 }
 
-void DexScreen_LoadResources(void)
+static u32 DexScreen_LoadResources(void)
 {
     m4aSoundVSyncOff();
     SetVBlankCallback(NULL);
@@ -919,9 +918,8 @@ void DexScreen_LoadResources(void)
     
     sPokedexScreenData = Alloc(sizeof(struct PokedexScreenData));
     *sPokedexScreenData = sDexScreenDataInitialState;
-    sPokedexScreenData->taskId = CreateTask(Task_PokedexScreen, 0);
     sPokedexScreenData->listItems = Alloc(NATIONAL_DEX_END * sizeof(struct ListMenuItem));
-    sPokedexScreenData->forms = Alloc(sizeof(u16) * 30); // To acomodate all Unown forms(28 in total) + 1 for a terminator. so, last halfword are unused
+    sPokedexScreenData->forms = Alloc(sizeof(u16) * 64); // To acomodate all Alcremie forms(63 in total) + 1 for a terminator.
     
     ResetAllBgsPos();
     
@@ -935,12 +933,14 @@ void DexScreen_LoadResources(void)
     FillBgTilemapBufferRect(0, 0x003, 0,  0, 32,  2, 0x0F);
     FillBgTilemapBufferRect(0, 0x000, 0,  2, 32, 16, 0x11);
     FillBgTilemapBufferRect(0, 0x003, 0, 18, 32,  2, 0x0F);
+    
+    return CreateTask(Task_PokedexScreen, 0);
 }
 
 void CB2_OpenPokedexFromStartMenu(void)
 {
     DexScreen_LoadResources();
-    ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+    ClearGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
     SetGpuReg(REG_OFFSET_BLDCNT, 0);
     SetGpuReg(REG_OFFSET_BLDALPHA, 0);
     SetGpuReg(REG_OFFSET_BLDY, 0);
@@ -3176,21 +3176,21 @@ static u32 DexScreen_PageNumberToRenderablePages(u32 page)
 static void DexScreen_InputHandler_StartToCry(void)
 {
     if (JOY_NEW(START_BUTTON))
-        PlayCry_NormalNoDucking(sPokedexScreenData->dexSpecies, 0, 125, 10);
+        PlayCry_NormalNoDucking(sPokedexScreenData->dexSpecies, 0, 125, CRY_PRIORITY_NORMAL);
 }
 
 u32 DexScreen_RegisterMonToPokedex(u32 species)
 {
-    u32 nationalDexNum = SpeciesToNationalPokedexNum(species);
+    u32 taskId, nationalDexNum = SpeciesToNationalPokedexNum(species);
     
     GetSetPokedexFlag(nationalDexNum, FLAG_SET_SEEN);
     GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
 
-    DexScreen_LoadResources();
-    gTasks[sPokedexScreenData->taskId].func = Task_DexScreen_RegisterMonToPokedex;
+    taskId = DexScreen_LoadResources();
+    gTasks[taskId].func = Task_DexScreen_RegisterMonToPokedex;
     DexScreen_LookUpCategoryBySpecies(species);
 
-    return sPokedexScreenData->taskId;
+    return taskId;
 }
 
 static void Task_DexScreen_RegisterMonToPokedex(u32 taskId)
@@ -3299,7 +3299,7 @@ static void Task_DexScreen_RegisterMonToPokedex(u32 taskId)
     }
 }
 
-static void DexScreen_PrintStringWithAlignment(const u8 * str, s32 mode)
+static void DexScreen_PrintStringWithAlignment(const u8 * str, u32 mode)
 {
     u32 x;
 

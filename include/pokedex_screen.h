@@ -21,9 +21,7 @@
 
 #define DEX_MODE(name) (DEX_CATEGORY_COUNT + DEX_ORDER_##name)
 
-#include "pokedex.h"
-
 void CB2_OpenPokedexFromStartMenu(void);
 void VBlankCB_PokedexScreen(void);
 
-#endif //GUARD_POKEDEX_SCREEN_H
+#endif // GUARD_POKEDEX_SCREEN_H

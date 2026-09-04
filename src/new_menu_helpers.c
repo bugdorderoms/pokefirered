@@ -162,7 +162,7 @@ static const u8 gMenuCursorDimensions[][2] =
     [FONT_MALE]           = { 8,  14 },
     [FONT_FEMALE]         = { 8,  14 },
     [FONT_BRAILLE]        = { 8,  16 },
-    [FONT_BOLD]           = {},
+    [FONT_BOLD]           = { 0,   0 },
     [FONT_NARROWER]       = { 8,  15 },
     [FONT_SMALL_NARROWER] = { 8,   8 },
 };

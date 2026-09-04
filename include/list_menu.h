@@ -78,7 +78,7 @@ struct ListMenu
     struct ListMenuTemplate template;
     u16 cursorPos;
     u16 itemsAbove;
-    u32 taskId;
+    u8 taskId;
 };
 
 struct ListMenuWindowRect

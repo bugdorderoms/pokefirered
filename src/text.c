@@ -1188,13 +1188,13 @@ void RenderSaveFailedScreenText(u32 fontId, u8 * dest, const u8 * src, u8 x, u8 
     }
 }
 
-s32 (*GetFontWidthFunc(u8 glyphId))(u16 _glyphId, bool32 _isJapanese)
+s32 (*GetFontWidthFunc(u32 fontId))(u16 glyphId, bool32 _isJapanese)
 {
     u32 i;
 
-    for (i = 0; i < 7; ++i)
+    for (i = 0; i < ARRAY_COUNT(sGlyphWidthFuncs); ++i)
     {
-        if (glyphId == sGlyphWidthFuncs[i].fontId)
+        if (fontId == sGlyphWidthFuncs[i].fontId)
             return *sGlyphWidthFuncs[i].func;
     }
     return NULL;

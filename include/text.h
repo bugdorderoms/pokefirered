@@ -162,7 +162,7 @@ bool32 TextPrinterWait(struct TextPrinter *textPrinter);
 void DrawDownArrow(u32 windowId, u16 x, u16 y, u32 bgColor, bool32 drawArrow, u8 *counter, u8 *yCoordIndex);
 u16 RenderText(struct TextPrinter *textPrinter);
 void RenderSaveFailedScreenText(u32 fontId, u8 * dest, const u8 * src, u8 x, u8 y, u8 width, u8 height);
-s32 (*GetFontWidthFunc(u8 glyphId))(u16, bool32);
+s32 (*GetFontWidthFunc(u32 fontId))(u16, bool32);
 s32 GetStringWidth(u32 fontId, const u8 *str, s16 letterSpacing);
 u32 RenderTextFont9(u8 *pixels, u32 fontId, u8 *str, int a3, int a4, int a5, int a6, int a7);
 u32 DrawKeypadIcon(u32 windowId, u32 keypadIconId, u16 x, u16 y);
