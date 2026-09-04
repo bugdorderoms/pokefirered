@@ -1391,7 +1391,7 @@ static void DexScreen_CreateCharacteristicListMenu(void)
 static u32 SortDex(u32 region, u32 getSetFlag, s8 (*sortFunc)(struct ListMenuItem*, struct ListMenuItem*))
 {
     struct SortComparator comparator;
-    u32 i, num, dexStart, dexEnd, ret = NATIONAL_DEX_NONE;
+    u32 i, num, dexStart, dexEnd, numEntries = 0;
     
     if (region == REGIONS_COUNT) // National dex
     {
@@ -1410,15 +1410,14 @@ static u32 SortDex(u32 region, u32 getSetFlag, s8 (*sortFunc)(struct ListMenuIte
         {
             num = i + 1;
             
-            if (GetSetPokedexFlag(num, getSetFlag))
+#if SKIP_LARGE_POKEDEX_GAPS
+            if (GetSetPokedexFlag(num, getSetFlag) || (num < NATIONAL_DEX_END && GetSetPokedexFlag(num + 1, getSetFlag)))
+#endif
             {
-                sPokedexScreenData->listItems[i].label = gSpeciesInfo[num].name;
-                ret = num; // Returns last index
+                sPokedexScreenData->listItems[numEntries].label = GetSetPokedexFlag(num, getSetFlag) ? gSpeciesInfo[num].name : gSpeciesInfo[SPECIES_NONE].name;
+                sPokedexScreenData->listItems[numEntries].index = num;
+                numEntries++;
             }
-            else
-                sPokedexScreenData->listItems[i].label = COMPOUND_STRING("-----");
-            
-            sPokedexScreenData->listItems[i].index = num;
         }
     }
     else
@@ -1429,21 +1428,21 @@ static u32 SortDex(u32 region, u32 getSetFlag, s8 (*sortFunc)(struct ListMenuIte
             
             if (GetSetPokedexFlag(num, getSetFlag))
             {
-                sPokedexScreenData->listItems[ret].label = gSpeciesInfo[num].name;
-                sPokedexScreenData->listItems[ret].index = num;
-                ++ret; // Returns N. of pokes in list
+                sPokedexScreenData->listItems[numEntries].label = gSpeciesInfo[num].name;
+                sPokedexScreenData->listItems[numEntries].index = num;
+                numEntries++;
             }
         }
         
-        if (ret > 1)
+        if (numEntries > 1)
         {
             comparator.kind = SORT_LIST_MENU_ITEMS;
             comparator.sortUnion.listMenuItemSort.array = sPokedexScreenData->listItems;
             comparator.sortUnion.listMenuItemSort.func = sortFunc;
-            MergeSortArray(&comparator, ret);
+            MergeSortArray(&comparator, numEntries);
         }
     }
-    return ret;
+    return numEntries;
 }
 
 static u32 DexScreen_CountMonsInOrderedList(u32 orderIdx)
@@ -2293,8 +2292,17 @@ static void DexScreen_LoadMonPicInWindow(u32 windowId, u32 species, u32 paletteO
 
 static void DexScreen_PrintMonDexNo(u32 windowId, u32 fontId, u32 species, u32 x, u32 y)
 {
+    u32 dexNum = SpeciesToNationalPokedexNum(species);
+    
+#if SKIP_LARGE_POKEDEX_GAPS
+    if (!GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
+    {
+        DexScreen_AddTextPrinterParameterized(windowId, fontId, COMPOUND_STRING("------"), x, y, 0);
+        return;
+    }
+#endif
     DexScreen_AddTextPrinterParameterized(windowId, fontId, COMPOUND_STRING("{NO}"), x, y, 0);
-    DexScreen_PrintNum4LeadingZeroes(windowId, fontId, SpeciesToNationalPokedexNum(species), x + 9, y, 0);
+    DexScreen_PrintNum4LeadingZeroes(windowId, fontId, dexNum, x + 9, y, 0);
 }
 
 static u32 DexScreen_GetDexCount(u32 caseId, u32 dexMode)
@@ -2845,13 +2853,12 @@ static void DexScreen_DrawMonDexPage(bool32 justRegistered)
     // Control info
     FillWindowPixelBuffer(1, PIXEL_FILL(15));
     
-    if (justRegistered == FALSE)
+    if (!justRegistered)
     {
         DexScreen_AddTextPrinterParameterized(1, 0, sText_Cry, 8, 2, 4);
         DexScreen_PrintControlInfo(sPokedexScreenData->forms[1] == SPECIES_NONE ? sText_NextDataCancel : sText_FormsNextDataCancel);
     }
     else
-        // Just registered
         DexScreen_PrintControlInfo(sText_Next);
 
     PutWindowTilemap(1);

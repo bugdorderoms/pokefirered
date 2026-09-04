@@ -1505,7 +1505,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
 {
     [SPECIES_NONE] =
     {
-        .name = _("????????????"),
+        .name = _("------------"),
         .categoryName = _("Unknown"),
         .description = COMPOUND_STRING("This is a newly discovered Pokémon. It is\n"
                                        "currently under investigation. No detailed\n"
