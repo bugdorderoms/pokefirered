@@ -4,11 +4,14 @@
 #define MAX_DMA_REQUESTS 128
 
 static struct {
-    /* 0x00 */ const u8 *src;
+    /* 0x00 */ union
+               {
+                   const u8 *src;
+                   u32 value;
+               } data;
     /* 0x04 */ u8 *dest;
     /* 0x08 */ u16 size;
     /* 0x0A */ u16 mode;
-    /* 0x0C */ u32 value;
 } gDma3Requests[MAX_DMA_REQUESTS];
 
 static volatile bool8 gDma3ManagerLocked;
@@ -24,10 +27,9 @@ void ClearDma3Requests(void)
     for(i = 0; i < (u8)ARRAY_COUNT(gDma3Requests); i++)
     {
         gDma3Requests[i].size = 0;
-        gDma3Requests[i].src = 0;
+        gDma3Requests[i].data.src = 0;
         gDma3Requests[i].dest = 0;
     }
-
     gDma3ManagerLocked = FALSE;
 }
 
@@ -53,33 +55,32 @@ void ProcessDma3Requests(void)
         switch (gDma3Requests[gDma3RequestCursor].mode)
         {
         case DMA_REQUEST_COPY32: // regular 32-bit copy
-            Dma3CopyLarge32_(gDma3Requests[gDma3RequestCursor].src,
+            Dma3CopyLarge32_(gDma3Requests[gDma3RequestCursor].data.src,
                              gDma3Requests[gDma3RequestCursor].dest,
                              gDma3Requests[gDma3RequestCursor].size);
             break;
         case DMA_REQUEST_FILL32: // repeat a single 32-bit value across RAM
-            Dma3FillLarge32_(gDma3Requests[gDma3RequestCursor].value,
+            Dma3FillLarge32_(gDma3Requests[gDma3RequestCursor].data.value,
                              gDma3Requests[gDma3RequestCursor].dest,
                              gDma3Requests[gDma3RequestCursor].size);
             break;
         case DMA_REQUEST_COPY16:    // regular 16-bit copy
-            Dma3CopyLarge16_(gDma3Requests[gDma3RequestCursor].src,
+            Dma3CopyLarge16_(gDma3Requests[gDma3RequestCursor].data.src,
                              gDma3Requests[gDma3RequestCursor].dest,
                              gDma3Requests[gDma3RequestCursor].size);
             break;
         case DMA_REQUEST_FILL16: // repeat a single 16-bit value across RAM
-            Dma3FillLarge16_(gDma3Requests[gDma3RequestCursor].value,
+            Dma3FillLarge16_(gDma3Requests[gDma3RequestCursor].data.value,
                              gDma3Requests[gDma3RequestCursor].dest,
                              gDma3Requests[gDma3RequestCursor].size);
             break;
         }
 
         // Free the request
-        gDma3Requests[gDma3RequestCursor].src = NULL;
+        gDma3Requests[gDma3RequestCursor].data.src = NULL;
         gDma3Requests[gDma3RequestCursor].dest = NULL;
         gDma3Requests[gDma3RequestCursor].size = 0;
         gDma3Requests[gDma3RequestCursor].mode = 0;
-        gDma3Requests[gDma3RequestCursor].value = 0;
         
         gDma3RequestCursor = INCREMENT_OR_WRAP(gDma3RequestCursor, MAX_DMA_REQUESTS); // loop back to the first DMA request
     }
@@ -90,14 +91,15 @@ s16 RequestDma3Copy(const void *src, void *dest, u16 size, u8 mode)
     int cursor;
     int var = 0;
 
-    gDma3ManagerLocked = 1;
+    gDma3ManagerLocked = TRUE;
 
     cursor = gDma3RequestCursor;
-    while(1)
+    
+    while(TRUE)
     {
-        if(!gDma3Requests[cursor].size) // an empty copy was found and the current cursor will be returned.
+        if (!gDma3Requests[cursor].size) // an empty copy was found and the current cursor will be returned.
         {
-            gDma3Requests[cursor].src = src;
+            gDma3Requests[cursor].data.src = src;
             gDma3Requests[cursor].dest = dest;
             gDma3Requests[cursor].size = size;
             gDma3Requests[cursor].mode = mode == DMA3_32BIT ? DMA_REQUEST_COPY32 : DMA_REQUEST_COPY16;
@@ -107,7 +109,7 @@ s16 RequestDma3Copy(const void *src, void *dest, u16 size, u8 mode)
         }
         cursor = INCREMENT_OR_WRAP(cursor, MAX_DMA_REQUESTS); // loop back to start.
 
-        if(++var >= MAX_DMA_REQUESTS) // max checks were made. all resulted in failure.
+        if (++var >= MAX_DMA_REQUESTS) // max checks were made. all resulted in failure.
         {
             break;
         }
@@ -122,16 +124,16 @@ s16 RequestDma3Fill(s32 value, void *dest, u16 size, u8 mode)
     int var = 0;
 
     cursor = gDma3RequestCursor;
-    gDma3ManagerLocked = 1;
+    gDma3ManagerLocked = TRUE;
 
-    while(1)
+    while (TRUE)
     {
-        if(!gDma3Requests[cursor].size)
+        if (!gDma3Requests[cursor].size)
         {
             gDma3Requests[cursor].dest = dest;
             gDma3Requests[cursor].size = size;
             gDma3Requests[cursor].mode = mode;
-            gDma3Requests[cursor].value = value;
+            gDma3Requests[cursor].data.value = value;
             gDma3Requests[cursor].mode = mode == DMA3_32BIT ? DMA_REQUEST_FILL32 : DMA_REQUEST_FILL16;
 
             gDma3ManagerLocked = FALSE;
@@ -139,7 +141,7 @@ s16 RequestDma3Fill(s32 value, void *dest, u16 size, u8 mode)
         }
         cursor = INCREMENT_OR_WRAP(cursor, MAX_DMA_REQUESTS); // loop back to start.
         
-        if(++var >= MAX_DMA_REQUESTS) // max checks were made. all resulted in failure.
+        if (++var >= MAX_DMA_REQUESTS) // max checks were made. all resulted in failure.
         {
             break;
         }
