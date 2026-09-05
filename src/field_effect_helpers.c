@@ -487,30 +487,33 @@ void CreateReflectionEffectSprites(void)
 
 void SetUpReflection(struct ObjectEvent * objectEvent, struct Sprite * sprite, bool32 stillReflection)
 {
-    struct Sprite * reflectionSprite = &gSprites[CreateCopySpriteAt(sprite, sprite->x, sprite->y, 0x98)];
-
-    reflectionSprite->callback = SpriteCB_UpdateObjectReflectionSprite;
-    reflectionSprite->oam.priority = 3;
-    reflectionSprite->usingSheet = TRUE;
-    reflectionSprite->anims = gDummySpriteAnimTable;
-    StartSpriteAnim(reflectionSprite, 0);
-    reflectionSprite->affineAnims = gDummySpriteAffineAnimTable;
-    reflectionSprite->affineAnimBeginning = TRUE;
-    reflectionSprite->subspriteMode = SUBSPRITES_OFF;
-    reflectionSprite->sReflectionObjEventId = sprite->data[0];
-    reflectionSprite->sReflectionObjEventLocalId = objectEvent->localId;
-    reflectionSprite->sIsStillReflection = stillReflection;
-    LoadObjectReflectionPalette(objectEvent, reflectionSprite);
-
-    if (!stillReflection)
-        reflectionSprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+    if (!GetObjectEventGraphicsInfo(objectEvent->graphicsId)->disableReflectionPaletteLoad)
+    {
+        struct Sprite * reflectionSprite = &gSprites[CreateCopySpriteAt(sprite, sprite->x, sprite->y, 0x98)];
+    
+        reflectionSprite->callback = SpriteCB_UpdateObjectReflectionSprite;
+        reflectionSprite->oam.priority = 3;
+        reflectionSprite->usingSheet = TRUE;
+        reflectionSprite->anims = gDummySpriteAnimTable;
+        StartSpriteAnim(reflectionSprite, 0);
+        reflectionSprite->affineAnims = gDummySpriteAffineAnimTable;
+        reflectionSprite->affineAnimBeginning = TRUE;
+        reflectionSprite->subspriteMode = SUBSPRITES_OFF;
+        reflectionSprite->sReflectionObjEventId = sprite->data[0];
+        reflectionSprite->sReflectionObjEventLocalId = objectEvent->localId;
+        reflectionSprite->sIsStillReflection = stillReflection;
+        LoadObjectReflectionPalette(objectEvent, reflectionSprite);
+    
+        if (!stillReflection)
+            reflectionSprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+    }
 }
 
 static void LoadObjectReflectionPalette(struct ObjectEvent * objectEvent, struct Sprite * sprite)
 {
     u32 bridgeType;
     
-    if (!GetObjectEventGraphicsInfo(objectEvent->graphicsId)->disableReflectionPaletteLoad && ((bridgeType = MetatileBehavior_GetBridgeType(objectEvent->previousMetatileBehavior))
+    if (((bridgeType = MetatileBehavior_GetBridgeType(objectEvent->previousMetatileBehavior))
     || (bridgeType = MetatileBehavior_GetBridgeType(objectEvent->currentMetatileBehavior))))
     {
         // When walking on a bridge high above water (Route 120), the reflection is a solid dark blue color.
