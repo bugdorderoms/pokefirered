@@ -769,13 +769,6 @@ void ChoosePartyMon(void)
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
 }
 
-void SelectMoveTutorMon(void)
-{
-    ScriptContext2_Enable();
-    gTasks[CreateTask(Task_WaitFadeAndInitChoosePartyPokemon, 10)].data[0] = PARTY_MENU_TYPE_MOVE_RELEARNER;
-    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
-}
-
 static void CB2_UpdatePartyMenu(void)
 {
     RunTasks();
@@ -2769,10 +2762,6 @@ static void HandleChooseMonSelection(u32 taskId, s8 *slotPtr)
         case PARTY_ACTION_CHOOSE_AND_CLOSE:
             PlaySE(SE_SELECT);
             gSpecialVar_0x8004 = *slotPtr;
-            
-            if (gPartyMenu.menuType == PARTY_MENU_TYPE_MOVE_RELEARNER)
-                gSpecialVar_0x8005 = GetNumberOfRelearnableMoves(&gPlayerParty[*slotPtr]);
-            
             Task_ClosePartyMenu(taskId);
             break;
         case PARTY_ACTION_MINIGAME:
@@ -4635,19 +4624,13 @@ static void CursorCB_Moves(u32 taskId)
     gTasks[taskId].func = Task_HandleSelectionMenuInput;
 }
 
-static void CB2_MoveRelearnerFromPartyMenu(void)
-{
-    ShowMoveTutorMenu(TRUE);
-}
-
 static void CursorCB_RelearnMove(u32 taskId)
 {
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
-    u32 numRelearnableMoves = GetNumberOfRelearnableMoves(mon);
     
     PlaySE(SE_SELECT);
     
-    if (numRelearnableMoves == 0)
+    if (GetNumberOfRelearnableMoves(mon) == 0)
     {
         PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
         PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
@@ -4660,8 +4643,7 @@ static void CursorCB_RelearnMove(u32 taskId)
     else
     {
         gSpecialVar_0x8004 = gPartyMenu.slotId;
-        gSpecialVar_0x8005 = numRelearnableMoves;
-        sPartyMenuInternal->exitCallback = CB2_MoveRelearnerFromPartyMenu;
+        sPartyMenuInternal->exitCallback = ShowMoveTutorMenu;
         Task_ClosePartyMenu(taskId);
     }
 }

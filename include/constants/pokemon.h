@@ -184,8 +184,6 @@
 #define MON_ALREADY_KNOWS_MOVE      2
 #define MON_LEARNED_MOVE            3
 
-#define MAX_LV_UP_MOVES              30
-
 #define PLAYER_HAS_TWO_USABLE_MONS              0x0
 #define PLAYER_HAS_ONE_MON                      0x1
 #define PLAYER_HAS_ONE_USABLE_MON               0x2

@@ -34,10 +34,9 @@
 #define PARTY_MENU_TYPE_CHOOSE_HALF         3  // multi battles, eReader battles, and some battle facilities
 #define PARTY_MENU_TYPE_MULTI_SHOWCASE      4
 #define PARTY_MENU_TYPE_DAYCARE             5
-#define PARTY_MENU_TYPE_MOVE_RELEARNER      6
+#define PARTY_MENU_TYPE_MINIGAME            6
 #define PARTY_MENU_TYPE_UNION_ROOM_REGISTER 7  // trading board
 #define PARTY_MENU_TYPE_UNION_ROOM_TRADE    8  // trading board
-#define PARTY_MENU_TYPE_MINIGAME            9
 
 #define PARTY_ACTION_CHOOSE_MON         0
 #define PARTY_ACTION_SEND_OUT           1

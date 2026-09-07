@@ -201,8 +201,6 @@ gSpecials:: @ 815FD60
 	def_special GetPCBoxToSendMon
 	
 	@ Move tutor specials
-	def_special SelectMoveTutorMon
-	def_special DisplayMoveTutorMenu
 	def_special ChooseMonForMoveTutor
 	def_special BufferTMHMMoveName
 	def_special CapeBrinkGetMoveToTeachLeadPokemon

@@ -82,7 +82,6 @@ static void Task_HandleDaycareLevelMenuInput(u32 taskId);
 static void DaycarePrintMonInfo(u32 windowId, u32 daycareSlotId, u32 y);
 
 // RAM buffers used to assist with BuildEggMoveset
-EWRAM_DATA static u16 sHatchedEggLevelUpMoves[MAX_LV_UP_MOVES] = {0};
 EWRAM_DATA static u16 sHatchedEggEggMoves[EGG_MOVES_ARRAY_COUNT] = {0};
 EWRAM_DATA static u16 sHatchedEggFinalMoves[MAX_MON_MOVES] = {0};
 
@@ -1316,6 +1315,7 @@ static void AddHatchedMonToParty(u32 id)
 static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, struct BoxPokemon *mother, u32 fatherItem, u32 motherItem)
 {
     u32 i, j, numLevelUpMoves, numEggMoves, numSharedParentMoves;
+    const struct LevelUpMove *learnset;
     u16 motherMoves[MAX_MON_MOVES], fatherMoves[MAX_MON_MOVES], eggFinalMoves[MAX_MON_MOVES];
     
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -1325,7 +1325,6 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
         eggFinalMoves[i] = MOVE_NONE;
     }
     memset(sHatchedEggEggMoves, MOVE_NONE, EGG_MOVES_ARRAY_COUNT);
-    memset(sHatchedEggLevelUpMoves, MOVE_NONE, MAX_LV_UP_MOVES);
     
     // Inherit egg moves
     numEggMoves = GetEggMoves(egg, sHatchedEggEggMoves);
@@ -1368,25 +1367,28 @@ static void BuildEggMoveset(struct Pokemon *egg, struct BoxPokemon *father, stru
                 eggFinalMoves[numSharedParentMoves++] = fatherMoves[i];
         }
     }
-    numLevelUpMoves = GetLevelUpMovesBySpecies(GetMonData(egg, MON_DATA_SPECIES), sHatchedEggLevelUpMoves);
+    learnset = gSpeciesInfo[GetMonData(egg, MON_DATA_SPECIES)].levelUpLearnset;
     
-    for (i = 0; i < MAX_MON_MOVES && eggFinalMoves[i] != MOVE_NONE; i++)
+    if (learnset != NULL)
     {
-        for (j = 0; j < numLevelUpMoves; j++)
+        for (i = 0; i < MAX_MON_MOVES && eggFinalMoves[i] != MOVE_NONE; i++)
         {
-            if (sHatchedEggLevelUpMoves[j] && eggFinalMoves[i] == sHatchedEggLevelUpMoves[j])
+            for (j = 0; learnset[j].move != MOVE_NONE; j++)
             {
-                if (GiveMoveToMon(egg, eggFinalMoves[i]) == MON_HAS_MAX_MOVES)
-                    DeleteFirstMoveAndGiveMoveToMon(egg, eggFinalMoves[i]);
-                
-                break;
+                if (eggFinalMoves[i] == learnset[j].move)
+                {
+                    if (GiveMoveToMon(egg, eggFinalMoves[i]) == MON_HAS_MAX_MOVES)
+                        DeleteFirstMoveAndGiveMoveToMon(egg, eggFinalMoves[i]);
+                    
+                    break;
+                }
             }
         }
     }
     
 #if VOLT_TACKLE_BY_BREEDING
     // Pichu having Volt Tackle
-    if (SpeciesToNationalPokedexNum(GetMonData(&egg, MON_DATA_SPECIES)) == NATIONAL_DEX_PICHU && (fatherItem == ITEM_LIGHT_BALL || motherItem == ITEM_LIGHT_BALL))
+    if (SpeciesToNationalPokedexNum(GetMonData(egg, MON_DATA_SPECIES)) == NATIONAL_DEX_PICHU && (fatherItem == ITEM_LIGHT_BALL || motherItem == ITEM_LIGHT_BALL))
     {
         if (GiveMoveToMon(egg, MOVE_VOLT_TACKLE) == MON_HAS_MAX_MOVES)
             DeleteFirstMoveAndGiveMoveToMon(egg, MOVE_VOLT_TACKLE);

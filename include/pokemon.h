@@ -200,8 +200,9 @@ struct SpeciesInfo
  /* 0x6C */ const u8 *evolutions;
  /* 0x70 */ const struct FormChange *formChangeTable;
             // Learnable moves
- /* 0x74 */ const u16 *tmLearnsets;
- /* 0x78 */ const u16 *tutorLearnsets;
+ /* 0x74 */ const struct LevelUpMove *levelUpLearnset;
+ /* 0x78 */ const u16 *tmLearnsets;
+ /* 0x7C */ const u16 *tutorLearnsets;
 };
 
 struct MoveFlags
@@ -370,10 +371,10 @@ struct NatureInfo
     s8 flavor[FLAVOR_COUNT];
 };
 
-struct __attribute__((packed)) LevelUpMove
+struct LevelUpMove
 {
     u16 move;
-    u8 level;
+    u16 level;
 };
 
 enum
@@ -432,7 +433,6 @@ extern struct SpriteTemplate gMultiuseSpriteTemplate;
 extern struct PokemonStorage* gPokemonStoragePtr;
 extern u8 gTriedEvolving;
 extern const u32 gExperienceTables[][MAX_LEVEL + 1];
-extern const struct LevelUpMove *const gLevelUpLearnsets[];
 extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 extern const struct SpriteTemplate gSpriteTemplates_Battlers[];
@@ -511,8 +511,6 @@ void PartySpreadPokerus(struct Pokemon *party);
 bool32 TryIncrementMonLevel(struct Pokemon *mon);
 bool32 CanMonLearnTM(struct Pokemon *mon, u32 move);
 bool32 CanSpeciesLearnTutorMove(u32 species, u32 move);
-u32 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves);
-u32 GetLevelUpMovesBySpecies(u32 species, u16 *moves);
 u32 GetNumberOfRelearnableMoves(struct Pokemon *mon);
 void PlayBattleBGM(void);
 void PlayMapChosenOrBattleBGM(u32 songId);

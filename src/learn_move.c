@@ -65,7 +65,7 @@
  * MoveRelearnerStateMachine: MENU_STATE_WAIT_FOR_FANFARE
  * MoveRelearnerStateMachine: MENU_STATE_WAIT_FOR_A_BUTTON
  * MoveRelearnerStateMachine: MENU_STATE_FADE_AND_RETURN
- * MoveRelearnerStateMachine: MENU_STATE_RETURN_TO_FIELD
+ * MoveRelearnerStateMachine: MENU_STATE_RETURN_TO_SUMARRY_SCREEN
  *   - Clean up and go to CB2_ReturnToField.
  * 
  * MoveRelearnerStateMachine: MENU_STATE_PRINT_GIVE_UP_PROMPT
@@ -96,7 +96,7 @@
 #define MENU_STATE_PRINT_GIVE_UP_PROMPT 12
 #define MENU_STATE_GIVE_UP_CONFIRM 13
 #define MENU_STATE_FADE_AND_RETURN 14
-#define MENU_STATE_RETURN_TO_FIELD 15
+#define MENU_STATE_RETURN_TO_SUMARRY_SCREEN 15
 #define MENU_STATE_PRINT_TRYING_TO_LEARN_PROMPT 16
 #define MENU_STATE_WAIT_FOR_TRYING_TO_LEARN 17
 #define MENU_STATE_CONFIRM_DELETE_OLD_MOVE 18
@@ -125,17 +125,15 @@ struct LearnMoveGfxResources
     u8 selectedMoveSlot;
     u16 listMenuScrollPos;
     u16 listMenuScrollRow;
-    u16 learnableMoves[MAX_LV_UP_MOVES];
-    const u8 *listMenuStrbufs[MAX_LV_UP_MOVES + 1];
+    u16 *learnableMoves;
+    struct ListMenuItem *listMenuItems;
     u8 listMenuTaskId;
     u8 bg1TilemapBuffer[BG_SCREEN_SIZE];
     u8 textColor[3];
     u8 selectedIndex;
-    struct ListMenuItem listMenuItems[MAX_LV_UP_MOVES + 1];
 };
 
 static EWRAM_DATA struct LearnMoveGfxResources * sMoveRelearner = NULL;
-static EWRAM_DATA bool8 sOpenFromPartyMenu = FALSE;
 
 static void CB2_MoveRelearner_Init(void);
 static void CB2_MoveRelearner(void);
@@ -316,9 +314,8 @@ static void VBlankCB_MoveRelearner(void)
     TransferPlttBuffer();
 }
 
-void ShowMoveTutorMenu(bool32 fromPartyMenu)
+void ShowMoveTutorMenu(void)
 {
-    sOpenFromPartyMenu = fromPartyMenu;
     SetMainCallback2(CB2_MoveRelearner_Init);
 }
 
@@ -362,8 +359,11 @@ static void CB2_MoveRelearner_Init(void)
     FreeAllSpritePalettes();
     ResetTasks();
     sMoveRelearner = AllocZeroed(sizeof(struct LearnMoveGfxResources));
-    InitMoveRelearnerStateVariables();
     sMoveRelearner->selectedPartyMember = gSpecialVar_0x8004;
+    sMoveRelearner->numLearnableMoves = GetNumberOfRelearnableMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember]);
+    sMoveRelearner->listMenuItems = Alloc(sizeof(struct ListMenuItem) * (sMoveRelearner->numLearnableMoves + 1));
+    sMoveRelearner->learnableMoves = Alloc(sizeof(u16) * sMoveRelearner->numLearnableMoves);
+    InitMoveRelearnerStateVariables();
     MoveRelearnerInitListMenuBuffersEtc();
     SetVBlankCallback(VBlankCB_MoveRelearner);
     MoveRelearnerLoadBgGfx();
@@ -589,19 +589,14 @@ static void MoveRelearnerStateMachine(void)
         BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
         sMoveRelearner->state++;
         break;
-    case MENU_STATE_RETURN_TO_FIELD:
+    case MENU_STATE_RETURN_TO_SUMARRY_SCREEN:
         if (!gPaletteFade.active)
         {
             FreeAllWindowBuffers();
+            FREE_IF_NOT_NULL(sMoveRelearner->learnableMoves);
+            FREE_IF_NOT_NULL(sMoveRelearner->listMenuItems);
             Free(sMoveRelearner);
-            
-            if (sOpenFromPartyMenu)
-            {
-                sOpenFromPartyMenu = FALSE;
-                CB2_ReturnToPartyMenuFromSummaryScreen();
-            }
-            else
-                SetMainCallback2(CB2_ReturnToField);
+            CB2_ReturnToPartyMenuFromSummaryScreen();
         }
         break;
     case MENU_STATE_FADE_FROM_SUMMARY_SCREEN:
@@ -673,15 +668,9 @@ static void PrintTeachWhichMoveToStrVar1(void)
 
 static void InitMoveRelearnerStateVariables(void)
 {
-    u32 i;
-    
     sMoveRelearner->state = 0;
     sMoveRelearner->scrollPositionMaybe = 0;
-    sMoveRelearner->numLearnableMoves = 0;
     sMoveRelearner->scheduleMoveInfoUpdate = FALSE;
-    
-    for (i = 0; i < MAX_LV_UP_MOVES; i++)
-        sMoveRelearner->learnableMoves[i] = MOVE_NONE;
 }
 
 static void SpriteCB_ListMenuScrollIndicators(struct Sprite * sprite)
@@ -722,30 +711,83 @@ static void SpawnListMenuScrollIndicatorSprites(void)
         gSprites[sMoveRelearner->spriteIds[i]].invisible = TRUE;
 }
 
+u32 GetNumberOfRelearnableMoves(struct Pokemon *mon)
+{
+    u32 i, j, numMoves = 0;
+    u32 level, species = GetMonData(mon, MON_DATA_SPECIES);
+    const struct LevelUpMove *learnset = gSpeciesInfo[species].levelUpLearnset;
+    
+    if (learnset != NULL)
+    {
+        level = GetMonData(mon, MON_DATA_LEVEL);
+        
+        for (i = 0; learnset[i].move != MOVE_NONE; i++)
+        {
+            if (learnset[i].level <= level)
+            {
+                u32 movePos = FindMoveSlotInMoveset(mon, learnset[i].move);
+                
+                if (movePos == MAX_MON_MOVES)
+                {
+                    for (j = 0; j < i; j++)
+                    {
+                        if (learnset[j].move == learnset[i].move && learnset[j].level <= level)
+                            break;
+                    }
+                    
+                    if (j == i)
+                        numMoves++;
+                }
+            }
+        }
+    }
+    return numMoves;
+}
+
 static void MoveRelearnerInitListMenuBuffersEtc(void)
 {
-    u32 i;
+    u32 i, j, level, numMoves = 0;
     u8 nickname[POKEMON_NAME_LENGTH + 1];
-    s32 count = sMoveRelearner->numLearnableMoves = GetMoveRelearnerMoves(&gPlayerParty[sMoveRelearner->selectedPartyMember], sMoveRelearner->learnableMoves);
+    const struct LevelUpMove *learnset;
+    struct Pokemon *mon = &gPlayerParty[sMoveRelearner->selectedPartyMember];
 
-    for (i = 0; i < sMoveRelearner->numLearnableMoves; i++)
-        sMoveRelearner->listMenuStrbufs[i] = gBattleMoves[sMoveRelearner->learnableMoves[i]].name;
-    
-    GetMonData(&gPlayerParty[sMoveRelearner->selectedPartyMember], MON_DATA_NICKNAME, nickname);
+    GetMonData(mon, MON_DATA_NICKNAME, nickname);
     StringCopy_Nickname(gStringVar1, nickname);
-    sMoveRelearner->listMenuStrbufs[sMoveRelearner->numLearnableMoves] = gMenuText_Cancel;
-    sMoveRelearner->numLearnableMoves++;
     
-    for (i = 0; i < count; i++)
+    learnset = gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].levelUpLearnset;
+    level = GetMonData(mon, MON_DATA_LEVEL);
+    
+    for (i = 0; learnset[i].move != MOVE_NONE; i++)
     {
-        sMoveRelearner->listMenuItems[i].label = sMoveRelearner->listMenuStrbufs[i];
-        sMoveRelearner->listMenuItems[i].index = i;
+        if (learnset[i].level <= level)
+        {
+            u32 movePos = FindMoveSlotInMoveset(mon, learnset[i].move);
+            
+            if (movePos == MAX_MON_MOVES)
+            {
+                for (j = 0; j < i; j++)
+                {
+                    if (learnset[j].move == learnset[i].move && learnset[j].level <= level)
+                        break;
+                }
+                
+                if (j == i)
+                {
+                    sMoveRelearner->learnableMoves[numMoves] = learnset[i].move;
+                    
+                    sMoveRelearner->listMenuItems[numMoves].label = gBattleMoves[learnset[i].move].name;
+                    sMoveRelearner->listMenuItems[numMoves].index = i;
+                    numMoves++;
+                }
+            }
+        }
     }
-    sMoveRelearner->listMenuItems[i].label = gMenuText_Cancel;
-    sMoveRelearner->listMenuItems[i].index = 0xFE;
+    sMoveRelearner->listMenuItems[numMoves].label = gMenuText_Cancel;
+    sMoveRelearner->listMenuItems[numMoves++].index = 0xFE;
+    
     gMultiuseListMenuTemplate = sMoveRelearnerListMenuTemplate;
     gMultiuseListMenuTemplate.items = sMoveRelearner->listMenuItems;
-    gMultiuseListMenuTemplate.totalItems = count + 1;
+    gMultiuseListMenuTemplate.totalItems = numMoves;
 }
 
 static void MoveRelearnerMenuHandleInput(void)
@@ -759,7 +801,7 @@ static void MoveRelearnerMenuHandleInput(void)
         if (sMoveRelearner->selectedIndex != 0xFE)
         {
             sMoveRelearner->state = 8;
-            StringCopy(gStringVar2, sMoveRelearner->listMenuStrbufs[sMoveRelearner->selectedIndex]);
+            StringCopy(gStringVar2, sMoveRelearner->listMenuItems[sMoveRelearner->selectedIndex].label);
             StringExpandPlaceholdersAndPrintTextOnWindow7Color2(COMPOUND_STRING("Teach {STR_VAR_2}?"));
         }
         else

@@ -78,10 +78,9 @@ static bool32 CheckZacianZamazentaKnowsIronHead(struct Pokemon *mon, u32 species
 // Species
 #include "data/pokemon/graphics/pics_and_icons.h"
 #include "data/pokemon/graphics/footprints.h"
+#include "data/pokemon/learnsets/level_up_learnsets.h"
 #include "data/pokemon/learnsets/tm_learnsets.h"
 #include "data/pokemon/form_change_tables.h"
-#include "data/pokemon/learnsets/level_up_learnsets.h"
-#include "data/pokemon/learnsets/level_up_learnset_pointers.h"
 #include "data/pokemon/species_info.h"
 #include "data/pokemon/experience_tables.h"
 #include "data/pokemon/fusions.h"
@@ -589,19 +588,19 @@ void ZeroEnemyPartyMons(void)
 static void GiveMonInitialMoveset(struct Pokemon *mon)
 {
     u32 i;
-    u32 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    const struct LevelUpMove *learnset = gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES, NULL)].levelUpLearnset;
     u32 level = GetLevelFromMonExp(mon);
 
-    for (i = 0; gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
+    for (i = 0; learnset[i].move != MOVE_NONE; i++)
     {
-        u32 move, moveLevel = gLevelUpLearnsets[species][i].level;
+        u32 move, moveLevel = learnset[i].level;
 
         if (moveLevel == 0)
             continue;
         else if (moveLevel > level)
             break;
 
-        move = gLevelUpLearnsets[species][i].move;
+        move = learnset[i].move;
         
         if (GiveMoveToMon(mon, move) == MON_HAS_MAX_MOVES)
             DeleteFirstMoveAndGiveMoveToMon(mon, move);
@@ -1105,6 +1104,7 @@ u32 MonTryLearningNewMove(struct Pokemon *mon, bool32 firstMove)
 {
     u32 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     u32 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+    const struct LevelUpMove *learnset = gSpeciesInfo[species].levelUpLearnset;
 
     // since you can learn more than one move per level
     // the game needs to know whether you decided to
@@ -1114,20 +1114,20 @@ u32 MonTryLearningNewMove(struct Pokemon *mon, bool32 firstMove)
     {
         sLearningMoveTableID = 0;
 
-        while (gLevelUpLearnsets[species][sLearningMoveTableID].level != level)
+        while (learnset[sLearningMoveTableID].level != level)
         {
-            if (gLevelUpLearnsets[species][++sLearningMoveTableID].move == LEVEL_UP_END)
+            if (learnset[++sLearningMoveTableID].move == MOVE_NONE)
                 return MON_DONT_FIND_MOVE_TO_LEARN;
         }
     }
     
     // Don't try to learn Iron Head again if transformed.
-    if (CheckZacianZamazentaKnowsIronHead(mon, species, gLevelUpLearnsets[species][sLearningMoveTableID].move))
+    if (CheckZacianZamazentaKnowsIronHead(mon, species, learnset[sLearningMoveTableID].move))
         return MON_DONT_FIND_MOVE_TO_LEARN;
     
-    if (gLevelUpLearnsets[species][sLearningMoveTableID].level == level)
+    if (learnset[sLearningMoveTableID].level == level)
     {
-        gMoveToLearn = gLevelUpLearnsets[species][sLearningMoveTableID++].move;
+        gMoveToLearn = learnset[sLearningMoveTableID++].move;
         return GiveMoveToMon(mon, gMoveToLearn);
     }
     return MON_DONT_FIND_MOVE_TO_LEARN;
@@ -1135,8 +1135,8 @@ u32 MonTryLearningNewMove(struct Pokemon *mon, bool32 firstMove)
 
 u32 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool32 firstMove)
 {
-    u32 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     u32 moveLevel, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
+    const struct LevelUpMove *learnset = gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES, NULL)].levelUpLearnset;
     
     // since you can learn more than one move per level
     // the game needs to know whether you decided to
@@ -1145,13 +1145,13 @@ u32 MonTryLearningNewMoveAfterEvolution(struct Pokemon *mon, bool32 firstMove)
     if (firstMove)
         sLearningMoveTableID = 0;
     
-    while (gLevelUpLearnsets[species][sLearningMoveTableID].move != LEVEL_UP_END)
+    while (learnset[sLearningMoveTableID].move != MOVE_NONE)
     {
-        moveLevel = gLevelUpLearnsets[species][sLearningMoveTableID].level;
+        moveLevel = learnset[sLearningMoveTableID].level;
         
         while (moveLevel == 0 || moveLevel == level)
         {
-            gMoveToLearn = gLevelUpLearnsets[species][sLearningMoveTableID++].move;
+            gMoveToLearn = learnset[sLearningMoveTableID++].move;
             return GiveMoveToMon(mon, gMoveToLearn);
         }
         sLearningMoveTableID++;
@@ -2718,68 +2718,6 @@ bool32 CanSpeciesLearnTutorMove(u32 species, u32 move)
         }
     }
     return FALSE;
-}
-
-u32 GetMoveRelearnerMoves(struct Pokemon *mon, u16 *moves)
-{
-    u32 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u32 numMoves, movePos, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
-    u32 i, j;
-
-    for (i = 0, numMoves = 0; i < MAX_LV_UP_MOVES && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
-    {
-        if (gLevelUpLearnsets[species][i].level <= level)
-        {
-            movePos = FindMoveSlotInMoveset(mon, gLevelUpLearnsets[species][i].move);
-
-            if (movePos == MAX_MON_MOVES)
-            {
-                for (j = 0; j < numMoves && moves[j] != gLevelUpLearnsets[species][i].move; j++);
-
-                if (j == numMoves)
-                    moves[numMoves++] = gLevelUpLearnsets[species][i].move;
-            }
-        }
-    }
-    return numMoves;
-}
-
-u32 GetLevelUpMovesBySpecies(u32 species, u16 *moves)
-{
-    u32 i, numMoves;
-
-    for (i = 0, numMoves = 0; i < MAX_LV_UP_MOVES && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
-         moves[numMoves++] = gLevelUpLearnsets[species][i].move;
-
-     return numMoves;
-}
-
-u32 GetNumberOfRelearnableMoves(struct Pokemon *mon)
-{
-    u16 moves[MAX_LV_UP_MOVES];
-    u32 species = GetMonData(mon, MON_DATA_SPECIES2, NULL);
-    u32 numMoves, movePos, level = GetMonData(mon, MON_DATA_LEVEL, NULL);
-    u32 i, j;
-
-    if (species == SPECIES_EGG)
-        return 0;
-
-    for (i = 0, numMoves = 0; i < MAX_LV_UP_MOVES && gLevelUpLearnsets[species][i].move != LEVEL_UP_END; i++)
-    {
-        if (gLevelUpLearnsets[species][i].level <= level)
-        {
-            movePos = FindMoveSlotInMoveset(mon, gLevelUpLearnsets[species][i].move);
-            
-            if (movePos == MAX_MON_MOVES)
-            {
-                for (j = 0; j < numMoves && moves[j] != gLevelUpLearnsets[species][i].move; j++);
-
-                if (j == numMoves)
-                    moves[numMoves++] = gLevelUpLearnsets[species][i].move;
-            }
-        }
-    }
-    return numMoves;
 }
 
 static u32 GetBattleBGM(void)

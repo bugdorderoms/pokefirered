@@ -2398,23 +2398,6 @@ u32 Create8x8SymbolSprite(s16 x, s16 y, u32 subpriority, u32 symbolId)
     return spriteId;
 }
 
-static void Task_WaitFadeOutAndShowMoveTutor(u32 taskId)
-{
-    if (!gPaletteFade.active)
-    {
-        DestroyTask(taskId);
-        gFieldCallback = FieldCB_ContinueScriptHandleMusic;
-        ShowMoveTutorMenu(FALSE);
-    }
-}
-
-void DisplayMoveTutorMenu(void)
-{
-    ScriptContext2_Enable();
-    BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
-    CreateTask(Task_WaitFadeOutAndShowMoveTutor, 10);
-}
-
 void EnablePlayerBag(void)
 {
     FlagSet(FLAG_SYS_BAG_ENABLED);
