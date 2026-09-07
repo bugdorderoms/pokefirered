@@ -75,6 +75,8 @@ gSpecials:: @ 815FD60
 	def_special EnablePlayerBag
 	def_special DoSlidingPuzzle
 	def_special ShowVoltorbFlip
+	def_special BufferMonNickname
+	def_special ChangePokemonNickname
 
 	@ Party specials
 	def_special ChoosePartyMon
@@ -151,14 +153,7 @@ gSpecials:: @ 815FD60
 	def_special Script_TryLoseFansFromPlayTime
 	def_special Script_UpdateTrainerFanClubGameClear
 	def_special Script_TryGainNewFanFromCounter
-	
-	@ Name rater specials
-	def_special NameRaterWasNicknameChanged
-	def_special BufferMonNickname
-	def_special IsMonOTIDNotPlayers
-	def_special ChangePokemonNickname
-	def_special IsMonOTNameNotPlayers
-	
+
 	@ Daycare specials
 	def_special GetDaycareMonNicknames
 	def_special GetDaycareState

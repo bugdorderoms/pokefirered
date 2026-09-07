@@ -501,16 +501,6 @@ u32 GetPartyMonSpecies(void)
     return GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPECIES2, NULL);
 }
 
-bool32 IsMonOTNameNotPlayers(void)
-{
-    GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_OT_NAME, gStringVar1);
-    
-    if (!StringCompare(gSaveBlock2Ptr->playerName, gStringVar1))
-        return FALSE;
-    else
-        return TRUE;
-}
-
 void DoPicboxCancel(void)
 {
     u8 t = EOS;
@@ -1563,18 +1553,6 @@ s32 CountDigits(s32 number)
         return 1;
 }
 
-bool32 NameRaterWasNicknameChanged(void)
-{
-    struct Pokemon * pokemon = &gPlayerParty[gSpecialVar_0x8004];
-    
-    GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
-    
-    if (StringCompare(gStringVar3, gStringVar1) == 0)
-        return FALSE;
-    else
-        return TRUE;
-}
-
 void ChangeBoxPokemonNickname(void)
 {
     struct BoxPokemon * pokemon = GetBoxedMonPtr(gSpecialVar_MonBoxId, gSpecialVar_MonBoxPos);
@@ -1611,14 +1589,6 @@ void BufferMonNickname(void)
 {
     GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_NICKNAME, gStringVar1);
     StringGet_Nickname(gStringVar1);
-}
-
-void IsMonOTIDNotPlayers(void)
-{
-    if (GetPlayerTrainerId() == GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_OT_ID, NULL))
-        gSpecialVar_Result = FALSE;
-    else
-        gSpecialVar_Result = TRUE;
 }
 
 u32 GetPlayerTrainerId(void)
