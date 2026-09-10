@@ -56,6 +56,13 @@ struct TrainerBattleParameter
     u8 ptrType;
 };
 
+struct LegendaryBattleTransition
+{
+    u16 nationalDex;
+    u16 mus;
+    u8 transition;
+};
+
 enum
 {
     TRANSITION_TYPE_NORMAL,
@@ -105,6 +112,31 @@ static const u8 sBattleTransitionTable_Trainer[][MAX_RANDOM_BATTLE_TRANSITIONS] 
     [TRANSITION_TYPE_UNDERGROUND] = { B_TRANSITION_HORIZONTAL_CORRUGATE, B_TRANSITION_BIG_POKEBALL         },
     [TRANSITION_TYPE_DARK_CAVE]   = { B_TRANSITION_BLUR,                 B_TRANSITION_GRID_SQUARES         },
     [TRANSITION_TYPE_SURFING]     = { B_TRANSITION_DISTORTED_WAVE,       B_TRANSITION_FULLSCREEN_WAVE      },
+};
+
+static const struct LegendaryBattleTransition sBattleTransitionTable_Legendary[] =
+{
+    {NATIONAL_DEX_ARTICUNO,      MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_ZAPDOS,        MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_MOLTRES,       MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_MEWTWO,        MUS_VS_MEWTWO,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_MEW,           MUS_VS_LEGEND,         B_TRANSITION_BLUR}, // Only defined here, but not used
+    {NATIONAL_DEX_ENTEI,         MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_RAIKOU,        MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_SUICUNE,       MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_LUGIA,         MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_HO_OH,         MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_CELEBI,        MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_REGIROCK,      MUS_RS_VS_TRAINER,     B_TRANSITION_REGIROCK},
+    {NATIONAL_DEX_REGICE,        MUS_RS_VS_TRAINER,     B_TRANSITION_REGICE},
+    {NATIONAL_DEX_REGISTEEL,     MUS_RS_VS_TRAINER,     B_TRANSITION_REGISTEEL},
+    {NATIONAL_DEX_LATIAS,        MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_LATIOS,        MUS_VS_LEGEND,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_KYOGRE,        MUS_RS_VS_TRAINER,     B_TRANSITION_KYOGRE},
+    {NATIONAL_DEX_GROUDON,       MUS_RS_VS_TRAINER,     B_TRANSITION_GROUDON},
+    {NATIONAL_DEX_RAYQUAZA,      MUS_RS_VS_TRAINER,     B_TRANSITION_RAYQUAZA},
+    {NATIONAL_DEX_DEOXYS,        MUS_VS_DEOXYS,         B_TRANSITION_BLUR},
+    {NATIONAL_DEX_JIRACHI,       MUS_VS_LEGEND,         B_TRANSITION_BLUR},
 };
 
 static const struct TrainerBattleParameter sOrdinaryBattleParams[] =
@@ -405,34 +437,21 @@ void StartMarowakBattle(void)
 
 void StartLegendaryBattle(void)
 {
-    u32 mus, transition = B_TRANSITION_BLUR;
-    
+    u32 i, mus = MUS_VS_LEGEND, transition = B_TRANSITION_BLUR;
+    u32 natDex = SpeciesToNationalPokedexNum(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES));
+
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
     gBattleTypeFlags = 0;
     
-    switch (SpeciesToNationalPokedexNum(GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)))
+    for (i = 0; i < ARRAY_COUNT(sBattleTransitionTable_Legendary); i++)
     {
-        case NATIONAL_DEX_MEWTWO:
-            mus = MUS_VS_MEWTWO;
+        if (sBattleTransitionTable_Legendary[i].nationalDex == natDex)
+        {
+            mus = sBattleTransitionTable_Legendary[i].mus;
+            transition = sBattleTransitionTable_Legendary[i].transition;
             break;
-        case NATIONAL_DEX_DEOXYS:
-            mus = MUS_VS_DEOXYS;
-            break;
-        case NATIONAL_DEX_MOLTRES:
-        case NATIONAL_DEX_ARTICUNO:
-        case NATIONAL_DEX_ZAPDOS:
-        case NATIONAL_DEX_HO_OH:
-        case NATIONAL_DEX_LUGIA:
-            mus = MUS_VS_LEGEND;
-            break;
-        case NATIONAL_DEX_GROUDON:
-            transition = B_TRANSITION_BLACK_DOODLES;
-            mus = MUS_RS_VS_TRAINER;
-            break;
-        default:
-            mus = MUS_RS_VS_TRAINER;
-            break;
+        }
     }
     CreateBattleStartTask(transition, mus);
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
