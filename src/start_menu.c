@@ -501,8 +501,6 @@ static u32 StartMenuPlayerCallback(void)
     if (!gPaletteFade.active)
     {
 #if MON_ICON_ON_TRAINER_CARD
-        gSpecialVar_0x8004 = MON_ICON_TINT_NORMAL;
-    
         UpdateTrainerCardPhotoIcons();
 #endif
         PlayRainStoppingSoundEffect();

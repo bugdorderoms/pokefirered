@@ -1,25 +1,3 @@
-CeladonCity_GameCorner_Text_TryPokemonPrinter:: @ 81B1D7D
-	.string "It's a Pokémon PRINTER!\p"
-	.string "It can put a print of your Pokémon\n"
-	.string "on the back of your TRAINER CARD.\p"
-	.string "It costs only ¥50.\n"
-	.string "Would you like to try it?$"
-
-CeladonCity_GameCorner_Text_DontHaveEnoughMoney:: @ 81B1E07
-	.string "You don't have enough money.$"
-
-CeladonCity_GameCorner_Text_ChoosePrintType:: @ 81B1E24
-	.string "Please choose the print type.$"
-
-CeladonCity_GameCorner_Text_BigSmileForPhoto:: @ 81B1E42
-	.string "A big smile for the photo, please!\n"
-	.string "Three… Two… One…\p"
-	.string "Flash!$"
-
-CeladonCity_GameCorner_Text_PrintIsReadyCheckTrainerCard:: @ 81B1E7D
-	.string "Your Pokémon print is ready!\n"
-	.string "Check your TRAINER CARD.$"
-
 FourIsland_House2_Text_WishICouldShowOffStickers:: @ 81B1EB3
 	.string "Giggle…\n"
 	.string "I collected a ton of STICKERS.\l"

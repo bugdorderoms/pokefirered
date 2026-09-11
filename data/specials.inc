@@ -27,7 +27,6 @@ gSpecials:: @ 815FD60
 	def_special SetVermilionTrashCans
 	def_special SeafoamIslandsB4F_CurrentDumpsPlayerOnLand
 	def_special SampleResortGorgeousMonAndReward
-	def_special UpdateTrainerCardPhotoIcons
 	def_special StickerManGetBragFlags
 	def_special SetFlavorTextFlagFromSpecialVars
 	def_special UpdatePickStateFromSpecialVar8005

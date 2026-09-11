@@ -50,7 +50,6 @@ void IncrementResortGorgeousStepCounter(void);
 void IncrementBirthIslandRockStepCount(void);
 void ResetFieldTasksArgs(void);
 bool32 UsedPokemonCenterWarp(void);
-void UpdateTrainerCardPhotoIcons(void);
 void UpdateTrainerFansAfterLinkBattle(void);
 void ResetTrainerFanClub(void);
 void LoadSymbolsIconGraphics(void);

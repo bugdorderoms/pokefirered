@@ -1618,16 +1618,6 @@ u32 GetUnlockedSeviiAreas(void)
     return result;
 }
 
-void UpdateTrainerCardPhotoIcons(void)
-{
-    u32 i, partyCount = CalculatePlayerPartyCount();
-
-    for (i = 0; i < partyCount; i++)
-        VarSet(VAR_TRAINER_CARD_MON_ICON_1 + i, GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL));
-    
-    VarSet(VAR_TRAINER_CARD_MON_ICON_TINT_IDX, gSpecialVar_0x8004);
-}
-
 u32 StickerManGetBragFlags(void)
 {
     u32 result = 0, numEggs = GetGameStat(GAME_STAT_HATCHED_EGGS);

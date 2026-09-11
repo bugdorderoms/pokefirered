@@ -46,7 +46,7 @@
 #define FLDEFF_HOT_SPRINGS_WATER         42
 #define FLDEFF_USE_WATERFALL             43
 #define FLDEFF_USE_DIVE                  44
-#define FLDEFF_UNK_45                    45 // TODO: related to fame checker photos
+#define FLDEFF_PHOTO_FLASH               45
 #define FLDEFF_X_ICON                    46
 #define FLDEFF_CAVE_DUST                 47
 #define FLDEFF_POKEBALL                  48

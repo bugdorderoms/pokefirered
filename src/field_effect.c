@@ -4832,24 +4832,24 @@ static bool32 dive_3_unknown(struct Task * task)
     return FALSE;
 }
 
-///////////////////
-// FLDEFF_UNK_45 //
-///////////////////
+////////////////////////
+// FLDEFF_PHOTO_FLASH //
+////////////////////////
 
-static void Task_FldEffUnk45(u32 taskId)
+static void Task_FldEffPhotoFlash(u32 taskId)
 {
     if (!gPaletteFade.active)
     {
-        FieldEffectActiveListRemove(FLDEFF_UNK_45);
+        FieldEffectActiveListRemove(FLDEFF_PHOTO_FLASH);
         DestroyTask(taskId);
     }
 }
 
-static u32 FldEff_Unk45(void)
+static u32 FldEff_PhotoFlash(void)
 {
     BlendPalettes(PALETTES_ALL, 0x10, RGB_WHITE);
     BeginNormalPaletteFade(PALETTES_ALL, -1, 0x0F, 0x00, RGB_WHITE);
-    CreateTask(Task_FldEffUnk45, 90);
+    CreateTask(Task_FldEffPhotoFlash, 90);
     return 0;
 }
 

@@ -40,7 +40,7 @@ static u32 FldEff_ShortGrass(void);
 static u32 FldEff_HotSpringsWater(void);
 static u32 FldEff_UseWaterfall(void);
 static u32 FldEff_UseDive(void);
-static u32 FldEff_Unk45(void);
+static u32 FldEff_PhotoFlash(void);
 static u32 FldEff_XIcon(void);
 static u32 FldEff_CaveDust(void);
 static u32 FldEff_Pokeball(void);
@@ -98,7 +98,7 @@ static u32 (*const sFldEffectsTable[FLDEFF_COUNT])(void) = {
     [FLDEFF_HOT_SPRINGS_WATER]         = FldEff_HotSpringsWater,
     [FLDEFF_USE_WATERFALL]             = FldEff_UseWaterfall,
     [FLDEFF_USE_DIVE]                  = FldEff_UseDive,
-    [FLDEFF_UNK_45]                    = FldEff_Unk45,
+    [FLDEFF_PHOTO_FLASH]               = FldEff_PhotoFlash,
     [FLDEFF_X_ICON]                    = FldEff_XIcon,
     [FLDEFF_CAVE_DUST]                 = FldEff_CaveDust,
     [FLDEFF_POKEBALL]                  = FldEff_Pokeball,

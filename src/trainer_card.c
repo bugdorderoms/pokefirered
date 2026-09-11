@@ -806,8 +806,6 @@ void TrainerCard_GenerateCardForLinkPlayer(struct TrainerCard *trainerCard)
     trainerCard->stickers[1] = VarGet(VAR_EGG_BRAG_STATE);
     trainerCard->stickers[2] = VarGet(VAR_LINK_WIN_BRAG_STATE);
 
-    trainerCard->monIconTint = VarGet(VAR_TRAINER_CARD_MON_ICON_TINT_IDX);
-
     for (id = 0; id < PARTY_SIZE; id++)
         trainerCard->monSpecies[id] = VarGet(VAR_TRAINER_CARD_MON_ICON_1 + id);
 }
@@ -1311,21 +1309,6 @@ static void LoadMonIconGfx(void)
     u32 i;
 
     CpuCopy16(gMonIconPalettes, sTrainerCardDataPtr->monIconPals, 2 * ARRAY_COUNT(sTrainerCardDataPtr->monIconPals));
-    
-    switch (sTrainerCardDataPtr->trainerCard.monIconTint)
-    {
-    case MON_ICON_TINT_NORMAL:
-        break;
-    case MON_ICON_TINT_BLACK:
-        TintPalette_CustomTone(sTrainerCardDataPtr->monIconPals, 96, 0, 0, 0);
-        break;
-    case MON_ICON_TINT_PINK:
-        TintPalette_CustomTone(sTrainerCardDataPtr->monIconPals, 96, 500, 330, 310);
-        break;
-    case MON_ICON_TINT_SEPIA:
-        TintPalette_SepiaTone(sTrainerCardDataPtr->monIconPals, 96);
-        break;
-    }
     LoadPalette(sTrainerCardDataPtr->monIconPals, 80, 192);
     
     for (i = 0; i < PARTY_SIZE; i++)
@@ -1829,3 +1812,13 @@ static void CreateTrainerCardTrainerPic(void)
         }
     }
 }
+
+#if MON_ICON_ON_TRAINER_CARD
+void UpdateTrainerCardPhotoIcons(void)
+{
+    u32 i, partyCount = CalculatePlayerPartyCount();
+
+    for (i = 0; i < partyCount; i++)
+        VarSet(VAR_TRAINER_CARD_MON_ICON_1 + i, GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL));
+}
+#endif

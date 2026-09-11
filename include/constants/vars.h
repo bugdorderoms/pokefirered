@@ -108,7 +108,7 @@
 #define VAR_0x403F                         0x403F
 #define VAR_0x4040                         0x4040
 #define VAR_0x4041                         0x4041
-#define VAR_TRAINER_CARD_MON_ICON_TINT_IDX 0x4042
+#define VAR_0x4042                         0x4042
 #define VAR_TRAINER_CARD_MON_ICON_1        0x4043
 #define VAR_TRAINER_CARD_MON_ICON_2        0x4044
 #define VAR_TRAINER_CARD_MON_ICON_3        0x4045

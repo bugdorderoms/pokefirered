@@ -40,7 +40,7 @@ struct TrainerCard
     /*0x48*/ u32 jumpsInRow;
     /*0x4C*/ bool8 shouldDrawStickers;
     /*0x4D*/ bool8 hasAllMons;
-    /*0x4E*/ u8 monIconTint;
+    /*0x4E*/ u8 unused;
     /*0x4F*/ u8 facilityClass;
     /*0x50*/ u8 stickers[TRAINER_CARD_STICKER_TYPES];
     /*0x54*/ u16 monSpecies[PARTY_SIZE];
@@ -52,5 +52,6 @@ void ShowPlayerTrainerCard(void (*callback)(void));
 void ShowTrainerCardInLink(u32 whoseCard, MainCallback callback);
 u32 GetTrainerCardStars(u32 cardId);
 void TrainerCard_GenerateCardForLinkPlayer(struct TrainerCard *trainerCard);
+void UpdateTrainerCardPhotoIcons(void);
 
 #endif //GUARD_TRAINER_CARD_H
