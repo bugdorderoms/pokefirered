@@ -134,20 +134,6 @@ ViridianCity_EventScript_TutorialStart:: @ 8165A54
 	release
 	end
 
-@ Unused
-ViridianCity_EventScript_WatchToLearnBasics:: @ 8165A5B
-	msgbox ViridianCity_Text_WatchThatToLearnBasics
-	release
-	end
-
-@ Unused. Starts battle after the post battle text, which is odd.
-ViridianCity_EventScript_TutorialUnused:: @ 8165A65
-	msgbox ViridianCity_Text_ThatWasEducationalTakeThis
-	special StartOldManTutorialBattle
-	waitstate
-	release
-	end
-
 ViridianCity_EventScript_TutorialNotReady:: @ 8165A84
 	msgbox ViridianCity_Text_ThisIsPrivateProperty
 	closemessage

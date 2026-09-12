@@ -28,10 +28,6 @@ CeruleanCity_BikeShop_Text_HowDoYouLikeNewBicycle:: @ 8192833
 	.string "You can take it out on CYCLING\n"
 	.string "ROAD and even into caves!$"
 
-CeruleanCity_BikeShop_Text_MakeRoomForBicycle:: @ 81928A8
-	.string "You better make room for your\n"
-	.string "BICYCLE!$"
-
 CeruleanCity_BikeShop_Text_CityBikeGoodEnoughForMe:: @ 81928CF
 	.string "A plain city bike is good enough\n"
 	.string "for me.\p"
@@ -45,12 +41,6 @@ CeruleanCity_BikeShop_Text_BikesCoolButExpensive:: @ 8192937
 CeruleanCity_BikeShop_Text_WowYourBikeIsCool:: @ 8192968
 	.string "Wow.\n"
 	.string "Your BIKE is really cool!$"
-
-@ Unused
-CeruleanCity_BikeShop_Text_GermanFoldableBicyleFinallyOnMarket:: @ 8192987
-	.string "ついに　はつばい！\p"
-	.string "ドイツ　せい　さいこうきゅう\n"
-	.string "おりたたみ　じてんしゃ！$"
 
 CeruleanCity_BikeShop_Text_ShinyNewBicycle:: @ 81929AD
 	.string "A shiny new BICYCLE!$"

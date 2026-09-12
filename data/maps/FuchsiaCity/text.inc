@@ -76,10 +76,6 @@ FuchsiaCity_Text_KabutoSign:: @ 81808FA
 	.string "An extremely rare Pokémon that was\l"
 	.string "regenerated from a fossil.$"
 
-@ Unused. May have been meant to be the placeholder text for the zoo mons, similar to RB's "!" text
-FuchsiaCity_Text_Ellipsis:: @ 8180945
-	.string "……$"
-
 Text_SubstituteTeach:: @ 8180948
 	.string "Aww, I wish I was a KANGASKHAN\n"
 	.string "baby.\p"

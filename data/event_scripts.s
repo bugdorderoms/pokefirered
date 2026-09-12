@@ -794,44 +794,10 @@ gStdScriptsEnd::
 	.include "data/scripts/std_msgbox.inc"
 	.include "data/scripts/trainer_battle.inc"
 
-@ Unused
-Text_WouldYouLikeToMixRecords:: @ 81A5028
-	.string "Would you like to mix records with\n"
-	.string "other TRAINERS?$"
-
-@ Unused
-Text_WeHopeToSeeYouAgain2:: @ 81A505B
-	.string "We hope to see you again!$"
-
 	.include "data/text/pc.inc"
-
-@ Unused
-Text_WelcomeTradeCenter:: @ 81A5103
-	.string "Welcome to the Pokémon CABLE CLUB\n"
-	.string "TRADE CENTER.$"
-
-@ Unused
-Text_WelcomeColosseum:: @ 81A5133
-	.string "Welcome to the Pokémon CABLE CLUB\n"
-	.string "COLOSSEUM.$"
-
-@ Unused
-Text_WelcomeTimeCapsule:: @ 81A5160
-	.string "Welcome to the Pokémon CABLE CLUB\n"
-	.string "TIME CAPSULE.$"
 
 Text_PleaseComeAgain:: @ 81A5190
 	.string "Please come again!$"
-
-@ Unused
-Text_HavingDiscountSaleToday:: @ 81A51A3
-	.string "Welcome!\p"
-	.string "We're having a discount sale today!$"
-
-@ Unused
-Text_PlayerWhatCanIDoForYou:: @ 81A51D0
-	.string "{PLAYER}{KUN}, welcome!\p"
-	.string "What can I do for you?$"
 
 	.include "data/text/obtain_item.inc"
 
@@ -849,28 +815,8 @@ Text_RegisteredItemsCantBeOpened::
 	.string "The registered items cannot\n"
 	.string "be seen here, it is too dark...$"
 
-@ Unused (email from R/S Rivals computer)
-Text_TrainerSchoolEmail:: @ 81A53B2
-	.string "パソコンに\n"
-	.string "ポケモン　トレーナー　こうざの\l"
-	.string "メールが　きている！\p"
-	.string "‥‥　‥‥　‥‥\p"
-	.string "ポケモンが　おぼえられる　わざは　4つ！\p"
-	.string "どんな　わざを　おぼえさせるかで\n"
-	.string "トレーナーの　じつりょくが　とわれます！\p"
-	.string "‥‥　‥‥　‥‥$"
-
 Text_PlayerBootedUpPC:: @ 81A5420
 	.string "{PLAYER} booted up the PC.$"
-
-@ Unused
-Text_LinkWasCanceled:: @ 81A5435
-	.string "つうしんは　キャンセルされました$"
-
-@ Unused
-Text_GiveNicknameToReceivedMon:: @ 81A5446
-	.string "Want to give a nickname to the\n"
-	.string "{STR_VAR_2} you received?$"
 
 gText_PkmnPoisonFainted:: @ 81A5476
 	.string "{STR_VAR_1} fainted…\p"
@@ -900,16 +846,6 @@ Text_RestoredPkmnToFullHealth:: @ 81A552B
 
 	.include "data/text/surf.inc"
 
-@ Unused, from R/S
-Text_DoorOpenedFarAway:: @ 81A55EA
-	.string "どこか　とおくの　とびらが\n"
-	.string "ひらいたような　おとだ‥‥$"
-
-@ Unused, from R/S
-Text_BigHoleInTheWall:: @ 81A5606
-	.string "かべに\n"
-	.string "おおきな　あなが　あいている！$"
-
 Text_WirelessClubUndergoingAdjustments:: @ 81A561A
 	.string "I'm terribly sorry.\n"
 	.string "The Pokémon WIRELESS CLUB is\l"
@@ -918,10 +854,6 @@ Text_WirelessClubUndergoingAdjustments:: @ 81A561A
 Text_AppearsToBeUndergoingAdjustments:: @ 81A5667
 	.string "It appears to be undergoing\n"
 	.string "adjustments…$"
-
-Text_HandedOverItem:: @ 81A5690
-	.string "{PLAYER} handed over the\n"
-	.string "{STR_VAR_1}.$"
 
 Text_GiveNicknameToThisMon:: @ 81A56A7
 	.string "Do you want to give a nickname to\n"
@@ -955,28 +887,6 @@ Text_ClosedLinkToProfOaksPC:: @ 81A5C2E
 Text_VoiceRangOutDontRunAway:: @ 81A5C4D
 	.string "Someone's voice rang out,\n"
 	.string "“Don't run away!”$"
-
-@ Uncear what the below unused JP texts were for
-Text_IdLikeToSeeRequest:: @ 81A5C79
-	.string "えっとー\n"
-	.string "{STR_VAR_2}が　みてみたいなー\p"
-	.string "それも　{STR_VAR_1}{STR_VAR_3}\n"
-	.string "{STR_VAR_2}が　みてみたいなー$"
-
-Text_ThankYouForShowingMe:: @ 81A5C9F
-	.string "わぁー　すごい！\n"
-	.string "{STR_VAR_1}{STR_VAR_3}{STR_VAR_2}だー！\p"
-	.string "ありがとー\n"
-	.string "また　よろしくねー！$"
-
-Text_ThatsNotRight:: @ 81A5CC3
-	.string "それっ　ちがうよー！$"
-
-Text_ISee:: @ 81A5CCE
-	.string "そっか‥$"
-
-Text_TheDoorIsClosed:: @ 81A5CD3
-	.string "ドアは　しまっている‥$"
 
 Text_TheDoorIsOpen:: @ 81A5CDF
 	.string "The door is open…$"
@@ -1086,22 +996,11 @@ EventScript_WallTownMap:: @ 81A6C32
 
 	.include "data/text/pokedex_rating.inc"
 	.include "data/scripts/pokedex_rating.inc"
-	.include "data/scripts/cave_of_origin.inc"
 
 EventScript_ChangePokemonNickname:: @ 81A74EB
 	fadescreen FADE_TO_BLACK
 	special ChangePokemonNickname
 	waitstate
-	return
-
-@ Unused
-EventScript_HandOverItem:: @ 81A74F2
-	getitemname 0, VAR_0x8004
-	playfanfare MUS_OBTAIN_TMHM
-	message Text_HandedOverItem
-	waitmessage
-	waitfanfare
-	removeitem VAR_0x8004, 1
 	return
 
 	.include "data/scripts/pokemon_league.inc"
@@ -1158,25 +1057,6 @@ EventScript_ReleaseEnd:: @ 81A7AE0
 	end
 
 	.include "data/scripts/pokemon_mansion.inc"
-
-@ Unused
-EventScript_DelayedLookAround:: @ 81A80FE
-	lockall
-	applymovement VAR_0x8004, Movement_WalkInPlaceFastestLeft
-	waitmovement 0
-	delay 20
-	applymovement VAR_0x8004, Movement_WalkInPlaceFastestUp
-	waitmovement 0
-	delay 20
-	applymovement VAR_0x8004, Movement_WalkInPlaceFastestRight
-	waitmovement 0
-	delay 20
-	applymovement VAR_0x8004, Movement_WalkInPlaceFastestDown
-	waitmovement 0
-	delay 20
-	releaseall
-	end
-
 	.include "data/scripts/silphco_doors.inc"
 	.include "data/scripts/pc_transfer.inc"
 
@@ -1311,13 +1191,6 @@ EventScript_NoMoreRoomForPokemon:: @ 81A927C
 
 	.include "data/text/braille.inc"
 	.include "data/scripts/trainers.inc"
-
-@ Test message!
-@ Welcome to the world of Pokémon!
-Text_TestMsg:: @ 81ACD45
-	.string "テストよう　メッセージです！\n"
-	.string "ポケモンの　せかいへ　ようこそ！$"
-
 	.include "data/scripts/fame_checker.inc"
 	.include "data/text/fame_checker.inc"
 	.include "data/text/sign_lady.inc"
@@ -1332,8 +1205,6 @@ Text_TestMsg:: @ 81ACD45
 	.include "data/scripts/repel.inc"
 	.include "data/scripts/safari_zone.inc"
 	.include "data/text/safari_zone.inc"
-	.include "data/text/competitive_brothers.inc"
-	.include "data/text/eon_ticket.inc"
 	.include "data/text/berries.inc"
 	.include "data/text/flavor_text.inc"
 	.include "data/scripts/hole.inc"

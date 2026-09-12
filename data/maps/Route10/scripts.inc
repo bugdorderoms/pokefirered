@@ -1,9 +1,6 @@
 Route10_MapScripts:: @ 8167FD9
 	.byte 0
 
-Route10_EventScript_Unused:: @ 8167FDA
-	end
-
 Route10_EventScript_NorthRockTunnelSign:: @ 8167FDB
 	msgbox Route10_Text_RockTunnelDetourToLavender, MSGBOX_SIGN
 	end

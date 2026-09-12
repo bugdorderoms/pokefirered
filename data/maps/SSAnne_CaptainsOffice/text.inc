@@ -39,10 +39,6 @@ SSAnne_CaptainsOffice_Text_SSAnneWillSetSailSoon:: @ 8173831
 	.string "Farewell, until our return to\n"
 	.string "VERMILION CITY!$"
 
-SSAnne_CaptainsOffice_Text_YouHaveNoRoomForThis:: @ 81738C3
-	.string "Oh, no!\n"
-	.string "You have no room for this!$"
-
 SSAnne_CaptainsOffice_Text_YuckShouldntHaveLooked:: @ 81738E6
 	.string "Yuck!\n"
 	.string "Shouldn't have looked!$"

@@ -40,18 +40,6 @@ Route8_WestEntrance_EventScript_GiveTea:: @ 816FBAB
 	goto Route8_WestEntrance_EventScript_GuardDrinkTea
 	end
 
-@ Unused
-Route8_WestEntrance_EventScript_GiveSodaPop:: @ 816FBB6
-	removeitem ITEM_SODA_POP, 1
-	goto Route8_WestEntrance_EventScript_GuardDrinkTea
-	end
-
-@ Unused
-Route8_WestEntrance_EventScript_GiveLemonade:: @ 816FBC1
-	removeitem ITEM_LEMONADE, 1
-	goto Route8_WestEntrance_EventScript_GuardDrinkTea
-	end
-
 Route8_WestEntrance_EventScript_GuardDrinkTea:: @ 816FBCC
 	msgbox Route8_WestEntrance_Text_ThatTeaLooksTasty
 	closemessage

@@ -34,7 +34,3 @@ Text_NothingToPutThemIn:: @ 81A52B4
 Text_FoundXItems:: @ 81A52DD
 	.string "{PLAYER} found\n"
 	.string "{STR_VAR_1} {STR_VAR_2}(s)!$"
-
-Text_NoRoomForAnotherDecor:: @ 81A5301
-	.string "Too bad! There's no room left for\n"
-	.string "another {STR_VAR_2}…$"
