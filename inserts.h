@@ -210,5 +210,8 @@
 // If this setting is enabled, pressing the Select button while only one Key Item is registered, that item will be used automatically without opening the menu.
 #define SINGLE_REGISTERED_ITEM_USE FALSE
 
+// If this setting is enabled, Key Items that are unusable in the field won't display the USE/REGISTER/DESELECT options in the context menu.
+#define STOP_UNUSABLE_KEY_ITEM_USE FALSE
+
 // If this setting is enabled, it will skip large unseen entries gaps on the Pokédex's list.
 #define SKIP_LARGE_POKEDEX_GAPS FALSE

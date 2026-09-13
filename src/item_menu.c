@@ -1469,6 +1469,7 @@ static void OpenContextMenu(u32 taskId)
                     sContextMenuNumItems = 1;
                 else
                     sContextMenuNumItems = 2;
+                
                 sContextMenuItemsPtr = sContextMenuItems_GiveIfNotKeyItemPocket[gBagMenuState.pocket];
             }
         }
@@ -1478,25 +1479,38 @@ static void OpenContextMenu(u32 taskId)
             {
             case OPEN_BAG_ITEMS:
                 sContextMenuNumItems = 4;
-                if (ItemIsMail(gSpecialVar_ItemId) == TRUE)
+                
+                if (ItemIsMail(gSpecialVar_ItemId))
                     sContextMenuItemsPtr = sContextMenuItems_CheckGiveTossCancel;
                 else
                     sContextMenuItemsPtr = sContextMenuItems_Field[gBagMenuState.pocket];
                 break;
             case OPEN_BAG_KEYITEMS:
                 sContextMenuItemsPtr = sContextMenuItemsBuffer;
-                sContextMenuNumItems = 3;
-                sContextMenuItemsBuffer[2] = ITEMMENUACTION_CANCEL;
-                if (FindRegisteredItemSlot(gSpecialVar_ItemId) != REGISTERED_ITEMS_COUNT)
-                    sContextMenuItemsBuffer[1] = ITEMMENUACTION_DESELECT;
-                else
-                    sContextMenuItemsBuffer[1] = ITEMMENUACTION_REGISTER;
+                sContextMenuNumItems = 0;
+                
                 if (gSpecialVar_ItemId == ITEM_TM_CASE || gSpecialVar_ItemId == ITEM_BERRY_POUCH)
-                    sContextMenuItemsBuffer[0] = ITEMMENUACTION_OPEN;
+                    sContextMenuItemsBuffer[sContextMenuNumItems++] = ITEMMENUACTION_OPEN;
                 else if (gSpecialVar_ItemId == ITEM_BICYCLE && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_ACRO_BIKE | PLAYER_AVATAR_FLAG_MACH_BIKE))
-                    sContextMenuItemsBuffer[0] = ITEMMENUACTION_WALK;
+                    sContextMenuItemsBuffer[sContextMenuNumItems++] = ITEMMENUACTION_WALK;
                 else
-                    sContextMenuItemsBuffer[0] = ITEMMENUACTION_USE;
+                {
+#if STOP_UNUSABLE_KEY_ITEM_USE
+                    if (ItemId_GetFieldFunc(gSpecialVar_ItemId) != FieldUseFunc_OakStopsYou)
+#endif
+                        sContextMenuItemsBuffer[sContextMenuNumItems++] = ITEMMENUACTION_USE;
+                }
+                
+#if STOP_UNUSABLE_KEY_ITEM_USE
+                if (ItemId_GetFieldFunc(gSpecialVar_ItemId) != FieldUseFunc_OakStopsYou)
+#endif
+                {
+                    if (FindRegisteredItemSlot(gSpecialVar_ItemId) != REGISTERED_ITEMS_COUNT)
+                        sContextMenuItemsBuffer[sContextMenuNumItems++] = ITEMMENUACTION_DESELECT;
+                    else
+                        sContextMenuItemsBuffer[sContextMenuNumItems++] = ITEMMENUACTION_REGISTER;
+                }
+                sContextMenuItemsBuffer[sContextMenuNumItems++] = ITEMMENUACTION_CANCEL;
                 break;
             case OPEN_BAG_POKEBALLS:
                 sContextMenuItemsPtr = sContextMenuItems_Field[gBagMenuState.pocket];
