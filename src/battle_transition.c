@@ -23,6 +23,8 @@
 typedef bool32 (*TransitionStateFunc)(struct Task *task);
 typedef bool32 (*TransitionSpriteCallback)(struct Sprite *sprite);
 
+#define SET_TILE(ptr, posY, posX, tile) ptr[(posY) * 32 + (posX)] = (tile) | 0xF000
+
 #define B_TRANS_DMA_FLAGS (((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_16BIT | DMA_SRC_INC | DMA_DEST_FIXED) << 16) | 1)
 
 struct TransitionData
@@ -106,6 +108,7 @@ static void BT_Phase2BlackHole(u32 taskId);
 static void BT_Phase2BlackHolePulsate(u32 taskId);
 static void BT_Phase2Rayquaza(u32 taskId);
 static void BT_Phase2RectangularSpiral(u32 taskId);
+static void BT_Phase2JawBite(u32 taskId);
 
 static const TransitionStateFunc sBT_MainPhases[] =
 {
@@ -147,6 +150,7 @@ static const TaskFunc sBT_Phase2Tasks[] =
     [B_TRANSITION_BLACKHOLE_PULSATE]     = BT_Phase2BlackHolePulsate,
     [B_TRANSITION_RAYQUAZA]              = BT_Phase2Rayquaza,
     [B_TRANSITION_RECTANGULAR_SPIRAL]    = BT_Phase2RectangularSpiral,
+    [B_TRANSITION_JAW_BITE]              = BT_Phase2JawBite,
 };
 
 ////////////////////////
@@ -816,10 +820,10 @@ static bool32 BT_Phase2BigPokeball_LoadTilemapAndWave(struct Task *task)
 
     BT_GetBg0TilemapBase(&tilemapAddr);
     
-    for (i = 0; i < 20; ++i)
+    for (i = 0; i < (DISPLAY_HEIGHT / 8); ++i)
     {
-        for (j = 0; j < 30; ++j, ++tilemap)
-            tilemapAddr[i * 32 + j] = *tilemap | 0xF000; // use palette #15
+        for (j = 0; j < (DISPLAY_WIDTH / 8); ++j, ++tilemap)
+            SET_TILE(tilemapAddr, i, j, *tilemap);
     }
     BT_LoadWaveIntoBuffer(gScanlineEffectRegBuffers[0], 0, task->tTheta, 132, task->tAmplitude, DISPLAY_HEIGHT);
 
@@ -2389,10 +2393,10 @@ static bool32 BT_Phase2Mugshot_LoadGfx(struct Task *task)
     LoadPalette(sVsBarOpponentPalettes[mugshotColor], 0xF0, 0x20);
     LoadPalette(sVsBarPlayerPalettes[gSaveBlock2Ptr->playerGender], 0xFA, 0xC);
     
-    for (i = 0; i < 20; ++i)
+    for (i = 0; i < (DISPLAY_HEIGHT / 8); ++i)
     {
-        for (j = 0; j < 32; ++j, ++mugshotsMap)
-            tilemapAddr[i * 32 + j] = *mugshotsMap | 0xF000; // use palette #15
+        for (j = 0; j < (DISPLAY_WIDTH / 8) + 2; ++j, ++mugshotsMap)
+            SET_TILE(tilemapAddr, i, j, *mugshotsMap);
     }
     EnableInterrupts(INTR_FLAG_HBLANK);
     SetHBlankCallback(HBCB_BT_Phase2Mugshot);
@@ -3988,7 +3992,7 @@ static bool32 BT_Phase2RectangularSpiral_Main(struct Task *task)
                 x = position % 32;
                 y = position / 32;
                 
-                tilemapAddr[y * 32 + x] = 2 | 0xF000;
+                SET_TILE(tilemapAddr, y, x, 2);
             }
         }
     }
@@ -4070,3 +4074,166 @@ static bool32 UpdateRectangularSpiralLine(const s16 *const *moveDataTable, struc
     }
     return TRUE;
 }
+
+//-----------------------
+// B_TRANSITION_JAW_BITE
+//-----------------------
+
+static bool32 BT_Phase2JawBite_Init(struct Task *task);
+static bool32 BT_Phase2JawBite_Main(struct Task *task);
+static bool32 BT_Phase2JawBite_Shake(struct Task *task);
+
+static const u32 sJawBiteTileset[] = INCBIN_U32("graphics/battle_transitions/jaw_bite.4bpp");
+static const u16 sJawBitePalette[] = INCBIN_U16("graphics/battle_transitions/jaw_bite.gbapal");
+
+static const s8 sBiteScreenShakeOffsets[][2] = {
+    { 7,  4},
+    {-7, -4},
+    { 5, -3},
+    {-5,  3},
+    { 3,  2},
+    {-3, -2},
+    { 1,  0},
+    {-1,  0},
+    { 0,  0}
+};
+
+static const TransitionStateFunc sBT_Phase2JawBiteFuncs[] =
+{
+    BT_Phase2JawBite_Init,
+    BT_Phase2JawBite_Main,
+    BT_Phase2JawBite_Shake,
+};
+
+#define LEFT_JAW_INITIAL_POS  0
+#define RIGHT_JAW_INITIAL_POS ((DISPLAY_WIDTH / 8) - 2)
+
+#define tFrameCounter data[1]
+#define tPosLeft      data[2]
+#define tPosRight     data[3]
+
+static void BT_Phase2JawBite(u32 taskId)
+{
+    while (sBT_Phase2JawBiteFuncs[gTasks[taskId].tState](&gTasks[taskId]));
+}
+
+static bool32 BT_Phase2JawBite_Init(struct Task *task)
+{
+    u16 *tilemapAddr, *tilesetAddr;
+
+    BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
+    CpuFill16(0x0000, tilemapAddr, 0x800);
+    CpuCopy16(sJawBiteTileset, tilesetAddr, sizeof(sJawBiteTileset));
+    
+    LoadPalette(sJawBitePalette, 0xF0, 0x20);
+    
+    task->tFrameCounter = 0;
+    task->tPosLeft = LEFT_JAW_INITIAL_POS;
+    task->tPosRight = RIGHT_JAW_INITIAL_POS;
+    
+    ++task->tState;
+    return FALSE;
+}
+
+static inline u32 BT_Phase2JawBite_GetBiteDelaySpeed(s32 distance)
+{
+    distance = clamp(distance, LEFT_JAW_INITIAL_POS, RIGHT_JAW_INITIAL_POS);
+    return (distance / RIGHT_JAW_INITIAL_POS) + 1;
+}
+
+static bool32 BT_Phase2JawBite_Main(struct Task *task)
+{
+    u16 *tilemapAddr;
+    u32 x, y, baseTile;
+    bool32 done;
+
+    // Update position
+    if (++task->tFrameCounter >= BT_Phase2JawBite_GetBiteDelaySpeed(task->tPosRight - task->tPosLeft))
+    {
+        task->tFrameCounter = 0;
+        
+        if (task->tPosLeft < 14)
+            task->tPosLeft += 2;
+        
+        if (task->tPosRight > 14)
+            task->tPosRight -= 2;
+    }
+    
+    // Update screen
+    BT_GetBg0TilemapBase(&tilemapAddr);
+
+    if (task->tPosLeft >= 14 && task->tPosRight <= 14)
+    {
+        baseTile = 4;
+        CpuFill16(1 | 0xF000, tilemapAddr, 0x800);
+        done = TRUE;
+    }
+    else
+    {
+        baseTile = 2;
+        CpuFill16(0x0000, tilemapAddr, 0x800);
+        done = FALSE;
+    }
+
+    for (y = 0; y < DISPLAY_HEIGHT / 8; y += 2)
+    {
+        // Fill black left part
+        for (x = 0; x < task->tPosLeft; x++)
+        {
+            SET_TILE(tilemapAddr, y, x, 1);
+            SET_TILE(tilemapAddr, y + 1, x, 1);
+        }
+        
+        // Fill black right part
+        for (x = task->tPosRight + 2; x < (DISPLAY_WIDTH / 8); x++)
+        {
+            SET_TILE(tilemapAddr, y, x, 1);
+            SET_TILE(tilemapAddr, y + 1, x, 1);
+        }
+        
+        // Draw jaw
+        
+        // top left part
+        SET_TILE(tilemapAddr, y, task->tPosLeft, baseTile);
+        SET_TILE(tilemapAddr, y, task->tPosLeft + 1, baseTile + 1);
+        
+        // bottom left part
+        SET_TILE(tilemapAddr, y + 1, task->tPosLeft, baseTile | 0x0800);
+        SET_TILE(tilemapAddr, y + 1, task->tPosLeft + 1, (baseTile + 1) | 0x0800);
+    
+        // top right part
+        SET_TILE(tilemapAddr, y, task->tPosRight, baseTile + 2);
+        SET_TILE(tilemapAddr, y, task->tPosRight + 1, baseTile + 3);
+        
+        // bottom right part
+        SET_TILE(tilemapAddr, y + 1, task->tPosRight, (baseTile + 2) | 0x0800);
+        SET_TILE(tilemapAddr, y + 1, task->tPosRight + 1, (baseTile + 3) | 0x0800);
+    }
+    
+    if (done)
+    {
+        ++task->tState;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static bool32 BT_Phase2JawBite_Shake(struct Task *task)
+{
+    u32 shakeIndex = task->tFrameCounter % ARRAY_COUNT(sBiteScreenShakeOffsets);
+    
+    REG_BG0HOFS = sBiteScreenShakeOffsets[shakeIndex][0];
+    REG_BG0VOFS = sBiteScreenShakeOffsets[shakeIndex][1];
+    
+    // Shake for 12 frames
+    if (++task->tFrameCounter > 12)
+    {
+        BT_BlendPalettesToBlack();
+        BT_DestroyPhase2AnimTask(task);
+    }
+    return FALSE;
+}
+
+#undef tFrameCounter
+#undef tPosLeft
+#undef tPosRight
