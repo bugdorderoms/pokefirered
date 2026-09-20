@@ -26,9 +26,6 @@
 
 #define EVOLUTION(...) (const u8[]) { __VA_ARGS__, EVOLUTIONS_END }
 
-#define LEARNSETS(name)                         \
-    .levelUpLearnset = s##name##LevelUpLearnset
-
 // Forms general data
 #define PIKACHU_MISC_INFO(...)                                                       \
     .name = _("Pikachu"),                                                            \
@@ -52,7 +49,7 @@
     .itemRare = ITEM_LIGHT_BALL,                                                     \
     .natDexNum = NATIONAL_DEX_PIKACHU,                                               \
     .cryId = CRY_ID_PIKACHU,                                                         \
-    LEARNSETS(Pikachu)
+    .levelUpLearnset = sPikachuLevelUpLearnset
 
 #define COSPLAY_PIKACHU_MISC_INFO                     \
     PIKACHU_MISC_INFO(),                              \
@@ -91,7 +88,7 @@
     .iconPaletteIndex = 1,                                                     \
     .natDexNum = NATIONAL_DEX_PICHU,                                           \
     .cryId = CRY_ID_PICHU,                                                     \
-    LEARNSETS(Pichu)
+    .levelUpLearnset = sPichuLevelUpLearnset
 
 #define UNOWN_MISC_INFO                                                      \
     .name = _("Unown"),                                                      \
@@ -121,7 +118,7 @@
     .formChangeTable = sUnownFormChangeTable,                                \
     .palette = sMonPalette_UnownNormal,                                      \
     .shinyPalette = sMonPalette_UnownShiny,                                  \
-    LEARNSETS(Unown)
+    .levelUpLearnset = sUnownLevelUpLearnset
 
 #define CASTFORM_MISC_INFO(type, desc)                    \
     .name = _("Castform"),                                \
@@ -148,7 +145,7 @@
     .natDexNum = NATIONAL_DEX_CASTFORM,                   \
     .cryId = CRY_ID_CASTFORM,                             \
     .formChangeTable = sCastformFormChangeTable,          \
-    LEARNSETS(Castform)
+    .levelUpLearnset = sCastformLevelUpLearnset
 
 #define DEOXYS_MISC_INFO                                                      \
     .name = _("Deoxys"),                                                      \
@@ -197,7 +194,8 @@
     .cryId = CRY_ID_BURMY,                                                                       \
     .evolutions = EVOLUTION(REQ_LEVEL(20), REQ_GENDER(MON_FEMALE), EVO_TARGET(femaleEvoSpecies), \
                             REQ_LEVEL(20), REQ_GENDER(MON_MALE), EVO_TARGET(SPECIES_MOTHIM)),    \
-    .formChangeTable = sBurmyFormChangeTable
+    .formChangeTable = sBurmyFormChangeTable,                                                    \
+    .levelUpLearnset = sBurmyLevelUpLearnset
 
 #define WORMADAM_MISC_INFO(type2, desc)   \
     .name = _("Wormadam"),                \
@@ -241,7 +239,8 @@
     .itemRare = ITEM_MIRACLE_SEED,                    \
     .natDexNum = NATIONAL_DEX_CHERRIM,                \
     .cryId = CRY_ID_CHERRIM,                          \
-    .formChangeTable = sCherrimFormChangeTable
+    .formChangeTable = sCherrimFormChangeTable,       \
+    .levelUpLearnset = sCherrimLevelUpLearnset
 
 #define SHELLOS_MISC_INFO(evoSpecies, desc)                         \
     .name = _("Shellos"),                                           \
@@ -267,7 +266,8 @@
     .cryId = CRY_ID_SHELLOS,                                        \
     .evolutions = EVOLUTION(REQ_LEVEL(30), EVO_TARGET(evoSpecies)), \
     .formChangeTable = sShellosFormChangeTable,                     \
-    .sosCallRate = 9
+    .sosCallRate = 9,                                               \
+    .levelUpLearnset = sShellosLevelUpLearnset
 
 #define GASTRODON_MISC_INFO(desc)                            \
     .name = _("Gastrodon"),                                  \
@@ -292,97 +292,102 @@
     .natDexNum = NATIONAL_DEX_GASTRODON,                     \
     .cryId = CRY_ID_GASTRODON,                               \
     .formChangeTable = sGastrodonFormChangeTable,            \
-    .sosCallRate = 6
+    .sosCallRate = 6,                                        \
+    .levelUpLearnset = sGastrodonLevelUpLearnset
 
-#define ROTOM_MISC_INFO(type2, desc)         \
-    .name = _("Rotom"),                      \
-    .categoryName = _("Plasma"),             \
-    .description = COMPOUND_STRING(desc),    \
-    MON_TYPES(TYPE_ELECTRIC, type2),         \
-    MON_ABILITIES(ABILITY_LEVITATE),         \
-    .hiddenAbility = ABILITY_NONE,           \
-    .genderRatio = MON_GENDERLESS,           \
-    .catchRate = 45,                         \
-    MON_EGG_GROUPS(EGG_GROUP_AMORPHOUS),     \
-    .eggCycles = 20,                         \
-    .height = 3,                             \
-    .weight = 3,                             \
-    .expYield = 154,                         \
-    .growthRate = GROWTH_MEDIUM_FAST,        \
-    .evYield_Speed = 1,                      \
-    .evYield_SpAttack = 1,                   \
-    .friendship = 70,                        \
-    .pokemonJumpDisallowed = TRUE,           \
-    .iconPaletteIndex = 0,                   \
-    .natDexNum = NATIONAL_DEX_ROTOM,         \
-    .cryId = CRY_ID_ROTOM,                   \
-    .formChangeTable = sRotomFormChangeTable
+#define ROTOM_MISC_INFO(type2, desc)          \
+    .name = _("Rotom"),                       \
+    .categoryName = _("Plasma"),              \
+    .description = COMPOUND_STRING(desc),     \
+    MON_TYPES(TYPE_ELECTRIC, type2),          \
+    MON_ABILITIES(ABILITY_LEVITATE),          \
+    .hiddenAbility = ABILITY_NONE,            \
+    .genderRatio = MON_GENDERLESS,            \
+    .catchRate = 45,                          \
+    MON_EGG_GROUPS(EGG_GROUP_AMORPHOUS),      \
+    .eggCycles = 20,                          \
+    .height = 3,                              \
+    .weight = 3,                              \
+    .expYield = 154,                          \
+    .growthRate = GROWTH_MEDIUM_FAST,         \
+    .evYield_Speed = 1,                       \
+    .evYield_SpAttack = 1,                    \
+    .friendship = 70,                         \
+    .pokemonJumpDisallowed = TRUE,            \
+    .iconPaletteIndex = 0,                    \
+    .natDexNum = NATIONAL_DEX_ROTOM,          \
+    .cryId = CRY_ID_ROTOM,                    \
+    .formChangeTable = sRotomFormChangeTable, \
+    .levelUpLearnset = sRotomLevelUpLearnset
 
 #define ROTOM_FORMS_MISC_INFO(type2, desc) \
     ROTOM_MISC_INFO(type2, desc),          \
     MON_STATS(50, 65, 107, 86, 105, 107)
 
-#define DIALGA_MISC_INFO(desc)                \
-    .name = _("Dialga"),                      \
-    .categoryName = _("Temporal"),            \
-    .description = COMPOUND_STRING(desc),     \
-    MON_TYPES(TYPE_STEEL, TYPE_DRAGON),       \
-    MON_ABILITIES(ABILITY_PRESSURE),          \
-    .hiddenAbility = ABILITY_TELEPATHY,       \
-    .genderRatio = MON_GENDERLESS,            \
-    .catchRate = 3,                           \
-    MON_EGG_GROUPS(EGG_GROUP_UNDISCOVERED),   \
-    .eggCycles = 120,                         \
-    .expYield = 306,                          \
-    .growthRate = GROWTH_SLOW,                \
-    .evYield_SpAttack = 3,                    \
-    FOOTPRINT(Dialga),                        \
-    .friendship = 0,                          \
-    .flags = SPECIES_FLAG_LEGENDARY,          \
-    .natDexNum = NATIONAL_DEX_DIALGA,         \
-    .cryId = CRY_ID_DIALGA,                   \
-    .formChangeTable = sDialgaFormChangeTable
+#define DIALGA_MISC_INFO(desc)                 \
+    .name = _("Dialga"),                       \
+    .categoryName = _("Temporal"),             \
+    .description = COMPOUND_STRING(desc),      \
+    MON_TYPES(TYPE_STEEL, TYPE_DRAGON),        \
+    MON_ABILITIES(ABILITY_PRESSURE),           \
+    .hiddenAbility = ABILITY_TELEPATHY,        \
+    .genderRatio = MON_GENDERLESS,             \
+    .catchRate = 3,                            \
+    MON_EGG_GROUPS(EGG_GROUP_UNDISCOVERED),    \
+    .eggCycles = 120,                          \
+    .expYield = 306,                           \
+    .growthRate = GROWTH_SLOW,                 \
+    .evYield_SpAttack = 3,                     \
+    FOOTPRINT(Dialga),                         \
+    .friendship = 0,                           \
+    .flags = SPECIES_FLAG_LEGENDARY,           \
+    .natDexNum = NATIONAL_DEX_DIALGA,          \
+    .cryId = CRY_ID_DIALGA,                    \
+    .formChangeTable = sDialgaFormChangeTable, \
+    .levelUpLearnset = sDialgaLevelUpLearnset
 
-#define PALKIA_MISC_INFO(desc)                \
-    .name = _("Palkia"),                      \
-    .categoryName = _("Spatial"),             \
-    .description = COMPOUND_STRING(desc),     \
-    MON_TYPES(TYPE_WATER, TYPE_DRAGON),       \
-    MON_ABILITIES(ABILITY_PRESSURE),          \
-    .hiddenAbility = ABILITY_TELEPATHY,       \
-    .genderRatio = MON_GENDERLESS,            \
-    .catchRate = 3,                           \
-    MON_EGG_GROUPS(EGG_GROUP_UNDISCOVERED),   \
-    .eggCycles = 120,                         \
-    .expYield = 306,                          \
-    .growthRate = GROWTH_SLOW,                \
-    .evYield_SpAttack = 3,                    \
-    FOOTPRINT(Palkia),                        \
-    .friendship = 0,                          \
-    .flags = SPECIES_FLAG_LEGENDARY,          \
-    .iconPaletteIndex = 2,                    \
-    .natDexNum = NATIONAL_DEX_PALKIA,         \
-    .cryId = CRY_ID_PALKIA,                   \
-    .formChangeTable = sPalkiaFormChangeTable
+#define PALKIA_MISC_INFO(desc)                 \
+    .name = _("Palkia"),                       \
+    .categoryName = _("Spatial"),              \
+    .description = COMPOUND_STRING(desc),      \
+    MON_TYPES(TYPE_WATER, TYPE_DRAGON),        \
+    MON_ABILITIES(ABILITY_PRESSURE),           \
+    .hiddenAbility = ABILITY_TELEPATHY,        \
+    .genderRatio = MON_GENDERLESS,             \
+    .catchRate = 3,                            \
+    MON_EGG_GROUPS(EGG_GROUP_UNDISCOVERED),    \
+    .eggCycles = 120,                          \
+    .expYield = 306,                           \
+    .growthRate = GROWTH_SLOW,                 \
+    .evYield_SpAttack = 3,                     \
+    FOOTPRINT(Palkia),                         \
+    .friendship = 0,                           \
+    .flags = SPECIES_FLAG_LEGENDARY,           \
+    .iconPaletteIndex = 2,                     \
+    .natDexNum = NATIONAL_DEX_PALKIA,          \
+    .cryId = CRY_ID_PALKIA,                    \
+    .formChangeTable = sPalkiaFormChangeTable, \
+    .levelUpLearnset = sPalkiaLevelUpLearnset
 
-#define GIRATINA_MISC_INFO(desc)                \
-    .name = _("Giratina"),                      \
-    .categoryName = _("Renegade"),              \
-    .description = COMPOUND_STRING(desc),       \
-    MON_TYPES(TYPE_GHOST, TYPE_DRAGON),         \
-    .genderRatio = MON_GENDERLESS,              \
-    .catchRate = 3,                             \
-    MON_EGG_GROUPS(EGG_GROUP_UNDISCOVERED),     \
-    .eggCycles = 120,                           \
-    .expYield = 306,                            \
-    .growthRate = GROWTH_SLOW,                  \
-    .evYield_HP = 3,                            \
-    .friendship = 0,                            \
-    .flags = SPECIES_FLAG_LEGENDARY,            \
-    .iconPaletteIndex = 0,                      \
-    .natDexNum = NATIONAL_DEX_GIRATINA,         \
-    .cryId = CRY_ID_GIRATINA,                   \
-    .formChangeTable = sGiratinaFormChangeTable
+#define GIRATINA_MISC_INFO(desc)                 \
+    .name = _("Giratina"),                       \
+    .categoryName = _("Renegade"),               \
+    .description = COMPOUND_STRING(desc),        \
+    MON_TYPES(TYPE_GHOST, TYPE_DRAGON),          \
+    .genderRatio = MON_GENDERLESS,               \
+    .catchRate = 3,                              \
+    MON_EGG_GROUPS(EGG_GROUP_UNDISCOVERED),      \
+    .eggCycles = 120,                            \
+    .expYield = 306,                             \
+    .growthRate = GROWTH_SLOW,                   \
+    .evYield_HP = 3,                             \
+    .friendship = 0,                             \
+    .flags = SPECIES_FLAG_LEGENDARY,             \
+    .iconPaletteIndex = 0,                       \
+    .natDexNum = NATIONAL_DEX_GIRATINA,          \
+    .cryId = CRY_ID_GIRATINA,                    \
+    .formChangeTable = sGiratinaFormChangeTable, \
+    .levelUpLearnset = sGiratinaLevelUpLearnset
 
 #define ARCEUS_MISC_INFO(type)                                            \
     .name = _("Arceus"),                                                  \
@@ -419,7 +424,8 @@
     .shadowSize = SHADOW_SIZE_L,                                          \
     .backPic = sMonBackPic_Arceus,                                        \
     .backPicSize = MON_COORDS_SIZE(60, 55),                               \
-    .backPicYOffset = 3
+    .backPicYOffset = 3,                                                  \
+    .levelUpLearnset = sArceusLevelUpLearnset
 
 #define UNFEZANT_MISC_INFO(desc)                          \
     .name = _("Unfezant"),                                \
@@ -1563,7 +1569,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_BulbasaurNormal,
         .shinyPalette = sMonPalette_BulbasaurShiny,
-        LEARNSETS(Bulbasaur),
+        .levelUpLearnset = sBulbasaurLevelUpLearnset,
     },
     
     [SPECIES_IVYSAUR] =
@@ -1605,7 +1611,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_IvysaurNormal,
         .shinyPalette = sMonPalette_IvysaurShiny,
-        LEARNSETS(Ivysaur),
+        .levelUpLearnset = sIvysaurLevelUpLearnset,
     },
 
     [SPECIES_VENUSAUR] =
@@ -1647,7 +1653,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_VenusaurNormal,
         .shinyPalette = sMonPalette_VenusaurShiny,
-        LEARNSETS(Venusaur),
+        .levelUpLearnset = sVenusaurLevelUpLearnset,
     },
 
     [SPECIES_CHARMANDER] =
@@ -1688,7 +1694,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_CharmanderNormal,
         .shinyPalette = sMonPalette_CharmanderShiny,
-        LEARNSETS(Charmander),
+        .levelUpLearnset = sCharmanderLevelUpLearnset,
     },
 
     [SPECIES_CHARMELEON] =
@@ -1730,7 +1736,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_CharmeleonNormal,
         .shinyPalette = sMonPalette_CharmeleonShiny,
-        LEARNSETS(Charmeleon),
+        .levelUpLearnset = sCharmeleonLevelUpLearnset,
     },
 
     [SPECIES_CHARIZARD] =
@@ -1771,7 +1777,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_CharizardNormal,
         .shinyPalette = sMonPalette_CharizardShiny,
-        LEARNSETS(Charizard),
+        .levelUpLearnset = sCharizardLevelUpLearnset,
     },
 
     [SPECIES_SQUIRTLE] =
@@ -1812,7 +1818,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_SquirtleNormal,
         .shinyPalette = sMonPalette_SquirtleShiny,
-        LEARNSETS(Squirtle),
+        .levelUpLearnset = sSquirtleLevelUpLearnset,
     },
 
     [SPECIES_WARTORTLE] =
@@ -1854,7 +1860,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_WartortleNormal,
         .shinyPalette = sMonPalette_WartortleShiny,
-        LEARNSETS(Wartortle),
+        .levelUpLearnset = sWartortleLevelUpLearnset,
     },
 
     [SPECIES_BLASTOISE] =
@@ -1895,7 +1901,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_BlastoiseNormal,
         .shinyPalette = sMonPalette_BlastoiseShiny,
-        LEARNSETS(Blastoise),
+        .levelUpLearnset = sBlastoiseLevelUpLearnset,
     },
 
     [SPECIES_CATERPIE] =
@@ -1938,7 +1944,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CaterpieShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_CATERPIE, SPECIES_BUTTERFREE),
-        LEARNSETS(Caterpie),
+        .levelUpLearnset = sCaterpieLevelUpLearnset,
     },
 
     [SPECIES_METAPOD] =
@@ -1979,7 +1985,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MetapodShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_CATERPIE, SPECIES_BUTTERFREE),
-        LEARNSETS(Metapod),
+        .levelUpLearnset = sMetapodLevelUpLearnset,
     },
 
     [SPECIES_BUTTERFREE] =
@@ -2022,7 +2028,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_ButterfreeNormal,
         .shinyPalette = sMonPalette_ButterfreeShiny,
-        LEARNSETS(Butterfree),
+        .levelUpLearnset = sButterfreeLevelUpLearnset,
     },
 
     [SPECIES_WEEDLE] =
@@ -2063,7 +2069,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_WeedleNormal,
         .shinyPalette = sMonPalette_WeedleShiny,
-        LEARNSETS(Weedle),
+        .levelUpLearnset = sWeedleLevelUpLearnset,
     },
 
     [SPECIES_KAKUNA] =
@@ -2102,7 +2108,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_KakunaNormal,
         .shinyPalette = sMonPalette_KakunaShiny,
-        LEARNSETS(Kakuna),
+        .levelUpLearnset = sKakunaLevelUpLearnset,
     },
 
     [SPECIES_BEEDRILL] =
@@ -2146,7 +2152,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_BeedrillNormal,
         .shinyPalette = sMonPalette_BeedrillShiny,
-        LEARNSETS(Beedrill),
+        .levelUpLearnset = sBeedrillLevelUpLearnset,
     },
 
     [SPECIES_PIDGEY] =
@@ -2187,7 +2193,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_PidgeyNormal,
         .shinyPalette = sMonPalette_PidgeyShiny,
-        LEARNSETS(Pidgey),
+        .levelUpLearnset = sPidgeyLevelUpLearnset,
     },
 
     [SPECIES_PIDGEOTTO] =
@@ -2228,7 +2234,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_PidgeottoNormal,
         .shinyPalette = sMonPalette_PidgeottoShiny,
-        LEARNSETS(Pidgeotto),
+        .levelUpLearnset = sPidgeottoLevelUpLearnset,
     },
 
     [SPECIES_PIDGEOT] =
@@ -2269,7 +2275,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_PidgeotNormal,
         .shinyPalette = sMonPalette_PidgeotShiny,
-        LEARNSETS(Pidgeot),
+        .levelUpLearnset = sPidgeotLevelUpLearnset,
     },
 
     [SPECIES_RATTATA] =
@@ -2311,7 +2317,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_RattataNormal,
         .shinyPalette = sMonPalette_RattataShiny,
-        LEARNSETS(Rattata),
+        .levelUpLearnset = sRattataLevelUpLearnset,
     },
 
     [SPECIES_RATICATE] =
@@ -2352,7 +2358,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_RaticateNormal,
         .shinyPalette = sMonPalette_RaticateShiny,
-        LEARNSETS(Raticate),
+        .levelUpLearnset = sRaticateLevelUpLearnset,
     },
 
     [SPECIES_SPEAROW] =
@@ -2395,7 +2401,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SpearowNormal,
         .shinyPalette = sMonPalette_SpearowShiny,
         .sosCallRate = 9,
-        LEARNSETS(Spearow),
+        .levelUpLearnset = sSpearowLevelUpLearnset,
     },
 
     [SPECIES_FEAROW] =
@@ -2437,7 +2443,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_FearowNormal,
         .shinyPalette = sMonPalette_FearowShiny,
         .sosCallRate = 6,
-        LEARNSETS(Fearow),
+        .levelUpLearnset = sFearowLevelUpLearnset,
     },
 
     [SPECIES_EKANS] =
@@ -2478,7 +2484,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_EkansNormal,
         .shinyPalette = sMonPalette_EkansShiny,
         .sosCallRate = 9,
-        LEARNSETS(Ekans),
+        .levelUpLearnset = sEkansLevelUpLearnset,
     },
 
     [SPECIES_ARBOK] =
@@ -2518,7 +2524,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ArbokNormal,
         .shinyPalette = sMonPalette_ArbokShiny,
         .sosCallRate = 6,
-        LEARNSETS(Arbok),
+        .levelUpLearnset = sArbokLevelUpLearnset,
     },
 
     [SPECIES_PIKACHU] =
@@ -2582,7 +2588,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_RaichuNormal,
         .shinyPalette = sMonPalette_RaichuShiny,
-        LEARNSETS(Raichu),
+        .levelUpLearnset = sRaichuLevelUpLearnset,
     },
     
     [SPECIES_SANDSHREW] =
@@ -2625,7 +2631,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_SandshrewNormal,
         .shinyPalette = sMonPalette_SandshrewShiny,
-        LEARNSETS(Sandshrew),
+        .levelUpLearnset = sSandshrewLevelUpLearnset,
     },
 
     [SPECIES_SANDSLASH] =
@@ -2667,7 +2673,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_SandslashNormal,
         .shinyPalette = sMonPalette_SandslashShiny,
-        LEARNSETS(Sandslash),
+        .levelUpLearnset = sSandslashLevelUpLearnset,
     },
 
     [SPECIES_NIDORAN_F] =
@@ -2708,7 +2714,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_NidoranFNormal,
         .shinyPalette = sMonPalette_NidoranFShiny,
-        LEARNSETS(NidoranF),
+        .levelUpLearnset = sNidoranFLevelUpLearnset,
     },
 
     [SPECIES_NIDORINA] =
@@ -2749,7 +2755,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_NidorinaNormal,
         .shinyPalette = sMonPalette_NidorinaShiny,
-        LEARNSETS(Nidorina),
+        .levelUpLearnset = sNidorinaLevelUpLearnset,
     },
 
     [SPECIES_NIDOQUEEN] =
@@ -2789,7 +2795,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_NidoqueenNormal,
         .shinyPalette = sMonPalette_NidoqueenShiny,
-        LEARNSETS(Nidoqueen),
+        .levelUpLearnset = sNidoqueenLevelUpLearnset,
     },
 
     [SPECIES_NIDORAN_M] =
@@ -2830,7 +2836,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_NidoranMNormal,
         .shinyPalette = sMonPalette_NidoranMShiny,
-        LEARNSETS(NidoranM),
+        .levelUpLearnset = sNidoranMLevelUpLearnset,
     },
 
     [SPECIES_NIDORINO] =
@@ -2871,7 +2877,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_NidorinoNormal,
         .shinyPalette = sMonPalette_NidorinoShiny,
-        LEARNSETS(Nidorino),
+        .levelUpLearnset = sNidorinoLevelUpLearnset,
     },
 
     [SPECIES_NIDOKING] =
@@ -2911,7 +2917,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_NidokingNormal,
         .shinyPalette = sMonPalette_NidokingShiny,
-        LEARNSETS(Nidoking),
+        .levelUpLearnset = sNidokingLevelUpLearnset,
     },
 
     [SPECIES_CLEFAIRY] =
@@ -2954,7 +2960,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ClefairyNormal,
         .shinyPalette = sMonPalette_ClefairyShiny,
         .sosCallRate = 6,
-        LEARNSETS(Clefairy),
+        .levelUpLearnset = sClefairyLevelUpLearnset,
     },
 
     [SPECIES_CLEFABLE] =
@@ -2995,7 +3001,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_ClefableNormal,
         .shinyPalette = sMonPalette_ClefableShiny,
-        LEARNSETS(Clefable),
+        .levelUpLearnset = sClefableLevelUpLearnset,
     },
 
     [SPECIES_VULPIX] =
@@ -3038,7 +3044,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_VulpixNormal,
         .shinyPalette = sMonPalette_VulpixShiny,
-        LEARNSETS(Vulpix),
+        .levelUpLearnset = sVulpixLevelUpLearnset,
     },
 
     [SPECIES_NINETALES] =
@@ -3081,7 +3087,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_NinetalesNormal,
         .shinyPalette = sMonPalette_NinetalesShiny,
-        LEARNSETS(Ninetales),
+        .levelUpLearnset = sNinetalesLevelUpLearnset,
     },
 
     [SPECIES_JIGGLYPUFF] =
@@ -3124,7 +3130,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_JigglypuffNormal,
         .shinyPalette = sMonPalette_JigglypuffShiny,
         .sosCallRate = 6,
-        LEARNSETS(Jigglypuff),
+        .levelUpLearnset = sJigglypuffLevelUpLearnset,
     },
 
     [SPECIES_WIGGLYTUFF] =
@@ -3165,7 +3171,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_WigglytuffNormal,
         .shinyPalette = sMonPalette_WigglytuffShiny,
-        LEARNSETS(Wigglytuff),
+        .levelUpLearnset = sWigglytuffLevelUpLearnset,
     },
 
     [SPECIES_ZUBAT] =
@@ -3208,7 +3214,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_ZubatShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_ZUBAT, SPECIES_GOLBAT),
-        LEARNSETS(Zubat),
+        .levelUpLearnset = sZubatLevelUpLearnset,
     },
 
     [SPECIES_GOLBAT] =
@@ -3251,7 +3257,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_GolbatShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_GOLBAT, SPECIES_CROBAT),
-        LEARNSETS(Golbat),
+        .levelUpLearnset = sGolbatLevelUpLearnset,
     },
     
     [SPECIES_ODDISH] =
@@ -3293,7 +3299,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_OddishNormal,
         .shinyPalette = sMonPalette_OddishShiny,
-        LEARNSETS(Oddish),
+        .levelUpLearnset = sOddishLevelUpLearnset,
     },
 
     [SPECIES_GLOOM] =
@@ -3336,7 +3342,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_GloomNormal,
         .shinyPalette = sMonPalette_GloomShiny,
-        LEARNSETS(Gloom),
+        .levelUpLearnset = sGloomLevelUpLearnset,
     },
 
     [SPECIES_VILEPLUME] =
@@ -3377,7 +3383,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_VileplumeNormal,
         .shinyPalette = sMonPalette_VileplumeShiny,
-        LEARNSETS(Vileplume),
+        .levelUpLearnset = sVileplumeLevelUpLearnset,
     },
     
     [SPECIES_PARAS] =
@@ -3421,7 +3427,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ParasNormal,
         .shinyPalette = sMonPalette_ParasShiny,
         .sosCallRate = 9,
-        LEARNSETS(Paras),
+        .levelUpLearnset = sParasLevelUpLearnset,
     },
 
     [SPECIES_PARASECT] =
@@ -3465,7 +3471,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ParasectNormal,
         .shinyPalette = sMonPalette_ParasectShiny,
         .sosCallRate = 6,
-        LEARNSETS(Parasect),
+        .levelUpLearnset = sParasectLevelUpLearnset,
     },
 
     [SPECIES_VENONAT] =
@@ -3506,7 +3512,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_VenonatNormal,
         .shinyPalette = sMonPalette_VenonatShiny,
-        LEARNSETS(Venonat),
+        .levelUpLearnset = sVenonatLevelUpLearnset,
     },
 
     [SPECIES_VENOMOTH] =
@@ -3548,7 +3554,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_VenomothNormal,
         .shinyPalette = sMonPalette_VenomothShiny,
-        LEARNSETS(Venomoth),
+        .levelUpLearnset = sVenomothLevelUpLearnset,
     },
 
     [SPECIES_DIGLETT] =
@@ -3590,7 +3596,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 14,
         .palette = sMonPalette_DiglettNormal,
         .shinyPalette = sMonPalette_DiglettShiny,
-        LEARNSETS(Diglett),
+        .levelUpLearnset = sDiglettLevelUpLearnset,
     },
 
     [SPECIES_DUGTRIO] =
@@ -3631,7 +3637,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 17,
         .palette = sMonPalette_DugtrioNormal,
         .shinyPalette = sMonPalette_DugtrioShiny,
-        LEARNSETS(Dugtrio),
+        .levelUpLearnset = sDugtrioLevelUpLearnset,
     },
 
     [SPECIES_MEOWTH] =
@@ -3674,7 +3680,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_MeowthNormal,
         .shinyPalette = sMonPalette_MeowthShiny,
-        LEARNSETS(Meowth),
+        .levelUpLearnset = sMeowthLevelUpLearnset,
     },
 
     [SPECIES_PERSIAN] =
@@ -3716,7 +3722,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_PersianNormal,
         .shinyPalette = sMonPalette_PersianShiny,
-        LEARNSETS(Persian),
+        .levelUpLearnset = sPersianLevelUpLearnset,
     },
 
     [SPECIES_PSYDUCK] =
@@ -3759,7 +3765,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_PsyduckShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_PSYDUCK, SPECIES_ZUBAT),
-        LEARNSETS(Psyduck),
+        .levelUpLearnset = sPsyduckLevelUpLearnset,
     },
 
     [SPECIES_GOLDUCK] =
@@ -3800,7 +3806,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_GolduckNormal,
         .shinyPalette = sMonPalette_GolduckShiny,
         .sosCallRate = 6,
-        LEARNSETS(Golduck),
+        .levelUpLearnset = sGolduckLevelUpLearnset,
     },
 
     [SPECIES_MANKEY] =
@@ -3842,7 +3848,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MankeyNormal,
         .shinyPalette = sMonPalette_MankeyShiny,
         .sosCallRate = 9,
-        LEARNSETS(Mankey),
+        .levelUpLearnset = sMankeyLevelUpLearnset,
     },
 
     [SPECIES_PRIMEAPE] =
@@ -3884,7 +3890,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PrimeapeNormal,
         .shinyPalette = sMonPalette_PrimeapeShiny,
         .sosCallRate = 6,
-        LEARNSETS(Primeape),
+        .levelUpLearnset = sPrimeapeLevelUpLearnset,
     },
 
     [SPECIES_GROWLITHE] =
@@ -3927,7 +3933,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_GrowlitheNormal,
         .shinyPalette = sMonPalette_GrowlitheShiny,
         .sosCallRate = 9,
-        LEARNSETS(Growlithe),
+        .levelUpLearnset = sGrowlitheLevelUpLearnset,
     },
 
     [SPECIES_ARCANINE] =
@@ -3968,7 +3974,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_ArcanineNormal,
         .shinyPalette = sMonPalette_ArcanineShiny,
-        LEARNSETS(Arcanine),
+        .levelUpLearnset = sArcanineLevelUpLearnset,
     },
 
     [SPECIES_POLIWAG] =
@@ -4010,7 +4016,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PoliwagNormal,
         .shinyPalette = sMonPalette_PoliwagShiny,
         .sosCallRate = 9,
-        LEARNSETS(Poliwag),
+        .levelUpLearnset = sPoliwagLevelUpLearnset,
     },
 
     [SPECIES_POLIWHIRL] =
@@ -4054,7 +4060,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PoliwhirlNormal,
         .shinyPalette = sMonPalette_PoliwhirlShiny,
         .sosCallRate = 6,
-        LEARNSETS(Poliwhirl),
+        .levelUpLearnset = sPoliwhirlLevelUpLearnset,
     },
 
     [SPECIES_POLIWRATH] =
@@ -4095,7 +4101,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_PoliwrathNormal,
         .shinyPalette = sMonPalette_PoliwrathShiny,
-        LEARNSETS(Poliwrath),
+        .levelUpLearnset = sPoliwrathLevelUpLearnset,
     },
 
     [SPECIES_ABRA] =
@@ -4139,7 +4145,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_AbraNormal,
         .shinyPalette = sMonPalette_AbraShiny,
         .sosCallRate = 9,
-        LEARNSETS(Abra),
+        .levelUpLearnset = sAbraLevelUpLearnset,
     },
 
     [SPECIES_KADABRA] =
@@ -4182,7 +4188,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_KadabraNormal,
         .shinyPalette = sMonPalette_KadabraShiny,
         .sosCallRate = 6,
-        LEARNSETS(Kadabra),
+        .levelUpLearnset = sKadabraLevelUpLearnset,
     },
 
     [SPECIES_ALAKAZAM] =
@@ -4224,7 +4230,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_AlakazamNormal,
         .shinyPalette = sMonPalette_AlakazamShiny,
-        LEARNSETS(Alakazam),
+        .levelUpLearnset = sAlakazamLevelUpLearnset,
     },
 
     [SPECIES_MACHOP] =
@@ -4267,7 +4273,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MachopNormal,
         .shinyPalette = sMonPalette_MachopShiny,
         .sosCallRate = 9,
-        LEARNSETS(Machop),
+        .levelUpLearnset = sMachopLevelUpLearnset,
     },
 
     [SPECIES_MACHOKE] =
@@ -4310,7 +4316,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MachokeNormal,
         .shinyPalette = sMonPalette_MachokeShiny,
         .sosCallRate = 6,
-        LEARNSETS(Machoke),
+        .levelUpLearnset = sMachokeLevelUpLearnset,
     },
 
     [SPECIES_MACHAMP] =
@@ -4352,7 +4358,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_MachampNormal,
         .shinyPalette = sMonPalette_MachampShiny,
-        LEARNSETS(Machamp),
+        .levelUpLearnset = sMachampLevelUpLearnset,
     },
 
     [SPECIES_BELLSPROUT] =
@@ -4393,7 +4399,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_BellsproutNormal,
         .shinyPalette = sMonPalette_BellsproutShiny,
-        LEARNSETS(Bellsprout),
+        .levelUpLearnset = sBellsproutLevelUpLearnset,
     },
 
     [SPECIES_WEEPINBELL] =
@@ -4433,7 +4439,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_WeepinbellNormal,
         .shinyPalette = sMonPalette_WeepinbellShiny,
-        LEARNSETS(Weepinbell),
+        .levelUpLearnset = sWeepinbellLevelUpLearnset,
     },
 
     [SPECIES_VICTREEBEL] =
@@ -4472,7 +4478,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_VictreebelNormal,
         .shinyPalette = sMonPalette_VictreebelShiny,
-        LEARNSETS(Victreebel),
+        .levelUpLearnset = sVictreebelLevelUpLearnset,
     },
 
     [SPECIES_TENTACOOL] =
@@ -4515,7 +4521,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_TentacoolNormal,
         .shinyPalette = sMonPalette_TentacoolShiny,
         .sosCallRate = 15,
-        LEARNSETS(Tentacool),
+        .levelUpLearnset = sTentacoolLevelUpLearnset,
     },
 
     [SPECIES_TENTACRUEL] =
@@ -4557,7 +4563,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_TentacruelShiny,
         .sosCallRate = 6,
         .sosCallAllies = SOS_ALLIES(SPECIES_TENTACRUEL, SPECIES_LUMINEON),
-        LEARNSETS(Tentacruel),
+        .levelUpLearnset = sTentacruelLevelUpLearnset,
     },
 
     [SPECIES_GEODUDE] =
@@ -4599,7 +4605,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_GeodudeNormal,
         .shinyPalette = sMonPalette_GeodudeShiny,
-        LEARNSETS(Geodude),
+        .levelUpLearnset = sGeodudeLevelUpLearnset,
     },
 
     [SPECIES_GRAVELER] =
@@ -4642,7 +4648,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_GravelerNormal,
         .shinyPalette = sMonPalette_GravelerShiny,
-        LEARNSETS(Graveler),
+        .levelUpLearnset = sGravelerLevelUpLearnset,
     },
 
     [SPECIES_GOLEM] =
@@ -4684,7 +4690,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_GolemNormal,
         .shinyPalette = sMonPalette_GolemShiny,
-        LEARNSETS(Golem),
+        .levelUpLearnset = sGolemLevelUpLearnset,
     },
 
     [SPECIES_PONYTA] =
@@ -4726,7 +4732,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_PonytaNormal,
         .shinyPalette = sMonPalette_PonytaShiny,
-        LEARNSETS(Ponyta),
+        .levelUpLearnset = sPonytaLevelUpLearnset,
     },
 
     [SPECIES_RAPIDASH] =
@@ -4767,7 +4773,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_RapidashNormal,
         .shinyPalette = sMonPalette_RapidashShiny,
-        LEARNSETS(Rapidash),
+        .levelUpLearnset = sRapidashLevelUpLearnset,
     },
 
     [SPECIES_SLOWPOKE] =
@@ -4813,7 +4819,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_SlowpokeShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_SLOWPOKE, SPECIES_SLOWBRO, SPECIES_SLOWKING),
-        LEARNSETS(Slowpoke),
+        .levelUpLearnset = sSlowpokeLevelUpLearnset,
     },
 
     [SPECIES_SLOWBRO] =
@@ -4856,7 +4862,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SlowbroNormal,
         .shinyPalette = sMonPalette_SlowbroShiny,
         .sosCallRate = 3,
-        LEARNSETS(Slowbro),
+        .levelUpLearnset = sSlowbroLevelUpLearnset,
     },
 
     [SPECIES_MAGNEMITE] =
@@ -4900,7 +4906,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MagnemiteNormal,
         .shinyPalette = sMonPalette_MagnemiteShiny,
         .sosCallRate = 9,
-        LEARNSETS(Magnemite),
+        .levelUpLearnset = sMagnemiteLevelUpLearnset,
     },
 
     [SPECIES_MAGNETON] =
@@ -4944,7 +4950,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MagnetonNormal,
         .shinyPalette = sMonPalette_MagnetonShiny,
         .sosCallRate = 6,
-        LEARNSETS(Magneton),
+        .levelUpLearnset = sMagnetonLevelUpLearnset,
     },
 
     [SPECIES_FARFETCHD] =
@@ -4986,7 +4992,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_FarfetchdNormal,
         .shinyPalette = sMonPalette_FarfetchdShiny,
-        LEARNSETS(Farfetchd),
+        .levelUpLearnset = sFarfetchdLevelUpLearnset,
     },
     
     [SPECIES_DODUO] =
@@ -5028,7 +5034,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_DoduoNormal,
         .shinyPalette = sMonPalette_DoduoShiny,
-        LEARNSETS(Doduo),
+        .levelUpLearnset = sDoduoLevelUpLearnset,
     },
     
     [SPECIES_DODRIO] =
@@ -5069,7 +5075,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_DodrioNormal,
         .shinyPalette = sMonPalette_DodrioShiny,
-        LEARNSETS(Dodrio),
+        .levelUpLearnset = sDodrioLevelUpLearnset,
     },
 
     [SPECIES_SEEL] =
@@ -5110,7 +5116,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SeelNormal,
         .shinyPalette = sMonPalette_SeelShiny,
         .sosCallRate = 9,
-        LEARNSETS(Seel),
+        .levelUpLearnset = sSeelLevelUpLearnset,
     },
 
     [SPECIES_DEWGONG] =
@@ -5150,7 +5156,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DewgongNormal,
         .shinyPalette = sMonPalette_DewgongShiny,
         .sosCallRate = 6,
-        LEARNSETS(Dewgong),
+        .levelUpLearnset = sDewgongLevelUpLearnset,
     },
 
     [SPECIES_GRIMER] =
@@ -5192,7 +5198,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_GrimerNormal,
         .shinyPalette = sMonPalette_GrimerShiny,
-        LEARNSETS(Grimer),
+        .levelUpLearnset = sGrimerLevelUpLearnset,
     },
 
     [SPECIES_MUK] =
@@ -5234,7 +5240,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_MukNormal,
         .shinyPalette = sMonPalette_MukShiny,
-        LEARNSETS(Muk),
+        .levelUpLearnset = sMukLevelUpLearnset,
     },
 
     [SPECIES_SHELLDER] =
@@ -5277,7 +5283,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ShellderNormal,
         .shinyPalette = sMonPalette_ShellderShiny,
         .sosCallRate = 9,
-        LEARNSETS(Shellder),
+        .levelUpLearnset = sShellderLevelUpLearnset,
     },
 
     [SPECIES_CLOYSTER] =
@@ -5318,7 +5324,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_CloysterNormal,
         .shinyPalette = sMonPalette_CloysterShiny,
-        LEARNSETS(Cloyster),
+        .levelUpLearnset = sCloysterLevelUpLearnset,
     },
 
     [SPECIES_GASTLY] =
@@ -5359,7 +5365,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_GastlyNormal,
         .shinyPalette = sMonPalette_GastlyShiny,
         .sosCallRate = 9,
-        LEARNSETS(Gastly),
+        .levelUpLearnset = sGastlyLevelUpLearnset,
     },
 
     [SPECIES_HAUNTER] =
@@ -5401,7 +5407,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_HaunterShiny,
         .sosCallRate = 6,
         .sosCallAllies = SOS_ALLIES(SPECIES_HAUNTER, SPECIES_GENGAR),
-        LEARNSETS(Haunter),
+        .levelUpLearnset = sHaunterLevelUpLearnset,
     },
 
     [SPECIES_GENGAR] =
@@ -5442,7 +5448,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_GengarNormal,
         .shinyPalette = sMonPalette_GengarShiny,
-        LEARNSETS(Gengar),
+        .levelUpLearnset = sGengarLevelUpLearnset,
     },
 
     [SPECIES_ONIX] =
@@ -5482,7 +5488,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_OnixNormal,
         .shinyPalette = sMonPalette_OnixShiny,
-        LEARNSETS(Onix),
+        .levelUpLearnset = sOnixLevelUpLearnset,
     },
 
     [SPECIES_DROWZEE] =
@@ -5524,7 +5530,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DrowzeeNormal,
         .shinyPalette = sMonPalette_DrowzeeShiny,
         .sosCallRate = 9,
-        LEARNSETS(Drowzee),
+        .levelUpLearnset = sDrowzeeLevelUpLearnset,
     },
 
     [SPECIES_HYPNO] =
@@ -5565,7 +5571,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_HypnoNormal,
         .shinyPalette = sMonPalette_HypnoShiny,
         .sosCallRate = 6,
-        LEARNSETS(Hypno),
+        .levelUpLearnset = sHypnoLevelUpLearnset,
     },
 
     [SPECIES_KRABBY] =
@@ -5606,7 +5612,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_KrabbyNormal,
         .shinyPalette = sMonPalette_KrabbyShiny,
-        LEARNSETS(Krabby),
+        .levelUpLearnset = sKrabbyLevelUpLearnset,
     },
 
     [SPECIES_KINGLER] =
@@ -5647,7 +5653,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_KinglerNormal,
         .shinyPalette = sMonPalette_KinglerShiny,
-        LEARNSETS(Kingler),
+        .levelUpLearnset = sKinglerLevelUpLearnset,
     },
 
     [SPECIES_VOLTORB] =
@@ -5688,7 +5694,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 14,
         .palette = sMonPalette_VoltorbNormal,
         .shinyPalette = sMonPalette_VoltorbShiny,
-        LEARNSETS(Voltorb),
+        .levelUpLearnset = sVoltorbLevelUpLearnset,
     },
 
     [SPECIES_ELECTRODE] =
@@ -5728,7 +5734,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_ElectrodeNormal,
         .shinyPalette = sMonPalette_ElectrodeShiny,
-        LEARNSETS(Electrode),
+        .levelUpLearnset = sElectrodeLevelUpLearnset,
     },
 
     [SPECIES_EXEGGCUTE] =
@@ -5770,7 +5776,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ExeggcuteNormal,
         .shinyPalette = sMonPalette_ExeggcuteShiny,
         .sosCallRate = 15,
-        LEARNSETS(Exeggcute),
+        .levelUpLearnset = sExeggcuteLevelUpLearnset,
     },
 
     [SPECIES_EXEGGUTOR] =
@@ -5811,7 +5817,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_ExeggutorNormal,
         .shinyPalette = sMonPalette_ExeggutorShiny,
-        LEARNSETS(Exeggutor),
+        .levelUpLearnset = sExeggutorLevelUpLearnset,
     },
 
     [SPECIES_CUBONE] =
@@ -5856,7 +5862,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CuboneShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_CUBONE, SPECIES_KANGASKHAN),
-        LEARNSETS(Cubone),
+        .levelUpLearnset = sCuboneLevelUpLearnset,
     },
 
     [SPECIES_MAROWAK] =
@@ -5898,7 +5904,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_MarowakNormal,
         .shinyPalette = sMonPalette_MarowakShiny,
-        LEARNSETS(Marowak),
+        .levelUpLearnset = sMarowakLevelUpLearnset,
     },
 
     [SPECIES_HITMONLEE] =
@@ -5938,7 +5944,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_HitmonleeNormal,
         .shinyPalette = sMonPalette_HitmonleeShiny,
-        LEARNSETS(Hitmonlee),
+        .levelUpLearnset = sHitmonleeLevelUpLearnset,
     },
 
     [SPECIES_HITMONCHAN] =
@@ -5978,7 +5984,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_HitmonchanNormal,
         .shinyPalette = sMonPalette_HitmonchanShiny,
-        LEARNSETS(Hitmonchan),
+        .levelUpLearnset = sHitmonchanLevelUpLearnset,
     },
 
     [SPECIES_LICKITUNG] =
@@ -6021,7 +6027,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LickitungNormal,
         .shinyPalette = sMonPalette_LickitungShiny,
         .sosCallRate = 3,
-        LEARNSETS(Lickitung),
+        .levelUpLearnset = sLickitungLevelUpLearnset,
     },
 
     [SPECIES_KOFFING] =
@@ -6063,7 +6069,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_KoffingNormal,
         .shinyPalette = sMonPalette_KoffingShiny,
-        LEARNSETS(Koffing),
+        .levelUpLearnset = sKoffingLevelUpLearnset,
     },
 
     [SPECIES_WEEZING] =
@@ -6104,7 +6110,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_WeezingNormal,
         .shinyPalette = sMonPalette_WeezingShiny,
-        LEARNSETS(Weezing),
+        .levelUpLearnset = sWeezingLevelUpLearnset,
     },
 
     [SPECIES_RHYHORN] =
@@ -6145,7 +6151,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_RhyhornNormal,
         .shinyPalette = sMonPalette_RhyhornShiny,
-        LEARNSETS(Rhyhorn),
+        .levelUpLearnset = sRhyhornLevelUpLearnset,
     },
 
     [SPECIES_RHYDON] =
@@ -6186,7 +6192,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_RhydonNormal,
         .shinyPalette = sMonPalette_RhydonShiny,
-        LEARNSETS(Rhydon),
+        .levelUpLearnset = sRhydonLevelUpLearnset,
     },
 
     [SPECIES_CHANSEY] =
@@ -6230,7 +6236,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_ChanseyShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_CHANSEY, SPECIES_BLISSEY),
-        LEARNSETS(Chansey),
+        .levelUpLearnset = sChanseyLevelUpLearnset,
     },
 
     [SPECIES_TANGELA] =
@@ -6271,7 +6277,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_TangelaNormal,
         .shinyPalette = sMonPalette_TangelaShiny,
-        LEARNSETS(Tangela),
+        .levelUpLearnset = sTangelaLevelUpLearnset,
     },
 
     [SPECIES_KANGASKHAN] =
@@ -6313,7 +6319,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_KangaskhanNormal,
         .shinyPalette = sMonPalette_KangaskhanShiny,
         .sosCallRate = 3,
-        LEARNSETS(Kangaskhan),
+        .levelUpLearnset = sKangaskhanLevelUpLearnset,
     },
 
     [SPECIES_HORSEA] =
@@ -6355,7 +6361,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 14,
         .palette = sMonPalette_HorseaNormal,
         .shinyPalette = sMonPalette_HorseaShiny,
-        LEARNSETS(Horsea),
+        .levelUpLearnset = sHorseaLevelUpLearnset,
     },
 
     [SPECIES_SEADRA] =
@@ -6397,7 +6403,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SeadraNormal,
         .shinyPalette = sMonPalette_SeadraShiny,
-        LEARNSETS(Seadra),
+        .levelUpLearnset = sSeadraLevelUpLearnset,
     },
 
     [SPECIES_GOLDEEN] =
@@ -6441,7 +6447,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_GoldeenShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_GOLDEEN, SPECIES_SEAKING),
-        LEARNSETS(Goldeen),
+        .levelUpLearnset = sGoldeenLevelUpLearnset,
     },
 
     [SPECIES_SEAKING] =
@@ -6482,7 +6488,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SeakingNormal,
         .shinyPalette = sMonPalette_SeakingShiny,
         .sosCallRate = 6,
-        LEARNSETS(Seaking),
+        .levelUpLearnset = sSeakingLevelUpLearnset,
     },
 
     [SPECIES_STARYU] =
@@ -6527,7 +6533,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_StaryuShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_STARYU, SPECIES_STARMIE),
-        LEARNSETS(Staryu),
+        .levelUpLearnset = sStaryuLevelUpLearnset,
     },
 
     [SPECIES_STARMIE] =
@@ -6569,7 +6575,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_StarmieNormal,
         .shinyPalette = sMonPalette_StarmieShiny,
-        LEARNSETS(Starmie),
+        .levelUpLearnset = sStarmieLevelUpLearnset,
     },
 
     [SPECIES_MR_MIME] =
@@ -6610,7 +6616,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_MrMimeNormal,
         .shinyPalette = sMonPalette_MrMimeShiny,
-        LEARNSETS(MrMime),
+        .levelUpLearnset = sMrMimeLevelUpLearnset,
     },
 
     [SPECIES_SCYTHER] =
@@ -6653,7 +6659,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ScytherNormal,
         .shinyPalette = sMonPalette_ScytherShiny,
         .sosCallRate = 3,
-        LEARNSETS(Scyther),
+        .levelUpLearnset = sScytherLevelUpLearnset,
     },
 
     [SPECIES_JYNX] =
@@ -6692,7 +6698,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_JynxNormal,
         .shinyPalette = sMonPalette_JynxShiny,
-        LEARNSETS(Jynx),
+        .levelUpLearnset = sJynxLevelUpLearnset,
     },
 
     [SPECIES_ELECTABUZZ] =
@@ -6735,7 +6741,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ElectabuzzNormal,
         .shinyPalette = sMonPalette_ElectabuzzShiny,
         .sosCallRate = 6,
-        LEARNSETS(Electabuzz),
+        .levelUpLearnset = sElectabuzzLevelUpLearnset,
     },
 
     [SPECIES_MAGMAR] =
@@ -6778,7 +6784,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MagmarNormal,
         .shinyPalette = sMonPalette_MagmarShiny,
         .sosCallRate = 6,
-        LEARNSETS(Magmar),
+        .levelUpLearnset = sMagmarLevelUpLearnset,
     },
 
     [SPECIES_PINSIR] =
@@ -6820,7 +6826,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PinsirNormal,
         .shinyPalette = sMonPalette_PinsirShiny,
         .sosCallRate = 3,
-        LEARNSETS(Pinsir),
+        .levelUpLearnset = sPinsirLevelUpLearnset,
     },
     
     [SPECIES_TAUROS] =
@@ -6864,7 +6870,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_TaurosShiny,
         .sosCallRate = 3,
         .sosCallAllies = SOS_ALLIES(SPECIES_TAUROS, SPECIES_MILTANK),
-        LEARNSETS(Tauros),
+        .levelUpLearnset = sTaurosLevelUpLearnset,
     },
 
     [SPECIES_MAGIKARP] =
@@ -6907,7 +6913,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MagikarpShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_MAGIKARP, SPECIES_GYARADOS),
-        LEARNSETS(Magikarp),
+        .levelUpLearnset = sMagikarpLevelUpLearnset,
     },
 
     [SPECIES_GYARADOS] =
@@ -6948,7 +6954,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_GyaradosNormal,
         .shinyPalette = sMonPalette_GyaradosShiny,
         .sosCallRate = 3,
-        LEARNSETS(Gyarados),
+        .levelUpLearnset = sGyaradosLevelUpLearnset,
     },
 
     [SPECIES_LAPRAS] =
@@ -6991,7 +6997,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LaprasNormal,
         .shinyPalette = sMonPalette_LaprasShiny,
         .sosCallRate = 3,
-        LEARNSETS(Lapras),
+        .levelUpLearnset = sLaprasLevelUpLearnset,
     },
 
     [SPECIES_DITTO] =
@@ -7033,7 +7039,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DittoNormal,
         .shinyPalette = sMonPalette_DittoShiny,
         .sosCallRate = 9,
-        LEARNSETS(Ditto),
+        .levelUpLearnset = sDittoLevelUpLearnset,
     },
 
     [SPECIES_EEVEE] =
@@ -7084,7 +7090,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_EeveeShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_EEVEE, SPECIES_ESPEON, SPECIES_UMBREON),
-        LEARNSETS(Eevee),
+        .levelUpLearnset = sEeveeLevelUpLearnset,
     },
 
     [SPECIES_VAPOREON] =
@@ -7124,7 +7130,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_VaporeonNormal,
         .shinyPalette = sMonPalette_VaporeonShiny,
-        LEARNSETS(Vaporeon),
+        .levelUpLearnset = sVaporeonLevelUpLearnset,
     },
 
     [SPECIES_JOLTEON] =
@@ -7164,7 +7170,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_JolteonNormal,
         .shinyPalette = sMonPalette_JolteonShiny,
-        LEARNSETS(Jolteon),
+        .levelUpLearnset = sJolteonLevelUpLearnset,
     },
 
     [SPECIES_FLAREON] =
@@ -7204,7 +7210,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_FlareonNormal,
         .shinyPalette = sMonPalette_FlareonShiny,
-        LEARNSETS(Flareon),
+        .levelUpLearnset = sFlareonLevelUpLearnset,
     },
 
     [SPECIES_PORYGON] =
@@ -7246,7 +7252,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_PorygonNormal,
         .shinyPalette = sMonPalette_PorygonShiny,
-        LEARNSETS(Porygon),
+        .levelUpLearnset = sPorygonLevelUpLearnset,
     },
 
     [SPECIES_OMANYTE] =
@@ -7287,7 +7293,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_OmanyteNormal,
         .shinyPalette = sMonPalette_OmanyteShiny,
-        LEARNSETS(Omanyte),
+        .levelUpLearnset = sOmanyteLevelUpLearnset,
     },
 
     [SPECIES_OMASTAR] =
@@ -7327,7 +7333,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_OmastarNormal,
         .shinyPalette = sMonPalette_OmastarShiny,
-        LEARNSETS(Omastar),
+        .levelUpLearnset = sOmastarLevelUpLearnset,
     },
 
     [SPECIES_KABUTO] =
@@ -7368,7 +7374,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_KabutoNormal,
         .shinyPalette = sMonPalette_KabutoShiny,
-        LEARNSETS(Kabuto),
+        .levelUpLearnset = sKabutoLevelUpLearnset,
     },
 
     [SPECIES_KABUTOPS] =
@@ -7408,7 +7414,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_KabutopsNormal,
         .shinyPalette = sMonPalette_KabutopsShiny,
-        LEARNSETS(Kabutops),
+        .levelUpLearnset = sKabutopsLevelUpLearnset,
     },
 
     [SPECIES_AERODACTYL] =
@@ -7449,7 +7455,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_AerodactylNormal,
         .shinyPalette = sMonPalette_AerodactylShiny,
-        LEARNSETS(Aerodactyl),
+        .levelUpLearnset = sAerodactylLevelUpLearnset,
     },
 
     [SPECIES_SNORLAX] =
@@ -7492,7 +7498,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_SnorlaxNormal,
         .shinyPalette = sMonPalette_SnorlaxShiny,
-        LEARNSETS(Snorlax),
+        .levelUpLearnset = sSnorlaxLevelUpLearnset,
     },
 
     [SPECIES_ARTICUNO] =
@@ -7534,7 +7540,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_ArticunoNormal,
         .shinyPalette = sMonPalette_ArticunoShiny,
-        LEARNSETS(Articuno),
+        .levelUpLearnset = sArticunoLevelUpLearnset,
     },
 
     [SPECIES_ZAPDOS] =
@@ -7576,7 +7582,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_ZapdosNormal,
         .shinyPalette = sMonPalette_ZapdosShiny,
-        LEARNSETS(Zapdos),
+        .levelUpLearnset = sZapdosLevelUpLearnset,
     },
 
     [SPECIES_MOLTRES] =
@@ -7618,7 +7624,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_MoltresNormal,
         .shinyPalette = sMonPalette_MoltresShiny,
-        LEARNSETS(Moltres),
+        .levelUpLearnset = sMoltresLevelUpLearnset,
     },
 
     [SPECIES_DRATINI] =
@@ -7661,7 +7667,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_DratiniShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_DRATINI, SPECIES_DRAGONAIR, SPECIES_DRAGONITE),
-        LEARNSETS(Dratini),
+        .levelUpLearnset = sDratiniLevelUpLearnset,
     },
 
     [SPECIES_DRAGONAIR] =
@@ -7703,7 +7709,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DragonairNormal,
         .shinyPalette = sMonPalette_DragonairShiny,
         .sosCallRate = 6,
-        LEARNSETS(Dragonair),
+        .levelUpLearnset = sDragonairLevelUpLearnset,
     },
 
     [SPECIES_DRAGONITE] =
@@ -7744,7 +7750,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_DragoniteNormal,
         .shinyPalette = sMonPalette_DragoniteShiny,
-        LEARNSETS(Dragonite),
+        .levelUpLearnset = sDragoniteLevelUpLearnset,
     },
 
     [SPECIES_MEWTWO] =
@@ -7786,7 +7792,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_MewtwoNormal,
         .shinyPalette = sMonPalette_MewtwoShiny,
-        LEARNSETS(Mewtwo),
+        .levelUpLearnset = sMewtwoLevelUpLearnset,
     },
 
     [SPECIES_MEW] =
@@ -7830,7 +7836,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_MewNormal,
         .shinyPalette = sMonPalette_MewShiny,
-        LEARNSETS(Mew),
+        .levelUpLearnset = sMewLevelUpLearnset,
     },
 
     [SPECIES_CHIKORITA] =
@@ -7871,7 +7877,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_ChikoritaNormal,
         .shinyPalette = sMonPalette_ChikoritaShiny,
-        LEARNSETS(Chikorita),
+        .levelUpLearnset = sChikoritaLevelUpLearnset,
     },
 
     [SPECIES_BAYLEEF] =
@@ -7913,7 +7919,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_BayleefNormal,
         .shinyPalette = sMonPalette_BayleefShiny,
-        LEARNSETS(Bayleef),
+        .levelUpLearnset = sBayleefLevelUpLearnset,
     },
 
     [SPECIES_MEGANIUM] =
@@ -7954,7 +7960,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_MeganiumNormal,
         .shinyPalette = sMonPalette_MeganiumShiny,
-        LEARNSETS(Meganium),
+        .levelUpLearnset = sMeganiumLevelUpLearnset,
     },
 
     [SPECIES_CYNDAQUIL] =
@@ -7995,7 +8001,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_CyndaquilNormal,
         .shinyPalette = sMonPalette_CyndaquilShiny,
-        LEARNSETS(Cyndaquil),
+        .levelUpLearnset = sCyndaquilLevelUpLearnset,
     },
 
     [SPECIES_QUILAVA] =
@@ -8037,7 +8043,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_QuilavaNormal,
         .shinyPalette = sMonPalette_QuilavaShiny,
-        LEARNSETS(Quilava),
+        .levelUpLearnset = sQuilavaLevelUpLearnset,
     },
 
     [SPECIES_TYPHLOSION] =
@@ -8078,7 +8084,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_TyphlosionNormal,
         .shinyPalette = sMonPalette_TyphlosionShiny,
-        LEARNSETS(Typhlosion),
+        .levelUpLearnset = sTyphlosionLevelUpLearnset,
     },
 
     [SPECIES_TOTODILE] =
@@ -8119,7 +8125,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_TotodileNormal,
         .shinyPalette = sMonPalette_TotodileShiny,
-        LEARNSETS(Totodile),
+        .levelUpLearnset = sTotodileLevelUpLearnset,
     },
 
     [SPECIES_CROCONAW] =
@@ -8161,7 +8167,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_CroconawNormal,
         .shinyPalette = sMonPalette_CroconawShiny,
-        LEARNSETS(Croconaw),
+        .levelUpLearnset = sCroconawLevelUpLearnset,
     },
 
     [SPECIES_FERALIGATR] =
@@ -8202,7 +8208,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_FeraligatrNormal,
         .shinyPalette = sMonPalette_FeraligatrShiny,
-        LEARNSETS(Feraligatr),
+        .levelUpLearnset = sFeraligatrLevelUpLearnset,
     },
 
     [SPECIES_SENTRET] =
@@ -8243,7 +8249,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_SentretNormal,
         .shinyPalette = sMonPalette_SentretShiny,
-        LEARNSETS(Sentret),
+        .levelUpLearnset = sSentretLevelUpLearnset,
     },
 
     [SPECIES_FURRET] =
@@ -8283,7 +8289,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_FurretNormal,
         .shinyPalette = sMonPalette_FurretShiny,
-        LEARNSETS(Furret),
+        .levelUpLearnset = sFurretLevelUpLearnset,
     },
 
     [SPECIES_HOOTHOOT] =
@@ -8326,7 +8332,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_HoothootShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_HOOTHOOT, SPECIES_NOCTOWL),
-        LEARNSETS(Hoothoot),
+        .levelUpLearnset = sHoothootLevelUpLearnset,
     },
 
     [SPECIES_NOCTOWL] =
@@ -8367,7 +8373,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_NoctowlNormal,
         .shinyPalette = sMonPalette_NoctowlShiny,
         .sosCallRate = 6,
-        LEARNSETS(Noctowl),
+        .levelUpLearnset = sNoctowlLevelUpLearnset,
     },
 
     [SPECIES_LEDYBA] =
@@ -8410,7 +8416,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LedybaNormal,
         .shinyPalette = sMonPalette_LedybaShiny,
         .sosCallRate = 9,
-        LEARNSETS(Ledyba),
+        .levelUpLearnset = sLedybaLevelUpLearnset,
     },
 
     [SPECIES_LEDIAN] =
@@ -8451,7 +8457,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LedianNormal,
         .shinyPalette = sMonPalette_LedianShiny,
         .sosCallRate = 6,
-        LEARNSETS(Ledian),
+        .levelUpLearnset = sLedianLevelUpLearnset,
     },
     
     [SPECIES_SPINARAK] =
@@ -8493,7 +8499,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SpinarakNormal,
         .shinyPalette = sMonPalette_SpinarakShiny,
         .sosCallRate = 9,
-        LEARNSETS(Spinarak),
+        .levelUpLearnset = sSpinarakLevelUpLearnset,
     },
 
     [SPECIES_ARIADOS] =
@@ -8534,7 +8540,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_AriadosNormal,
         .shinyPalette = sMonPalette_AriadosShiny,
         .sosCallRate = 6,
-        LEARNSETS(Ariados),
+        .levelUpLearnset = sAriadosLevelUpLearnset,
     },
 
     [SPECIES_CROBAT] =
@@ -8573,7 +8579,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_CrobatNormal,
         .shinyPalette = sMonPalette_CrobatShiny,
-        LEARNSETS(Crobat),
+        .levelUpLearnset = sCrobatLevelUpLearnset,
     },
 
     [SPECIES_CHINCHOU] =
@@ -8617,7 +8623,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_ChinchouShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_CHINCHOU, SPECIES_LANTURN),
-        LEARNSETS(Chinchou),
+        .levelUpLearnset = sChinchouLevelUpLearnset,
     },
 
     [SPECIES_LANTURN] =
@@ -8658,7 +8664,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LanturnNormal,
         .shinyPalette = sMonPalette_LanturnShiny,
         .sosCallRate = 6,
-        LEARNSETS(Lanturn),
+        .levelUpLearnset = sLanturnLevelUpLearnset,
     },
 
     [SPECIES_PICHU] =
@@ -8723,7 +8729,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CleffaShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_CLEFFA, SPECIES_CLEFAIRY, SPECIES_HAPPINY),
-        LEARNSETS(Cleffa),
+        .levelUpLearnset = sCleffaLevelUpLearnset,
     },
 
     [SPECIES_IGGLYBUFF] =
@@ -8766,7 +8772,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_IgglybuffShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_IGGLYBUFF, SPECIES_JIGGLYPUFF, SPECIES_HAPPINY),
-        LEARNSETS(Igglybuff),
+        .levelUpLearnset = sIgglybuffLevelUpLearnset,
     },
 
     [SPECIES_TOGEPI] =
@@ -8807,7 +8813,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_TogepiNormal,
         .shinyPalette = sMonPalette_TogepiShiny,
-        LEARNSETS(Togepi),
+        .levelUpLearnset = sTogepiLevelUpLearnset,
     },
 
     [SPECIES_TOGETIC] =
@@ -8848,7 +8854,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_TogeticNormal,
         .shinyPalette = sMonPalette_TogeticShiny,
-        LEARNSETS(Togetic),
+        .levelUpLearnset = sTogeticLevelUpLearnset,
     },
 
     [SPECIES_NATU] =
@@ -8891,7 +8897,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_NatuShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_NATU, SPECIES_XATU),
-        LEARNSETS(Natu),
+        .levelUpLearnset = sNatuLevelUpLearnset,
     },
 
     [SPECIES_XATU] =
@@ -8933,7 +8939,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_XatuNormal,
         .shinyPalette = sMonPalette_XatuShiny,
         .sosCallRate = 6,
-        LEARNSETS(Xatu),
+        .levelUpLearnset = sXatuLevelUpLearnset,
     },
 
     [SPECIES_MAREEP] =
@@ -8975,7 +8981,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MareepNormal,
         .shinyPalette = sMonPalette_MareepShiny,
         .sosCallRate = 9,
-        LEARNSETS(Mareep),
+        .levelUpLearnset = sMareepLevelUpLearnset,
     },
 
     [SPECIES_FLAAFFY] =
@@ -9017,7 +9023,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_FlaaffyNormal,
         .shinyPalette = sMonPalette_FlaaffyShiny,
         .sosCallRate = 6,
-        LEARNSETS(Flaaffy),
+        .levelUpLearnset = sFlaaffyLevelUpLearnset,
     },
 
     [SPECIES_AMPHAROS] =
@@ -9058,7 +9064,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_AmpharosNormal,
         .shinyPalette = sMonPalette_AmpharosShiny,
-        LEARNSETS(Ampharos),
+        .levelUpLearnset = sAmpharosLevelUpLearnset,
     },
 
     [SPECIES_BELLOSSOM] =
@@ -9098,7 +9104,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_BellossomNormal,
         .shinyPalette = sMonPalette_BellossomShiny,
-        LEARNSETS(Bellossom),
+        .levelUpLearnset = sBellossomLevelUpLearnset,
     },
 
     [SPECIES_MARILL] =
@@ -9139,7 +9145,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_MarillNormal,
         .shinyPalette = sMonPalette_MarillShiny,
-        LEARNSETS(Marill),
+        .levelUpLearnset = sMarillLevelUpLearnset,
     },
 
     [SPECIES_AZUMARILL] =
@@ -9179,7 +9185,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_AzumarillNormal,
         .shinyPalette = sMonPalette_AzumarillShiny,
-        LEARNSETS(Azumarill),
+        .levelUpLearnset = sAzumarillLevelUpLearnset,
     },
 
     [SPECIES_SUDOWOODO] =
@@ -9219,7 +9225,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_SudowoodoNormal,
         .shinyPalette = sMonPalette_SudowoodoShiny,
-        LEARNSETS(Sudowoodo),
+        .levelUpLearnset = sSudowoodoLevelUpLearnset,
     },
 
     [SPECIES_POLITOED] =
@@ -9260,7 +9266,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_PolitoedNormal,
         .shinyPalette = sMonPalette_PolitoedShiny,
-        LEARNSETS(Politoed),
+        .levelUpLearnset = sPolitoedLevelUpLearnset,
     },
 
     [SPECIES_HOPPIP] =
@@ -9302,7 +9308,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_HoppipNormal,
         .shinyPalette = sMonPalette_HoppipShiny,
-        LEARNSETS(Hoppip),
+        .levelUpLearnset = sHoppipLevelUpLearnset,
     },
 
     [SPECIES_SKIPLOOM] =
@@ -9344,7 +9350,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_SkiploomNormal,
         .shinyPalette = sMonPalette_SkiploomShiny,
-        LEARNSETS(Skiploom),
+        .levelUpLearnset = sSkiploomLevelUpLearnset,
     },
 
     [SPECIES_JUMPLUFF] =
@@ -9385,7 +9391,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_JumpluffNormal,
         .shinyPalette = sMonPalette_JumpluffShiny,
-        LEARNSETS(Jumpluff),
+        .levelUpLearnset = sJumpluffLevelUpLearnset,
     },
 
     [SPECIES_AIPOM] =
@@ -9428,7 +9434,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_AipomShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_AIPOM, SPECIES_AMBIPOM),
-        LEARNSETS(Aipom),
+        .levelUpLearnset = sAipomLevelUpLearnset,
     },
 
     [SPECIES_SUNKERN] =
@@ -9468,7 +9474,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_SunkernNormal,
         .shinyPalette = sMonPalette_SunkernShiny,
-        LEARNSETS(Sunkern),
+        .levelUpLearnset = sSunkernLevelUpLearnset,
     },
 
     [SPECIES_SUNFLORA] =
@@ -9508,7 +9514,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_SunfloraNormal,
         .shinyPalette = sMonPalette_SunfloraShiny,
-        LEARNSETS(Sunflora),
+        .levelUpLearnset = sSunfloraLevelUpLearnset,
     },
 
     [SPECIES_YANMA] =
@@ -9550,7 +9556,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_YanmaNormal,
         .shinyPalette = sMonPalette_YanmaShiny,
-        LEARNSETS(Yanma),
+        .levelUpLearnset = sYanmaLevelUpLearnset,
     },
 
     [SPECIES_WOOPER] =
@@ -9592,7 +9598,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_WooperNormal,
         .shinyPalette = sMonPalette_WooperShiny,
-        LEARNSETS(Wooper),
+        .levelUpLearnset = sWooperLevelUpLearnset,
     },
 
     [SPECIES_QUAGSIRE] =
@@ -9632,7 +9638,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_QuagsireNormal,
         .shinyPalette = sMonPalette_QuagsireShiny,
-        LEARNSETS(Quagsire),
+        .levelUpLearnset = sQuagsireLevelUpLearnset,
     },
 
     [SPECIES_ESPEON] =
@@ -9672,7 +9678,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_EspeonNormal,
         .shinyPalette = sMonPalette_EspeonShiny,
-        LEARNSETS(Espeon),
+        .levelUpLearnset = sEspeonLevelUpLearnset,
     },
 
     [SPECIES_UMBREON] =
@@ -9712,7 +9718,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_UmbreonNormal,
         .shinyPalette = sMonPalette_UmbreonShiny,
-        LEARNSETS(Umbreon),
+        .levelUpLearnset = sUmbreonLevelUpLearnset,
     },
 
     [SPECIES_MURKROW] =
@@ -9755,7 +9761,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MurkrowNormal,
         .shinyPalette = sMonPalette_MurkrowShiny,
         .sosCallRate = 9,
-        LEARNSETS(Murkrow),
+        .levelUpLearnset = sMurkrowLevelUpLearnset,
     },
 
     [SPECIES_SLOWKING] =
@@ -9797,7 +9803,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_SlowkingNormal,
         .shinyPalette = sMonPalette_SlowkingShiny,
-        LEARNSETS(Slowking),
+        .levelUpLearnset = sSlowkingLevelUpLearnset,
     },
 
     [SPECIES_MISDREAVUS] =
@@ -9839,7 +9845,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MisdreavusNormal,
         .shinyPalette = sMonPalette_MisdreavusShiny,
         .sosCallRate = 9,
-        LEARNSETS(Misdreavus),
+        .levelUpLearnset = sMisdreavusLevelUpLearnset,
     },
 
     [SPECIES_UNOWN] =
@@ -9894,7 +9900,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_WobbuffetNormal,
         .shinyPalette = sMonPalette_WobbuffetShiny,
-        LEARNSETS(Wobbuffet),
+        .levelUpLearnset = sWobbuffetLevelUpLearnset,
     },
 
     [SPECIES_GIRAFARIG] =
@@ -9935,7 +9941,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_GirafarigNormal,
         .shinyPalette = sMonPalette_GirafarigShiny,
-        LEARNSETS(Girafarig),
+        .levelUpLearnset = sGirafarigLevelUpLearnset,
     },
 
     [SPECIES_PINECO] =
@@ -9976,7 +9982,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PinecoNormal,
         .shinyPalette = sMonPalette_PinecoShiny,
         .sosCallRate = 9,
-        LEARNSETS(Pineco),
+        .levelUpLearnset = sPinecoLevelUpLearnset,
     },
 
     [SPECIES_FORRETRESS] =
@@ -10016,7 +10022,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ForretressNormal,
         .shinyPalette = sMonPalette_ForretressShiny,
         .sosCallRate = 6,
-        LEARNSETS(Forretress),
+        .levelUpLearnset = sForretressLevelUpLearnset,
     },
 
     [SPECIES_DUNSPARCE] =
@@ -10057,7 +10063,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DunsparceNormal,
         .shinyPalette = sMonPalette_DunsparceShiny,
         .sosCallRate = 3,
-        LEARNSETS(Dunsparce),
+        .levelUpLearnset = sDunsparceLevelUpLearnset,
     },
 
     [SPECIES_GLIGAR] =
@@ -10098,7 +10104,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_GligarNormal,
         .shinyPalette = sMonPalette_GligarShiny,
-        LEARNSETS(Gligar),
+        .levelUpLearnset = sGligarLevelUpLearnset,
     },
 
     [SPECIES_STEELIX] =
@@ -10139,7 +10145,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_SteelixNormal,
         .shinyPalette = sMonPalette_SteelixShiny,
-        LEARNSETS(Steelix),
+        .levelUpLearnset = sSteelixLevelUpLearnset,
     },
 
     [SPECIES_SNUBBULL] =
@@ -10181,7 +10187,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SnubbullNormal,
         .shinyPalette = sMonPalette_SnubbullShiny,
         .sosCallRate = 9,
-        LEARNSETS(Snubbull),
+        .levelUpLearnset = sSnubbullLevelUpLearnset,
     },
 
     [SPECIES_GRANBULL] =
@@ -10222,7 +10228,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_GranbullNormal,
         .shinyPalette = sMonPalette_GranbullShiny,
         .sosCallRate = 6,
-        LEARNSETS(Granbull),
+        .levelUpLearnset = sGranbullLevelUpLearnset,
     },
 
     [SPECIES_QWILFISH] =
@@ -10264,7 +10270,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_QwilfishNormal,
         .shinyPalette = sMonPalette_QwilfishShiny,
-        LEARNSETS(Qwilfish),
+        .levelUpLearnset = sQwilfishLevelUpLearnset,
     },
 
     [SPECIES_SCIZOR] =
@@ -10305,7 +10311,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_ScizorNormal,
         .shinyPalette = sMonPalette_ScizorShiny,
-        LEARNSETS(Scizor),
+        .levelUpLearnset = sScizorLevelUpLearnset,
     },
 
     [SPECIES_SHUCKLE] =
@@ -10348,7 +10354,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_ShuckleNormal,
         .shinyPalette = sMonPalette_ShuckleShiny,
-        LEARNSETS(Shuckle),
+        .levelUpLearnset = sShuckleLevelUpLearnset,
     },
 
     [SPECIES_HERACROSS] =
@@ -10390,7 +10396,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_HeracrossNormal,
         .shinyPalette = sMonPalette_HeracrossShiny,
         .sosCallRate = 3,
-        LEARNSETS(Heracross),
+        .levelUpLearnset = sHeracrossLevelUpLearnset,
     },
 
     [SPECIES_SNEASEL] =
@@ -10434,7 +10440,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SneaselNormal,
         .shinyPalette = sMonPalette_SneaselShiny,
         .sosCallRate = 9,
-        LEARNSETS(Sneasel),
+        .levelUpLearnset = sSneaselLevelUpLearnset,
     },
 
     [SPECIES_TEDDIURSA] =
@@ -10476,7 +10482,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_TeddiursaNormal,
         .shinyPalette = sMonPalette_TeddiursaShiny,
-        LEARNSETS(Teddiursa),
+        .levelUpLearnset = sTeddiursaLevelUpLearnset,
     },
 
     [SPECIES_URSARING] =
@@ -10517,7 +10523,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_UrsaringNormal,
         .shinyPalette = sMonPalette_UrsaringShiny,
-        LEARNSETS(Ursaring),
+        .levelUpLearnset = sUrsaringLevelUpLearnset,
     },
 
     [SPECIES_SLUGMA] =
@@ -10557,7 +10563,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SlugmaNormal,
         .shinyPalette = sMonPalette_SlugmaShiny,
-        LEARNSETS(Slugma),
+        .levelUpLearnset = sSlugmaLevelUpLearnset,
     },
 
     [SPECIES_MAGCARGO] =
@@ -10596,7 +10602,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_MagcargoNormal,
         .shinyPalette = sMonPalette_MagcargoShiny,
-        LEARNSETS(Magcargo),
+        .levelUpLearnset = sMagcargoLevelUpLearnset,
     },
 
     [SPECIES_SWINUB] =
@@ -10637,7 +10643,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_SwinubNormal,
         .shinyPalette = sMonPalette_SwinubShiny,
-        LEARNSETS(Swinub),
+        .levelUpLearnset = sSwinubLevelUpLearnset,
     },
 
     [SPECIES_PILOSWINE] =
@@ -10679,7 +10685,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_PiloswineNormal,
         .shinyPalette = sMonPalette_PiloswineShiny,
-        LEARNSETS(Piloswine),
+        .levelUpLearnset = sPiloswineLevelUpLearnset,
     },
 
     [SPECIES_CORSOLA] =
@@ -10724,7 +10730,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CorsolaShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_CORSOLA, SPECIES_MAREANIE),
-        LEARNSETS(Corsola),
+        .levelUpLearnset = sCorsolaLevelUpLearnset,
     },
 
     [SPECIES_REMORAID] =
@@ -10767,7 +10773,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_RemoraidShiny,
         .sosCallRate = 3,
         .sosCallAllies = SOS_ALLIES(SPECIES_REMORAID, SPECIES_OCTILLERY),
-        LEARNSETS(Remoraid),
+        .levelUpLearnset = sRemoraidLevelUpLearnset,
     },
 
     [SPECIES_OCTILLERY] =
@@ -10808,7 +10814,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_OctilleryNormal,
         .shinyPalette = sMonPalette_OctilleryShiny,
-        LEARNSETS(Octillery),
+        .levelUpLearnset = sOctilleryLevelUpLearnset,
     },
 
     [SPECIES_DELIBIRD] =
@@ -10849,7 +10855,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DelibirdNormal,
         .shinyPalette = sMonPalette_DelibirdShiny,
         .sosCallRate = 9,
-        LEARNSETS(Delibird),
+        .levelUpLearnset = sDelibirdLevelUpLearnset,
     },
 
     [SPECIES_MANTINE] =
@@ -10888,7 +10894,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_MantineNormal,
         .shinyPalette = sMonPalette_MantineShiny,
-        LEARNSETS(Mantine),
+        .levelUpLearnset = sMantineLevelUpLearnset,
     },
     
     [SPECIES_SKARMORY] =
@@ -10930,7 +10936,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SkarmoryNormal,
         .shinyPalette = sMonPalette_SkarmoryShiny,
         .sosCallRate = 6,
-        LEARNSETS(Skarmory),
+        .levelUpLearnset = sSkarmoryLevelUpLearnset,
     },
 
     [SPECIES_HOUNDOUR] =
@@ -10972,7 +10978,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_HoundourNormal,
         .shinyPalette = sMonPalette_HoundourShiny,
         .sosCallRate = 9,
-        LEARNSETS(Houndour),
+        .levelUpLearnset = sHoundourLevelUpLearnset,
     },
 
     [SPECIES_HOUNDOOM] =
@@ -11014,7 +11020,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_HoundoomNormal,
         .shinyPalette = sMonPalette_HoundoomShiny,
         .sosCallRate = 6,
-        LEARNSETS(Houndoom),
+        .levelUpLearnset = sHoundoomLevelUpLearnset,
     },
 
     [SPECIES_KINGDRA] =
@@ -11056,7 +11062,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_KingdraNormal,
         .shinyPalette = sMonPalette_KingdraShiny,
-        LEARNSETS(Kingdra),
+        .levelUpLearnset = sKingdraLevelUpLearnset,
     },
 
     [SPECIES_PHANPY] =
@@ -11097,7 +11103,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_PhanpyNormal,
         .shinyPalette = sMonPalette_PhanpyShiny,
-        LEARNSETS(Phanpy),
+        .levelUpLearnset = sPhanpyLevelUpLearnset,
     },
 
     [SPECIES_DONPHAN] =
@@ -11138,7 +11144,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_DonphanNormal,
         .shinyPalette = sMonPalette_DonphanShiny,
-        LEARNSETS(Donphan),
+        .levelUpLearnset = sDonphanLevelUpLearnset,
     },
 
     [SPECIES_PORYGON2] =
@@ -11180,7 +11186,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_Porygon2Normal,
         .shinyPalette = sMonPalette_Porygon2Shiny,
-        LEARNSETS(Porygon2),
+        .levelUpLearnset = sPorygon2LevelUpLearnset,
     },
 
     [SPECIES_STANTLER] =
@@ -11221,7 +11227,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_StantlerNormal,
         .shinyPalette = sMonPalette_StantlerShiny,
-        LEARNSETS(Stantler),
+        .levelUpLearnset = sStantlerLevelUpLearnset,
     },
 
     [SPECIES_SMEARGLE] =
@@ -11262,7 +11268,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SmeargleNormal,
         .shinyPalette = sMonPalette_SmeargleShiny,
         .sosCallRate = 9,
-        LEARNSETS(Smeargle),
+        .levelUpLearnset = sSmeargleLevelUpLearnset,
     },
 
     [SPECIES_TYROGUE] =
@@ -11305,7 +11311,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_TyrogueNormal,
         .shinyPalette = sMonPalette_TyrogueShiny,
-        LEARNSETS(Tyrogue),
+        .levelUpLearnset = sTyrogueLevelUpLearnset,
     },
 
     [SPECIES_HITMONTOP] =
@@ -11345,7 +11351,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_HitmontopNormal,
         .shinyPalette = sMonPalette_HitmontopShiny,
-        LEARNSETS(Hitmontop),
+        .levelUpLearnset = sHitmontopLevelUpLearnset,
     },
 
     [SPECIES_SMOOCHUM] =
@@ -11388,7 +11394,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_SmoochumShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_SMOOCHUM, SPECIES_JYNX, SPECIES_HAPPINY),
-        LEARNSETS(Smoochum),
+        .levelUpLearnset = sSmoochumLevelUpLearnset,
     },
 
     [SPECIES_ELEKID] =
@@ -11432,7 +11438,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_ElekidShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_ELEKID, SPECIES_ELECTABUZZ, SPECIES_HAPPINY),
-        LEARNSETS(Elekid),
+        .levelUpLearnset = sElekidLevelUpLearnset,
     },
 
     [SPECIES_MAGBY] =
@@ -11476,7 +11482,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MagbyShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_MAGBY, SPECIES_MAGMAR, SPECIES_HAPPINY),
-        LEARNSETS(Magby),
+        .levelUpLearnset = sMagbyLevelUpLearnset,
     },
 
     [SPECIES_MILTANK] =
@@ -11520,7 +11526,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MiltankShiny,
         .sosCallRate = 3,
         .sosCallAllies = SOS_ALLIES(SPECIES_MILTANK, SPECIES_TAUROS),
-        LEARNSETS(Miltank),
+        .levelUpLearnset = sMiltankLevelUpLearnset,
     },
 
     [SPECIES_BLISSEY] =
@@ -11561,7 +11567,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 16,
         .palette = sMonPalette_BlisseyNormal,
         .shinyPalette = sMonPalette_BlisseyShiny,
-        LEARNSETS(Blissey),
+        .levelUpLearnset = sBlisseyLevelUpLearnset,
     },
 
     [SPECIES_RAIKOU] =
@@ -11603,7 +11609,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_RaikouNormal,
         .shinyPalette = sMonPalette_RaikouShiny,
-        LEARNSETS(Raikou),
+        .levelUpLearnset = sRaikouLevelUpLearnset,
     },
 
     [SPECIES_ENTEI] =
@@ -11645,7 +11651,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_EnteiNormal,
         .shinyPalette = sMonPalette_EnteiShiny,
-        LEARNSETS(Entei),
+        .levelUpLearnset = sEnteiLevelUpLearnset,
     },
 
     [SPECIES_SUICUNE] =
@@ -11687,7 +11693,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_SuicuneNormal,
         .shinyPalette = sMonPalette_SuicuneShiny,
-        LEARNSETS(Suicune),
+        .levelUpLearnset = sSuicuneLevelUpLearnset,
     },
 
     [SPECIES_LARVITAR] =
@@ -11729,7 +11735,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LarvitarNormal,
         .shinyPalette = sMonPalette_LarvitarShiny,
         .sosCallRate = 9,
-        LEARNSETS(Larvitar),
+        .levelUpLearnset = sLarvitarLevelUpLearnset,
     },
 
     [SPECIES_PUPITAR] =
@@ -11770,7 +11776,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PupitarNormal,
         .shinyPalette = sMonPalette_PupitarShiny,
         .sosCallRate = 9,
-        LEARNSETS(Pupitar),
+        .levelUpLearnset = sPupitarLevelUpLearnset,
     },
 
     [SPECIES_TYRANITAR] =
@@ -11811,7 +11817,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_TyranitarNormal,
         .shinyPalette = sMonPalette_TyranitarShiny,
-        LEARNSETS(Tyranitar),
+        .levelUpLearnset = sTyranitarLevelUpLearnset,
     },
 
     [SPECIES_LUGIA] =
@@ -11852,7 +11858,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_LugiaNormal,
         .shinyPalette = sMonPalette_LugiaShiny,
-        LEARNSETS(Lugia),
+        .levelUpLearnset = sLugiaLevelUpLearnset,
     },
 
     [SPECIES_HO_OH] =
@@ -11895,7 +11901,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_HoOhNormal,
         .shinyPalette = sMonPalette_HoOhShiny,
-        LEARNSETS(HoOh),
+        .levelUpLearnset = sHoOhLevelUpLearnset,
     },
 
     [SPECIES_CELEBI] =
@@ -11939,7 +11945,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_CelebiNormal,
         .shinyPalette = sMonPalette_CelebiShiny,
-        LEARNSETS(Celebi),
+        .levelUpLearnset = sCelebiLevelUpLearnset,
     },
     
     [SPECIES_TREECKO] =
@@ -11980,7 +11986,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_TreeckoNormal,
         .shinyPalette = sMonPalette_TreeckoShiny,
-        LEARNSETS(Treecko),
+        .levelUpLearnset = sTreeckoLevelUpLearnset,
     },
 
     [SPECIES_GROVYLE] =
@@ -12021,7 +12027,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_GrovyleNormal,
         .shinyPalette = sMonPalette_GrovyleShiny,
-        LEARNSETS(Grovyle),
+        .levelUpLearnset = sGrovyleLevelUpLearnset,
     },
 
     [SPECIES_SCEPTILE] =
@@ -12062,7 +12068,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SceptileNormal,
         .shinyPalette = sMonPalette_SceptileShiny,
-        LEARNSETS(Sceptile),
+        .levelUpLearnset = sSceptileLevelUpLearnset,
     },
 
     [SPECIES_TORCHIC] =
@@ -12103,7 +12109,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_TorchicNormal,
         .shinyPalette = sMonPalette_TorchicShiny,
-        LEARNSETS(Torchic),
+        .levelUpLearnset = sTorchicLevelUpLearnset,
     },
 
     [SPECIES_COMBUSKEN] =
@@ -12145,7 +12151,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_CombuskenNormal,
         .shinyPalette = sMonPalette_CombuskenShiny,
-        LEARNSETS(Combusken),
+        .levelUpLearnset = sCombuskenLevelUpLearnset,
     },
 
     [SPECIES_BLAZIKEN] =
@@ -12186,7 +12192,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_BlazikenNormal,
         .shinyPalette = sMonPalette_BlazikenShiny,
-        LEARNSETS(Blaziken),
+        .levelUpLearnset = sBlazikenLevelUpLearnset,
     },
 
     [SPECIES_MUDKIP] =
@@ -12227,7 +12233,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_MudkipNormal,
         .shinyPalette = sMonPalette_MudkipShiny,
-        LEARNSETS(Mudkip),
+        .levelUpLearnset = sMudkipLevelUpLearnset,
     },
 
     [SPECIES_MARSHTOMP] =
@@ -12268,7 +12274,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_MarshtompNormal,
         .shinyPalette = sMonPalette_MarshtompShiny,
-        LEARNSETS(Marshtomp),
+        .levelUpLearnset = sMarshtompLevelUpLearnset,
     },
 
     [SPECIES_SWAMPERT] =
@@ -12309,7 +12315,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SwampertNormal,
         .shinyPalette = sMonPalette_SwampertShiny,
-        LEARNSETS(Swampert),
+        .levelUpLearnset = sSwampertLevelUpLearnset,
     },
 
     [SPECIES_POOCHYENA] =
@@ -12350,7 +12356,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_PoochyenaNormal,
         .shinyPalette = sMonPalette_PoochyenaShiny,
-        LEARNSETS(Poochyena),
+        .levelUpLearnset = sPoochyenaLevelUpLearnset,
     },
 
     [SPECIES_MIGHTYENA] =
@@ -12390,7 +12396,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_MightyenaNormal,
         .shinyPalette = sMonPalette_MightyenaShiny,
-        LEARNSETS(Mightyena),
+        .levelUpLearnset = sMightyenaLevelUpLearnset,
     },
 
     [SPECIES_ZIGZAGOON] =
@@ -12434,7 +12440,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_ZigzagoonNormal,
         .shinyPalette = sMonPalette_ZigzagoonShiny,
-        LEARNSETS(Zigzagoon),
+        .levelUpLearnset = sZigzagoonLevelUpLearnset,
     },
 
     [SPECIES_LINOONE] =
@@ -12477,7 +12483,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_LinooneNormal,
         .shinyPalette = sMonPalette_LinooneShiny,
-        LEARNSETS(Linoone),
+        .levelUpLearnset = sLinooneLevelUpLearnset,
     },
 
     [SPECIES_WURMPLE] =
@@ -12520,7 +12526,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_WurmpleNormal,
         .shinyPalette = sMonPalette_WurmpleShiny,
-        LEARNSETS(Wurmple),
+        .levelUpLearnset = sWurmpleLevelUpLearnset,
     },
 
     [SPECIES_SILCOON] =
@@ -12561,7 +12567,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_SilcoonNormal,
         .shinyPalette = sMonPalette_SilcoonShiny,
-        LEARNSETS(Silcoon),
+        .levelUpLearnset = sSilcoonLevelUpLearnset,
     },
 
     [SPECIES_BEAUTIFLY] =
@@ -12603,7 +12609,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_BeautiflyNormal,
         .shinyPalette = sMonPalette_BeautiflyShiny,
-        LEARNSETS(Beautifly),
+        .levelUpLearnset = sBeautiflyLevelUpLearnset,
     },
 
     [SPECIES_CASCOON] =
@@ -12644,7 +12650,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_CascoonNormal,
         .shinyPalette = sMonPalette_CascoonShiny,
-        LEARNSETS(Cascoon),
+        .levelUpLearnset = sCascoonLevelUpLearnset,
     },
 
     [SPECIES_DUSTOX] =
@@ -12685,7 +12691,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_DustoxNormal,
         .shinyPalette = sMonPalette_DustoxShiny,
-        LEARNSETS(Dustox),
+        .levelUpLearnset = sDustoxLevelUpLearnset,
     },
 
     [SPECIES_LOTAD] =
@@ -12727,7 +12733,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_LotadNormal,
         .shinyPalette = sMonPalette_LotadShiny,
-        LEARNSETS(Lotad),
+        .levelUpLearnset = sLotadLevelUpLearnset,
     },
 
     [SPECIES_LOMBRE] =
@@ -12769,7 +12775,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_LombreNormal,
         .shinyPalette = sMonPalette_LombreShiny,
-        LEARNSETS(Lombre),
+        .levelUpLearnset = sLombreLevelUpLearnset,
     },
 
     [SPECIES_LUDICOLO] =
@@ -12810,7 +12816,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_LudicoloNormal,
         .shinyPalette = sMonPalette_LudicoloShiny,
-        LEARNSETS(Ludicolo),
+        .levelUpLearnset = sLudicoloLevelUpLearnset,
     },
 
     [SPECIES_SEEDOT] =
@@ -12852,7 +12858,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_SeedotNormal,
         .shinyPalette = sMonPalette_SeedotShiny,
-        LEARNSETS(Seedot),
+        .levelUpLearnset = sSeedotLevelUpLearnset,
     },
 
     [SPECIES_NUZLEAF] =
@@ -12894,7 +12900,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_NuzleafNormal,
         .shinyPalette = sMonPalette_NuzleafShiny,
-        LEARNSETS(Nuzleaf),
+        .levelUpLearnset = sNuzleafLevelUpLearnset,
     },
 
     [SPECIES_SHIFTRY] =
@@ -12935,7 +12941,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_ShiftryNormal,
         .shinyPalette = sMonPalette_ShiftryShiny,
-        LEARNSETS(Shiftry),
+        .levelUpLearnset = sShiftryLevelUpLearnset,
     },
 
     [SPECIES_TAILLOW] =
@@ -12976,7 +12982,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_TaillowNormal,
         .shinyPalette = sMonPalette_TaillowShiny,
-        LEARNSETS(Taillow),
+        .levelUpLearnset = sTaillowLevelUpLearnset,
     },
 
     [SPECIES_SWELLOW] =
@@ -13016,7 +13022,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SwellowNormal,
         .shinyPalette = sMonPalette_SwellowShiny,
-        LEARNSETS(Swellow),
+        .levelUpLearnset = sSwellowLevelUpLearnset,
     },
 
     [SPECIES_WINGULL] =
@@ -13060,7 +13066,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_WingullNormal,
         .shinyPalette = sMonPalette_WingullShiny,
         .sosCallRate = 9,
-        LEARNSETS(Wingull),
+        .levelUpLearnset = sWingullLevelUpLearnset,
     },
 
     [SPECIES_PELIPPER] =
@@ -13102,7 +13108,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_PelipperNormal,
         .shinyPalette = sMonPalette_PelipperShiny,
         .sosCallRate = 6,
-        LEARNSETS(Pelipper),
+        .levelUpLearnset = sPelipperLevelUpLearnset,
     },
 
     [SPECIES_RALTS] =
@@ -13143,7 +13149,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_RaltsNormal,
         .shinyPalette = sMonPalette_RaltsShiny,
-        LEARNSETS(Ralts),
+        .levelUpLearnset = sRaltsLevelUpLearnset,
     },
 
     [SPECIES_KIRLIA] =
@@ -13185,7 +13191,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_KirliaNormal,
         .shinyPalette = sMonPalette_KirliaShiny,
-        LEARNSETS(Kirlia),
+        .levelUpLearnset = sKirliaLevelUpLearnset,
     },
 
     [SPECIES_GARDEVOIR] =
@@ -13226,7 +13232,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_GardevoirNormal,
         .shinyPalette = sMonPalette_GardevoirShiny,
-        LEARNSETS(Gardevoir),
+        .levelUpLearnset = sGardevoirLevelUpLearnset,
     },
 
     [SPECIES_SURSKIT] =
@@ -13269,7 +13275,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SurskitNormal,
         .shinyPalette = sMonPalette_SurskitShiny,
         .sosCallRate = 9,
-        LEARNSETS(Surskit),
+        .levelUpLearnset = sSurskitLevelUpLearnset,
     },
 
     [SPECIES_MASQUERAIN] =
@@ -13312,7 +13318,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MasquerainNormal,
         .shinyPalette = sMonPalette_MasquerainShiny,
         .sosCallRate = 6,
-        LEARNSETS(Masquerain),
+        .levelUpLearnset = sMasquerainLevelUpLearnset,
     },
 
     [SPECIES_SHROOMISH] =
@@ -13355,7 +13361,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_ShroomishNormal,
         .shinyPalette = sMonPalette_ShroomishShiny,
-        LEARNSETS(Shroomish),
+        .levelUpLearnset = sShroomishLevelUpLearnset,
     },
 
     [SPECIES_BRELOOM] =
@@ -13397,7 +13403,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_BreloomNormal,
         .shinyPalette = sMonPalette_BreloomShiny,
-        LEARNSETS(Breloom),
+        .levelUpLearnset = sBreloomLevelUpLearnset,
     },
 
     [SPECIES_SLAKOTH] =
@@ -13438,7 +13444,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_SlakothNormal,
         .shinyPalette = sMonPalette_SlakothShiny,
-        LEARNSETS(Slakoth),
+        .levelUpLearnset = sSlakothLevelUpLearnset,
     },
 
     [SPECIES_VIGOROTH] =
@@ -13479,7 +13485,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_VigorothNormal,
         .shinyPalette = sMonPalette_VigorothShiny,
-        LEARNSETS(Vigoroth),
+        .levelUpLearnset = sVigorothLevelUpLearnset,
     },
 
     [SPECIES_SLAKING] =
@@ -13519,7 +13525,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SlakingNormal,
         .shinyPalette = sMonPalette_SlakingShiny,
-        LEARNSETS(Slaking),
+        .levelUpLearnset = sSlakingLevelUpLearnset,
     },
 
     [SPECIES_NINCADA] =
@@ -13561,7 +13567,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 18,
         .palette = sMonPalette_NincadaNormal,
         .shinyPalette = sMonPalette_NincadaShiny,
-        LEARNSETS(Nincada),
+        .levelUpLearnset = sNincadaLevelUpLearnset,
     },
 
     [SPECIES_NINJASK] =
@@ -13602,7 +13608,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_NinjaskNormal,
         .shinyPalette = sMonPalette_NinjaskShiny,
-        LEARNSETS(Ninjask),
+        .levelUpLearnset = sNinjaskLevelUpLearnset,
     },
 
     [SPECIES_SHEDINJA] =
@@ -13643,7 +13649,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_ShedinjaNormal,
         .shinyPalette = sMonPalette_ShedinjaShiny,
-        LEARNSETS(Shedinja),
+        .levelUpLearnset = sShedinjaLevelUpLearnset,
     },
 
     [SPECIES_WHISMUR] =
@@ -13684,7 +13690,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_WhismurNormal,
         .shinyPalette = sMonPalette_WhismurShiny,
-        LEARNSETS(Whismur),
+        .levelUpLearnset = sWhismurLevelUpLearnset,
     },
 
     [SPECIES_LOUDRED] =
@@ -13725,7 +13731,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_LoudredNormal,
         .shinyPalette = sMonPalette_LoudredShiny,
-        LEARNSETS(Loudred),
+        .levelUpLearnset = sLoudredLevelUpLearnset,
     },
 
     [SPECIES_EXPLOUD] =
@@ -13765,7 +13771,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_ExploudNormal,
         .shinyPalette = sMonPalette_ExploudShiny,
-        LEARNSETS(Exploud),
+        .levelUpLearnset = sExploudLevelUpLearnset,
     },
 
     [SPECIES_MAKUHITA] =
@@ -13808,7 +13814,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MakuhitaNormal,
         .shinyPalette = sMonPalette_MakuhitaShiny,
         .sosCallRate = 9,
-        LEARNSETS(Makuhita),
+        .levelUpLearnset = sMakuhitaLevelUpLearnset,
     },
 
     [SPECIES_HARIYAMA] =
@@ -13850,7 +13856,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_HariyamaNormal,
         .shinyPalette = sMonPalette_HariyamaShiny,
         .sosCallRate = 6,
-        LEARNSETS(Hariyama),
+        .levelUpLearnset = sHariyamaLevelUpLearnset,
     },
 
     [SPECIES_AZURILL] =
@@ -13891,7 +13897,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_AzurillNormal,
         .shinyPalette = sMonPalette_AzurillShiny,
-        LEARNSETS(Azurill),
+        .levelUpLearnset = sAzurillLevelUpLearnset,
     },
 
     [SPECIES_NOSEPASS] =
@@ -13934,7 +13940,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_NosepassNormal,
         .shinyPalette = sMonPalette_NosepassShiny,
         .sosCallRate = 9,
-        LEARNSETS(Nosepass),
+        .levelUpLearnset = sNosepassLevelUpLearnset,
     },
 
     [SPECIES_SKITTY] =
@@ -13975,7 +13981,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SkittyNormal,
         .shinyPalette = sMonPalette_SkittyShiny,
-        LEARNSETS(Skitty),
+        .levelUpLearnset = sSkittyLevelUpLearnset,
     },
 
     [SPECIES_DELCATTY] =
@@ -14016,7 +14022,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_DelcattyNormal,
         .shinyPalette = sMonPalette_DelcattyShiny,
-        LEARNSETS(Delcatty),
+        .levelUpLearnset = sDelcattyLevelUpLearnset,
     },
 
     [SPECIES_SABLEYE] =
@@ -14059,7 +14065,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_SableyeNormal,
         .shinyPalette = sMonPalette_SableyeShiny,
-        LEARNSETS(Sableye),
+        .levelUpLearnset = sSableyeLevelUpLearnset,
     },
 
     [SPECIES_MAWILE] =
@@ -14103,7 +14109,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MawileNormal,
         .shinyPalette = sMonPalette_MawileShiny,
         .sosCallRate = 6,
-        LEARNSETS(Mawile),
+        .levelUpLearnset = sMawileLevelUpLearnset,
     },
 
     [SPECIES_ARON] =
@@ -14145,7 +14151,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_AronNormal,
         .shinyPalette = sMonPalette_AronShiny,
-        LEARNSETS(Aron),
+        .levelUpLearnset = sAronLevelUpLearnset,
     },
 
     [SPECIES_LAIRON] =
@@ -14187,7 +14193,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_LaironNormal,
         .shinyPalette = sMonPalette_LaironShiny,
-        LEARNSETS(Lairon),
+        .levelUpLearnset = sLaironLevelUpLearnset,
     },
 
     [SPECIES_AGGRON] =
@@ -14229,7 +14235,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_AggronNormal,
         .shinyPalette = sMonPalette_AggronShiny,
-        LEARNSETS(Aggron),
+        .levelUpLearnset = sAggronLevelUpLearnset,
     },
 
     [SPECIES_MEDITITE] =
@@ -14270,7 +14276,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_MedititeNormal,
         .shinyPalette = sMonPalette_MedititeShiny,
-        LEARNSETS(Meditite),
+        .levelUpLearnset = sMedititeLevelUpLearnset,
     },
 
     [SPECIES_MEDICHAM] =
@@ -14311,7 +14317,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_MedichamNormal,
         .shinyPalette = sMonPalette_MedichamShiny,
-        LEARNSETS(Medicham),
+        .levelUpLearnset = sMedichamLevelUpLearnset,
     },
 
     [SPECIES_ELECTRIKE] =
@@ -14353,7 +14359,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ElectrikeNormal,
         .shinyPalette = sMonPalette_ElectrikeShiny,
         .sosCallRate = 9,
-        LEARNSETS(Electrike),
+        .levelUpLearnset = sElectrikeLevelUpLearnset,
     },
 
     [SPECIES_MANECTRIC] =
@@ -14395,7 +14401,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ManectricNormal,
         .shinyPalette = sMonPalette_ManectricShiny,
         .sosCallRate = 6,
-        LEARNSETS(Manectric),
+        .levelUpLearnset = sManectricLevelUpLearnset,
     },
 
     [SPECIES_PLUSLE] =
@@ -14436,7 +14442,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_PlusleNormal,
         .shinyPalette = sMonPalette_PlusleShiny,
-        LEARNSETS(Plusle),
+        .levelUpLearnset = sPlusleLevelUpLearnset,
     },
 
     [SPECIES_MINUN] =
@@ -14477,7 +14483,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_MinunNormal,
         .shinyPalette = sMonPalette_MinunShiny,
-        LEARNSETS(Minun),
+        .levelUpLearnset = sMinunLevelUpLearnset,
     },
 
     [SPECIES_VOLBEAT] =
@@ -14518,7 +14524,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_VolbeatNormal,
         .shinyPalette = sMonPalette_VolbeatShiny,
-        LEARNSETS(Volbeat),
+        .levelUpLearnset = sVolbeatLevelUpLearnset,
     },
 
     [SPECIES_ILLUMISE] =
@@ -14559,7 +14565,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_IllumiseNormal,
         .shinyPalette = sMonPalette_IllumiseShiny,
-        LEARNSETS(Illumise),
+        .levelUpLearnset = sIllumiseLevelUpLearnset,
     },
 
     [SPECIES_ROSELIA] =
@@ -14601,7 +14607,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_RoseliaNormal,
         .shinyPalette = sMonPalette_RoseliaShiny,
-        LEARNSETS(Roselia),
+        .levelUpLearnset = sRoseliaLevelUpLearnset,
     },
 
     [SPECIES_GULPIN] =
@@ -14643,7 +14649,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_GulpinNormal,
         .shinyPalette = sMonPalette_GulpinShiny,
-        LEARNSETS(Gulpin),
+        .levelUpLearnset = sGulpinLevelUpLearnset,
     },
 
     [SPECIES_SWALOT] =
@@ -14684,7 +14690,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_SwalotNormal,
         .shinyPalette = sMonPalette_SwalotShiny,
-        LEARNSETS(Swalot),
+        .levelUpLearnset = sSwalotLevelUpLearnset,
     },
 
     [SPECIES_CARVANHA] =
@@ -14728,7 +14734,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CarvanhaShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_CARVANHA, SPECIES_SHARPEDO),
-        LEARNSETS(Carvanha),
+        .levelUpLearnset = sCarvanhaLevelUpLearnset,
     },
 
     [SPECIES_SHARPEDO] =
@@ -14770,7 +14776,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SharpedoNormal,
         .shinyPalette = sMonPalette_SharpedoShiny,
         .sosCallRate = 3,
-        LEARNSETS(Sharpedo),
+        .levelUpLearnset = sSharpedoLevelUpLearnset,
     },
     
     [SPECIES_WAILMER] =
@@ -14812,7 +14818,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_WailmerShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_WAILMER, SPECIES_WAILORD),
-        LEARNSETS(Wailmer),
+        .levelUpLearnset = sWailmerLevelUpLearnset,
     },
 
     [SPECIES_WAILORD] =
@@ -14852,7 +14858,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_WailordNormal,
         .shinyPalette = sMonPalette_WailordShiny,
         .sosCallRate = 6,
-        LEARNSETS(Wailord),
+        .levelUpLearnset = sWailordLevelUpLearnset,
     },
 
     [SPECIES_NUMEL] =
@@ -14893,7 +14899,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_NumelNormal,
         .shinyPalette = sMonPalette_NumelShiny,
-        LEARNSETS(Numel),
+        .levelUpLearnset = sNumelLevelUpLearnset,
     },
 
     [SPECIES_CAMERUPT] =
@@ -14935,7 +14941,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_CameruptNormal,
         .shinyPalette = sMonPalette_CameruptShiny,
-        LEARNSETS(Camerupt),
+        .levelUpLearnset = sCameruptLevelUpLearnset,
     },
 
     [SPECIES_TORKOAL] =
@@ -14977,7 +14983,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_TorkoalNormal,
         .shinyPalette = sMonPalette_TorkoalShiny,
         .sosCallRate = 6,
-        LEARNSETS(Torkoal),
+        .levelUpLearnset = sTorkoalLevelUpLearnset,
     },
 
     [SPECIES_SPOINK] =
@@ -15017,7 +15023,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_SpoinkNormal,
         .shinyPalette = sMonPalette_SpoinkShiny,
-        LEARNSETS(Spoink),
+        .levelUpLearnset = sSpoinkLevelUpLearnset,
     },
 
     [SPECIES_GRUMPIG] =
@@ -15057,7 +15063,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_GrumpigNormal,
         .shinyPalette = sMonPalette_GrumpigShiny,
-        LEARNSETS(Grumpig),
+        .levelUpLearnset = sGrumpigLevelUpLearnset,
     },
 
     [SPECIES_SPINDA] =
@@ -15098,7 +15104,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_SpindaNormal,
         .shinyPalette = sMonPalette_SpindaShiny,
         .sosCallRate = 6,
-        LEARNSETS(Spinda),
+        .levelUpLearnset = sSpindaLevelUpLearnset,
     },
 
     [SPECIES_TRAPINCH] =
@@ -15142,7 +15148,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_TrapinchShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_TRAPINCH, SPECIES_GOLETT, SPECIES_BALTOY),
-        LEARNSETS(Trapinch),
+        .levelUpLearnset = sTrapinchLevelUpLearnset,
     },
 
     [SPECIES_VIBRAVA] =
@@ -15185,7 +15191,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_VibravaNormal,
         .shinyPalette = sMonPalette_VibravaShiny,
         .sosCallRate = 6,
-        LEARNSETS(Vibrava),
+        .levelUpLearnset = sVibravaLevelUpLearnset,
     },
 
     [SPECIES_FLYGON] =
@@ -15226,7 +15232,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_FlygonNormal,
         .shinyPalette = sMonPalette_FlygonShiny,
-        LEARNSETS(Flygon),
+        .levelUpLearnset = sFlygonLevelUpLearnset,
     },
 
     [SPECIES_CACNEA] =
@@ -15268,7 +15274,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_CacneaNormal,
         .shinyPalette = sMonPalette_CacneaShiny,
-        LEARNSETS(Cacnea),
+        .levelUpLearnset = sCacneaLevelUpLearnset,
     },
 
     [SPECIES_CACTURNE] =
@@ -15310,7 +15316,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_CacturneNormal,
         .shinyPalette = sMonPalette_CacturneShiny,
-        LEARNSETS(Cacturne),
+        .levelUpLearnset = sCacturneLevelUpLearnset,
     },
 
     [SPECIES_SWABLU] =
@@ -15351,7 +15357,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_SwabluNormal,
         .shinyPalette = sMonPalette_SwabluShiny,
-        LEARNSETS(Swablu),
+        .levelUpLearnset = sSwabluLevelUpLearnset,
     },
 
     [SPECIES_ALTARIA] =
@@ -15392,7 +15398,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_AltariaNormal,
         .shinyPalette = sMonPalette_AltariaShiny,
-        LEARNSETS(Altaria),
+        .levelUpLearnset = sAltariaLevelUpLearnset,
     },
 
     [SPECIES_ZANGOOSE] =
@@ -15433,7 +15439,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_ZangooseNormal,
         .shinyPalette = sMonPalette_ZangooseShiny,
-        LEARNSETS(Zangoose),
+        .levelUpLearnset = sZangooseLevelUpLearnset,
     },
 
     [SPECIES_SEVIPER] =
@@ -15474,7 +15480,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 1,
         .palette = sMonPalette_SeviperNormal,
         .shinyPalette = sMonPalette_SeviperShiny,
-        LEARNSETS(Seviper),
+        .levelUpLearnset = sSeviperLevelUpLearnset,
     },
 
     [SPECIES_LUNATONE] =
@@ -15516,7 +15522,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_LunatoneNormal,
         .shinyPalette = sMonPalette_LunatoneShiny,
-        LEARNSETS(Lunatone),
+        .levelUpLearnset = sLunatoneLevelUpLearnset,
     },
 
     [SPECIES_SOLROCK] =
@@ -15557,7 +15563,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_SolrockNormal,
         .shinyPalette = sMonPalette_SolrockShiny,
-        LEARNSETS(Solrock),
+        .levelUpLearnset = sSolrockLevelUpLearnset,
     },
 
     [SPECIES_BARBOACH] =
@@ -15600,7 +15606,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_BarboachShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_BARBOACH, SPECIES_WHISCASH),
-        LEARNSETS(Barboach),
+        .levelUpLearnset = sBarboachLevelUpLearnset,
     },
 
     [SPECIES_WHISCASH] =
@@ -15640,7 +15646,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_WhiscashNormal,
         .shinyPalette = sMonPalette_WhiscashShiny,
         .sosCallRate = 6,
-        LEARNSETS(Whiscash),
+        .levelUpLearnset = sWhiscashLevelUpLearnset,
     },
 
     [SPECIES_CORPHISH] =
@@ -15683,7 +15689,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_CorphishShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_CORPHISH, SPECIES_CRAWDAUNT),
-        LEARNSETS(Corphish),
+        .levelUpLearnset = sCorphishLevelUpLearnset,
     },
 
     [SPECIES_CRAWDAUNT] =
@@ -15724,7 +15730,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_CrawdauntNormal,
         .shinyPalette = sMonPalette_CrawdauntShiny,
         .sosCallRate = 6,
-        LEARNSETS(Crawdaunt),
+        .levelUpLearnset = sCrawdauntLevelUpLearnset,
     },
 
     [SPECIES_BALTOY] =
@@ -15768,7 +15774,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_BaltoyNormal,
         .shinyPalette = sMonPalette_BaltoyShiny,
         .sosCallRate = 15,
-        LEARNSETS(Baltoy),
+        .levelUpLearnset = sBaltoyLevelUpLearnset,
     },
 
     [SPECIES_CLAYDOL] =
@@ -15810,7 +15816,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ClaydolNormal,
         .shinyPalette = sMonPalette_ClaydolShiny,
         .sosCallRate = 15,
-        LEARNSETS(Claydol),
+        .levelUpLearnset = sClaydolLevelUpLearnset,
     },
 
     [SPECIES_LILEEP] =
@@ -15852,7 +15858,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_LileepNormal,
         .shinyPalette = sMonPalette_LileepShiny,
-        LEARNSETS(Lileep),
+        .levelUpLearnset = sLileepLevelUpLearnset,
     },
 
     [SPECIES_CRADILY] =
@@ -15893,7 +15899,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_CradilyNormal,
         .shinyPalette = sMonPalette_CradilyShiny,
-        LEARNSETS(Cradily),
+        .levelUpLearnset = sCradilyLevelUpLearnset,
     },
 
     [SPECIES_ANORITH] =
@@ -15933,7 +15939,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 19,
         .palette = sMonPalette_AnorithNormal,
         .shinyPalette = sMonPalette_AnorithShiny,
-        LEARNSETS(Anorith),
+        .levelUpLearnset = sAnorithLevelUpLearnset,
     },
 
     [SPECIES_ARMALDO] =
@@ -15973,7 +15979,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_ArmaldoNormal,
         .shinyPalette = sMonPalette_ArmaldoShiny,
-        LEARNSETS(Armaldo),
+        .levelUpLearnset = sArmaldoLevelUpLearnset,
     },
 
     [SPECIES_FEEBAS] =
@@ -16015,7 +16021,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_FeebasNormal,
         .shinyPalette = sMonPalette_FeebasShiny,
         .sosCallRate = 9,
-        LEARNSETS(Feebas),
+        .levelUpLearnset = sFeebasLevelUpLearnset,
     },
 
     [SPECIES_MILOTIC] =
@@ -16054,7 +16060,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_MiloticNormal,
         .shinyPalette = sMonPalette_MiloticShiny,
-        LEARNSETS(Milotic),
+        .levelUpLearnset = sMiloticLevelUpLearnset,
     },
 
     [SPECIES_CASTFORM] =
@@ -16114,7 +16120,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_KecleonNormal,
         .shinyPalette = sMonPalette_KecleonShiny,
         .sosCallRate = 9,
-        LEARNSETS(Kecleon),
+        .levelUpLearnset = sKecleonLevelUpLearnset,
     },
 
     [SPECIES_SHUPPET] =
@@ -16157,7 +16163,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ShuppetNormal,
         .shinyPalette = sMonPalette_ShuppetShiny,
         .sosCallRate = 9,
-        LEARNSETS(Shuppet),
+        .levelUpLearnset = sShuppetLevelUpLearnset,
     },
 
     [SPECIES_BANETTE] =
@@ -16200,7 +16206,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_BanetteNormal,
         .shinyPalette = sMonPalette_BanetteShiny,
         .sosCallRate = 6,
-        LEARNSETS(Banette),
+        .levelUpLearnset = sBanetteLevelUpLearnset,
     },
 
     [SPECIES_DUSKULL] =
@@ -16242,7 +16248,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_DuskullNormal,
         .shinyPalette = sMonPalette_DuskullShiny,
-        LEARNSETS(Duskull),
+        .levelUpLearnset = sDuskullLevelUpLearnset,
     },
 
     [SPECIES_DUSCLOPS] =
@@ -16285,7 +16291,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_DusclopsNormal,
         .shinyPalette = sMonPalette_DusclopsShiny,
-        LEARNSETS(Dusclops),
+        .levelUpLearnset = sDusclopsLevelUpLearnset,
     },
 
     [SPECIES_TROPIUS] =
@@ -16326,7 +16332,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_TropiusNormal,
         .shinyPalette = sMonPalette_TropiusShiny,
         .sosCallRate = 3,
-        LEARNSETS(Tropius),
+        .levelUpLearnset = sTropiusLevelUpLearnset,
     },
 
     [SPECIES_CHIMECHO] =
@@ -16368,7 +16374,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_ChimechoNormal,
         .shinyPalette = sMonPalette_ChimechoShiny,
-        LEARNSETS(Chimecho),
+        .levelUpLearnset = sChimechoLevelUpLearnset,
     },
 
     [SPECIES_ABSOL] =
@@ -16410,7 +16416,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_AbsolNormal,
         .shinyPalette = sMonPalette_AbsolShiny,
         .sosCallRate = 3,
-        LEARNSETS(Absol),
+        .levelUpLearnset = sAbsolLevelUpLearnset,
     },
 
     [SPECIES_WYNAUT] =
@@ -16451,7 +16457,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_WynautNormal,
         .shinyPalette = sMonPalette_WynautShiny,
-        LEARNSETS(Wynaut),
+        .levelUpLearnset = sWynautLevelUpLearnset,
     },
 
     [SPECIES_SNORUNT] =
@@ -16496,7 +16502,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_SnoruntShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_SNORUNT, SPECIES_GLALIE),
-        LEARNSETS(Snorunt),
+        .levelUpLearnset = sSnoruntLevelUpLearnset,
     },
 
     [SPECIES_GLALIE] =
@@ -16537,7 +16543,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_GlalieNormal,
         .shinyPalette = sMonPalette_GlalieShiny,
         .sosCallRate = 3,
-        LEARNSETS(Glalie),
+        .levelUpLearnset = sGlalieLevelUpLearnset,
     },
 
     [SPECIES_SPHEAL] =
@@ -16577,7 +16583,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_SphealNormal,
         .shinyPalette = sMonPalette_SphealShiny,
-        LEARNSETS(Spheal),
+        .levelUpLearnset = sSphealLevelUpLearnset,
     },
 
     [SPECIES_SEALEO] =
@@ -16617,7 +16623,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_SealeoNormal,
         .shinyPalette = sMonPalette_SealeoShiny,
-        LEARNSETS(Sealeo),
+        .levelUpLearnset = sSealeoLevelUpLearnset,
     },
 
     [SPECIES_WALREIN] =
@@ -16656,7 +16662,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_WalreinNormal,
         .shinyPalette = sMonPalette_WalreinShiny,
-        LEARNSETS(Walrein),
+        .levelUpLearnset = sWalreinLevelUpLearnset,
     },
 
     [SPECIES_CLAMPERL] =
@@ -16701,7 +16707,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_ClamperlShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_CLAMPERL, SPECIES_GOREBYSS, SPECIES_HUNTAIL),
-        LEARNSETS(Clamperl),
+        .levelUpLearnset = sClamperlLevelUpLearnset,
     },
 
     [SPECIES_HUNTAIL] =
@@ -16742,7 +16748,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_HuntailNormal,
         .shinyPalette = sMonPalette_HuntailShiny,
-        LEARNSETS(Huntail),
+        .levelUpLearnset = sHuntailLevelUpLearnset,
     },
 
     [SPECIES_GOREBYSS] =
@@ -16782,7 +16788,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_GorebyssNormal,
         .shinyPalette = sMonPalette_GorebyssShiny,
-        LEARNSETS(Gorebyss),
+        .levelUpLearnset = sGorebyssLevelUpLearnset,
     },
 
     [SPECIES_RELICANTH] =
@@ -16825,7 +16831,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_RelicanthNormal,
         .shinyPalette = sMonPalette_RelicanthShiny,
         .sosCallRate = 3,
-        LEARNSETS(Relicanth),
+        .levelUpLearnset = sRelicanthLevelUpLearnset,
     },
 
     [SPECIES_LUVDISC] =
@@ -16867,7 +16873,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LuvdiscNormal,
         .shinyPalette = sMonPalette_LuvdiscShiny,
         .sosCallRate = 6,
-        LEARNSETS(Luvdisc),
+        .levelUpLearnset = sLuvdiscLevelUpLearnset,
     },
     
     [SPECIES_BAGON] =
@@ -16911,7 +16917,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_BagonShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_BAGON, SPECIES_SHELGON, SPECIES_SALAMENCE),
-        LEARNSETS(Bagon),
+        .levelUpLearnset = sBagonLevelUpLearnset,
     },
 
     [SPECIES_SHELGON] =
@@ -16954,7 +16960,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_ShelgonNormal,
         .shinyPalette = sMonPalette_ShelgonShiny,
         .sosCallRate = 6,
-        LEARNSETS(Shelgon),
+        .levelUpLearnset = sShelgonLevelUpLearnset,
     },
 
     [SPECIES_SALAMENCE] =
@@ -16996,7 +17002,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_SalamenceNormal,
         .shinyPalette = sMonPalette_SalamenceShiny,
-        LEARNSETS(Salamence),
+        .levelUpLearnset = sSalamenceLevelUpLearnset,
     },
 
     [SPECIES_BELDUM] =
@@ -17040,7 +17046,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_BeldumNormal,
         .shinyPalette = sMonPalette_BeldumShiny,
         .sosCallRate = 9,
-        LEARNSETS(Beldum),
+        .levelUpLearnset = sBeldumLevelUpLearnset,
     },
 
     [SPECIES_METANG] =
@@ -17083,7 +17089,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_MetangNormal,
         .shinyPalette = sMonPalette_MetangShiny,
         .sosCallRate = 6,
-        LEARNSETS(Metang),
+        .levelUpLearnset = sMetangLevelUpLearnset,
     },
 
     [SPECIES_METAGROSS] =
@@ -17125,7 +17131,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_MetagrossNormal,
         .shinyPalette = sMonPalette_MetagrossShiny,
-        LEARNSETS(Metagross),
+        .levelUpLearnset = sMetagrossLevelUpLearnset,
     },
 
     [SPECIES_REGIROCK] =
@@ -17166,7 +17172,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_RegirockNormal,
         .shinyPalette = sMonPalette_RegirockShiny,
-        LEARNSETS(Regirock),
+        .levelUpLearnset = sRegirockLevelUpLearnset,
     },
 
     [SPECIES_REGICE] =
@@ -17207,7 +17213,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_RegiceNormal,
         .shinyPalette = sMonPalette_RegiceShiny,
-        LEARNSETS(Regice),
+        .levelUpLearnset = sRegiceLevelUpLearnset,
     },
 
     [SPECIES_REGISTEEL] =
@@ -17249,7 +17255,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_RegisteelNormal,
         .shinyPalette = sMonPalette_RegisteelShiny,
-        LEARNSETS(Registeel),
+        .levelUpLearnset = sRegisteelLevelUpLearnset,
     },
 
     [SPECIES_LATIAS] =
@@ -17291,7 +17297,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_LatiasNormal,
         .shinyPalette = sMonPalette_LatiasShiny,
-        LEARNSETS(Latias),
+        .levelUpLearnset = sLatiasLevelUpLearnset,
     },
 
     [SPECIES_LATIOS] =
@@ -17333,7 +17339,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_LatiosNormal,
         .shinyPalette = sMonPalette_LatiosShiny,
-        LEARNSETS(Latios),
+        .levelUpLearnset = sLatiosLevelUpLearnset,
     },
 
     [SPECIES_KYOGRE] =
@@ -17375,7 +17381,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 18,
         .palette = sMonPalette_KyogreNormal,
         .shinyPalette = sMonPalette_KyogreShiny,
-        LEARNSETS(Kyogre),
+        .levelUpLearnset = sKyogreLevelUpLearnset,
     },
 
     [SPECIES_GROUDON] =
@@ -17417,7 +17423,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_GroudonNormal,
         .shinyPalette = sMonPalette_GroudonShiny,
-        LEARNSETS(Groudon),
+        .levelUpLearnset = sGroudonLevelUpLearnset,
     },
 
     [SPECIES_RAYQUAZA] =
@@ -17459,7 +17465,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_RayquazaNormal,
         .shinyPalette = sMonPalette_RayquazaShiny,
-        LEARNSETS(Rayquaza),
+        .levelUpLearnset = sRayquazaLevelUpLearnset,
     },
 
     [SPECIES_JIRACHI] =
@@ -17503,7 +17509,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_JirachiNormal,
         .shinyPalette = sMonPalette_JirachiShiny,
-        LEARNSETS(Jirachi),
+        .levelUpLearnset = sJirachiLevelUpLearnset,
     },
 
     [SPECIES_DEOXYS] =
@@ -17525,7 +17531,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_DeoxysNormal,
         .shinyPalette = sMonPalette_DeoxysShiny,
-        LEARNSETS(Deoxys),
+        .levelUpLearnset = sDeoxysLevelUpLearnset,
     },
     
     [SPECIES_TURTWIG] =
@@ -17566,6 +17572,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_TurtwigNormal,
         .shinyPalette = sMonPalette_TurtwigShiny,
+        .levelUpLearnset = sTurtwigLevelUpLearnset,
     },
 
     [SPECIES_GROTLE] =
@@ -17607,6 +17614,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_GrotleNormal,
         .shinyPalette = sMonPalette_GrotleShiny,
+        .levelUpLearnset = sGrotleLevelUpLearnset,
     },
 
     [SPECIES_TORTERRA] =
@@ -17647,6 +17655,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_TorterraNormal,
         .shinyPalette = sMonPalette_TorterraShiny,
+        .levelUpLearnset = sTorterraLevelUpLearnset,
     },
 
     [SPECIES_CHIMCHAR] =
@@ -17687,6 +17696,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_ChimcharNormal,
         .shinyPalette = sMonPalette_ChimcharShiny,
+        .levelUpLearnset = sChimcharLevelUpLearnset,
     },
 
     [SPECIES_MONFERNO] =
@@ -17728,6 +17738,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_MonfernoNormal,
         .shinyPalette = sMonPalette_MonfernoShiny,
+        .levelUpLearnset = sMonfernoLevelUpLearnset,
     },
 
     [SPECIES_INFERNAPE] =
@@ -17769,6 +17780,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_InfernapeNormal,
         .shinyPalette = sMonPalette_InfernapeShiny,
+        .levelUpLearnset = sInfernapeLevelUpLearnset,
     },
 
     [SPECIES_PIPLUP] =
@@ -17809,6 +17821,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_PiplupNormal,
         .shinyPalette = sMonPalette_PiplupShiny,
+        .levelUpLearnset = sPiplupLevelUpLearnset,
     },
 
     [SPECIES_PRINPLUP] =
@@ -17849,6 +17862,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_PrinplupNormal,
         .shinyPalette = sMonPalette_PrinplupShiny,
+        .levelUpLearnset = sPrinplupLevelUpLearnset,
     },
 
     [SPECIES_EMPOLEON] =
@@ -17888,6 +17902,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_EmpoleonNormal,
         .shinyPalette = sMonPalette_EmpoleonShiny,
+        .levelUpLearnset = sEmpoleonLevelUpLearnset,
     },
 
     [SPECIES_STARLY] =
@@ -17928,6 +17943,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_StarlyNormal,
         .shinyPalette = sMonPalette_StarlyShiny,
+        .levelUpLearnset = sStarlyLevelUpLearnset,
     },
 
     [SPECIES_STARAVIA] =
@@ -17968,6 +17984,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_StaraviaNormal,
         .shinyPalette = sMonPalette_StaraviaShiny,
+        .levelUpLearnset = sStaraviaLevelUpLearnset,
     },
 
     [SPECIES_STARAPTOR] =
@@ -18007,6 +18024,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_StaraptorNormal,
         .shinyPalette = sMonPalette_StaraptorShiny,
+        .levelUpLearnset = sStaraptorLevelUpLearnset,
     },
 
     [SPECIES_BIDOOF] =
@@ -18047,6 +18065,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_BidoofNormal,
         .shinyPalette = sMonPalette_BidoofShiny,
+        .levelUpLearnset = sBidoofLevelUpLearnset,
     },
 
     [SPECIES_BIBAREL] =
@@ -18086,6 +18105,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_BibarelNormal,
         .shinyPalette = sMonPalette_BibarelShiny,
+        .levelUpLearnset = sBibarelLevelUpLearnset,
     },
 
     [SPECIES_KRICKETOT] =
@@ -18127,6 +18147,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_KricketotNormal,
         .shinyPalette = sMonPalette_KricketotShiny,
+        .levelUpLearnset = sKricketotLevelUpLearnset,
     },
 
     [SPECIES_KRICKETUNE] =
@@ -18167,6 +18188,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_KricketuneNormal,
         .shinyPalette = sMonPalette_KricketuneShiny,
+        .levelUpLearnset = sKricketuneLevelUpLearnset,
     },
 
     [SPECIES_SHINX] =
@@ -18207,6 +18229,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_ShinxNormal,
         .shinyPalette = sMonPalette_ShinxShiny,
+        .levelUpLearnset = sShinxLevelUpLearnset,
     },
 
     [SPECIES_LUXIO] =
@@ -18247,6 +18270,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_LuxioNormal,
         .shinyPalette = sMonPalette_LuxioShiny,
+        .levelUpLearnset = sLuxioLevelUpLearnset,
     },
 
     [SPECIES_LUXRAY] =
@@ -18286,6 +18310,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_LuxrayNormal,
         .shinyPalette = sMonPalette_LuxrayShiny,
+        .levelUpLearnset = sLuxrayLevelUpLearnset,
     },
     
     [SPECIES_BUDEW] =
@@ -18327,6 +18352,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_BudewNormal,
         .shinyPalette = sMonPalette_BudewShiny,
+        .levelUpLearnset = sBudewLevelUpLearnset,
     },
 
     [SPECIES_ROSERADE] =
@@ -18367,6 +18393,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_RoseradeNormal,
         .shinyPalette = sMonPalette_RoseradeShiny,
+        .levelUpLearnset = sRoseradeLevelUpLearnset,
     },
 
     [SPECIES_CRANIDOS] =
@@ -18407,6 +18434,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_CranidosNormal,
         .shinyPalette = sMonPalette_CranidosShiny,
+        .levelUpLearnset = sCranidosLevelUpLearnset,
     },
 
     [SPECIES_RAMPARDOS] =
@@ -18446,6 +18474,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_RampardosNormal,
         .shinyPalette = sMonPalette_RampardosShiny,
+        .levelUpLearnset = sRampardosLevelUpLearnset,
     },
 
     [SPECIES_SHIELDON] =
@@ -18486,6 +18515,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_ShieldonNormal,
         .shinyPalette = sMonPalette_ShieldonShiny,
+        .levelUpLearnset = sShieldonLevelUpLearnset,
     },
 
     [SPECIES_BASTIODON] =
@@ -18525,6 +18555,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_BastiodonNormal,
         .shinyPalette = sMonPalette_BastiodonShiny,
+        .levelUpLearnset = sBastiodonLevelUpLearnset,
     },
 
     [SPECIES_BURMY] =
@@ -18567,6 +18598,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_WormadamNormal,
         .shinyPalette = sMonPalette_WormadamShiny,
+        .levelUpLearnset = sWormadamLevelUpLearnset,
     },
 
     [SPECIES_MOTHIM] =
@@ -18609,6 +18641,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_MothimNormal,
         .shinyPalette = sMonPalette_MothimShiny,
+        .levelUpLearnset = sMothimLevelUpLearnset,
     },
 
     [SPECIES_COMBEE] =
@@ -18650,6 +18683,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 22,
         .palette = sMonPalette_CombeeNormal,
         .shinyPalette = sMonPalette_CombeeShiny,
+        .levelUpLearnset = sCombeeLevelUpLearnset,
     },
 
     [SPECIES_VESPIQUEN] =
@@ -18690,6 +18724,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_VespiquenNormal,
         .shinyPalette = sMonPalette_VespiquenShiny,
+        .levelUpLearnset = sVespiquenLevelUpLearnset,
     },
 
     [SPECIES_PACHIRISU] =
@@ -18729,6 +18764,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_PachirisuNormal,
         .shinyPalette = sMonPalette_PachirisuShiny,
+        .levelUpLearnset = sPachirisuLevelUpLearnset,
     },
 
     [SPECIES_BUIZEL] =
@@ -18769,6 +18805,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_BuizelNormal,
         .shinyPalette = sMonPalette_BuizelShiny,
+        .levelUpLearnset = sBuizelLevelUpLearnset,
     },
 
     [SPECIES_FLOATZEL] =
@@ -18808,6 +18845,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_FloatzelNormal,
         .shinyPalette = sMonPalette_FloatzelShiny,
+        .levelUpLearnset = sFloatzelLevelUpLearnset,
     },
 
     [SPECIES_CHERUBI] =
@@ -18849,6 +18887,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_CherubiNormal,
         .shinyPalette = sMonPalette_CherubiShiny,
+        .levelUpLearnset = sCherubiLevelUpLearnset,
     },
 
     [SPECIES_CHERRIM] =
@@ -18946,6 +18985,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_AmbipomNormal,
         .shinyPalette = sMonPalette_AmbipomShiny,
+        .levelUpLearnset = sAmbipomLevelUpLearnset,
     },
 
     [SPECIES_DRIFLOON] =
@@ -18987,6 +19027,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DrifloonNormal,
         .shinyPalette = sMonPalette_DrifloonShiny,
         .sosCallRate = 9,
+        .levelUpLearnset = sDrifloonLevelUpLearnset,
     },
 
     [SPECIES_DRIFBLIM] =
@@ -19026,6 +19067,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_DrifblimNormal,
         .shinyPalette = sMonPalette_DrifblimShiny,
         .sosCallRate = 6,
+        .levelUpLearnset = sDrifblimLevelUpLearnset,
     },
 
     [SPECIES_BUNEARY] =
@@ -19068,6 +19110,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_BunearyShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_BUNEARY, SPECIES_LOPUNNY),
+        .levelUpLearnset = sBunearyLevelUpLearnset,
     },
 
     [SPECIES_LOPUNNY] =
@@ -19109,6 +19152,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LopunnyNormal,
         .shinyPalette = sMonPalette_LopunnyShiny,
         .sosCallRate = 6,
+        .levelUpLearnset = sLopunnyLevelUpLearnset,
     },
 
     [SPECIES_MISMAGIUS] =
@@ -19149,6 +19193,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_MismagiusNormal,
         .shinyPalette = sMonPalette_MismagiusShiny,
+        .levelUpLearnset = sMismagiusLevelUpLearnset,
     },
 
     [SPECIES_HONCHKROW] =
@@ -19188,6 +19233,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_HonchkrowNormal,
         .shinyPalette = sMonPalette_HonchkrowShiny,
+        .levelUpLearnset = sHonchkrowLevelUpLearnset,
     },
 
     [SPECIES_GLAMEOW] =
@@ -19228,6 +19274,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 7,
         .palette = sMonPalette_GlameowNormal,
         .shinyPalette = sMonPalette_GlameowShiny,
+        .levelUpLearnset = sGlameowLevelUpLearnset,
     },
 
     [SPECIES_PURUGLY] =
@@ -19267,6 +19314,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_PuruglyNormal,
         .shinyPalette = sMonPalette_PuruglyShiny,
+        .levelUpLearnset = sPuruglyLevelUpLearnset,
     },
 
     [SPECIES_CHINGLING] =
@@ -19309,6 +19357,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_ChinglingNormal,
         .shinyPalette = sMonPalette_ChinglingShiny,
+        .levelUpLearnset = sChinglingLevelUpLearnset,
     },
 
     [SPECIES_STUNKY] =
@@ -19349,6 +19398,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_StunkyNormal,
         .shinyPalette = sMonPalette_StunkyShiny,
+        .levelUpLearnset = sStunkyLevelUpLearnset,
     },
 
     [SPECIES_SKUNTANK] =
@@ -19388,6 +19438,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_SkuntankNormal,
         .shinyPalette = sMonPalette_SkuntankShiny,
+        .levelUpLearnset = sSkuntankLevelUpLearnset,
     },
 
     [SPECIES_BRONZOR] =
@@ -19429,6 +19480,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_BronzorNormal,
         .shinyPalette = sMonPalette_BronzorShiny,
+        .levelUpLearnset = sBronzorLevelUpLearnset,
     },
 
     [SPECIES_BRONZONG] =
@@ -19469,6 +19521,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_BronzongNormal,
         .shinyPalette = sMonPalette_BronzongShiny,
+        .levelUpLearnset = sBronzongLevelUpLearnset,
     },
 
     [SPECIES_BONSLY] =
@@ -19511,6 +19564,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_BonslyShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_BONSLY, SPECIES_SUDOWOODO, SPECIES_HAPPINY),
+        .levelUpLearnset = sBonslyLevelUpLearnset,
     },
     
     [SPECIES_MIME_JR] =
@@ -19553,6 +19607,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MimeJrShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_MIME_JR, SPECIES_MR_MIME, SPECIES_HAPPINY),
+        .levelUpLearnset = sMimeJrLevelUpLearnset,
     },
 
     [SPECIES_HAPPINY] =
@@ -19594,6 +19649,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_HappinyNormal,
         .shinyPalette = sMonPalette_HappinyShiny,
+        .levelUpLearnset = sHappinyLevelUpLearnset,
     },
 
     [SPECIES_CHATOT] =
@@ -19634,6 +19690,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_ChatotNormal,
         .shinyPalette = sMonPalette_ChatotShiny,
+        .levelUpLearnset = sChatotLevelUpLearnset,
     },
 
     [SPECIES_SPIRITOMB] =
@@ -19673,6 +19730,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_SpiritombNormal,
         .shinyPalette = sMonPalette_SpiritombShiny,
+        .levelUpLearnset = sSpiritombLevelUpLearnset,
     },
 
     [SPECIES_GIBLE] =
@@ -19713,6 +19771,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_GibleNormal,
         .shinyPalette = sMonPalette_GibleShiny,
+        .levelUpLearnset = sGibleLevelUpLearnset,
     },
 
     [SPECIES_GABITE] =
@@ -19753,6 +19812,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_GabiteNormal,
         .shinyPalette = sMonPalette_GabiteShiny,
+        .levelUpLearnset = sGabiteLevelUpLearnset,
     },
 
     [SPECIES_GARCHOMP] =
@@ -19793,6 +19853,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_GarchompNormal,
         .shinyPalette = sMonPalette_GarchompShiny,
+        .levelUpLearnset = sGarchompLevelUpLearnset,
     },
 
     [SPECIES_MUNCHLAX] =
@@ -19837,6 +19898,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MunchlaxShiny,
         .sosCallRate = 6,
         .sosCallAllies = SOS_ALLIES(SPECIES_MUNCHLAX, SPECIES_SNORLAX, SPECIES_HAPPINY),
+        .levelUpLearnset = sMunchlaxLevelUpLearnset,
     },
 
     [SPECIES_RIOLU] =
@@ -19879,6 +19941,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_RioluShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_RIOLU, SPECIES_LUCARIO, SPECIES_HAPPINY),
+        .levelUpLearnset = sRioluLevelUpLearnset,
     },
 
     [SPECIES_LUCARIO] =
@@ -19920,6 +19983,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_LucarioNormal,
         .shinyPalette = sMonPalette_LucarioShiny,
+        .levelUpLearnset = sLucarioLevelUpLearnset,
     },
 
     [SPECIES_HIPPOPOTAS] =
@@ -19960,6 +20024,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 14,
         .palette = sMonPalette_HippopotasNormal,
         .shinyPalette = sMonPalette_HippopotasShiny,
+        .levelUpLearnset = sHippopotasLevelUpLearnset,
     },
 
     [SPECIES_HIPPOWDON] =
@@ -19999,6 +20064,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_HippowdonNormal,
         .shinyPalette = sMonPalette_HippowdonShiny,
+        .levelUpLearnset = sHippowdonLevelUpLearnset,
     },
 
     [SPECIES_SKORUPI] =
@@ -20040,6 +20106,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SkorupiNormal,
         .shinyPalette = sMonPalette_SkorupiShiny,
+        .levelUpLearnset = sSkorupiLevelUpLearnset,
     },
 
     [SPECIES_DRAPION] =
@@ -20080,6 +20147,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_DrapionNormal,
         .shinyPalette = sMonPalette_DrapionShiny,
+        .levelUpLearnset = sDrapionLevelUpLearnset,
     },
 
     [SPECIES_CROAGUNK] =
@@ -20121,6 +20189,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_CroagunkNormal,
         .shinyPalette = sMonPalette_CroagunkShiny,
+        .levelUpLearnset = sCroagunkLevelUpLearnset,
     },
 
     [SPECIES_TOXICROAK] =
@@ -20161,6 +20230,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_ToxicroakNormal,
         .shinyPalette = sMonPalette_ToxicroakShiny,
+        .levelUpLearnset = sToxicroakLevelUpLearnset,
     },
 
     [SPECIES_CARNIVINE] =
@@ -20199,6 +20269,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_CarnivineNormal,
         .shinyPalette = sMonPalette_CarnivineShiny,
+        .levelUpLearnset = sCarnivineLevelUpLearnset,
     },
 
     [SPECIES_FINNEON] =
@@ -20241,6 +20312,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_FinneonShiny,
         .sosCallRate = 9,
         .sosCallAllies = SOS_ALLIES(SPECIES_FINNEON, SPECIES_LUMINEON),
+        .levelUpLearnset = sFinneonLevelUpLearnset,
     },
 
     [SPECIES_LUMINEON] =
@@ -20280,6 +20352,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .palette = sMonPalette_LumineonNormal,
         .shinyPalette = sMonPalette_LumineonShiny,
         .sosCallRate = 6,
+        .levelUpLearnset = sLumineonLevelUpLearnset,
     },
 
     [SPECIES_MANTYKE] =
@@ -20322,6 +20395,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .shinyPalette = sMonPalette_MantykeShiny,
         .sosCallRate = 15,
         .sosCallAllies = SOS_ALLIES(SPECIES_MANTYKE, SPECIES_REMORAID),
+        .levelUpLearnset = sMantykeLevelUpLearnset,
     },
 
     [SPECIES_SNOVER] =
@@ -20363,6 +20437,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_SnoverNormal,
         .shinyPalette = sMonPalette_SnoverShiny,
+        .levelUpLearnset = sSnoverLevelUpLearnset,
     },
 
     [SPECIES_ABOMASNOW] =
@@ -20405,6 +20480,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_AbomasnowNormal,
         .shinyPalette = sMonPalette_AbomasnowShiny,
+        .levelUpLearnset = sAbomasnowLevelUpLearnset,
     },
 
     [SPECIES_WEAVILE] =
@@ -20446,6 +20522,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_WeavileNormal,
         .shinyPalette = sMonPalette_WeavileShiny,
+        .levelUpLearnset = sWeavileLevelUpLearnset,
     },
 
     [SPECIES_MAGNEZONE] =
@@ -20485,6 +20562,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 12,
         .palette = sMonPalette_MagnezoneNormal,
         .shinyPalette = sMonPalette_MagnezoneShiny,
+        .levelUpLearnset = sMagnezoneLevelUpLearnset,
     },
 
     [SPECIES_LICKILICKY] =
@@ -20525,6 +20603,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 2,
         .palette = sMonPalette_LickilickyNormal,
         .shinyPalette = sMonPalette_LickilickyShiny,
+        .levelUpLearnset = sLickilickyLevelUpLearnset,
     },
 
     [SPECIES_RHYPERIOR] =
@@ -20564,6 +20643,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_RhyperiorNormal,
         .shinyPalette = sMonPalette_RhyperiorShiny,
+        .levelUpLearnset = sRhyperiorLevelUpLearnset,
     },
 
     [SPECIES_TANGROWTH] =
@@ -20603,6 +20683,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_TangrowthNormal,
         .shinyPalette = sMonPalette_TangrowthShiny,
+        .levelUpLearnset = sTangrowthLevelUpLearnset,
     },
 
     [SPECIES_ELECTIVIRE] =
@@ -20643,6 +20724,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_ElectivireNormal,
         .shinyPalette = sMonPalette_ElectivireShiny,
+        .levelUpLearnset = sElectivireLevelUpLearnset,
     },
 
     [SPECIES_MAGMORTAR] =
@@ -20683,6 +20765,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_MagmortarNormal,
         .shinyPalette = sMonPalette_MagmortarShiny,
+        .levelUpLearnset = sMagmortarLevelUpLearnset,
     },
 
     [SPECIES_TOGEKISS] =
@@ -20723,6 +20806,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_TogekissNormal,
         .shinyPalette = sMonPalette_TogekissShiny,
+        .levelUpLearnset = sTogekissLevelUpLearnset,
     },
 
     [SPECIES_YANMEGA] =
@@ -20763,6 +20847,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_YanmegaNormal,
         .shinyPalette = sMonPalette_YanmegaShiny,
+        .levelUpLearnset = sYanmegaLevelUpLearnset,
     },
 
     [SPECIES_LEAFEON] =
@@ -20802,6 +20887,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_LeafeonNormal,
         .shinyPalette = sMonPalette_LeafeonShiny,
+        .levelUpLearnset = sLeafeonLevelUpLearnset,
     },
 
     [SPECIES_GLACEON] =
@@ -20841,6 +20927,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_GlaceonNormal,
         .shinyPalette = sMonPalette_GlaceonShiny,
+        .levelUpLearnset = sGlaceonLevelUpLearnset,
     },
 
     [SPECIES_GLISCOR] =
@@ -20880,6 +20967,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 11,
         .palette = sMonPalette_GliscorNormal,
         .shinyPalette = sMonPalette_GliscorShiny,
+        .levelUpLearnset = sGliscorLevelUpLearnset,
     },
 
     [SPECIES_MAMOSWINE] =
@@ -20919,6 +21007,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_MamoswineNormal,
         .shinyPalette = sMonPalette_MamoswineShiny,
+        .levelUpLearnset = sMamoswineLevelUpLearnset,
     },
 
     [SPECIES_PORYGON_Z] =
@@ -20959,6 +21048,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_PorygonZNormal,
         .shinyPalette = sMonPalette_PorygonZShiny,
+        .levelUpLearnset = sPorygonZLevelUpLearnset,
     },
 
     [SPECIES_GALLADE] =
@@ -20999,6 +21089,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 5,
         .palette = sMonPalette_GalladeNormal,
         .shinyPalette = sMonPalette_GalladeShiny,
+        .levelUpLearnset = sGalladeLevelUpLearnset,
     },
 
     [SPECIES_PROBOPASS] =
@@ -21040,6 +21131,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 4,
         .palette = sMonPalette_ProbopassNormal,
         .shinyPalette = sMonPalette_ProbopassShiny,
+        .levelUpLearnset = sProbopassLevelUpLearnset,
     },
 
     [SPECIES_DUSKNOIR] =
@@ -21080,6 +21172,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_DusknoirNormal,
         .shinyPalette = sMonPalette_DusknoirShiny,
+        .levelUpLearnset = sDusknoirLevelUpLearnset,
     },
 
     [SPECIES_FROSLASS] =
@@ -21118,6 +21211,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 3,
         .palette = sMonPalette_FroslassNormal,
         .shinyPalette = sMonPalette_FroslassShiny,
+        .levelUpLearnset = sFroslassLevelUpLearnset,
     },
 
     [SPECIES_ROTOM] =
@@ -21180,6 +21274,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_UxieNormal,
         .shinyPalette = sMonPalette_UxieShiny,
+        .levelUpLearnset = sUxieLevelUpLearnset,
     },
 
     [SPECIES_MESPRIT] =
@@ -21223,6 +21318,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 8,
         .palette = sMonPalette_MespritNormal,
         .shinyPalette = sMonPalette_MespritShiny,
+        .levelUpLearnset = sMespritLevelUpLearnset,
     },
 
     [SPECIES_AZELF] =
@@ -21265,6 +21361,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 6,
         .palette = sMonPalette_AzelfNormal,
         .shinyPalette = sMonPalette_AzelfShiny,
+        .levelUpLearnset = sAzelfLevelUpLearnset,
     },
 
     [SPECIES_DIALGA] =
@@ -21350,6 +21447,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_HeatranNormal,
         .shinyPalette = sMonPalette_HeatranShiny,
+        .levelUpLearnset = sHeatranLevelUpLearnset,
     },
 
     [SPECIES_REGIGIGAS] =
@@ -21390,6 +21488,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 13,
         .palette = sMonPalette_RegigigasNormal,
         .shinyPalette = sMonPalette_RegigigasShiny,
+        .levelUpLearnset = sRegigigasLevelUpLearnset,
     },
 
     [SPECIES_GIRATINA] =
@@ -21454,6 +21553,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_CresseliaNormal,
         .shinyPalette = sMonPalette_CresseliaShiny,
+        .levelUpLearnset = sCresseliaLevelUpLearnset,
     },
 
     [SPECIES_PHIONE] =
@@ -21494,6 +21594,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 9,
         .palette = sMonPalette_PhioneNormal,
         .shinyPalette = sMonPalette_PhioneShiny,
+        .levelUpLearnset = sPhioneLevelUpLearnset,
     },
 
     [SPECIES_MANAPHY] =
@@ -21534,6 +21635,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 10,
         .palette = sMonPalette_ManaphyNormal,
         .shinyPalette = sMonPalette_ManaphyShiny,
+        .levelUpLearnset = sManaphyLevelUpLearnset,
     },
 
     [SPECIES_DARKRAI] =
@@ -21575,6 +21677,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 0,
         .palette = sMonPalette_DarkraiNormal,
         .shinyPalette = sMonPalette_DarkraiShiny,
+        .levelUpLearnset = sDarkraiLevelUpLearnset,
     },
 
     [SPECIES_SHAYMIN] =
@@ -21618,6 +21721,7 @@ const struct SpeciesInfo gSpeciesInfo[NUM_SPECIES + 1] =
         .backPicYOffset = 15,
         .palette = sMonPalette_ShayminNormal,
         .shinyPalette = sMonPalette_ShayminShiny,
+        .levelUpLearnset = sShayminLevelUpLearnset,
     },
 
     [SPECIES_ARCEUS] =
