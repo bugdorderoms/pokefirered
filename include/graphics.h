@@ -1044,7 +1044,8 @@ extern const u8 gHealthboxElementsGfxTable[][32];
 extern const u16 gBattleInterface_BallStatusBarPal[];
 extern const u16 gBattleInterface_BallDisplayPal[];
 extern const u16 gBattleInterface_SummaryBallDisplayGfx[];
-extern const u8 gBattleInterface_AbilityPopUp[];
+extern const u8 gBattleInterface_AbilityPopUpPlayer[];
+extern const u8 gBattleInterface_AbilityPopUpOpponent[];
 extern const u16 gBattleInterface_AbilityPopUpPal[];
 extern const u8 gBattleInterfaceGfx_RaidShield[];
 

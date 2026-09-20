@@ -2031,9 +2031,15 @@ void TryAddLastUsedBallTrigger(void)
     {
         if (GetSpriteTileStartByTag(GFX_TAG_LAST_USED_BALL_THROW) == 0xFFFF)
         {
+            const struct SpritePalette spritePalette =
+            {
+                .data = gBattleInterface_AbilityPopUpPal,
+                .tag = GFX_TAG_ABILITY_POP_UP
+            };
+            
             // Create trigger
             LoadSpriteSheet(&sLastUsedBallThrowSpriteSheet);
-            LoadSpritePalette(&gSpritePalette_AbilityPopUp);
+            LoadSpritePalette(&spritePalette);
             
             gBattleStruct->lastUsedBall.triggerSpriteId = CreateSprite(&sLastUsedBallThrowSpriteTemplate, LAST_BALL_WIN_POS_X, LAST_BALL_WIN_POS_Y, 5);
             gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].sInitialX = LAST_BALL_WIN_POS_X;

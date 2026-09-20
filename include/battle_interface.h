@@ -238,6 +238,4 @@ void ChangeLastBallCycleArrowsColor(bool32 showArrows);
 void CreateRaidShieldSprites(u32 battlerId, u32 numShields, bool32 animate);
 bool32 DestroyRaidShieldSprites(u32 numShields);
 
-extern const struct SpritePalette gSpritePalette_AbilityPopUp;
-
 #endif // GUARD_BATTLE_INTERFACE_H

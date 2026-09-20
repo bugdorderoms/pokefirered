@@ -116,12 +116,6 @@ static const struct SpriteTemplate sItemThrowSpriteTemplate =
     .callback = AnimThrowItemProjectile,
 };
 
-const struct SpritePalette gSpritePalette_AbilityPopUp =
-{
-    .data = gBattleInterface_AbilityPopUpPal,
-    .tag = GFX_TAG_ABILITY_POP_UP
-};
-
 static const struct OamData sOamData_AbilityPopUp =
 {
     .shape = ST_OAM_H_RECTANGLE,
@@ -148,6 +142,16 @@ static const union AnimCmd *const sSpriteAnimTable_AbilityPopUp[] =
 static const union AnimCmd *const sSpriteAnimTable_AbilityPopUp2[] =
 {
     sSpriteAnim_AbilityPopUp2
+};
+
+struct
+{
+    const u8 *tiles;
+    const u16 *palette;
+} static const sAbilityPopUpGfxData[B_SIDE_COUNT] =
+{
+    [B_SIDE_PLAYER]   = { gBattleInterface_AbilityPopUpPlayer,   gBattleInterface_AbilityPopUpPal },
+    [B_SIDE_OPPONENT] = { gBattleInterface_AbilityPopUpOpponent, gBattleInterface_AbilityPopUpPal }
 };
 
 static const u16 sAbilityPopUpOverwrittenPixelsTable[][2] =
@@ -1372,10 +1376,10 @@ void AnimTask_GetBattlersFromArg(u32 taskId)
 #define tBattler         data[4]
 #define tIsMain          data[5]
 
-static void RestoreAbilityPopUpOverwrittenPixels(u8 * tiles)
+static void RestoreAbilityPopUpOverwrittenPixels(u32 battlerId, u8 * tiles)
 {
     u32 i, j, pixelCount;
-    const u8 *src, *popUpImg = gBattleInterface_AbilityPopUp;
+    const u8 *src, *popUpImg = sAbilityPopUpGfxData[GetBattlerSide(battlerId)].tiles;
     u8 *dest, *buffer = AllocZeroed(0x800);
     
     CpuCopy32(tiles, buffer, 0x800);
@@ -1483,7 +1487,7 @@ static void PrintBattlerAndAbilityOnAbilityPopUp(u32 battler, u32 sprite, u32 sp
     AbilityPopUpPrinter(gAbilities[ability].name, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP) + 256,
                         (void*)(OBJ_VRAM0) + (gSprites[sprite2].oam.tileNum * TILE_SIZE_4BPP) + 256, 4, TEXT_COLOR_LIGHT_GREEN, TEXT_COLOR_RED, TEXT_COLOR_WHITE);
 
-    RestoreAbilityPopUpOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP));
+    RestoreAbilityPopUpOverwrittenPixels(battler, (void*)(OBJ_VRAM0) + (gSprites[sprite].oam.tileNum * TILE_SIZE_4BPP));
 }
 
 static void SpriteCB_AbilityPopUp(struct Sprite * sprite)
@@ -1568,22 +1572,30 @@ void AnimTask_CreateAbilityPopUp(u32 taskId)
 {
     s16 x, y;
     u32 position, spriteId1, spriteId2, battler = gBattleAnimAttacker;
+    u32 battlerSide = GetBattlerSide(battler);
     u32 gfxTag = GFX_TAG_ABILITY_POP_UP + battler;
+    u32 palTag = GFX_TAG_ABILITY_POP_UP + battlerSide;
     bool32 useDoublesCoords;
     
     // Resources
     const struct SpriteSheet sSpriteSheet_AbilityPopUp =
     {
-        .data = gBattleInterface_AbilityPopUp,
+        .data = sAbilityPopUpGfxData[battlerSide].tiles,
         .size = 0x0800,
         .tag = gfxTag
+    };
+    
+    const struct SpritePalette sSpritePalette_AbilityPopUp =
+    {
+        .data = sAbilityPopUpGfxData[battlerSide].palette,
+        .tag = palTag
     };
     
     // Sprite templates
     const struct SpriteTemplate sSpriteTemplate_AbilityPopUp =
     {
         .tileTag = gfxTag,
-        .paletteTag = GFX_TAG_ABILITY_POP_UP,
+        .paletteTag = palTag,
         .oam = &sOamData_AbilityPopUp,
         .anims = sSpriteAnimTable_AbilityPopUp,
         .images = NULL,
@@ -1593,7 +1605,7 @@ void AnimTask_CreateAbilityPopUp(u32 taskId)
     const struct SpriteTemplate sSpriteTemplate_AbilityPopUp2 =
     {
         .tileTag = gfxTag,
-        .paletteTag = GFX_TAG_ABILITY_POP_UP,
+        .paletteTag = palTag,
         .oam = &sOamData_AbilityPopUp,
         .anims = sSpriteAnimTable_AbilityPopUp2,
         .images = NULL,
@@ -1601,7 +1613,7 @@ void AnimTask_CreateAbilityPopUp(u32 taskId)
         .callback = SpriteCB_AbilityPopUp
     };
     LoadSpriteSheet(&sSpriteSheet_AbilityPopUp);
-    LoadSpritePalette(&gSpritePalette_AbilityPopUp);
+    LoadSpritePalette(&sSpritePalette_AbilityPopUp);
     
     gActiveAbilityPopUps |= Bit(battler);
     
@@ -1613,7 +1625,7 @@ void AnimTask_CreateAbilityPopUp(u32 taskId)
     x = sAbilityPopUpCoords[useDoublesCoords][position].x;
     y = sAbilityPopUpCoords[useDoublesCoords][position].y;
     
-    if (GetBattlerSide(battler) == B_SIDE_PLAYER)
+    if (battlerSide == B_SIDE_PLAYER)
     {
         spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp, x - ABILITY_POP_UP_POS_X_SLIDE, y, 0);
         spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2, x - ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF, y, 0);

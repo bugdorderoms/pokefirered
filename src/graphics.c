@@ -329,7 +329,8 @@ const u8 gBattleInterfaceGfx_Status4[] = INCBIN_U8("graphics/battle_interface/st
 const u8 gUnknown_8D12A44[] = INCBIN_U8("graphics/battle_interface/unknown_D12A44.4bpp");
 const u8 gUnknown_8D12A64[] = INCBIN_U8("graphics/battle_interface/unknown_D12A64.4bpp");
 
-const u8 gBattleInterface_AbilityPopUp[] = INCBIN_U8("graphics/battle_interface/ability_pop_up.4bpp");
+const u8 gBattleInterface_AbilityPopUpPlayer[] = INCBIN_U8("graphics/battle_interface/ability_pop_up.4bpp");
+const u8 gBattleInterface_AbilityPopUpOpponent[] = INCBIN_U8("graphics/battle_interface/ability_pop_up.4bpp");
 const u16 gBattleInterface_AbilityPopUpPal[] = INCBIN_U16("graphics/battle_interface/ability_pop_up.gbapal");
 
 const u8 gBattleInterfaceGfx_RaidShield[] = INCBIN_U8("graphics/battle_interface/raid_barrier.4bpp");
