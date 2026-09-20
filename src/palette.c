@@ -152,42 +152,23 @@ bool32 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u32 startY, u32 ta
 void BlendPalette(u32 palOffset, u32 numEntries, u32 coeff, u32 blendColor)
 {
     u32 i;
+    u32 rBlend = GET_R(blendColor);
+    u32 gBlend = GET_G(blendColor);
+    u32 bBlend = GET_B(blendColor);
     
     for (i = 0; i < numEntries; i++)
     {
         u32 index = i + palOffset;
-        s8 r = GET_R(gPlttBufferUnfaded[index]);
-        s8 g = GET_G(gPlttBufferUnfaded[index]);
-        s8 b = GET_B(gPlttBufferUnfaded[index]);
-        
-        gPlttBufferFaded[index] = ((r + (((GET_R(blendColor) - r) * coeff) >> 4)) << 0)
-                                | ((g + (((GET_G(blendColor) - g) * coeff) >> 4)) << 5)
-                                | ((b + (((GET_B(blendColor) - b) * coeff) >> 4)) << 10);
-    }
-}
+        u32 color = gPlttBufferUnfaded[index];
 
-void BlendPalettesAt(u16 * palbuff, u32 blend_pal, u32 coefficient, s32 size)
-{
-    if (coefficient == 16)
-    {
-        while (--size != -1)
-            *palbuff++ = blend_pal;
-    }
-    else
-    {
-        u32 r = (blend_pal >>  0) & 0x1F;
-        u32 g = (blend_pal >>  5) & 0x1F;
-        u32 b = (blend_pal >> 10) & 0x1F;
+        s8 r = GET_R(color);
+        s8 g = GET_G(color);
+        s8 b = GET_B(color);
         
-        while (--size != -1)
-        {
-            u32 r2 = (*palbuff >>  0) & 0x1F;
-            u32 g2 = (*palbuff >>  5) & 0x1F;
-            u32 b2 = (*palbuff >> 10) & 0x1F;
-            *palbuff++ = ((r2 + (((r - r2) * coefficient) >> 4)) <<  0)
-                       | ((g2 + (((g - g2) * coefficient) >> 4)) <<  5)
-                       | ((b2 + (((b - b2) * coefficient) >> 4)) << 10);
-        }
+        gPlttBufferFaded[index] = RGBA((r + (((rBlend - r) * coeff) >> 4)),
+                                       (g + (((gBlend - g) * coeff) >> 4)),
+                                       (b + (((bBlend - b) * coeff) >> 4)),
+                                       IS_ALPHA(color));
     }
 }
 
@@ -337,7 +318,7 @@ static u32 UpdateFastPaletteFade(void)
                 g = g0;
             if (b < b0)
                 b = b0;
-            gPlttBufferFaded[i] = RGB(r, g, b);
+            gPlttBufferFaded[i] = RGBA(r, g, b, IS_ALPHA(gPlttBufferUnfaded[i]));
         }
         break;
     case FAST_FADE_OUT_TO_WHITE:
@@ -352,7 +333,7 @@ static u32 UpdateFastPaletteFade(void)
                 g = 31;
             if (b > 31)
                 b = 31;
-            gPlttBufferFaded[i] = RGB(r, g, b);
+            gPlttBufferFaded[i] = RGBA(r, g, b, IS_ALPHA(gPlttBufferFaded[i]));
         }
         break;
     case FAST_FADE_IN_FROM_BLACK:
@@ -371,7 +352,7 @@ static u32 UpdateFastPaletteFade(void)
                 g = g0;
             if (b > b0)
                 b = b0;
-            gPlttBufferFaded[i] = RGB(r, g, b);
+            gPlttBufferFaded[i] = RGBA(r, g, b, IS_ALPHA(gPlttBufferUnfaded[i]));
         }
         break;
     case FAST_FADE_OUT_TO_BLACK:
@@ -386,7 +367,7 @@ static u32 UpdateFastPaletteFade(void)
                 g = 0;
             if (b < 0)
                 b = 0;
-            gPlttBufferFaded[i] = RGB(r, g, b);
+            gPlttBufferFaded[i] = RGBA(r, g, b, IS_ALPHA(gPlttBufferFaded[i]));
         }
     }
     gPaletteFade.objPaletteToggle ^= TRUE;
@@ -408,10 +389,10 @@ static u32 UpdateFastPaletteFade(void)
             CpuCopy32(gPlttBufferUnfaded, gPlttBufferFaded, PLTT_SIZE);
             break;
         case FAST_FADE_OUT_TO_WHITE:
-            CpuFill32(PALETTES_ALL, gPlttBufferFaded, PLTT_SIZE);
+            CpuFill32(RGB_WHITE, gPlttBufferFaded, PLTT_SIZE);
             break;
         case FAST_FADE_OUT_TO_BLACK:
-            CpuFill32(0x00000000, gPlttBufferFaded, PLTT_SIZE);
+            CpuFill32(RGB_BLACK, gPlttBufferFaded, PLTT_SIZE);
             break;
         }
         gPaletteFade.mode = NORMAL_FADE;
@@ -529,79 +510,91 @@ void BlendPalettesUnfaded(u32 selectedPalettes, u32 coeff, u32 color)
 
 void TintPalette_GrayScale(u16 *palette, u32 count)
 {
-    s32 r, g, b, i;
-    u32 gray;
+    s32 r, g, b;
+    u32 i, gray;
 
     for (i = 0; i < count; ++i)
     {
         r = GET_R(*palette);
         g = GET_G(*palette);
         b = GET_B(*palette);
+        
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
-        *palette++ = RGB2(gray, gray, gray);
+        
+        *palette++ = RGBA(gray, gray, gray, IS_ALPHA(*palette));
     }
 }
 
 void TintPalette_GrayScale2(u16 *palette, u32 count)
 {
-    s32 r, g, b, i;
-    u32 gray;
+    s32 r, g, b;
+    u32 i, gray;
 
     for (i = 0; i < count; ++i)
     {
         r = GET_R(*palette);
         g = GET_G(*palette);
         b = GET_B(*palette);
+        
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
-
         if (gray > 0x1F)
             gray = 0x1F;
+        
         gray = sRoundedDownGrayscaleMap[gray];
-        *palette++ = RGB2(gray, gray, gray);
+        
+        *palette++ = RGBA(gray, gray, gray, IS_ALPHA(*palette));
     }
 }
 
 void TintPalette_SepiaTone(u16 *palette, u32 count)
 {
-    s32 r, g, b, i;
-    u32 gray;
+    s32 r, g, b;
+    u32 i, gray;
 
     for (i = 0; i < count; ++i)
     {
         r = GET_R(*palette);
         g = GET_G(*palette);
         b = GET_B(*palette);
+        
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
+        
         r = (u16)((Q_8_8(1.2) * gray)) >> 8;
         g = (u16)((Q_8_8(1.0) * gray)) >> 8;
         b = (u16)((Q_8_8(0.94) * gray)) >> 8;
+        
         if (r > 31)
             r = 31;
-        *palette++ = RGB2(r, g, b);
+        
+        *palette++ = RGBA(r, g, b, IS_ALPHA(*palette));
     }
 }
 
 void TintPalette_CustomTone(u16 *palette, u32 count, u16 rTone, u16 gTone, u16 bTone)
 {
-    s32 r, g, b, i;
-    u32 gray;
+    s32 r, g, b;
+    u32 i, gray;
 
     for (i = 0; i < count; ++i)
     {
         r = GET_R(*palette);
         g = GET_G(*palette);
         b = GET_B(*palette);
+        
         gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
+        
         r = (u16)((rTone * gray)) >> 8;
         g = (u16)((gTone * gray)) >> 8;
         b = (u16)((bTone * gray)) >> 8;
+        
         if (r > 31)
             r = 31;
         if (g > 31)
             g = 31;
         if (b > 31)
             b = 31;
-        *palette++ = RGB2(r, g, b);
+        
+        *palette++ = RGBA(r, g, b, IS_ALPHA(*palette));
     }
 }
 

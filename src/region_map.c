@@ -842,7 +842,7 @@ static void RegionMap_DarkenPalette(u16 *pal, u32 size, u32 tint)
         g = (((g << 8) / 100) * tint) >> 8;
         b = (((b << 8) / 100) * tint) >> 8;
 
-        *pal = RGB2(r, g, b);
+        *pal = RGB(r, g, b);
         pal++;
     }
 }

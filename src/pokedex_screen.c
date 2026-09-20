@@ -1030,10 +1030,10 @@ static void Task_PokedexScreen(u32 taskId)
         if (gPaletteFade.bufferTransferDisabled)
         {
             gPaletteFade.bufferTransferDisabled = FALSE;
-            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0, RGB_WHITE);
         }
         else
-            BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITE);
         
         sPokedexScreenData->state = 5;
         break;
@@ -1066,7 +1066,7 @@ static void Task_PokedexScreen(u32 taskId)
                 {
                     RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
                     sPokedexScreenData->category = sPokedexScreenData->modeSelectInput;
-                    BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                    BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                     sPokedexScreenData->state = 7;
                 }
                 break;
@@ -1074,7 +1074,7 @@ static void Task_PokedexScreen(u32 taskId)
             case DEX_MODE(NUMERICAL_NATIONAL):
                 RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
                 sPokedexScreenData->dexOrderId = sPokedexScreenData->modeSelectInput - DEX_CATEGORY_COUNT;
-                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                 sPokedexScreenData->state = 9;
                 break;
             case DEX_MODE(ATOZ):
@@ -1084,7 +1084,7 @@ static void Task_PokedexScreen(u32 taskId)
                 RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
                 sPokedexScreenData->dexOrderId = sPokedexScreenData->modeSelectInput - DEX_CATEGORY_COUNT;
                 sPokedexScreenData->characteristicOrderMenuItemsAbove = sPokedexScreenData->characteristicOrderMenuCursorPos = 0;
-                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                 sPokedexScreenData->state = 8;
                 break;
             }
@@ -1238,7 +1238,7 @@ static void Task_DexScreen_NumericalOrder(u32 taskId)
         break;
     case 4:
         ShowBg(1);
-        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITE);
         sPokedexScreenData->state = 5;
         break;
     case 5:
@@ -1256,14 +1256,14 @@ static void Task_DexScreen_NumericalOrder(u32 taskId)
             {
                 sPokedexScreenData->dexSpecies = sPokedexScreenData->characteristicMenuInput;
                 RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
-                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                 sPokedexScreenData->state = 7;
             }
         }
         else if (JOY_NEW(B_BUTTON))
         {
             RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
-            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
             sPokedexScreenData->state = 1;
         }
         break;
@@ -1327,7 +1327,7 @@ static void Task_DexScreen_CharacteristicOrder(u32 taskId)
         break;
     case 4:
         ShowBg(1);
-        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITE);
         sPokedexScreenData->state = 5;
         break;
     case 5:
@@ -1344,14 +1344,14 @@ static void Task_DexScreen_CharacteristicOrder(u32 taskId)
             if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(sPokedexScreenData->characteristicMenuInput), FLAG_GET_SEEN) && !DexScreen_LookUpCategoryBySpecies(sPokedexScreenData->characteristicMenuInput))
             {
                 RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
-                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                 sPokedexScreenData->state = 7;
             }
         }
         else if (JOY_NEW(B_BUTTON))
         {
             RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
-            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
             sPokedexScreenData->state = 1;
         }
         break;
@@ -1641,7 +1641,7 @@ static void Task_DexScreen_CategorySubmenu(u32 taskId)
         sPokedexScreenData->state = 3;
         break;
     case 3:
-        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITE);
         ShowBg(3);
         ShowBg(2);
         ShowBg(1);
@@ -1728,7 +1728,7 @@ static void Task_DexScreen_CategorySubmenu(u32 taskId)
     case 7:
         RemoveScrollIndicatorArrowPair(sPokedexScreenData->scrollArrowsTaskId);
         ListMenuRemoveCursorObject(sPokedexScreenData->categoryPageCursorTaskId, 0);
-        BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
         sPokedexScreenData->state = 1;
         break;
     case 8:
@@ -1973,7 +1973,7 @@ static void Task_DexScreen_ShowMonPage(u32 taskId)
         sPokedexScreenData->state = 4;
         break;
     case 4:
-        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(~0x8000, 0, 16, 0, RGB_WHITE);
         ShowBg(3);
         ShowBg(2);
         ShowBg(1);
@@ -1990,19 +1990,19 @@ static void Task_DexScreen_ShowMonPage(u32 taskId)
         else if (JOY_NEW(B_BUTTON))
         {
             RemoveDexPageWindows();
-            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
             sPokedexScreenData->state = 1;
         }
         else if (JOY_NEW(DPAD_UP) && DexScreen_TryScrollMonsVertical(1))
         {
             RemoveDexPageWindows();
-            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
             sPokedexScreenData->state = 6;
         }
         else if (JOY_NEW(DPAD_DOWN) && DexScreen_TryScrollMonsVertical(0))
         {
             RemoveDexPageWindows();
-            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
             sPokedexScreenData->state = 6;
         }
         else
@@ -2014,14 +2014,14 @@ static void Task_DexScreen_ShowMonPage(u32 taskId)
                 {
                     --sPokedexScreenData->formIndex;
                     RemoveDexPageWindows();
-                    BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                    BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                     sPokedexScreenData->state = 13;
                 }
                 else if (JOY_NEW(DPAD_RIGHT) && sPokedexScreenData->forms[sPokedexScreenData->formIndex + 1] != SPECIES_NONE)
                 {
                     ++sPokedexScreenData->formIndex;
                     RemoveDexPageWindows();
-                    BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+                    BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
                     sPokedexScreenData->state = 13;
                 }
             }
@@ -2049,7 +2049,7 @@ static void Task_DexScreen_ShowMonPage(u32 taskId)
     case 9:
         if (JOY_NEW(A_BUTTON))
         {
-            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(~0x8000, 0, 0, 16, RGB_WHITE);
             sPokedexScreenData->state = 12;
         }
         else if (JOY_NEW(B_BUTTON))

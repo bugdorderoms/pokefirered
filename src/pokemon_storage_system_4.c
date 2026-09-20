@@ -1070,7 +1070,7 @@ bool32 DoWallpaperGfxChange(void)
     switch (gPSSData->wallpaperChangeState)
     {
     case 0:
-        BeginNormalPaletteFade(gPSSData->field_738, 1, 0, 16, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(gPSSData->field_738, 1, 0, 16, RGB_WHITE);
         gPSSData->wallpaperChangeState++;
         break;
     case 1:
@@ -1084,7 +1084,7 @@ bool32 DoWallpaperGfxChange(void)
         if (WaitForWallpaperGfxLoad())
         {
             sub_8091EF0();
-            BeginNormalPaletteFade(gPSSData->field_738, 1, 16, 0, RGB_WHITEALPHA);
+            BeginNormalPaletteFade(gPSSData->field_738, 1, 16, 0, RGB_WHITE);
             gPSSData->wallpaperChangeState++;
         }
         break;

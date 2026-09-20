@@ -49,7 +49,6 @@ extern u16 gPlttBufferUnfaded[PLTT_BUFFER_SIZE];
 extern u16 gPlttBufferFaded[PLTT_BUFFER_SIZE];
 
 void BlendPalette(u32, u32, u32, u32);
-void BlendPalettesAt(u16 * palbuff, u32 blend_pal, u32 coefficient, s32 size);
 void LoadCompressedPalette(const u32 *src, u32 offset, u32 size);
 void LoadPalette(const void *src, u32 offset, u32 size);
 void FillPalette(u32 value, u32 offset, u32 size);

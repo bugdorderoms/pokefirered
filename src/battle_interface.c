@@ -2379,10 +2379,8 @@ void SwapBallToDisplay(bool32 isSameBall)
 void ChangeLastBallCycleArrowsColor(bool32 showArrows)
 {
     u32 paletteNum;
-    struct PlttData *defaultPlttArrow;
-    struct PlttData *defaultPlttOutline;
-    struct PlttData *pltArrow;
-    struct PlttData *pltOutline;
+    u32 defaultArrowColor, defaultArrowOutlineColor;
+    u16 *arrowColor, *arrowOutlineColor;
     
     // Don't wast time doing this every time, only if necessary
     if (gBattleStruct->lastUsedBall.triggerSpriteId != MAX_SPRITES && gBattleStruct->lastUsedBall.arrowsVisible != showArrows)
@@ -2391,29 +2389,23 @@ void ChangeLastBallCycleArrowsColor(bool32 showArrows)
         
         paletteNum = (16 + gSprites[gBattleStruct->lastUsedBall.triggerSpriteId].oam.paletteNum) * 16;
         
-        pltArrow = (struct PlttData *)&gPlttBufferFaded[paletteNum + 8]; // Arrow color is in idx 8
-        pltOutline = (struct PlttData *)&gPlttBufferFaded[paletteNum + 9]; // Arrow outline is in idx 9
+        arrowColor = &gPlttBufferFaded[paletteNum + 8]; // Arrow color is in idx 8
+        arrowOutlineColor = &gPlttBufferFaded[paletteNum + 9]; // Arrow outline is in idx 9
         
         if (!showArrows)
         {
-            defaultPlttArrow = (struct PlttData *)&gPlttBufferFaded[paletteNum + 6]; // Background color is idx 6
-            pltArrow->r = defaultPlttArrow->r;
-            pltArrow->g = defaultPlttArrow->g;
-            pltArrow->b = defaultPlttArrow->b;
-            pltOutline->r = defaultPlttArrow->r;
-            pltOutline->g = defaultPlttArrow->g;
-            pltOutline->b = defaultPlttArrow->b;
+            defaultArrowColor = gPlttBufferFaded[paletteNum + 6]; // Background color is idx 6
+            
+            *arrowColor = defaultArrowColor;
+            *arrowOutlineColor = defaultArrowColor;
         }
         else
         {
-            defaultPlttArrow = (struct PlttData *)&gPlttBufferFaded[paletteNum + 2]; // Grey color is idx 2
-            defaultPlttOutline = (struct PlttData *)&gPlttBufferFaded[paletteNum + 5]; // Light grey color for outline is idx 5
-            pltArrow->r = defaultPlttArrow->r;
-            pltArrow->g = defaultPlttArrow->g;
-            pltArrow->b = defaultPlttArrow->b;
-            pltOutline->r = defaultPlttOutline->r;
-            pltOutline->g = defaultPlttOutline->g;
-            pltOutline->b = defaultPlttOutline->b;
+            defaultArrowColor = gPlttBufferFaded[paletteNum + 2]; // Grey color is idx 2
+            defaultArrowOutlineColor = gPlttBufferFaded[paletteNum + 5]; // Light grey color for outline is idx 5
+            
+            *arrowColor = defaultArrowColor;
+            *arrowOutlineColor = defaultArrowOutlineColor;
         }
     }
 }

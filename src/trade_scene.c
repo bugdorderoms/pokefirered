@@ -1414,15 +1414,15 @@ static bool32 DoTradeAnim_Cable(void)
         }
         break;
     case 34:
-        BlendPalettes(0x1, 16, RGB_WHITEALPHA);
+        BlendPalettes(0x1, 16, RGB_WHITE);
         sTradeData->state++;
         break;
     case 35:
-        BlendPalettes(0x1, 0, RGB_WHITEALPHA);
+        BlendPalettes(0x1, 0, RGB_WHITE);
         sTradeData->state++;
         break;
     case 36:
-        BlendPalettes(0x1, 16, RGB_WHITEALPHA);
+        BlendPalettes(0x1, 16, RGB_WHITE);
         sTradeData->state++;
         break;
     case 37:
@@ -1450,7 +1450,7 @@ static bool32 DoTradeAnim_Cable(void)
             sTradeData->state++;
             gSprites[sTradeData->pokePicSpriteIdxs[0]].invisible = TRUE;
             gSprites[sTradeData->pokePicSpriteIdxs[1]].invisible = TRUE;
-            BlendPalettes(0x1, 0, RGB_WHITEALPHA);
+            BlendPalettes(0x1, 0, RGB_WHITE);
         }
         break;
     case 39:
@@ -1588,12 +1588,12 @@ static bool32 DoTradeAnim_Cable(void)
         gSprites[sTradeData->pokeballSpriteId2].callback = SpriteCB_TradePokeball_Inbound;
         StartSpriteAnim(&gSprites[sTradeData->pokeballSpriteId2], 1);
         StartSpriteAffineAnim(&gSprites[sTradeData->pokeballSpriteId2], 2);
-        BlendPalettes(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 16, RGB_WHITEALPHA);
+        BlendPalettes(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 16, RGB_WHITE);
         sTradeData->state++;
         sTradeData->timer = 0;
         break;
     case 64:
-        BeginNormalPaletteFade(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 1, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 1, 16, 0, RGB_WHITE);
         sTradeData->state++;
         break;
     case 65:
@@ -1904,15 +1904,15 @@ static bool32 DoTradeAnim_Wireless(void)
         }
         break;
     case 34:
-        BlendPalettes(0x8, 16, RGB_WHITEALPHA);
+        BlendPalettes(0x8, 16, RGB_WHITE);
         sTradeData->state++;
         break;
     case 35:
-        BlendPalettes(0x8, 16, RGB_WHITEALPHA);
+        BlendPalettes(0x8, 16, RGB_WHITE);
         sTradeData->state++;
         break;
     case 36:
-        BlendPalettes(0x8, 16, RGB_WHITEALPHA);
+        BlendPalettes(0x8, 16, RGB_WHITE);
         sTradeData->state++;
         break;
     case 37:
@@ -2096,12 +2096,12 @@ static bool32 DoTradeAnim_Wireless(void)
         gSprites[sTradeData->pokeballSpriteId2].callback = SpriteCB_TradePokeball_Inbound;
         StartSpriteAnim(&gSprites[sTradeData->pokeballSpriteId2], 1);
         StartSpriteAffineAnim(&gSprites[sTradeData->pokeballSpriteId2], 2);
-        BlendPalettes(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 16, RGB_WHITEALPHA);
+        BlendPalettes(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 16, RGB_WHITE);
         sTradeData->state++;
         sTradeData->timer = 0;
         break;
     case 64:
-        BeginNormalPaletteFade(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 1, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(1 << (16 + gSprites[sTradeData->pokeballSpriteId2].oam.paletteNum), 1, 16, 0, RGB_WHITE);
         sTradeData->state++;
         break;
     case 65:
@@ -2303,7 +2303,7 @@ static void SpriteCB_TradePokeball_Outbound(struct Sprite * sprite)
         PlaySE(SE_M_MEGA_KICK);
         sprite->callback = SpriteCB_TradePokeball_Outbound2;
         sprite->data[0] = 0;
-        BeginNormalPaletteFade(1 << (sprite->oam.paletteNum + 16), -1, 0, 16, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(1 << (sprite->oam.paletteNum + 16), -1, 0, 16, RGB_WHITE);
     }
 }
 
@@ -2818,7 +2818,7 @@ static void Task_CloseCenterWhiteColumn(u32 taskId)
         sTradeData->win0right -= 5;
 
         if (sTradeData->win0left > DISPLAY_WIDTH / 2 - 5)
-            BlendPalettes(0x8, 0, RGB_WHITEALPHA);
+            BlendPalettes(0x8, 0, RGB_WHITE);
     }
     else
     {

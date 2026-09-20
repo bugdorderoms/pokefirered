@@ -371,14 +371,32 @@ static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s
                 {
                     if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
                     {
-                        for (i = 0; i < 16; i++)
+                        for (i = 0; i < 16; i++, palOffset++)
                         {
+#if WEATHER_ALPHA_COLOR
+
                             // Apply gamma shift to the original color.
                             r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
                             g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
                             b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
                             
-                            gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
+                            gPlttBufferFaded[palOffset] = RGBA(r, g, b, IS_ALPHA(gPlttBufferUnfaded[palOffset]));
+                            
+#else
+    
+                            if (IS_ALPHA(gPlttBufferUnfaded[palOffset]))
+                                gPlttBufferFaded[palOffset] = gPlttBufferUnfaded[palOffset];
+                            else
+                            {
+                                // Apply gamma shift to the original color.
+                                r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
+                                g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
+                                b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
+                                
+                                gPlttBufferFaded[palOffset] = RGB(r, g, b);
+                            }
+                            
+#endif
                         }
                     }
                     else
@@ -400,8 +418,21 @@ static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s
                 {
                     if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
                     {
-                        for (i = 0; i < 16; i++)
-                            gPlttBufferFaded[palOffset++] = sDroughtWeatherColors[gammaIndex][DROUGHT_COLOR_INDEX(gPlttBufferUnfaded[palOffset])];
+                        for (i = 0; i < 16; i++, palOffset++)
+                        {
+#if WEATHER_ALPHA_COLOR
+
+                            gPlttBufferFaded[palOffset] = sDroughtWeatherColors[gammaIndex][DROUGHT_COLOR_INDEX(gPlttBufferUnfaded[palOffset])] | IS_ALPHA(gPlttBufferUnfaded[palOffset]);
+
+#else
+    
+                            if (IS_ALPHA(gPlttBufferUnfaded[palOffset]))
+                                gPlttBufferFaded[palOffset] = gPlttBufferUnfaded[palOffset];
+                            else
+                                gPlttBufferFaded[palOffset] = sDroughtWeatherColors[gammaIndex][DROUGHT_COLOR_INDEX(gPlttBufferUnfaded[palOffset])];
+                            
+#endif
+                        }
                     }
                     else
                     {
@@ -432,8 +463,10 @@ static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s
                     {
                         if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
                         {
-                            for (i = 0; i < 16; i++)
+                            for (i = 0; i < 16; i++, palOffset++)
                             {
+#if WEATHER_ALPHA_COLOR
+
                                 // Apply gamma shift to the original color.
                                 r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
                                 g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
@@ -444,7 +477,27 @@ static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s
                                 g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
                                 b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
                                 
-                                gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
+                                gPlttBufferFaded[palOffset] = RGBA(r, g, b, IS_ALPHA(gPlttBufferUnfaded[palOffset]));
+
+#else
+    
+                                if (IS_ALPHA(gPlttBufferUnfaded[palOffset]))
+                                    BlendPalette(palOffset, 1, blendCoeff, fadeColor);
+                                else
+                                {
+                                    // Apply gamma shift to the original color.
+                                    r = sGammaShiftTable[gammaIndex][GET_R(gPlttBufferUnfaded[palOffset])];
+                                    g = sGammaShiftTable[gammaIndex][GET_G(gPlttBufferUnfaded[palOffset])];
+                                    b = sGammaShiftTable[gammaIndex][GET_B(gPlttBufferUnfaded[palOffset])];
+                                    
+                                    // Apply target blend color to the original color.
+                                    r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
+                                    g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
+                                    b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
+                                    
+                                    gPlttBufferFaded[palOffset] = RGB(r, g, b);
+                                }
+#endif
                             }
                         }
                         else
@@ -464,8 +517,10 @@ static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s
                     {
                         if (curPalIndex < 13) // Excludes palettes 13, 14, 15 and sprite palettes.
                         {
-                            for (i = 0; i < 16; i++)
+                            for (i = 0; i < 16; i++, palOffset++)
                             {
+#if WEATHER_ALPHA_COLOR
+
                                 r = GET_R(gPlttBufferUnfaded[palOffset]);
                                 g = GET_G(gPlttBufferUnfaded[palOffset]);
                                 b = GET_B(gPlttBufferUnfaded[palOffset]);
@@ -480,7 +535,32 @@ static void ApplyGammaShift(u32 gammaType, u32 startPalIndex, u32 numPalettes, s
                                 g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
                                 b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
                                 
-                                gPlttBufferFaded[palOffset++] = RGB2(r, g, b);
+                                gPlttBufferFaded[palOffset] = RGBA(r, g, b, IS_ALPHA(gPlttBufferUnfaded[palOffset]));
+
+#else
+    
+                                if (IS_ALPHA(gPlttBufferUnfaded[palOffset]))
+                                    BlendPalette(palOffset, 1, blendCoeff, fadeColor);
+                                else
+                                {
+                                    r = GET_R(gPlttBufferUnfaded[palOffset]);
+                                    g = GET_G(gPlttBufferUnfaded[palOffset]);
+                                    b = GET_B(gPlttBufferUnfaded[palOffset]);
+                                    
+                                    offset = ((b & 0x1E) << 7) | ((g & 0x1E) << 3) | ((r & 0x1E) >> 1);
+                                    r = GET_R(sDroughtWeatherColors[gammaIndex][offset]);
+                                    g = GET_G(sDroughtWeatherColors[gammaIndex][offset]);
+                                    b = GET_B(sDroughtWeatherColors[gammaIndex][offset]);
+                                    
+                                    // Apply target blend color to the original color.
+                                    r += ((GET_R(fadeColor) - r) * blendCoeff) >> 4;
+                                    g += ((GET_G(fadeColor) - g) * blendCoeff) >> 4;
+                                    b += ((GET_B(fadeColor) - b) * blendCoeff) >> 4;
+                                    
+                                    gPlttBufferFaded[palOffset] = RGB(r, g, b);
+                                }
+                                
+#endif
                             }
                         }
                         else
@@ -536,7 +616,7 @@ void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes)
         fadeOut = FALSE;
         break;
     case FADE_FROM_WHITE:
-        fadeColor = RGB_WHITEALPHA;
+        fadeColor = RGB_WHITE;
         fadeOut = FALSE;
         break;
     case FADE_TO_BLACK:
@@ -544,7 +624,7 @@ void FadeSelectedPals(u32 mode, s8 delay, u32 selectedPalettes)
         fadeOut = TRUE;
         break;
     case FADE_TO_WHITE:
-        fadeColor = RGB_WHITEALPHA;
+        fadeColor = RGB_WHITE;
         fadeOut = TRUE;
         break;
     default:

@@ -62,14 +62,14 @@ static const u8 sDNSMapExceptions[] =
  * From 01:00 to 03:59 the last filter is used. */
 static const u16 sMidnightFilters[] =
 {
-    RGB2(14, 14, 6),    //CE19
-    RGB2(14, 14, 7),    //CE1D
-    RGB2(14, 14, 8),    //CE21
-    RGB2(15, 15, 8),    //EF21
-    RGB2(15, 15, 9),    //EF25
-    RGB2(15, 15, 9),    //EF25
-    RGB2(16, 16, 9),    //1026
-    RGB2(16, 16, 10),   //102A
+    RGB(14, 14, 6),    //CE19
+    RGB(14, 14, 7),    //CE1D
+    RGB(14, 14, 8),    //CE21
+    RGB(15, 15, 8),    //EF21
+    RGB(15, 15, 9),    //EF25
+    RGB(15, 15, 9),    //EF25
+    RGB(16, 16, 9),    //1026
+    RGB(16, 16, 10),   //102A
 };
 
 /* Filters used at dawn. (30 filters).          *
@@ -77,76 +77,76 @@ static const u16 sMidnightFilters[] =
  * 2 minutes.                                   */
 static const u16 sDawnFilters[] =
 {
-    RGB2(15, 15, 10),
-    RGB2(15, 15, 10),   //1
-    RGB2(14, 14, 10),   //2
-    RGB2(13, 13, 10),   //3
-    RGB2(12, 12, 10),   //4
-    RGB2(11, 11, 10),   //5
-    RGB2(10, 10, 10),   //6
-    RGB2(9, 9, 10),     //7
-    RGB2(8, 8, 10),     //8
-    RGB2(8, 8, 11),     //9
-    RGB2(7, 7, 11),     //10
-    RGB2(6, 6, 11),     //11
-    RGB2(5, 5, 11),     //12
-    RGB2(4, 4, 11),     //13
-    RGB2(3, 3, 11),     //14
-    RGB2(2, 2, 11),     //15
-    RGB2(1, 1, 11),     //16
-    RGB2(0, 0, 11),     //17
-    RGB2(0, 0, 10),     //18
-    RGB2(0, 0, 9),      //19
-    RGB2(0, 0, 8),      //20
-    RGB2(0, 0, 7),      //21
-    RGB2(0, 0, 6),      //22
-    RGB2(0, 0, 5),      //23
-    RGB2(0, 0, 4),      //24
-    RGB2(0, 0, 3),      //0003
-    RGB2(0, 0, 2),      //0002
-    RGB2(0, 0, 1),      //0001
-    RGB2(0, 0, 0),      //0000
-    RGB2(0, 0, 0),      //0000
+    RGB(15, 15, 10),
+    RGB(15, 15, 10),   //1
+    RGB(14, 14, 10),   //2
+    RGB(13, 13, 10),   //3
+    RGB(12, 12, 10),   //4
+    RGB(11, 11, 10),   //5
+    RGB(10, 10, 10),   //6
+    RGB(9, 9, 10),     //7
+    RGB(8, 8, 10),     //8
+    RGB(8, 8, 11),     //9
+    RGB(7, 7, 11),     //10
+    RGB(6, 6, 11),     //11
+    RGB(5, 5, 11),     //12
+    RGB(4, 4, 11),     //13
+    RGB(3, 3, 11),     //14
+    RGB(2, 2, 11),     //15
+    RGB(1, 1, 11),     //16
+    RGB(0, 0, 11),     //17
+    RGB(0, 0, 10),     //18
+    RGB(0, 0, 9),      //19
+    RGB(0, 0, 8),      //20
+    RGB(0, 0, 7),      //21
+    RGB(0, 0, 6),      //22
+    RGB(0, 0, 5),      //23
+    RGB(0, 0, 4),      //24
+    RGB(0, 0, 3),      //0003
+    RGB(0, 0, 2),      //0002
+    RGB(0, 0, 1),      //0001
+    RGB(0, 0, 0),      //0000
+    RGB(0, 0, 0),      //0000
 };
 
 /* Filters used at day. (no filter actually lul)*/
-static const u16 sDayFilter = RGB2(0, 0, 0);   //0000
+static const u16 sDayFilter = RGB(0, 0, 0);   //0000
 
 /* Filters used at sunset. (30 filters).        *
  * From 17:00 to 18:59 filters are cycled every *
  * 2 minutes.                                   */
 static const u16 sSunsetFilters[] = 
 {
-    RGB2(0, 0, 1),      //0004
-    RGB2(0, 1, 1),      //2004
-    RGB2(0, 1, 2),      //2008
-    RGB2(0, 1, 3),      //200C
-    RGB2(0, 2, 3),      //400C
-    RGB2(0, 2, 4),      //4010
-    RGB2(0, 2, 5),      //4014
-    RGB2(0, 3, 5),      //6014
-    RGB2(0, 3, 6),      //6018
-    RGB2(0, 3, 7),      //601C
-    RGB2(0, 4, 7),      //801C
-    RGB2(0, 4, 8),      //8020
-    RGB2(0, 4, 9),      //8024
-    RGB2(0, 5, 9),      //A024
-    RGB2(0, 5, 10),     //A028
-    RGB2(0, 5, 11),     //A02C
-    RGB2(0, 6, 11),     //C02C
-    RGB2(0, 6, 12),     //C030
-    RGB2(0, 6, 13),     //C034
-    RGB2(0, 7, 13),     //E034
-    RGB2(0, 7, 14),     //E038
-    RGB2(0, 7, 14),     //E038
-    RGB2(0, 8, 14),     //0039
-    RGB2(0, 9, 14),     //2039
-    RGB2(0, 10, 14),    //4039
-    RGB2(0, 11, 14),    //6039
-    RGB2(0, 12, 14),    //8039
-    RGB2(0, 13, 14),    //A039
-    RGB2(0, 14, 14),    //C039
-    RGB2(0, 14, 14),    //C039
+    RGB(0, 0, 1),      //0004
+    RGB(0, 1, 1),      //2004
+    RGB(0, 1, 2),      //2008
+    RGB(0, 1, 3),      //200C
+    RGB(0, 2, 3),      //400C
+    RGB(0, 2, 4),      //4010
+    RGB(0, 2, 5),      //4014
+    RGB(0, 3, 5),      //6014
+    RGB(0, 3, 6),      //6018
+    RGB(0, 3, 7),      //601C
+    RGB(0, 4, 7),      //801C
+    RGB(0, 4, 8),      //8020
+    RGB(0, 4, 9),      //8024
+    RGB(0, 5, 9),      //A024
+    RGB(0, 5, 10),     //A028
+    RGB(0, 5, 11),     //A02C
+    RGB(0, 6, 11),     //C02C
+    RGB(0, 6, 12),     //C030
+    RGB(0, 6, 13),     //C034
+    RGB(0, 7, 13),     //E034
+    RGB(0, 7, 14),     //E038
+    RGB(0, 7, 14),     //E038
+    RGB(0, 8, 14),     //0039
+    RGB(0, 9, 14),     //2039
+    RGB(0, 10, 14),    //4039
+    RGB(0, 11, 14),    //6039
+    RGB(0, 12, 14),    //8039
+    RGB(0, 13, 14),    //A039
+    RGB(0, 14, 14),    //C039
+    RGB(0, 14, 14),    //C039
 };
 
 /* Filters used at nightfall. (30 filters).     *
@@ -154,40 +154,40 @@ static const u16 sSunsetFilters[] =
  * 2 minutes.                                   */
 static const u16 sNightfallFilters[] = 
 {
-    RGB2(0, 14, 14),    //39C0
-    RGB2(0, 14, 14),    //39C0
-    RGB2(0, 14, 13),    //35C0
-    RGB2(0, 14, 12),    //31C0
-    RGB2(0, 14, 11),    //2DC0
-    RGB2(0, 14, 10),    //29C0
-    RGB2(1, 14, 10),    //29C1
-    RGB2(1, 14, 9),     //25C1
-    RGB2(0, 14, 8),     //21C0
-    RGB2(1, 14, 7),     //1DC1
-    RGB2(1, 14, 6),     //19C1
-    RGB2(2, 14, 6),     //19C2
-    RGB2(2, 14, 5),     //15C2
-    RGB2(2, 14, 4),     //11C2
-    RGB2(2, 14, 3),     //0DC2
-    RGB2(2, 14, 2),     //09C2
-    RGB2(2, 14, 2),     //09C2
-    RGB2(3, 14, 3),     //0DC3
-    RGB2(4, 14, 4),     //11C4
-    RGB2(5, 14, 5),     //15C5
-    RGB2(6, 14, 6),     //19C6
-    RGB2(7, 14, 6),     //19C7
-    RGB2(8, 14, 6),     //19C8
-    RGB2(9, 14, 6),     //19C9
-    RGB2(10, 14, 6),    //19CA
-    RGB2(11, 14, 6),    //19CB
-    RGB2(12, 14, 6),    //19CC
-    RGB2(13, 14, 6),    //19CD
-    RGB2(14, 14, 6),    //19CE
-    RGB2(14, 14, 6),    //19CE
+    RGB(0, 14, 14),    //39C0
+    RGB(0, 14, 14),    //39C0
+    RGB(0, 14, 13),    //35C0
+    RGB(0, 14, 12),    //31C0
+    RGB(0, 14, 11),    //2DC0
+    RGB(0, 14, 10),    //29C0
+    RGB(1, 14, 10),    //29C1
+    RGB(1, 14, 9),     //25C1
+    RGB(0, 14, 8),     //21C0
+    RGB(1, 14, 7),     //1DC1
+    RGB(1, 14, 6),     //19C1
+    RGB(2, 14, 6),     //19C2
+    RGB(2, 14, 5),     //15C2
+    RGB(2, 14, 4),     //11C2
+    RGB(2, 14, 3),     //0DC2
+    RGB(2, 14, 2),     //09C2
+    RGB(2, 14, 2),     //09C2
+    RGB(3, 14, 3),     //0DC3
+    RGB(4, 14, 4),     //11C4
+    RGB(5, 14, 5),     //15C5
+    RGB(6, 14, 6),     //19C6
+    RGB(7, 14, 6),     //19C7
+    RGB(8, 14, 6),     //19C8
+    RGB(9, 14, 6),     //19C9
+    RGB(10, 14, 6),    //19CA
+    RGB(11, 14, 6),    //19CB
+    RGB(12, 14, 6),    //19CC
+    RGB(13, 14, 6),    //19CD
+    RGB(14, 14, 6),    //19CE
+    RGB(14, 14, 6),    //19CE
 };
 
 /* Filter used at night. From 22:00 to 24:59 */
-static const u16 sNightFilter = RGB2(14, 14, 6);   //19CE
+static const u16 sNightFilter = RGB(14, 14, 6);   //19CE
 
 // The season for each month of the year
 static const u8 sSeasonsByMonth[MONTH_COUNT] =
@@ -291,7 +291,7 @@ static inline u32 DNSApplyProportionalFilterToColour(u32 colour, u32 filter)
     green = ((colour & 0x3E0) >> 5) * ((0x3E0 - (filter & 0x3E0)) >> 5) >> 5;
     blue = ((colour & 0x7C00) >> 10) * ((0x7C00 - (filter & 0x7C00)) >> 10) >> 5;
     
-    return RGB2(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
+    return RGB(red <= 31 ? red : 0, green <= 31 ? green : 0, blue <= 31 ? blue : 0);
 }
 
 void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 *tagExceptions, u32 tagExceptionsCount)
@@ -306,7 +306,11 @@ void DNSApplyFilters(const struct DNSPalExceptions palExceptionFlags, const u16 
             for (colNum = 0; colNum < 16; colNum++)
             {
                 colourSlot = palNum * 16 + colNum;
-                sDNSPaletteDmaBuffer[colourSlot] = DNSApplyProportionalFilterToColour(gPlttBufferFaded[colourSlot], rgbFilter);
+                
+                if (!IS_ALPHA(gPlttBufferFaded[colourSlot]))
+                    sDNSPaletteDmaBuffer[colourSlot] = DNSApplyProportionalFilterToColour(gPlttBufferFaded[colourSlot], rgbFilter);
+                else
+                    sDNSPaletteDmaBuffer[colourSlot] = gPlttBufferFaded[colourSlot];
             }
         }
         else
@@ -333,26 +337,19 @@ static void TryLightningUpTilesetPalettes(u32 tilesetId, bool32 fadeActive)
     
     if (tilesetId != gTileset_None && gMapTilesets[tilesetId - 1].lightningColors)
     {
-        i = 0;
-        while (TRUE)
+        lightColors = gMapTilesets[tilesetId - 1].lightningColors;
+        
+        for (i = 0; lightColors[i].color != RGB_BLACK; i++)
         {
-            lightColors = &gMapTilesets[tilesetId - 1].lightningColors[i];
-            
-            // End of table
-            if (lightColors->color == RGB_BLACK)
-                break;
-            
-            colorSlot = lightColors->paletteNum * 16 + lightColors->colorSlot;
+            colorSlot = lightColors[i].paletteNum * 16 + lightColors[i].colorSlot;
             
             if (fadeActive || (gPlttBufferUnfaded[colorSlot] != RGB_BLACK && gPlttBufferFaded[colorSlot] == RGB_BLACK))
             {
                 sDNSPaletteDmaBuffer[colorSlot] = gPlttBufferFaded[colorSlot];
-                gPlttBufferUnfaded[colorSlot] = lightColors->color;
+                gPlttBufferUnfaded[colorSlot] = lightColors[i].color;
             }
             else
-                sDNSPaletteDmaBuffer[colorSlot] = lightColors->color;
-            
-            i++;
+                sDNSPaletteDmaBuffer[colorSlot] = lightColors[i].color;
         }
     }
 }

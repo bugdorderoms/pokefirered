@@ -4,47 +4,47 @@ const struct LightningColor gLightningColors_PalletTown[] = {
     {
         .paletteNum = 8,
         .colorSlot = 8,
-        .color = RGB2(30, 30, 5)
+        .color = RGB(30, 30, 5)
     },
     {
         .paletteNum = 8,
         .colorSlot = 9,
-        .color = RGB2(26, 25, 4)
+        .color = RGB(26, 25, 4)
     },
     {
         .paletteNum = 8,
         .colorSlot = 10,
-        .color = RGB2(22, 21, 3)
+        .color = RGB(22, 21, 3)
     },
     {
         .paletteNum = 9,
         .colorSlot = 8,
-        .color = RGB2(30, 30, 5)
+        .color = RGB(30, 30, 5)
     },
     {
         .paletteNum = 9,
         .colorSlot = 9,
-        .color = RGB2(26, 25, 4)
+        .color = RGB(26, 25, 4)
     },
     {
         .paletteNum = 9,
         .colorSlot = 10,
-        .color = RGB2(22, 21, 3)
+        .color = RGB(22, 21, 3)
     },
     {
         .paletteNum = 10,
         .colorSlot = 8,
-        .color = RGB2(30, 30, 5)
+        .color = RGB(30, 30, 5)
     },
     {
         .paletteNum = 10,
         .colorSlot = 9,
-        .color = RGB2(26, 25, 4)
+        .color = RGB(26, 25, 4)
     },
     {
         .paletteNum = 10,
         .colorSlot = 10,
-        .color = RGB2(22, 21, 3)
+        .color = RGB(22, 21, 3)
     },
     LIGHTNING_END
 };

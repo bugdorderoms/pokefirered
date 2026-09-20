@@ -113,7 +113,7 @@ static void Task_DrawClearSaveDataScreen(u32 taskId)
         CopyBgTilemapBufferToVram(0);
         break;
     default:
-        BeginNormalPaletteFade(0xFFFF, 0, 16, 0, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(0xFFFF, 0, 16, 0, RGB_WHITE);
         SetVBlankCallback(VBlankCB_WaitYesNo);
         gTasks[taskId].func = Task_HandleYesNoMenu;
         break;
@@ -157,7 +157,7 @@ static void Task_CleanUpAndSoftReset(u32 taskId)
     switch (sClearSaveDataState->unk2)
     {
     case 0:
-        BeginNormalPaletteFade(0xFFFF, 0, 0, 16, RGB_WHITEALPHA);
+        BeginNormalPaletteFade(0xFFFF, 0, 0, 16, RGB_WHITE);
         sClearSaveDataState->unk2++;
         break;
     case 1:

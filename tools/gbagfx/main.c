@@ -240,7 +240,7 @@ void HandlePngToGbaCommand(char *inputPath, char *outputPath, int argc, char **a
 
 void HandlePngToJascPaletteCommand(char *inputPath, char *outputPath, int argc UNUSED, char **argv UNUSED)
 {
-    struct Palette palette = {};
+    struct Palette palette = {0};
 
     ReadPngPalette(inputPath, &palette);
     WriteJascPalette(outputPath, &palette);
@@ -248,7 +248,7 @@ void HandlePngToJascPaletteCommand(char *inputPath, char *outputPath, int argc U
 
 void HandlePngToGbaPaletteCommand(char *inputPath, char *outputPath, int argc UNUSED, char **argv UNUSED)
 {
-    struct Palette palette = {};
+    struct Palette palette = {0};
 
     ReadPngPalette(inputPath, &palette);
     WriteGbaPalette(outputPath, &palette);
@@ -256,7 +256,7 @@ void HandlePngToGbaPaletteCommand(char *inputPath, char *outputPath, int argc UN
 
 void HandleGbaToJascPaletteCommand(char *inputPath, char *outputPath, int argc UNUSED, char **argv UNUSED)
 {
-    struct Palette palette = {};
+    struct Palette palette = {0};
 
     ReadGbaPalette(inputPath, &palette);
     WriteJascPalette(outputPath, &palette);
@@ -289,7 +289,7 @@ void HandleJascToGbaPaletteCommand(char *inputPath, char *outputPath, int argc, 
         }
     }
 
-    struct Palette palette = {};
+    struct Palette palette = {0};
 
     ReadJascPalette(inputPath, &palette);
 
