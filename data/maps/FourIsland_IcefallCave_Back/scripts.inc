@@ -106,12 +106,6 @@ FourIsland_IcefallCave_Back_Movement_WalkInPlaceDown:: @ 8163EE8
 	walk_in_place_down
 	step_end
 
-FourIsland_IcefallCave_Back_Movement_UnusedPushRight:: @ 8163EEA
-	lock_facing_direction
-	walk_right
-	unlock_facing_direction
-	step_end
-
 FourIsland_IcefallCave_Back_Movement_Rocket1ReactToThreat:: @ 8163EEE
 	walk_in_place_fast_down
 	step_end
@@ -159,11 +153,6 @@ FourIsland_IcefallCave_Back_Movement_Rocket3FaceLorelei:: @ 8163F11
 	delay_16
 	delay_8
 	walk_in_place_fastest_right
-	step_end
-
-FourIsland_IcefallCave_Back_Movement_UnusedWalkLeft:: @ 8163F15
-	walk_left
-	walk_left
 	step_end
 
 FourIsland_IcefallCave_Back_Movement_LoreleiToRockets:: @ 8163F18

@@ -92,12 +92,6 @@ IndigoPlateau_Exterior_Movement_PlayerLeave:: @ 8167311
 	player_run_down
 	step_end
 
-@ Unused
-IndigoPlateau_Exterior_Movement_PlayerExitBuilding:: @ 8167318
-	walk_down
-	walk_down
-	step_end
-
 IndigoPlateau_Exterior_Movement_PlayerWatchRivalLeave:: @ 816731B
 	delay_16
 	delay_4

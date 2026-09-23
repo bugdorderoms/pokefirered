@@ -934,46 +934,6 @@ PalletTown_ProfessorOaksLab_Movement_OakExcitedWest:: @ 81699A5
 	walk_in_place_right
 	step_end
 
-@ Unused
-Movement_1699AC:: @ 81699AC
-	walk_left
-	walk_in_place_fastest_down
-	delay_8
-	walk_in_place_fastest_right
-	delay_8
-	walk_in_place_fastest_up
-	delay_8
-	walk_in_place_fastest_left
-	delay_8
-	walk_in_place_fastest_down
-	delay_8
-	walk_right
-	walk_right
-	walk_in_place_fastest_up
-	delay_8
-	walk_in_place_fastest_left
-	delay_8
-	walk_in_place_fastest_down
-	delay_8
-	walk_in_place_fastest_right
-	delay_8
-	walk_in_place_fastest_up
-	delay_8
-	walk_left
-	step_end
-
-@ Unused
-Movement_1699C5:
-	walk_up
-	walk_down
-	walk_down
-	walk_in_place_down
-	walk_up
-	delay_16
-	delay_16
-	delay_16
-	step_end
-
 PalletTown_ProfessorOaksLab_EventScript_TryStartNationalDexScene:: @ 81699CE
 	call PokedexRating_EventScript_RateInPerson
 	closemessage

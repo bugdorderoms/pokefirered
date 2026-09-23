@@ -1,10 +1,6 @@
 CeladonCity_DepartmentStore_2F_MapScripts:: @ 816BAF4
 	.byte 0
 
-CeladonCity_DepartmentStore_2F_EventScript_UnusedNPC:: @ 816BAF5
-	msgbox CeladonCity_DepartmentStore_2F_Text_SuperRepelMorePowerfulRepel, MSGBOX_NPC
-	end
-
 CeladonCity_DepartmentStore_2F_EventScript_Lass:: @ 816BAFE
 	msgbox CeladonCity_DepartmentStore_2F_Text_BuyReviveForLongOutings, MSGBOX_NPC
 	end

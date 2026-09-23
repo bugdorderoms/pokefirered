@@ -85,9 +85,6 @@ SilphCo_11F_Text_Grunt1PostBattle:: @ 81772F9
 	.string "Watch your step…\n"
 	.string "My BOSS likes his Pokémon tough!$"
 
-SilphCo_11F_Text_MonitorHasMonsOnIt:: @ 817732B
-	.string "The monitor has Pokémon on it!$"
-
 SilphCo_11F_Text_FloorSign:: @ 817734A
 	.string "SILPH CO. HEAD OFFICE\n"
 	.string "11F$"

@@ -173,11 +173,6 @@ VermilionCity_EventScript_ChooseSeagallopDestTriPass:: @ 8166B3B
 	case 127, EventScript_CancelSail
 	end
 
-@ Unreachable
-Vermilion_EventScript_Unused:: @ 8166B88
-	release
-	end
-
 VermilionCity_EventScript_CheckTicketLeft:: @ 8166B8A
 	lockall
 	goto VermilionCity_EventScript_CheckTicket

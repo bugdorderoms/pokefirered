@@ -8,25 +8,6 @@ ViridianCity_House2_EventScript_PokemonJournal:: @ 81ACD65
 	release
 	end
 
-EventScript_PokemonJournalUnused1:: @ 81ACD8D
-	lock
-	faceplayer
-	famechecker FAMECHECKER_DAISY, 1
-	famechecker FAMECHECKER_OAK, 4
-	textcolor 3
-	msgbox PokemonJournal_Text_SpecialFeatureProfOak
-	release
-	end
-
-EventScript_PokemonJournalUnused2:: @ 81ACDB5
-	lock
-	faceplayer
-	famechecker FAMECHECKER_DAISY, 4
-	textcolor 3
-	msgbox PokemonJournal_Text_SpecialFeatureProfOak
-	release
-	end
-
 FourIsland_PokemonCenter_1F_EventScript_PokemonJournal:: @ 81ACDD0
 	lockall
 	famechecker FAMECHECKER_DAISY, 5
@@ -200,22 +181,6 @@ SixIsland_Mart_EventScript_OldWoman:: @ 81ACFEF
 	faceplayer
 	famechecker FAMECHECKER_AGATHA, 5
 	msgbox SixIsland_Mart_Text_AgathaOldestEverEliteFourMember
-	release
-	end
-
-EventScript_LanceUnused:: @ 81AD008
-	lock
-	faceplayer
-	famechecker FAMECHECKER_LANCE, 0
-	msgbox gFameCheckerFlavorText_Lance0
-	release
-	end
-
-SaffronCity_EventScript_BattleGirlUnused:: @ 81AD021
-	lock
-	faceplayer
-	famechecker FAMECHECKER_LANCE, 1
-	msgbox SaffronCity_Text_HowCanClubNotRecognizeLance
 	release
 	end
 

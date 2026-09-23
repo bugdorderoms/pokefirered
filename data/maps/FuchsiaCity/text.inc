@@ -35,11 +35,6 @@ FuchsiaCity_Text_WardensHomeSign:: @ 818070D
 	.string "SAFARI ZONE\n"
 	.string "WARDEN'S HOME$"
 
-FuchsiaCity_Text_SafariZoneOfficeSign:: @ 8180727
-	.string "Pokémon PARADISE!\n"
-	.string "Welcome to the SAFARI ZONE!\l"
-	.string "SAFARI ZONE OFFICE$"
-
 FuchsiaCity_Text_GymSign:: @ 8180768
 	.string "FUCHSIA CITY Pokémon GYM\n"
 	.string "LEADER: KOGA\l"

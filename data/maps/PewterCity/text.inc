@@ -95,28 +95,6 @@ PewterCity_Text_CitySign:: @ 817E824
 	.string "PEWTER CITY\n"
 	.string "A Stone Gray City$"
 
-@ The below 3 JP texts are unused. Possibly a cut NPC meant to give the player the Berry Pouch
-PewterCity_Text_DefeatedBrockYouCanHaveTreasure:: @ 817E842
-	.string "あッれー！\n"
-	.string "その　ジムバッジ‥‥\l"
-	.string "すげえな　タケシに　かったのかよ！\p"
-	.string "かんどう　したから\n"
-	.string "おれの　たからもの　やるよ！$"
-
-PewterCity_Text_BerriesInsideUseCarefully:: @ 817E87E
-	.string "なかには　きのみが　はいってるぜ\p"
-	.string "やくに　たつ　きのみも\n"
-	.string "はいって　いるから\l"
-	.string "だいじに　つかって　くれよ！$"
-
-PewterCity_Text_MonsWillUseHeldBerriesOnTheirOwn:: @ 817E8B4
-	.string "ポケモンに　きのみを\n"
-	.string "もたせて　おけば\l"
-	.string "たたかっている　ときに\l"
-	.string "かってに　つかって　くれるんだ\p"
-	.string "キズぐすり　とか　どくけし　より\n"
-	.string "てがるで　べんり　だろ？$"
-
 PewterCity_Text_OhPlayer:: @ 817E902
 	.string "Oh, {PLAYER}{KUN}!$"
 

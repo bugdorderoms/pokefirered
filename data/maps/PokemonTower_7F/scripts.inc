@@ -203,10 +203,6 @@ PokemonTower_7F_EventScript_RemoveGrunt3:: @ 8163745
 	release
 	end
 
-PokemonTower_7F_EventScript_Unused:: @ 816374A
-	release
-	end
-
 PokemonTower_7F_Movement_Grunt3ExitRight:: @ 816374C
 	walk_down
 	walk_down

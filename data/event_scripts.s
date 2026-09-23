@@ -1205,7 +1205,6 @@ EventScript_NoMoreRoomForPokemon:: @ 81A927C
 	.include "data/scripts/repel.inc"
 	.include "data/scripts/safari_zone.inc"
 	.include "data/text/safari_zone.inc"
-	.include "data/text/berries.inc"
 	.include "data/text/flavor_text.inc"
 	.include "data/scripts/hole.inc"
 	.include "data/text/trainers.inc"

@@ -88,16 +88,6 @@ Route22_EventScript_EarlyRivalExitBottom:: @ 81683A5
 	waitmovement 0
 	return
 
-Route22_Movement_UnusedRivalExit:: @ 8
-	walk_right
-	walk_right
-	walk_right
-	walk_right
-	walk_right
-	walk_right
-	walk_right
-	step_end
-
 Route22_Movement_EarlyRivalExit:: @ 81683B8
 	walk_down
 	walk_right

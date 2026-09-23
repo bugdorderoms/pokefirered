@@ -169,17 +169,6 @@ OneIsland_PokemonCenter_1F_Movement_BillWalkToCelio:: @ 8170E86
 	walk_in_place_fastest_right
 	step_end
 
-@ Unused
-Movement_170E8F:: @ 8170E8F
-	walk_up
-	step_end
-
-@ Unused
-Movement_170E91:: @ 8170E91
-	walk_left
-	walk_in_place_fastest_right
-	step_end
-
 OneIsland_PokemonCenter_1F_EventScript_Nurse:: @ 8170E94
 	lock
 	faceplayer
@@ -531,19 +520,6 @@ OneIsland_PokemonCenter_1F_Movement_PlayerWalkToBillBottom:: @ 817131A
 	walk_up
 	walk_up
 	walk_in_place_fastest_right
-	step_end
-
-@ Unused
-Movement_17131F:: @ 817131F
-	delay_16
-	delay_16
-	delay_4
-	walk_in_place_fastest_left
-	step_end
-
-@ Unused
-Movement_171324:: @ 8171324
-	walk_in_place_fast_down
 	step_end
 
 OneIsland_PokemonCenter_1F_Movement_PlayerExit:: @ 8171326

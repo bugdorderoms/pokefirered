@@ -103,12 +103,6 @@ ThreeIsland_EventScript_PlayerFaceUp:: @ 8167931
 	waitmovement 0
 	return
 
-@ Unused
-ThreeIsland_EventScript_PlayerFaceDown:: @ 816793C
-	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestDown
-	waitmovement 0
-	return
-
 ThreeIsland_EventScript_PlayerFaceLeft:: @ 8167947
 	applymovement OBJ_EVENT_ID_PLAYER, Movement_WalkInPlaceFastestLeft
 	waitmovement 0

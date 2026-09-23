@@ -20,27 +20,6 @@ Text_ExplosionTaught:: @ 817A756
 	.string "volcano…\p"
 	.string "What a terrifying thrill!$"
 
-@ Below 4 are unused JP versions of the above texts
-Text_ExplosionTeachJP:: @ 817A797
-	.string "こ　この　かざんが\n"
-	.string "もし　だいばくはつ　したら\l"
-	.string "お　おれら　ひとたまりも\l"
-	.string "ないなあ　‥ブルブル！\p"
-	.string "こ　こわい　ついでに\n"
-	.string "だいばくはつ　でも　おぼえてみる？$"
-
-Text_ExplosionDeclinedJP:: @ 817A7E5
-	.string "や　やっぱ　こわいもんな\n"
-	.string "ブルブル$"
-
-Text_ExplosionWhichMonJP:: @ 817A7F7
-	.string "つ　つよきだね！\n"
-	.string "じゃあ　どの　ポケモンに　する？$"
-
-Text_ExplosionTaughtJP:: @ 817A811
-	.string "かざんで　だいばくはつを‥\n"
-	.string "す　すごい　スリル！$"
-
 MtEmber_Exterior_Text_WellTryDiggingHere:: @ 817A82A
 	.string "Over here.\n"
 	.string "We'll try digging here.\p"

@@ -38,42 +38,6 @@ SaffronCity_PokemonTrainerFanClub_Movement_FanApproachPlayer:: @ 816F124
 	walk_left
 	step_end
 
-@ Unused, leftover from RS
-LilycoveCity_PokemonTrainerFanClub_Movement_FanApproachPlayer:: @ 816F12C
-	delay_8
-	walk_in_place_fastest_down
-	walk_down
-	walk_down
-	walk_down
-	walk_left
-	walk_left
-	step_end
-
-@ Unused, leftover from RS
-LilycoveCity_PokemonTrainerFanClub_Movement_LittleGirlWatchPlayer:: @ 816F134
-	walk_fast_left
-	walk_fast_left
-	walk_fast_down
-	walk_fast_down
-	walk_fast_left
-	walk_fast_down
-	step_end
-
-@ Unused, leftover from RS
-LilycoveCity_PokemonTrainerFanClub_Movement_LittleGirlMoveCloserToPlayer:: @ 816F13B
-	walk_down
-	walk_in_place_fastest_right
-	step_end
-
-@ Unused, leftover from RS
-LilycoveCity_PokemonTrainerFanClub_Movement_LittleGirlHideFromPlayer:: @ 816F13E
-	jump_in_place_right
-	walk_fast_up
-	walk_fast_up
-	walk_fast_right
-	walk_in_place_fastest_down
-	step_end
-
 SaffronCity_PokemonTrainerFanClub_OnTransition:: @ 816F144
 	compare VAR_MAP_SCENE_SAFFRON_CITY_POKEMON_TRAINER_FAN_CLUB, 1
 	goto_if_eq SaffronCity_PokemonTrainerFanClub_EventScript_SetMemberPosForFirstMeeting

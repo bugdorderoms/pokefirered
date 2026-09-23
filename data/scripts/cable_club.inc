@@ -6,11 +6,6 @@ CableClub_EventScript_HideOrShowMysteryGiftMan:: @ 81BB1BA
 	setflag FLAG_HIDE_MG_DELIVERYMEN
 	return
 
-@ Unused
-EventScript_MysteryGiftThankYou:: @ 81BB1E4
-	msgbox Text_ThankYouForAccessingMysteryGift, MSGBOX_NPC
-	end
-
 CableClub_OnWarp:: @ 81BB1ED
 	map_script_2 VAR_CABLE_CLUB_STATE, USING_SINGLE_BATTLE, EventScript_CheckTurnAttendant
 	map_script_2 VAR_CABLE_CLUB_STATE, USING_DOUBLE_BATTLE, EventScript_CheckTurnAttendant
@@ -312,12 +307,6 @@ CableClub_EventScript_EnterColosseum:: @ 81BB5B3
 	waitstate
 	end
 
-@ Unused
-CableClub_EventScript_PlayerApproachLinkRoomRight:: @ 81BB621
-	applymovement OBJ_EVENT_ID_PLAYER, Movement_PlayerApproachLinkRoomRight
-	waitmovement 0
-	return
-
 CableClub_EventScript_WarpTo4PColosseum:: @ 81BB62C
 	special SetCableClubWarp
 	warp MAP_BATTLE_COLOSSEUM_4P, 255, 5, 8
@@ -475,13 +464,6 @@ CableClub_EventScript_AbortMinigame:: @ 81BB83F
 	release
 	end
 
-@ Unused
-CableClub_EventScript_CableClubWarp:: @ 81BB84F
-	special SetCableClubWarp
-	special DoCableClubWarp
-	waitstate
-	end
-
 CableClub_EventScript_AbortLinkIncorrectNumberOfParticipants:: @ 81BB857
 	special CloseLink
 	msgbox CableClub_Text_IncorrectNumberOfParticipants
@@ -502,11 +484,6 @@ Movement_AttendantFaceDown:: @ 81BB88B
 	face_down
 	step_end
 
-@ Unused
-Movement_AttendantFaceRight:: @ 81BB88D
-	face_right
-	step_end
-
 Movement_AttendantFaceLeft:: @ 81BB88F
 	face_left
 	step_end
@@ -514,12 +491,6 @@ Movement_AttendantFaceLeft:: @ 81BB88F
 Movement_PlayerExitLinkRoom:: @ 81BB891
 	walk_down
 	walk_down
-	step_end
-
-Movement_PlayerApproachLinkRoomRight:: @ 81BB894
-	walk_right
-	walk_up
-	walk_up
 	step_end
 
 Movement_PlayerApproachLinkRoomLeft:: @ 81BB898
@@ -530,11 +501,6 @@ Movement_PlayerApproachLinkRoomLeft:: @ 81BB898
 
 Movement_PlayerEnterLinkRoom:: @ 81BB89C
 	walk_up
-	step_end
-
-@ Unused
-Movement_PlayerFaceAttendantLeft:: @ 81BB89E
-	face_left
 	step_end
 
 Movement_PlayerFaceAttendantRight:: @ 81BB8A0
@@ -630,22 +596,6 @@ TradeCenter_EventScript_Chair0:: @ 81BB950
 
 TradeCenter_EventScript_Chair1:: @ 81BB95C
 	setvar VAR_0x8005, 1
-	textcolor 3
-	special EnterTradeSeat
-	waitstate
-	end
-
-@ Unused
-TradeCenter_EventScript_Chair2:: @ 81BB968
-	setvar VAR_0x8005, 2
-	textcolor 3
-	special EnterTradeSeat
-	waitstate
-	end
-
-@ Unused
-TradeCenter_EventScript_Chair3:: @ 81BB974
-	setvar VAR_0x8005, 3
 	textcolor 3
 	special EnterTradeSeat
 	waitstate

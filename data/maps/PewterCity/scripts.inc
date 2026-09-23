@@ -36,26 +36,6 @@ PewterCity_EventScript_WalkToGymEast:: @ 8165BD3
 	waitmovement 0
 	return
 
-@ Unused
-PewterCity_EventScript_WalkToGymWest:: @ 8165BF6
-	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Movement_PlayerWaitForGuideWest
-	applymovement LOCALID_PEWTER_GYM_GUIDE, PewterCity_Movement_GuideMoveToLeadWest
-	waitmovement 0
-	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Movement_PlayerWalkToGymWest
-	applymovement LOCALID_PEWTER_GYM_GUIDE, PewterCity_Movement_GuideWalkToGymWest
-	waitmovement 0
-	return
-
-@ Unused
-PewterCity_EventScript_WalkToGymNorth:: @ 8165C19
-	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Movement_PlayerWaitForGuideNorth
-	applymovement LOCALID_PEWTER_GYM_GUIDE, PewterCity_Movement_GuideMoveToLeadNorth
-	waitmovement 0
-	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Movement_PlayerWalkToGymNorth
-	applymovement LOCALID_PEWTER_GYM_GUIDE, PewterCity_Movement_GuideWalkToGymNorth
-	waitmovement 0
-	return
-
 .macro walk_to_gym
 	walk_left
 	walk_left
@@ -120,48 +100,6 @@ PewterCity_EventScript_WalkToGymNorth:: @ 8165C19
 	walk_right
 .endm
 
-.macro walk_to_gym_alt
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_up
-	walk_up
-	walk_up
-	walk_up
-	walk_up
-	walk_up
-	walk_up
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_down
-	walk_down
-	walk_down
-	walk_down
-	walk_down
-	walk_down
-	walk_right
-.endm
-
 PewterCity_Movement_PlayerWaitForGuideEast:: @ 8165C3C
 	delay_16
 	delay_16
@@ -174,32 +112,6 @@ PewterCity_Movement_PlayerWalkToGymEast:: @ 8165C41
 	walk_to_gym
 	step_end
 
-PewterCity_Movement_PlayerWaitForGuideWest:: @ 8165C80
-	delay_16
-	step_end
-
-PewterCity_Movement_PlayerWalkToGymWest:: @ 8165C82
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_to_gym_alt
-	step_end
-
-PewterCity_Movement_PlayerWaitForGuideNorth:: @ 8165CAF
-	delay_16
-	step_end
-
-PewterCity_Movement_PlayerWalkToGymNorth:: @ 8165CB1
-	walk_up
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_to_gym_alt
-	step_end
-
 PewterCity_Movement_GuideMoveToLeadEast:: @ 8165CDE
 	walk_down
 	walk_left
@@ -209,34 +121,6 @@ PewterCity_Movement_GuideMoveToLeadEast:: @ 8165CDE
 
 PewterCity_Movement_GuideWalkToGymEast:: @ 8165CE3
 	walk_to_gym
-	walk_right
-	walk_in_place_fastest_left
-	step_end
-
-PewterCity_Movement_GuideMoveToLeadWest:: @ 8165D23
-	walk_in_place_right
-	step_end
-
-PewterCity_Movement_GuideWalkToGymWest:: @ 8165D25
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_to_gym_alt
-	walk_right
-	walk_in_place_fastest_left
-	step_end
-
-PewterCity_Movement_GuideMoveToLeadNorth:: @ 8165D53
-	walk_in_place_down
-	step_end
-
-PewterCity_Movement_GuideWalkToGymNorth:: @ 8165D55
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_to_gym_alt
 	walk_right
 	walk_in_place_fastest_left
 	step_end
@@ -324,15 +208,6 @@ PewterCity_EventScript_WalkToGymBottom:: @ 8165E42
 	waitmovement 0
 	return
 
-@ Unused
-PewterCity_EventScript_WalkToGymRight:: @ 8165E5E
-	applymovement LOCALID_PEWTER_GYM_GUIDE, PewterCity_Movement_GuideApproachPlayerRight
-	waitmovement 0
-	applymovement OBJ_EVENT_ID_PLAYER, PewterCity_Movement_PlayerWalkToGymRight
-	applymovement LOCALID_PEWTER_GYM_GUIDE, PewterCity_Movement_GuideWalkToGymRight
-	waitmovement 0
-	return
-
 PewterCity_Movement_PlayerWalkToGymTop:: @ 8165E7A
 	walk_left
 	walk_to_gym
@@ -349,20 +224,6 @@ PewterCity_Movement_PlayerWalkToGymBottom:: @ 8165EF9
 	walk_up
 	walk_left
 	walk_to_gym
-	step_end
-
-PewterCity_Movement_PlayerWalkToGymRight:: @ 8165F3A
-	walk_left
-	walk_left
-	walk_left
-	walk_left
-	walk_up
-	walk_left
-	walk_left
-	walk_left
-	walk_up
-	walk_up
-	walk_to_gym_alt
 	step_end
 
 PewterCity_Movement_GuideMoveToLeadTop:: @ 8165F6C
@@ -383,15 +244,6 @@ PewterCity_Movement_GuideMoveToLeadBottom:: @ 8165F74
 	walk_in_place_down
 	step_end
 
-PewterCity_Movement_GuideApproachPlayerRight:: @ 8165F78
-	walk_down
-	walk_down
-	walk_right
-	walk_down
-	walk_right
-	walk_in_place_right
-	step_end
-
 PewterCity_Movement_GuideWalkToGymTop:: @ 8165F7F
 	walk_to_gym
 	walk_right
@@ -409,21 +261,6 @@ PewterCity_Movement_GuideWalkToGymBottom:: @ 8166000
 	walk_up
 	walk_left
 	walk_to_gym
-	walk_right
-	walk_in_place_fastest_left
-	step_end
-
-PewterCity_Movement_GuideWalkToGymRight:: @ 8166042
-	walk_left
-	walk_left
-	walk_left
-	walk_up
-	walk_left
-	walk_left
-	walk_left
-	walk_up
-	walk_up
-	walk_to_gym_alt
 	walk_right
 	walk_in_place_fastest_left
 	step_end
@@ -856,9 +693,4 @@ PewterCity_Movement_AideExit3:: @ 8166465
 	walk_left
 	walk_left
 	walk_left
-	step_end
-
-@ Unused
-PewterCity_Movement_WalkInPlaceLeft:: @ 816646F
-	walk_in_place_left
 	step_end
