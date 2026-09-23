@@ -102,6 +102,8 @@ u16 ListMenuGetYCoordForPrintingArrowCursor(u32 listTaskId);
 void ListMenuOverrideSetColors(u32 cursorPal, u32 fillValue, u32 cursorShadowPal);
 void ListMenuDefaultCursorMoveFunc(s32 itemIndex, bool32 onInit, struct ListMenu *list);
 void ListMenuSetTemplateField(u32 taskId, u32 field, s32 value);
+void DynamicListMenu_PushElement(const u8 *text, u32 id);
+void DynamicListMenu_Init(u32 x, u32 y, u32 maxShowed);
 
 extern const u8 gMenuText_Cancel[];
 extern const u8 gMenuText_Close[];

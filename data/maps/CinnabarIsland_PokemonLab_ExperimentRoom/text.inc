@@ -32,12 +32,6 @@ CinnabarIsland_PokemonLab_ExperimentRoom_Text_NoIsTooBad:: @ 819A314
 	.string "No!\n"
 	.string "Is too bad!$"
 
-@ Unused
-CinnabarIsland_PokemonLab_ExperimentRoom_Text_TakesTimeGoForWalkJP:: @ 819A324
-	.string "ちょっと　じかん　かかるよ！\p"
-	.string "そこらへんを　すこし\n"
-	.string "ブラブラ　してくると　よろしー！$"
-
 CinnabarIsland_PokemonLab_ExperimentRoom_Text_FossilMonBackToLife:: @ 819A34F
 	.string "You late.\n"
 	.string "Where were you?\p"
@@ -47,10 +41,6 @@ CinnabarIsland_PokemonLab_ExperimentRoom_Text_FossilMonBackToLife:: @ 819A34F
 CinnabarIsland_PokemonLab_ExperimentRoom_Text_ReceivedMonFromDoctor:: @ 819A39E
 	.string "{PLAYER} received the {STR_VAR_1}\n"
 	.string "from the doctor.$"
-
-@ Unused
-CinnabarIsland_PokemonLab_ExperimentRoom_Text_NoRoomForPokemon:: @ 819A3C2
-	.string "ポケモン　いっぱいで　もてないね！$"
 
 CinnabarIsland_PokemonLab_ExperimentRoom_Text_ThatFossilIsOfMonMakeItLiveAgain:: @ 819A3D4
 	.string "Oh!\n"
@@ -75,3 +65,14 @@ CinnabarIsland_PokemonLab_ExperimentRoom_Text_YouComeAgain:: @ 819A4E1
 	.string "Aiyah!\n"
 	.string "You come again!$"
 
+CinnabarIsland_PokemonLab_ExperimentRoom_Text_HelixFossilOption::
+	.string "Helix Fossil$"
+
+CinnabarIsland_PokemonLab_ExperimentRoom_Text_DomeFossilOption::
+	.string "Dome Fossil$"
+
+CinnabarIsland_PokemonLab_ExperimentRoom_Text_OldAmberOption::
+	.string "Old Amber$"
+
+CinnabarIsland_PokemonLab_ExperimentRoom_Text_ExitOption::
+	.string "Exit$"

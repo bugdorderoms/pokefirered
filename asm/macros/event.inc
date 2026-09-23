@@ -519,9 +519,12 @@
 	.2byte \index
 	.2byte \quantity
 	.endm
-
-	.macro nop4b
+	
+	@ Ands the value of `var` to a fixed word value (b).
+	.macro andvar var:req, value:req
 	.byte 0x4b
+	.2byte \var
+	.2byte \value
 	.endm
 
 	.macro nop4c
@@ -853,12 +856,21 @@
 	.byte \y
 	.endm
 	
-	.macro nop72
+	@ Appends an element to the dynamic multichoice list array.
+	.macro dynmultipush text:req, id:req
 	.byte 0x72
+	.4byte \text
+	.byte \id
 	.endm
-
-	.macro nop73
+	
+	@ Displays a multichoice box from which the user can choose a selection, and blocks script execution until a selection is made.
+	@ Lists of options are created dynamically by using dynmultipush to append a new option.
+	@ The maxShowed predefined value below is the number of options that fits on the screen when the multichoice y position is 1(top of screen).
+	.macro dynmultiinit x:req, y:req, maxShowed=9
 	.byte 0x73
+	.byte \x
+	.byte \y
+	.byte \maxShowed
 	.endm
 
 	.macro nop74

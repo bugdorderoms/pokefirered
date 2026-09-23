@@ -38,69 +38,20 @@ FourIsland_House2_EventScript_NothingToBragAbout:: @ 81B29C6
 	end
 
 FourIsland_House2_EventScript_ChooseBrag:: @ 81B29D0
-	switch VAR_0x8008
-	case 1, FourIsland_House2_EventScript_ChooseBragHoF
-	case 2, FourIsland_House2_EventScript_ChooseBragEggs
-	case 4, FourIsland_House2_EventScript_ChooseBragLinkWins
-	case 3, FourIsland_House2_EventScript_ChooseBragHoFEggs
-	case 5, FourIsland_House2_EventScript_ChooseBragHoFLinkWins
-	case 6, FourIsland_House2_EventScript_ChooseBragEggsLinkWins
-	case 7, FourIsland_House2_EventScript_ChooseBragHofEggsLinkWins
-	end
-
-FourIsland_House2_EventScript_ChooseBragHoF:: @ 81B2A23
-	multichoice 15, 8, MULTICHOICE_HOF_QUIT, FALSE
-	switch VAR_RESULT
-	case 0, FourIsland_House2_EventScript_BragHoF
-	case 1, FourIsland_House2_EventScript_QuitBrag
-	case SCR_MENU_CANCEL, FourIsland_House2_EventScript_QuitBrag
-	end
-
-FourIsland_House2_EventScript_ChooseBragEggs:: @ 81B2A4F
-	multichoice 16, 8, MULTICHOICE_EGGS_QUIT, FALSE
-	switch VAR_RESULT
-	case 0, FourIsland_House2_EventScript_BragEggs
-	case 1, FourIsland_House2_EventScript_QuitBrag
-	case SCR_MENU_CANCEL, FourIsland_House2_EventScript_QuitBrag
-	end
-
-FourIsland_House2_EventScript_ChooseBragLinkWins:: @ 81B2A7B
-	multichoice 15, 8, MULTICHOICE_VICTORIES_QUIT, FALSE
-	switch VAR_RESULT
-	case 0, FourIsland_House2_EventScript_BragLinkWins
-	case 1, FourIsland_House2_EventScript_QuitBrag
-	case SCR_MENU_CANCEL, FourIsland_House2_EventScript_QuitBrag
-	end
-
-FourIsland_House2_EventScript_ChooseBragHoFEggs:: @ 81B2AA7
-	multichoice 15, 6, MULTICHOICE_HOF_EGGS_QUIT, FALSE
-	switch VAR_RESULT
-	case 0, FourIsland_House2_EventScript_BragHoF
-	case 1, FourIsland_House2_EventScript_BragEggs
-	case 2, FourIsland_House2_EventScript_QuitBrag
-	case SCR_MENU_CANCEL, FourIsland_House2_EventScript_QuitBrag
-	end
-
-FourIsland_House2_EventScript_ChooseBragHoFLinkWins:: @ 81B2ADE
-	multichoice 15, 6, MULTICHOICE_HOF_VICTORIES_QUIT, FALSE
-	switch VAR_RESULT
-	case 0, FourIsland_House2_EventScript_BragHoF
-	case 1, FourIsland_House2_EventScript_BragLinkWins
-	case 2, FourIsland_House2_EventScript_QuitBrag
-	case SCR_MENU_CANCEL, FourIsland_House2_EventScript_QuitBrag
-	end
-
-FourIsland_House2_EventScript_ChooseBragEggsLinkWins:: @ 81B2B15
-	multichoice 15, 6, MULTICHOICE_EGGS_VICTORIES_QUIT, FALSE
-	switch VAR_RESULT
-	case 0, FourIsland_House2_EventScript_BragEggs
-	case 1, FourIsland_House2_EventScript_BragLinkWins
-	case 2, FourIsland_House2_EventScript_QuitBrag
-	case SCR_MENU_CANCEL, FourIsland_House2_EventScript_QuitBrag
-	end
-
-FourIsland_House2_EventScript_ChooseBragHofEggsLinkWins:: @ 81B2B4C
-	multichoice 15, 5, MULTICHOICE_HOF_EGGS_VICTORIES_QUIT, FALSE
+	andvar VAR_0x8008, (1 << 0)
+	goto_if FALSE, FourIsland_House2_EventScript_ChooseBrag_CheckEggs
+	dynmultipush FourIsland_House2_Text_HallOfFameOption, 0
+FourIsland_House2_EventScript_ChooseBrag_CheckEggs::
+	andvar VAR_0x8008, (1 << 1)
+	goto_if FALSE, FourIsland_House2_EventScript_ChooseBrag_CheckLinkWins
+	dynmultipush FourIsland_House2_Text_EggsOption, 1
+FourIsland_House2_EventScript_ChooseBrag_CheckLinkWins::
+	andvar VAR_0x8008, (1 << 2)
+	goto_if FALSE, FourIsland_House2_EventScript_ChooseBrag_InitMultichoice
+	dynmultipush FourIsland_House2_Text_VictoriesOption, 2
+FourIsland_House2_EventScript_ChooseBrag_InitMultichoice::
+	dynmultipush FourIsland_House2_Text_QuitOption, 3
+	dynmultiinit 18, 2
 	switch VAR_RESULT
 	case 0, FourIsland_House2_EventScript_BragHoF
 	case 1, FourIsland_House2_EventScript_BragEggs

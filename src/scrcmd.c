@@ -16,6 +16,7 @@
 #include "event_object_lock.h"
 #include "field_message_box.h"
 #include "rtc.h"
+#include "list_menu.h"
 #include "new_menu_helpers.h"
 #include "script_menu.h"
 #include "data.h"
@@ -528,6 +529,17 @@ bool32 ScrCmd_compare_var_to_var(struct ScriptContext * ctx)
     const u16 *ptr1 = GetVarPointer(cmd->var1);
     const u16 *ptr2 = GetVarPointer(cmd->var2);
     ctx->comparisonResult = compare_012(*ptr1, *ptr2);
+    
+    return FALSE;
+}
+
+bool32 ScrCmd_and_var_to_value(struct ScriptContext * ctx)
+{
+    CMD_ARGS(u16 var, u16 value);
+    
+    const u16 value1 = *GetVarPointer(cmd->var);
+    const u16 value2 = cmd->value;
+    ctx->comparisonResult = (value1 & value2) ? 1 : 0;
     
     return FALSE;
 }
@@ -1333,6 +1345,21 @@ bool32 ScrCmd_multichoice(struct ScriptContext * ctx)
         return TRUE;
     }
     return FALSE;
+}
+
+bool32 ScrCmd_dynamicmultichoicepush(struct ScriptContext * ctx)
+{
+    CMD_ARGS(const u8 *text, u8 id);
+    DynamicListMenu_PushElement(cmd->text, cmd->id);
+    return FALSE;
+}
+
+bool32 ScrCmd_dynamicmultichoice(struct ScriptContext * ctx)
+{
+    CMD_ARGS(u8 x, u8 y, u8 maxShowed);
+    DynamicListMenu_Init(cmd->x, cmd->y, cmd->maxShowed);
+    ScriptContext1_Stop();
+    return TRUE;
 }
 
 bool32 ScrCmd_showitempic(struct ScriptContext * ctx)

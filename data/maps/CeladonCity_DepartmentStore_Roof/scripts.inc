@@ -24,15 +24,15 @@ CeladonCity_DepartmentStore_Roof_EventScript_CheckPlayerHasDrinks:: @ 816BCF6
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_SetHasFreshWater:: @ 816BD2C
-	addvar VAR_TEMP_1, 1
+	addvar VAR_TEMP_1, (1 << 0)
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_SetHasSodaPop:: @ 816BD32
-	addvar VAR_TEMP_1, 2
+	addvar VAR_TEMP_1, (1 << 1)
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_SetHasLemonade:: @ 816BD38
-	addvar VAR_TEMP_1, 4
+	addvar VAR_TEMP_1, (1 << 2)
 	return
 
 CeladonCity_DepartmentStore_Roof_EventScript_AskGiveDrink:: @ 816BD3E
@@ -43,75 +43,29 @@ CeladonCity_DepartmentStore_Roof_EventScript_AskGiveDrink:: @ 816BD3E
 	message CeladonCity_DepartmentStore_Roof_Text_GiveWhichDrink
 	waitmessage
 	textcolor 1
-	switch VAR_TEMP_1
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveFreshWater
-	case 2, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveSodaPop
-	case 3, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveFreshWaterSodaPop
-	case 4, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveLemonade
-	case 5, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveFreshWaterLemonade
-	case 6, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveSodaPopLemonade
-	case 7, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveAllDrinks
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveFreshWater:: @ 816BDAE
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_FRESH_WATER, FALSE
-	switch VAR_RESULT
-	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveSodaPop:: @ 816BDDA
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_SODA_POP, FALSE
-	switch VAR_RESULT
-	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveSodaPop
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveFreshWaterSodaPop:: @ 816BE06
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_FRESH_WATER_SODA_POP, FALSE
-	switch VAR_RESULT
-	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_GiveSodaPop
-	case 2, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveLemonade:: @ 816BE3D
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_LEMONADE, FALSE
-	switch VAR_RESULT
-	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveLemonade
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveFreshWaterLemonade:: @ 816BE69
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_FRESH_WATER_LEMONADE, FALSE
-	switch VAR_RESULT
-	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_GiveLemonade
-	case 2, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveSodaPopLemonade:: @ 816BEA0
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_SODA_POP_LEMONADE, FALSE
-	switch VAR_RESULT
-	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveSodaPop
-	case 1, CeladonCity_DepartmentStore_Roof_EventScript_GiveLemonade
-	case 2, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	end
-
-CeladonCity_DepartmentStore_Roof_EventScript_AskGiveAllDrinks:: @ 816BED7
-	multichoice 0, 0, MULTICHOICE_THIRSTY_GIRL_FRESH_WATER_SODA_POP_LEMONADE, FALSE
+	andvar VAR_TEMP_1, (1 << 0)
+	goto_if FALSE, CeladonCity_DepartmentStore_Roof_EventScript_CheckHasSodaPop
+	getitemname 0, ITEM_FRESH_WATER
+	dynmultipush FourIsland_House2_Text_ThirstyGirlDrinkOption, 0
+CeladonCity_DepartmentStore_Roof_EventScript_CheckHasSodaPop::
+	andvar VAR_TEMP_1, (1 << 1)
+	goto_if FALSE, CeladonCity_DepartmentStore_Roof_EventScript_CheckHasLemonade
+	getitemname 0, ITEM_SODA_POP
+	dynmultipush FourIsland_House2_Text_ThirstyGirlDrinkOption, 1
+CeladonCity_DepartmentStore_Roof_EventScript_CheckHasLemonade::
+	andvar VAR_TEMP_1, (1 << 2)
+	goto_if FALSE, CeladonCity_DepartmentStore_Roof_EventScript_AskGiveDrinks
+	getitemname 0, ITEM_LEMONADE
+	dynmultipush FourIsland_House2_Text_ThirstyGirlDrinkOption, 2
+CeladonCity_DepartmentStore_Roof_EventScript_AskGiveDrinks::
+	dynmultipush FourIsland_House2_Text_ThirstyGirlExitOption, 3
+	dynmultiinit 1, 1
 	switch VAR_RESULT
 	case 0, CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater
 	case 1, CeladonCity_DepartmentStore_Roof_EventScript_GiveSodaPop
 	case 2, CeladonCity_DepartmentStore_Roof_EventScript_GiveLemonade
 	case 3, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
-	case 127, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
+	case SCR_MENU_CANCEL, CeladonCity_DepartmentStore_Roof_EventScript_DontGiveDrink
 	end
 
 CeladonCity_DepartmentStore_Roof_EventScript_GiveFreshWater:: @ 816BF19

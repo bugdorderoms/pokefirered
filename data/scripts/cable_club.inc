@@ -832,7 +832,7 @@ CableClub_EventScript_DirectCornerAttendant:: @ 81BBB9C
 	end
 
 CableClub_EventScript_DirectCornerNoBerry:: @ 81BBC32
-	multichoice 0, 0, MULTICHOICE_TRADE_COLOSSEUM_2, FALSE
+	multichoice 0, 0, MULTICHOICE_TRADE_CENTER_COLOSSEUM, FALSE
 	switch VAR_RESULT
 	case 0, CableClub_EventScript_WirelessTrade
 	case 1, CableClub_EventScript_WirelessBattleSelect

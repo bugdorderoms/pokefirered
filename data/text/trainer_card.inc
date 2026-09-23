@@ -143,3 +143,15 @@ FourIsland_House2_Text_LivingLegendLinkWins:: @ 81B280F
 	.string "Oh, no, no can do.\p"
 	.string "You're practically a living legend.\n"
 	.string "I have no SITCKERS left to give.$"
+
+FourIsland_House2_Text_HallOfFameOption::
+	.string "Hall Of Fame$"
+
+FourIsland_House2_Text_EggsOption::
+	.string "Eggs$"
+
+FourIsland_House2_Text_VictoriesOption::
+	.string "Victories$"
+
+FourIsland_House2_Text_QuitOption::
+	.string "Quit$"

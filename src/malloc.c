@@ -106,7 +106,7 @@ static void *AllocInternal(void *heapStart, u32 size)
     }
 }
 
-void FreeInternal(void *heapStart, void *p)
+static void FreeInternal(void *heapStart, void *p)
 {
     AGB_ASSERT_EX(p != NULL, ABSPATH("gflib/malloc.c"), 195);
 
@@ -157,6 +157,78 @@ void FreeInternal(void *heapStart, void *p)
     }
 }
 
+static void *ReallocInternal(void *heapStart, void *p, u32 newSize)
+{
+    struct MemBlock *head;
+    struct MemBlock *pos;
+    struct MemBlock *nextBlock;
+    void *newMem;
+    u32 oldSize;
+    u32 combinedSize;
+
+    if (!p)
+        return AllocInternal(heapStart, newSize);
+
+    head = (struct MemBlock *)heapStart;
+    pos = (struct MemBlock *)((u8 *)p - sizeof(struct MemBlock));
+
+    AGB_ASSERT_EX(pos->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 204);
+    AGB_ASSERT_EX(pos->flag == TRUE, ABSPATH("gflib/malloc.c"), 205);
+
+    oldSize = pos->size;
+
+    // Alignment
+    if (newSize & 3)
+        newSize = 4 * ((newSize / 4) + 1);
+    
+    // Return same pointer for new sizes lower than the actual
+    if (newSize <= oldSize)
+        return p;
+    
+    // Try expand current location
+    if (pos->next != head && !pos->next->flag)
+    {
+        nextBlock = pos->next;
+        AGB_ASSERT_EX(nextBlock->magic_number == MALLOC_SYSTEM_ID, ABSPATH("gflib/malloc.c"), 211);
+
+        combinedSize = oldSize + sizeof(struct MemBlock) + nextBlock->size;
+
+        if (combinedSize >= newSize)
+        {
+            pos->next = nextBlock->next;
+            if (pos->next != head)
+                pos->next->prev = pos;
+
+            nextBlock->magic_number = 0;
+            pos->size = combinedSize;
+
+            if (pos->size - newSize >= 2 * sizeof(struct MemBlock))
+            {
+                int splitBlockSize = pos->size - sizeof(struct MemBlock) - newSize;
+                struct MemBlock *newSplitBlock = (struct MemBlock *)(pos->data + newSize);
+
+                pos->size = newSize;
+                PutMemBlockHeader(newSplitBlock, pos, pos->next, splitBlockSize);
+
+                pos->next = newSplitBlock;
+                if (newSplitBlock->next != head)
+                    newSplitBlock->next->prev = newSplitBlock;
+            }
+            return pos->data;
+        }
+    }
+
+    // Alloc a new block
+    newMem = AllocInternal(heapStart, newSize);
+    if (newMem == NULL)
+        return NULL;
+
+    CpuCopy32(p, newMem, oldSize);
+    FreeInternal(heapStart, p);
+
+    return newMem;
+}
+
 void InitHeap(void *heapStart, u32 heapSize)
 {
     sHeapStart = heapStart;
@@ -186,4 +258,9 @@ void *AllocZeroed(u32 size)
 void Free(void *pointer)
 {
     FreeInternal(sHeapStart, pointer);
+}
+
+void *Realloc(void *pointer, u32 newSize)
+{
+    return ReallocInternal(sHeapStart, pointer, newSize);
 }

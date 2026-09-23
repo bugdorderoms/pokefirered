@@ -76,7 +76,7 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_checkitemtype
 	.4byte ScrCmd_addpcitem
 	.4byte ScrCmd_checkpcitem
-	.4byte ScrCmd_nop
+	.4byte ScrCmd_and_var_to_value
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_nop
@@ -115,8 +115,8 @@ gScriptCmdTable:: @ 815F9B4
 	.4byte ScrCmd_multichoice
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_showitempic
-	.4byte ScrCmd_nop
-	.4byte ScrCmd_nop
+	.4byte ScrCmd_dynamicmultichoicepush
+	.4byte ScrCmd_dynamicmultichoice
 	.4byte ScrCmd_nop
 	.4byte ScrCmd_showmonpic
 	.4byte ScrCmd_hidemonpic

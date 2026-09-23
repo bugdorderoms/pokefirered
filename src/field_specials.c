@@ -70,19 +70,9 @@ struct FieldSpecialListMenu
     u8 windowTileNum;
 };
 
-struct ListMenuLabels
-{
-    const u8 *text;
-};
-
-struct ListMenuActions
-{
-    const struct ListMenuLabels * list;
-};
-
 struct FormChangeListMenuActions
 {
-    const struct ListMenuLabels * list;
+    const struct ListMenuItem * list;
     const u16 *forms;
     u8 count;
 };
@@ -94,6 +84,8 @@ static EWRAM_DATA struct ListMenuItem * sListMenuItems = NULL;
 static EWRAM_DATA u16 sListMenuLastScrollPosition = 0;
 static EWRAM_DATA u8 sPCBoxToSendMon = 0;
 static EWRAM_DATA u8 sBrailleTextCursorSpriteID = 0;
+static EWRAM_DATA u8 sDynamicListMenuItemsCount = 0;
+static EWRAM_DATA u8 sDynamicListMenuItemsCapacity = 0;
 
 struct ListMenuTemplate sFieldSpecialsListMenuTemplate;
 u16 sFieldSpecialsListMenuScrollBuffer;
@@ -1077,59 +1069,43 @@ static void Task_AnimateElevatorWindowView(u32 taskId)
     data[1]++;
 }
 
-static const struct ListMenuLabels sBadgesListMenu[] = {
-    { COMPOUND_STRING("Boulderbadge") },
-    { COMPOUND_STRING("Cascadebadge") },
-    { COMPOUND_STRING("Thunderbadge") },
-    { COMPOUND_STRING("Rainbowbadge") },
-    { COMPOUND_STRING("Soulbadge") },
-    { COMPOUND_STRING("Marshbadge") },
-    { COMPOUND_STRING("Volcanobadge") },
-    { COMPOUND_STRING("Earthbadge") },
-    { COMPOUND_STRING("Exit") },
+static const struct ListMenuItem sBadgesListMenu[] = {
+    { COMPOUND_STRING("Boulderbadge"), 0 },
+    { COMPOUND_STRING("Cascadebadge"), 1 },
+    { COMPOUND_STRING("Thunderbadge"), 2 },
+    { COMPOUND_STRING("Rainbowbadge"), 3 },
+    { COMPOUND_STRING("Soulbadge"),    4 },
+    { COMPOUND_STRING("Marshbadge"),   5 },
+    { COMPOUND_STRING("Volcanobadge"), 6 },
+    { COMPOUND_STRING("Earthbadge"),   7 },
+    { COMPOUND_STRING("Exit"),         8 },
 };
 
-static const struct ListMenuLabels sSilphcoFloorsListMenu[] = {
-    { gText_11F },
-    { gText_10F },
-    { gText_9F },
-    { gText_8F },
-    { gText_7F },
-    { gText_6F },
-    { gText_5F },
-    { gText_4F },
-    { gText_3F },
-    { gText_2F },
-    { gText_1F },
-    { COMPOUND_STRING("Exit") },
+static const struct ListMenuItem sSilphcoFloorsListMenu[] = {
+    { gText_11F, 0 },
+    { gText_10F, 1 },
+    { gText_9F,  2 },
+    { gText_8F,  3 },
+    { gText_7F,  4 },
+    { gText_6F,  5 },
+    { gText_5F,  6 },
+    { gText_4F,  7 },
+    { gText_3F,  8 },
+    { gText_2F,  9 },
+    { gText_1F,  10 },
+    { COMPOUND_STRING("Exit"), 11 },
 };
 
-static const struct ListMenuLabels sBerryPowderListMenu[] = {
-    { COMPOUND_STRING("Energypowder{CLEAR_TO 0x74}{FONT_SMALL}50") },
-    { COMPOUND_STRING("Energy Root{CLEAR_TO 0x74}{FONT_SMALL}80") },
-    { COMPOUND_STRING("Heal Powder{CLEAR_TO 0x74}{FONT_SMALL}50") },
-    { COMPOUND_STRING("Revival Herb{CLEAR_TO 0x6F}{FONT_SMALL}300") },
-    { COMPOUND_STRING("Protein{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
-    { COMPOUND_STRING("Iron{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
-    { COMPOUND_STRING("Carbos{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
-    { COMPOUND_STRING("Calcium{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
-    { COMPOUND_STRING("Zinc{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
-    { COMPOUND_STRING("HP Up{CLEAR_TO 0x65}{FONT_SMALL}1,000") },
-    { COMPOUND_STRING("PP Up{CLEAR_TO 0x65}{FONT_SMALL}3,000") },
-    { COMPOUND_STRING("Exit") },
+static const struct ListMenuItem *const sListMenuLabels[] = {
+    [LISTMENU_BADGES]         = sBadgesListMenu,
+    [LISTMENU_SILPHCO_FLOORS] = sSilphcoFloorsListMenu,
 };
 
-static const struct ListMenuActions sListMenuLabels[] = {
-    [LISTMENU_BADGES]         = {sBadgesListMenu},
-    [LISTMENU_SILPHCO_FLOORS] = {sSilphcoFloorsListMenu},
-    [LISTMENU_BERRY_POWDER]   = {sBerryPowderListMenu},
-};
-
-static const struct ListMenuLabels sDeoxysListMenu[] = {
-    { COMPOUND_STRING("Attack Form") },
-    { COMPOUND_STRING("Defense Form") },
-    { COMPOUND_STRING("Speed Form") },
-    { sText_DefaultForm }
+static const struct ListMenuItem sDeoxysListMenu[] = {
+    { COMPOUND_STRING("Attack Form"),  0 },
+    { COMPOUND_STRING("Defense Form"), 1 },
+    { COMPOUND_STRING("Speed Form"),   2 },
+    { sText_DefaultForm,               3 }
 };
 
 static const u16 sDeoxysForms[] =
@@ -1140,13 +1116,13 @@ static const u16 sDeoxysForms[] =
     SPECIES_DEOXYS
 };
 
-static const struct ListMenuLabels sRotomListMenu[] = {
-    { COMPOUND_STRING("Heat Form") },
-    { COMPOUND_STRING("Wash Form") },
-    { COMPOUND_STRING("Frost Form") },
-    { COMPOUND_STRING("Fan Form") },
-    { COMPOUND_STRING("Mow Form") },
-    { sText_DefaultForm }
+static const struct ListMenuItem sRotomListMenu[] = {
+    { COMPOUND_STRING("Heat Form"),  0 },
+    { COMPOUND_STRING("Wash Form"),  1 },
+    { COMPOUND_STRING("Frost Form"), 2 },
+    { COMPOUND_STRING("Fan Form"),   3 },
+    { COMPOUND_STRING("Mow Form"),   4 },
+    { sText_DefaultForm,             5 }
 };
 
 static const u16 sRotomForms[] =
@@ -1159,13 +1135,13 @@ static const u16 sRotomForms[] =
     SPECIES_ROTOM
 };
 
-static const struct ListMenuLabels sPikachuListMenu[] = {
-    { COMPOUND_STRING("Rock Star") },
-    { COMPOUND_STRING("Belle") },
-    { COMPOUND_STRING("Pop Star") },
-    { COMPOUND_STRING("Ph. D.") },
-    { COMPOUND_STRING("Libre") },
-    { sText_DefaultForm }
+static const struct ListMenuItem sPikachuListMenu[] = {
+    { COMPOUND_STRING("Rock Star"), 0 },
+    { COMPOUND_STRING("Belle"),     1 },
+    { COMPOUND_STRING("Pop Star"),  2 },
+    { COMPOUND_STRING("Ph. D."),    3 },
+    { COMPOUND_STRING("Libre"),     4 },
+    { sText_DefaultForm,            5 }
 };
 
 static const u16 sPikachuForms[] =
@@ -1178,16 +1154,16 @@ static const u16 sPikachuForms[] =
     SPECIES_PIKACHU_COSPLAY
 };
 
-static const struct ListMenuLabels sFurfrouListMenu[] = {
-    { COMPOUND_STRING("Heart Trim") },
-    { COMPOUND_STRING("Star Trim") },
-    { COMPOUND_STRING("Diamond Trim") },
-    { COMPOUND_STRING("Debutante Trim") },
-    { COMPOUND_STRING("Matron Trim") },
-    { COMPOUND_STRING("Dandy Trim") },
-    { COMPOUND_STRING("La Reine Trim") },
-    { COMPOUND_STRING("Kabuki Trim") },
-    { COMPOUND_STRING("Pharaoh Trim") }
+static const struct ListMenuItem sFurfrouListMenu[] = {
+    { COMPOUND_STRING("Heart Trim"),     0 },
+    { COMPOUND_STRING("Star Trim"),      1 },
+    { COMPOUND_STRING("Diamond Trim"),   2 },
+    { COMPOUND_STRING("Debutante Trim"), 3 },
+    { COMPOUND_STRING("Matron Trim"),    4 },
+    { COMPOUND_STRING("Dandy Trim"),     5 },
+    { COMPOUND_STRING("La Reine Trim"),  6 },
+    { COMPOUND_STRING("Kabuki Trim"),    7 },
+    { COMPOUND_STRING("Pharaoh Trim"),   8 }
     // No default form, if changed its trim it will only returns after 5 days
 };
 
@@ -1214,9 +1190,9 @@ static const struct FormChangeListMenuActions sFormChangeMenuLabels[] = {
     FORMS_LIST(Furfrou),
 };
 
-static u32 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const struct FieldSpecialListMenu *menuListTemplate)
+static u32 InitFieldSpecialListMenu(const struct ListMenuItem *list, const struct FieldSpecialListMenu *menuListTemplate)
 {
-    u8 width, mwidth, windowHeight;
+    u8 width, mwidth;
     u32 i, taskId = CreateTask(Task_ListMenuHandleInput, 8);
     struct Task * task = &gTasks[taskId];
     struct WindowTemplate template;
@@ -1230,20 +1206,15 @@ static u32 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const str
     task->data[8] = menuListTemplate->itemsAbove;
     task->data[5] = (task->data[0] * 2);
     
-    windowHeight = task->data[5] - 1;
-    if (task->data[5] >= 14)
+    if (sListMenuItems == NULL)
     {
-        task->data[5] -= 2;
-        --windowHeight;
+        sListMenuItems = AllocZeroed(task->data[1] * sizeof(struct ListMenuItem));
+        memcpy(sListMenuItems, list, task->data[1] * sizeof(struct ListMenuItem));
     }
-    sListMenuItems = AllocZeroed(task->data[1] * sizeof(struct ListMenuItem));
     CreateScriptListMenu();
     
     for (i = 0, mwidth = 0; i < task->data[1]; i++)
     {
-        sListMenuItems[i].label = list[i].text;
-        sListMenuItems[i].index = i;
-        
         width = GetStringWidth(2, sListMenuItems[i].label, 0);
         if (mwidth < width)
             mwidth = width;
@@ -1252,7 +1223,7 @@ static u32 InitFieldSpecialListMenu(const struct ListMenuLabels *list, const str
     if (task->data[2] + task->data[4] > 29)
         task->data[2] = 29 - task->data[4];
     
-    template = SetWindowTemplateFields(menuListTemplate->bgId, task->data[2], task->data[3], task->data[4], windowHeight, menuListTemplate->palNum, menuListTemplate->baseBlock);
+    template = SetWindowTemplateFields(menuListTemplate->bgId, task->data[2], task->data[3], task->data[4], task->data[5], menuListTemplate->palNum, menuListTemplate->baseBlock);
     task->data[13] = AddWindow(&template);
     
     if (menuListTemplate->windowTileNum == 0)
@@ -1302,7 +1273,7 @@ void ListMenu(void)
     menuList.baseBlock = MULTICHOICE_DEFAULT_BASE_BLOCK;
     menuList.palNum = 15;
     menuList.windowTileNum = 0;
-    InitFieldSpecialListMenu(sListMenuLabels[gSpecialVar_0x8000].list, &menuList);
+    InitFieldSpecialListMenu(sListMenuLabels[gSpecialVar_0x8000], &menuList);
 }
 
 u32 InitFormChangeListMenu(u32 listId)
@@ -1328,6 +1299,65 @@ u32 GetFormChangeListMenuSpecies(u32 listId)
     return sFormChangeMenuLabels[listId].forms[gSpecialVar_Result];
 }
 
+#define DYNAMIC_LISTMENU_SIZE 5
+
+void DynamicListMenu_PushElement(const u8 *text, u32 id)
+{
+    u8 *textBuffer;
+    struct ListMenuItem newItem;
+    
+    ScriptContext2_Enable();
+    
+    StringExpandPlaceholders(gStringVar4, text);
+    
+    textBuffer = Alloc(StringLength(gStringVar4) + 1);
+    StringCopy(textBuffer, gStringVar4);
+
+    newItem.label = textBuffer;
+    newItem.index = id;
+    
+    if (sListMenuItems == NULL) // First time allocating. Alloc an initial fixed amount.
+    {
+        sDynamicListMenuItemsCapacity = DYNAMIC_LISTMENU_SIZE;
+        sListMenuItems = Alloc(sizeof(struct ListMenuItem) * sDynamicListMenuItemsCapacity);
+    }
+    else if (sDynamicListMenuItemsCount >= sDynamicListMenuItemsCapacity) // Increase the allocated size by a fixed amount.
+    {
+        sDynamicListMenuItemsCapacity += DYNAMIC_LISTMENU_SIZE;
+        sListMenuItems = Realloc(sListMenuItems, sizeof(struct ListMenuItem) * sDynamicListMenuItemsCapacity);
+    }
+    sListMenuItems[sDynamicListMenuItemsCount++] = newItem;
+}
+
+static void MultichoiceDynamic_FreeElements(void)
+{
+    u32 i;
+    
+    for (i = 0; i < sDynamicListMenuItemsCount; i++)
+        Free((void *)sListMenuItems[i].label);
+    
+    sDynamicListMenuItemsCount = 0;
+    sDynamicListMenuItemsCapacity = 0;
+}
+
+void DynamicListMenu_Init(u32 x, u32 y, u32 maxShowed)
+{
+    struct FieldSpecialListMenu menuList =
+    {
+        .count = sDynamicListMenuItemsCount,
+        .bgId = 0,
+        .x = x,
+        .y = y,
+        .maxShowed = maxShowed,
+        .cursorPos = sListMenuLastScrollPosition = 0,
+        .itemsAbove = 0,
+        .baseBlock = MULTICHOICE_DEFAULT_BASE_BLOCK,
+        .palNum = 15,
+        .windowTileNum = 0,
+    };
+    InitFieldSpecialListMenu(sListMenuItems, &menuList);
+}
+
 static void CreateScriptListMenu(void)
 {
     sFieldSpecialsListMenuTemplate.items = sListMenuItems;
@@ -1339,12 +1369,12 @@ static void CreateScriptListMenu(void)
     sFieldSpecialsListMenuTemplate.header_X = 0;
     sFieldSpecialsListMenuTemplate.item_X = 8;
     sFieldSpecialsListMenuTemplate.cursor_X = 0;
-    sFieldSpecialsListMenuTemplate.upText_Y = 0;
+    sFieldSpecialsListMenuTemplate.upText_Y = 2;
     sFieldSpecialsListMenuTemplate.cursorPal = 2;
     sFieldSpecialsListMenuTemplate.fillValue = 1;
     sFieldSpecialsListMenuTemplate.cursorShadowPal = 3;
     sFieldSpecialsListMenuTemplate.lettersSpacing = 1;
-    sFieldSpecialsListMenuTemplate.itemVerticalPadding = 0;
+    sFieldSpecialsListMenuTemplate.itemVerticalPadding = 1;
     sFieldSpecialsListMenuTemplate.scrollMultiple = 0;
     sFieldSpecialsListMenuTemplate.fontId = 2;
     sFieldSpecialsListMenuTemplate.cursorKind = 0;
@@ -1376,7 +1406,7 @@ static void Task_ListMenuHandleInput(u32 taskId)
     case -1:
         break;
     case -2:
-        gSpecialVar_Result = 0x7F;
+        gSpecialVar_Result = SCR_MENU_CANCEL;
         PlaySE(SE_SELECT);
         Task_DestroyListMenu(taskId, TRUE);
         break;
@@ -1401,7 +1431,8 @@ void Task_DestroyListMenu(u32 taskId, bool32 enableScripts)
     struct Task * task = &gTasks[taskId];
     Task_ListMenuRemoveScrollIndicatorArrowPair(taskId);
     DestroyListMenuTask(task->data[14], NULL, NULL);
-    Free(sListMenuItems);
+    MultichoiceDynamic_FreeElements();
+    FREE_AND_SET_NULL(sListMenuItems);
     ClearStdWindowAndFrameToTransparent(task->data[13], TRUE);
     FillWindowPixelBuffer(task->data[13], PIXEL_FILL(0));
     ClearWindowTilemap(task->data[13]);
@@ -1456,9 +1487,9 @@ static void Task_CreateMenuRemoveScrollIndicatorArrowPair(u32 taskId)
     if (task->data[0] != task->data[1])
     {
         template.firstX = 4 * task->data[4] + 8 * task->data[2];
-        template.firstY = 8;
-        template.secondX = 4 * task->data[4] + 8 * task->data[2];
-        template.secondY = 8 * task->data[5] + 10;
+        template.secondX = template.firstX;
+        template.firstY = 8 * task->data[3] - 2;
+        template.secondY = 8 * task->data[5] + 8 * task->data[3] + 2;
         template.fullyUpThreshold = 0;
         template.fullyDownThreshold = task->data[1] - task->data[0];
         task->data[12] = AddScrollIndicatorArrowPair(&template, &sListMenuLastScrollPosition);

@@ -24,6 +24,7 @@
 extern u8 gHeap[];
 void *Alloc(u32 size);
 void *AllocZeroed(u32 size);
+void *Realloc(void *pointer, u32 newSize);
 void Free(void *pointer);
 void InitHeap(void *pointer, u32 size);
 

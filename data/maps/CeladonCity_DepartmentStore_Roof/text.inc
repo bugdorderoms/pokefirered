@@ -80,3 +80,8 @@ CeladonCity_DepartmentStore_Roof_Text_NoMoreRoomForStuff:: @ 819608E
 CeladonCity_DepartmentStore_Roof_Text_NotThirsty:: @ 81960AE
 	.string "Not thirsty!$"
 
+FourIsland_House2_Text_ThirstyGirlDrinkOption::
+	.string "{STR_VAR_1}$"
+
+FourIsland_House2_Text_ThirstyGirlExitOption::
+	.string "Exit$"
