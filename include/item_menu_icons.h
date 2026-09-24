@@ -15,7 +15,7 @@ extern const struct CompressedSpritePalette gBagSwapSpritePalette;
 void ResetItemMenuIconState(void);
 void ItemMenuIcons_CreateInsertIndicatorBarHidden(void);
 void DestroyItemMenuIcon(u32 a0);
-void CreateItemMenuIcon(u32 itemId, u32 a0);
+u32 CreateItemMenuIcon(u32 itemId, u32 a0);
 u32 AddItemIconObject(u32 tilesTag, u32 paletteTag, u32 itemId);
 u32 AddItemIconObjectWithCustomObjectTemplate(const struct SpriteTemplate * origTemplate, u32 tilesTag, u32 paletteTag, u32 itemId);
 void DestroyItemIconObj(struct Sprite *sprite, u32 tilesTag, u32 paletteTag);

@@ -373,7 +373,7 @@ void DestroyItemIconObj(struct Sprite *sprite, u32 tilesTag, u32 paletteTag)
     DestroySpriteAndFreeMatrix(sprite);
 }
 
-void CreateItemMenuIcon(u32 itemId, u32 idx)
+u32 CreateItemMenuIcon(u32 itemId, u32 idx)
 {
     u8 * ptr = &sItemMenuIconSpriteIds[10];
     u32 spriteId;
@@ -391,6 +391,7 @@ void CreateItemMenuIcon(u32 itemId, u32 idx)
             gSprites[spriteId].y2 = 136;
         }
     }
+    return ptr[idx];
 }
 
 void DestroyItemMenuIcon(u32 idx)
