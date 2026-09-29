@@ -108,6 +108,7 @@ static void BT_Phase2BlackHole(u32 taskId);
 static void BT_Phase2BlackHolePulsate(u32 taskId);
 static void BT_Phase2Rayquaza(u32 taskId);
 static void BT_Phase2RectangularSpiral(u32 taskId);
+static void BT_Phase2Zygarde(u32 taskId);
 static void BT_Phase2JawBite(u32 taskId);
 
 static const TransitionStateFunc sBT_MainPhases[] =
@@ -150,6 +151,7 @@ static const TaskFunc sBT_Phase2Tasks[] =
     [B_TRANSITION_BLACKHOLE_PULSATE]     = BT_Phase2BlackHolePulsate,
     [B_TRANSITION_RAYQUAZA]              = BT_Phase2Rayquaza,
     [B_TRANSITION_RECTANGULAR_SPIRAL]    = BT_Phase2RectangularSpiral,
+    [B_TRANSITION_ZYGARDE]               = BT_Phase2Zygarde,
     [B_TRANSITION_JAW_BITE]              = BT_Phase2JawBite,
 };
 
@@ -4075,6 +4077,274 @@ static bool32 UpdateRectangularSpiralLine(const s16 *const *moveDataTable, struc
     return TRUE;
 }
 
+//----------------------
+// B_TRANSITION_ZYGARDE
+//----------------------
+
+static bool32 BT_Phase2Zygarde_FadeToBlack(struct Task *task);
+static bool32 BT_Phase2Zygarde_Init(struct Task *task);
+static bool32 BT_Phase2Zygarde_SpawnCells(struct Task *task);
+static bool32 BT_Phase2Zygarde_Wait(struct Task *task);
+static bool32 BT_Phase2Zygarde_GlowIn(struct Task *task);
+static bool32 BT_Phase2Zygarde_GlowOut(struct Task *task);
+static bool32 BT_Phase2Zygarde_SlideDown(struct Task *task);
+static bool32 BT_Phase2Zygarde_SlideUp(struct Task *task);
+
+static const u32 sZygardeCellsTileset[] = INCBIN_U32("graphics/battle_transitions/zygarde_cells.4bpp");
+static const u16 sZygardeCellsPalette[] = INCBIN_U16("graphics/battle_transitions/zygarde_cells.gbapal");
+
+#define HAS_NO_CELLS_AROUND        0
+#define HAS_GREENCELL_TOP_LEFT     Bit(0)
+#define HAS_WHITECELL_TOP_LEFT     Bit(1)
+#define HAS_GREENCELL_TOP_RIGHT    Bit(2)
+#define HAS_WHITECELL_TOP_RIGHT    Bit(3)
+#define HAS_GREENCELL_BOTTOM_LEFT  Bit(4)
+#define HAS_WHITECELL_BOTTOM_LEFT  Bit(5)
+#define HAS_GREENCELL_BOTTOM_RIGHT Bit(6)
+#define HAS_WHITECELL_BOTTOM_RIGHT Bit(7)
+
+#define GREEN_CELL_FLAGS (HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_TOP_RIGHT | HAS_GREENCELL_BOTTOM_LEFT | HAS_GREENCELL_BOTTOM_RIGHT)
+
+struct ZygardeCell
+{
+    u16 x:5;
+    u16 y:5;
+    u16 nextCellDelay:5;
+    u16 isWhiteCell:1;
+    u8 drawFlags;
+};
+
+static const struct ZygardeCell sZygardeCellsSpawnData[] =
+{
+    {.x =  6, .y =  4, .nextCellDelay = 15, .isWhiteCell =  TRUE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 16, .y =  8, .nextCellDelay = 14, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 30, .y = 12, .nextCellDelay = 13, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 22, .y = 20, .nextCellDelay = 11, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 26, .y = 12, .nextCellDelay = 10, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x =  6, .y = 12, .nextCellDelay = 10, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x =  8, .y = 16, .nextCellDelay =  9, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT},
+    {.x = 14, .y = 20, .nextCellDelay =  9, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x =  8, .y =  8, .nextCellDelay =  9, .isWhiteCell = FALSE, .drawFlags = HAS_WHITECELL_TOP_LEFT | HAS_GREENCELL_BOTTOM_LEFT},
+    {.x = 26, .y =  4, .nextCellDelay =  9, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x =  0, .y =  0, .nextCellDelay =  8, .isWhiteCell =  TRUE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 12, .y = 16, .nextCellDelay =  8, .isWhiteCell =  TRUE, .drawFlags = HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x =  4, .y =  0, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_WHITECELL_BOTTOM_RIGHT},
+    {.x =  4, .y = 16, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_RIGHT},
+    {.x = 18, .y = 20, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x =  4, .y =  8, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_WHITECELL_TOP_RIGHT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x = 24, .y = 16, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_RIGHT | HAS_GREENCELL_BOTTOM_LEFT},
+    {.x =  2, .y =  4, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_WHITECELL_TOP_LEFT | HAS_GREENCELL_TOP_RIGHT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x =  0, .y =  8, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_RIGHT},
+    {.x = 10, .y = 20, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_WHITECELL_TOP_RIGHT},
+    {.x = 16, .y = 16, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_BOTTOM_LEFT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x = 10, .y = 12, .nextCellDelay =  5, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_BOTTOM_LEFT | HAS_WHITECELL_BOTTOM_RIGHT},
+    {.x = 22, .y =  4, .nextCellDelay =  4, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 20, .y =  8, .nextCellDelay =  4, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_RIGHT},
+    {.x =  0, .y = 16, .nextCellDelay =  4, .isWhiteCell = FALSE, .drawFlags = HAS_NO_CELLS_AROUND},
+    {.x = 18, .y = 12, .nextCellDelay =  2, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_TOP_RIGHT | HAS_GREENCELL_BOTTOM_LEFT},
+    {.x = 14, .y = 12, .nextCellDelay =  2, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_RIGHT | HAS_WHITECELL_BOTTOM_LEFT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x = 24, .y =  8, .nextCellDelay =  2, .isWhiteCell =  TRUE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_TOP_RIGHT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x = 28, .y =  8, .nextCellDelay =  2, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_BOTTOM_LEFT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x = 18, .y =  4, .nextCellDelay =  1, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_BOTTOM_LEFT | HAS_GREENCELL_BOTTOM_RIGHT},
+    {.x =  2, .y = 20, .nextCellDelay =  1, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_TOP_RIGHT},
+    {.x = 20, .y = 16, .nextCellDelay =  0, .isWhiteCell = FALSE, .drawFlags = HAS_GREENCELL_TOP_LEFT | HAS_GREENCELL_BOTTOM_LEFT | HAS_GREENCELL_BOTTOM_RIGHT},
+};
+
+static const TransitionStateFunc sBT_Phase2ZygardeFuncs[] =
+{
+    BT_Phase2Zygarde_FadeToBlack,
+    BT_Phase2Kyogre_WaitPaletteFade,
+    BT_Phase2Zygarde_Init,
+    BT_Phase2Zygarde_SpawnCells,
+    BT_Phase2Zygarde_Wait,
+    BT_Phase2Zygarde_GlowIn,
+    BT_Phase2Zygarde_GlowOut,
+    BT_Phase2Zygarde_Wait,
+    BT_Phase2Zygarde_SlideDown,
+    BT_Phase2Zygarde_SlideUp,
+};
+
+#define tCellIndex   data[1]
+#define tDelay       data[2]
+#define tGlow        data[3]
+#define tScrollY     data[4]
+#define tScrollSpeed data[5]
+
+static void BT_Phase2Zygarde(u32 taskId)
+{
+    while (sBT_Phase2ZygardeFuncs[gTasks[taskId].tState](&gTasks[taskId]));
+}
+
+static bool32 BT_Phase2Zygarde_FadeToBlack(struct Task *task)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 1, 0, 16, RGB_BLACK);
+    ++task->tState;
+    return FALSE;
+}
+
+static bool32 BT_Phase2Zygarde_Init(struct Task *task)
+{
+    u16 *tilemapAddr, *tilesetAddr;
+
+    SetGpuReg(REG_OFFSET_BG0CNT, BGCNT_CHARBASE(2) | BGCNT_SCREENBASE(26) | BGCNT_TXT256x512);
+
+    BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
+    CpuFill16(0x0000, tilemapAddr, BG_SCREEN_SIZE);
+    CpuCopy16(sZygardeCellsTileset, tilesetAddr, sizeof(sZygardeCellsTileset));
+
+    LoadPalette(sZygardeCellsPalette, 0xF0, 0x20);
+    
+    // Starts a little offscreen so some cells can be cut off
+    REG_BG0HOFS = 16;
+    REG_BG0VOFS = task->tScrollY = 16;
+
+    task->tCellIndex = 0;
+    task->tDelay = 64;
+    task->tGlow = 0;
+    task->tScrollSpeed = 0;
+    
+    ++task->tState;
+    return FALSE;
+}
+
+#define SET_CELL_BORDER_TILE(tileY, tileX, flagsMask, tileAddr, flipMask)          \
+    do                                                                             \
+    {                                                                              \
+        u32 borderTile = baseTile + tileAddr;                                      \
+        if (drawFlags & (flagsMask))                                               \
+        {                                                                          \
+            borderTile += (drawFlags & ((flagsMask) & GREEN_CELL_FLAGS)) ? 0 : 1;  \
+            borderTile += 5 + tileAddr;                                            \
+        }                                                                          \
+        SET_TILE(tilemapAddr, tileY, tileX, borderTile | flipMask);                \
+    } while (0)
+
+static bool32 BT_Phase2Zygarde_SpawnCells(struct Task *task)
+{
+    u16 *tilemapAddr;
+    
+    if (--task->tDelay > 0)
+        return FALSE;
+    
+    if (task->tCellIndex < ARRAY_COUNT(sZygardeCellsSpawnData))
+    {
+        const struct ZygardeCell cell = sZygardeCellsSpawnData[task->tCellIndex++];
+        u32 tileX = cell.x, tileY = cell.y;
+        u32 drawFlags = cell.drawFlags;
+        u32 baseTile = cell.isWhiteCell ? 9 : 0;
+
+        // Draw cell
+        BT_GetBg0TilemapBase(&tilemapAddr);
+        
+        // row 1
+        SET_CELL_BORDER_TILE(tileY, tileX + 1, (HAS_GREENCELL_TOP_LEFT | HAS_WHITECELL_TOP_LEFT), 0, 0);
+        SET_CELL_BORDER_TILE(tileY, tileX + 2, (HAS_GREENCELL_TOP_RIGHT | HAS_WHITECELL_TOP_RIGHT), 0, 0x0400);
+        
+        // row 2
+        SET_CELL_BORDER_TILE(tileY + 1, tileX, (HAS_GREENCELL_TOP_LEFT | HAS_WHITECELL_TOP_LEFT), 1, 0);
+        SET_TILE(tilemapAddr, tileY + 1, tileX + 1, baseTile + 2);
+        SET_TILE(tilemapAddr, tileY + 1, tileX + 2, (baseTile + 2) | 0x0400);
+        SET_CELL_BORDER_TILE(tileY + 1, tileX + 3, (HAS_GREENCELL_TOP_RIGHT | HAS_WHITECELL_TOP_RIGHT), 1, 0x0400);
+        
+        // row 3
+        SET_TILE(tilemapAddr, tileY + 2, tileX,     baseTile + 3);
+        SET_TILE(tilemapAddr, tileY + 2, tileX + 1, baseTile + 4);
+        SET_TILE(tilemapAddr, tileY + 2, tileX + 2, baseTile + 4);
+        SET_TILE(tilemapAddr, tileY + 2, tileX + 3, (baseTile + 3) | 0x0400);
+
+        // row 4
+        SET_TILE(tilemapAddr, tileY + 3, tileX,     baseTile + 3);
+        SET_TILE(tilemapAddr, tileY + 3, tileX + 1, baseTile + 4);
+        SET_TILE(tilemapAddr, tileY + 3, tileX + 2, baseTile + 4);
+        SET_TILE(tilemapAddr, tileY + 3, tileX + 3, (baseTile + 3) | 0x0400);
+        
+        // row 5
+        SET_CELL_BORDER_TILE(tileY + 4, tileX, (HAS_GREENCELL_BOTTOM_LEFT | HAS_WHITECELL_BOTTOM_LEFT), 1, 0x0800);
+        SET_TILE(tilemapAddr, tileY + 4, tileX + 1, (baseTile + 2) | 0x0800);
+        SET_TILE(tilemapAddr, tileY + 4, tileX + 2, (baseTile + 2) | 0x0400 | 0x0800);
+        SET_CELL_BORDER_TILE(tileY + 4, tileX + 3, (HAS_GREENCELL_BOTTOM_RIGHT | HAS_WHITECELL_BOTTOM_RIGHT), 1, 0x0400 | 0x0800);
+        
+        // row 6
+        SET_CELL_BORDER_TILE(tileY + 5, tileX + 1, (HAS_GREENCELL_BOTTOM_LEFT | HAS_WHITECELL_BOTTOM_LEFT), 0, 0x0800);
+        SET_CELL_BORDER_TILE(tileY + 5, tileX + 2, (HAS_GREENCELL_BOTTOM_RIGHT | HAS_WHITECELL_BOTTOM_RIGHT), 0, 0x0400 | 0x0800);
+        
+        task->tDelay = cell.nextCellDelay;
+    }
+    else
+    {
+        task->tDelay = 40;
+        ++task->tState;
+    }
+    return FALSE;
+}
+
+static bool32 BT_Phase2Zygarde_Wait(struct Task *task)
+{
+    if (--task->tDelay == 0)
+        ++task->tState;
+    return FALSE;
+}
+
+static bool32 BT_Phase2Zygarde_GlowIn(struct Task *task)
+{
+    if ((++task->tDelay % 8) == 0)
+    {
+        if (++task->tGlow == 6)
+            ++task->tState;
+        
+        LoadPalette(&sZygardeCellsPalette[task->tGlow * 16], 0xF0, 0x20);
+    }
+    return FALSE;
+}
+
+static bool32 BT_Phase2Zygarde_GlowOut(struct Task *task)
+{
+    if ((++task->tDelay % 8) == 0)
+    {
+        if (--task->tGlow == 0)
+        {
+            task->tDelay = 64;
+            ++task->tState;
+        }
+        LoadPalette(&sZygardeCellsPalette[task->tGlow * 16], 0xF0, 0x20);
+    }
+    return FALSE;
+}
+
+static bool32 BT_Phase2Zygarde_SlideDown(struct Task *task)
+{
+    --task->tScrollSpeed;
+    task->tScrollY += task->tScrollSpeed;
+    
+    REG_BG0VOFS = task->tScrollY;
+    
+    if (task->tScrollSpeed == -6)
+        ++task->tState;
+    
+    return FALSE;
+}
+
+static bool32 BT_Phase2Zygarde_SlideUp(struct Task *task)
+{
+    task->tScrollSpeed++;
+    task->tScrollY += task->tScrollSpeed;
+    
+    REG_BG0VOFS = task->tScrollY;
+    
+    if (task->tScrollY >= DISPLAY_HEIGHT + 16)
+    {
+        BT_BlendPalettesToBlack();
+        BT_DestroyPhase2AnimTask(task);
+    }
+    return FALSE;
+}
+
+#undef tCellIndex
+#undef tDelay
+#undef tGlow
+#undef tScrollY
+#undef tScrollSpeed
+
 //-----------------------
 // B_TRANSITION_JAW_BITE
 //-----------------------
@@ -4084,7 +4354,6 @@ static bool32 BT_Phase2JawBite_Main(struct Task *task);
 static bool32 BT_Phase2JawBite_Shake(struct Task *task);
 
 static const u32 sJawBiteTileset[] = INCBIN_U32("graphics/battle_transitions/jaw_bite.4bpp");
-static const u16 sJawBitePalette[] = INCBIN_U16("graphics/battle_transitions/jaw_bite.gbapal");
 
 static const s8 sBiteScreenShakeOffsets[][2] = {
     { 7,  4},
@@ -4125,7 +4394,7 @@ static bool32 BT_Phase2JawBite_Init(struct Task *task)
     CpuFill16(0x0000, tilemapAddr, 0x800);
     CpuCopy16(sJawBiteTileset, tilesetAddr, sizeof(sJawBiteTileset));
     
-    LoadPalette(sJawBitePalette, 0xF0, 0x20);
+    LoadPalette(sZygardeCellsPalette, 0xF0, 0x20);
     
     task->tFrameCounter = 0;
     task->tPosLeft = LEFT_JAW_INITIAL_POS;
