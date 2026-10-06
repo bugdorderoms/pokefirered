@@ -9387,10 +9387,15 @@ static void atkF2_displaydexinfo(void)
             }
             break;
         case 3:
-            InitBattleBgsVideo();
-            LoadBattleTextboxAndBackground();
-            gBattle_BG3_X = 0x100;
-            ++gBattleCommunication[MULTIUSE_STATE];
+            if (gSaveBlock2Ptr->optionsSkipPkmnNickname && CalculatePlayerPartyCount() < PARTY_SIZE)
+                gBattleCommunication[MULTIUSE_STATE] = 5;
+            else
+            {
+                InitBattleBgsVideo();
+                LoadBattleTextboxAndBackground();
+                gBattle_BG3_X = 0x100;
+                ++gBattleCommunication[MULTIUSE_STATE];
+            }
             break;
         case 4:
             if (!IsDma3ManagerBusyWithBgCopy())
