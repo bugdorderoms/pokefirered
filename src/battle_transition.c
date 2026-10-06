@@ -7,6 +7,7 @@
 #include "battle.h"
 #include "palette.h"
 #include "trig.h"
+#include "item_menu_icons.h"
 #include "random.h"
 #include "sound.h"
 #include "decompress.h"
@@ -786,6 +787,7 @@ static void VBCB_BT_Phase2BigPokeball2(void);
 
 static const u32 sBigPokeballTileset[] = INCBIN_U32("graphics/battle_transitions/big_pokeball_tileset.4bpp");
 static const u16 sBigPokeballTilemap[] = INCBIN_U16("graphics/battle_transitions/big_pokeball_tilemap.bin");
+static const u16 sSlidingPokeballBigPokeballPalette[] = INCBIN_U16("graphics/battle_transitions/sliding_pokeball.gbapal"); // Shared by big pokeball and sliding pokeball
 
 static const TransitionStateFunc sBT_Phase2BigPokeballFuncs[] =
 {
@@ -811,7 +813,7 @@ static void BT_Phase2BigPokeball(u32 taskId)
 
 static bool32 BT_Phase2BigPokeball_Init(struct Task *task)
 {
-    BT_Phase2_InitPatternWaveTransition(task, sBigPokeballTileset, sizeof(sBigPokeballTileset), gSlidingPokeballBigPokeballPalette, TRUE);
+    BT_Phase2_InitPatternWaveTransition(task, sBigPokeballTileset, sizeof(sBigPokeballTileset), sSlidingPokeballBigPokeballPalette, TRUE);
     ++task->tState;
     return FALSE;
 }
@@ -1190,20 +1192,84 @@ static bool32 BT_Phase2Regirock_LoadTilemapAndWave(struct Task *task)
 //--------------------------------
 
 static bool32 BT_Phase2SlidingPokeballs_LoadBgGfx(struct Task *task);
-static bool32 BT_Phase2SlidingPokeballs_SetupFldeffArgs(struct Task *task);
+static bool32 BT_Phase2SlidingPokeballs_SetupSprites(struct Task *task);
 static bool32 BT_Phase2SlidingPokeballs_IsDone(struct Task *task);
+static void SpriteCB_BT_Phase2SlidingPokeballs(struct Sprite *sprite);
 
+static const u8 sSpriteImage_SlidingPokeball[] = INCBIN_U8("graphics/battle_transitions/sliding_pokeball.4bpp");
 static const u32 sSlidingPokeballTilemap[] = INCBIN_U32("graphics/battle_transitions/sliding_pokeball_tilemap.bin");
+
+static const struct SpritePalette sSpritePalette_SlidingPokeball = { .data = sSlidingPokeballBigPokeballPalette, .tag = 0x1000 };
 
 static const s16 gUnknown_83FA400[] = { -16, 256 };
 static const s16 gUnknown_83FA404[] = { 0, 16, 32, 8, 24 };
 
+static const struct OamData sSlidingPokeballsOam =
+{
+    .shape = SPRITE_SHAPE(32x32),
+    .size = SPRITE_SIZE(32x32),
+    .affineMode = ST_OAM_AFFINE_NORMAL,
+    .priority = 0
+};
+
+static const union AnimCmd sAnim_SlidingPokeball[] =
+{
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnimTable_SlidingPokeball[] =
+{
+    sAnim_SlidingPokeball
+};
+
+static const struct SpriteFrameImage sPicTable_SlidingPokeball[] =
+{
+    {
+        .data = sSpriteImage_SlidingPokeball, 
+        .size = 0x200,
+    },
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_SlidingPokeball1[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, -4, 1),
+    AFFINEANIMCMD_JUMP(0),
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_SlidingPokeball2[] =
+{
+    AFFINEANIMCMD_FRAME(0, 0, 4, 1),
+    AFFINEANIMCMD_JUMP(0),
+};
+
+static const union AffineAnimCmd *const sSpriteAffineAnimTable_SlidingPokeball[] =
+{
+    sSpriteAffineAnim_SlidingPokeball1,
+    sSpriteAffineAnim_SlidingPokeball2,
+};
+
+static const struct SpriteTemplate sSpriteTemplate_SlidingPokeball =
+{
+    .tileTag = SPRITE_INVALID_TAG,
+    .paletteTag = 0x1000,
+    .oam = &sSlidingPokeballsOam,
+    .anims = sAnimTable_SlidingPokeball,
+    .images = sPicTable_SlidingPokeball,
+    .affineAnims = sSpriteAffineAnimTable_SlidingPokeball,
+    .callback = SpriteCB_BT_Phase2SlidingPokeballs,
+};
+
 static const TransitionStateFunc sBT_Phase2SlidingPokeballsFuncs[] =
 {
     BT_Phase2SlidingPokeballs_LoadBgGfx,
-    BT_Phase2SlidingPokeballs_SetupFldeffArgs,
+    BT_Phase2SlidingPokeballs_SetupSprites,
     BT_Phase2SlidingPokeballs_IsDone,
 };
+
+#define spMovementDir  data[0]
+#define spInitialDelay data[1]
+#define spCurrentPosX  data[2]
 
 static void BT_Phase2SlidingPokeballs(u32 taskId)
 {
@@ -1213,34 +1279,39 @@ static void BT_Phase2SlidingPokeballs(u32 taskId)
 static bool32 BT_Phase2SlidingPokeballs_LoadBgGfx(struct Task *task)
 {
     u16 *tilemapAddr, *tilesetAddr;
+    
+    BT_InitCtrlBlk();
 
     BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
     CpuCopy16(sSlidingPokeballTilemap, tilesetAddr, 0x40);
     CpuFill32(0, tilemapAddr, 0x800);
-    LoadPalette(gSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    LoadPalette(sSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    
+    sTransitionStructPtr->counter = 5;
+    
     ++task->tState;
     return FALSE;
 }
 
-static bool32 BT_Phase2SlidingPokeballs_SetupFldeffArgs(struct Task *task)
+static bool32 BT_Phase2SlidingPokeballs_SetupSprites(struct Task *task)
 {
-    u32 i;
-    s16 rand;
-    s16 arr0[ARRAY_COUNT(gUnknown_83FA400)];
-    s16 arr1[ARRAY_COUNT(gUnknown_83FA404)];
-
-    memcpy(arr0, gUnknown_83FA400, sizeof(gUnknown_83FA400));
-    memcpy(arr1, gUnknown_83FA404, sizeof(gUnknown_83FA404));
+    u32 i, rand;
+    
+    LoadSpritePalette(&sSpritePalette_SlidingPokeball);
     
     rand = Random() % 2;
     
-    for (i = 0; i <= 4; ++i, rand ^= 1)
+    for (i = 0; i < sTransitionStructPtr->counter; ++i)
     {
-        gFieldEffectArguments[0] = arr0[rand];      // x
-        gFieldEffectArguments[1] = (i * 32) + 16;   // y
-        gFieldEffectArguments[2] = rand;
-        gFieldEffectArguments[3] = arr1[i];
-        FieldEffectStart(FLDEFF_POKEBALL);
+        struct Sprite *sprite = &gSprites[CreateSpriteAtEnd(&sSpriteTemplate_SlidingPokeball, gUnknown_83FA400[rand], (i * 32) + 16, 0)];
+        
+        sprite->spMovementDir = rand == 0 ? 8 : -8;
+        sprite->spInitialDelay = gUnknown_83FA404[i];
+        sprite->spCurrentPosX = -1;
+        
+        StartSpriteAffineAnim(sprite, rand);
+        
+        rand ^= 1;
     }
     ++task->tState;
     return FALSE;
@@ -1248,13 +1319,52 @@ static bool32 BT_Phase2SlidingPokeballs_SetupFldeffArgs(struct Task *task)
 
 static bool32 BT_Phase2SlidingPokeballs_IsDone(struct Task *task)
 {
-    if (!FieldEffectActiveListContains(FLDEFF_POKEBALL))
+    if (sTransitionStructPtr->counter == 0)
     {
         BT_BlendPalettesToBlack();
         BT_DestroyPhase2AnimTask(task);
     }
     return FALSE;
 }
+
+static void SpriteCB_BT_Phase2SlidingPokeballs(struct Sprite *sprite)
+{
+    if (sprite->spInitialDelay)
+        --sprite->spInitialDelay;
+    else
+    {
+        if ((u16)sprite->x <= DISPLAY_WIDTH)
+        {
+            s16 posX = sprite->x >> 3;
+            s16 posY = sprite->y >> 3;
+
+            if (posX != sprite->spCurrentPosX)
+            {
+                u16 *tilemapAddr;
+
+                sprite->spCurrentPosX = posX;
+                
+                BT_GetBg0TilemapBase(&tilemapAddr);
+                
+                SET_TILE(tilemapAddr, posY - 2, posX, 1);
+                SET_TILE(tilemapAddr, posY - 1, posX, 1);
+                SET_TILE(tilemapAddr, posY - 0, posX, 1);
+                SET_TILE(tilemapAddr, posY + 1, posX, 1);
+            }
+        }
+        sprite->x += sprite->spMovementDir;
+        
+        if (sprite->x < -15 || sprite->x > DISPLAY_WIDTH + 15)
+        {
+            DestroySpriteAndFreeResources(sprite);
+            sTransitionStructPtr->counter--;
+        }
+    }
+}
+
+#undef spMovementDir
+#undef spInitialDelay
+#undef spCurrentPosX
 
 //----------------------------------
 // B_TRANSITION_CLOCKWISE_BLACKFADE
@@ -1876,7 +1986,7 @@ static bool32 BT_Phase2WhiteFadeInStripes_IsWhiteFadeDone(struct Task *task)
     
     if (sTransitionStructPtr->counter >= NUM_WHITE_BARS)
     {
-        BlendPalettes(PALETTES_ALL, 0x10, RGB_WHITE);
+        BlendPalettes(PALETTES_ALL, 0x10, RGB_WHITE | RGB_ALPHA);
         ++task->tState;
     }
     return FALSE;
@@ -2037,7 +2147,7 @@ static bool32 BT_Phase2GridSquares_LoadGfx(struct Task *task)
     CpuCopy16(sGridSquareTileset, tilesetAddr, 0x20);
     CpuFill16(0xF000, tilemapAddr, 0x800);
     
-    LoadPalette(gSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    LoadPalette(sSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
     
     ++task->tState;
     return FALSE;
@@ -2577,7 +2687,7 @@ static bool32 BT_Phase2Mugshot_ExpandWhiteBand(struct Task *task)
 static bool32 BT_Phase2Mugshot_StartBlackFade(struct Task *task)
 {
     sTransitionStructPtr->vblankDma = FALSE;
-    BlendPalettes(PALETTES_ALL, 0x10, RGB_WHITE);
+    BlendPalettes(PALETTES_ALL, 0x10, RGB_WHITE | RGB_ALPHA);
     sTransitionStructPtr->bldCnt = BLDCNT_TGT1_BG0 | BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN;
     task->tCounter = 0;
     ++task->tState;
@@ -2598,15 +2708,19 @@ static bool32 BT_Phase2Mugshot_WaitForBlackFade(struct Task *task)
     return FALSE;
 }
 
-static u32 CreateTrainerSprite(u32 trainerSpriteID, s16 x, s16 y, u32 subpriority)
+static u32 CreateTrainerSprite(u32 trainerSpriteID, s16 x, s16 y, u32 subpriority, u32 paletteTag)
 {
     struct SpriteTemplate spriteTemplate;
+    struct CompressedSpritePalette spritePalette = {
+        .data = gTrainerFrontPicTable[trainerSpriteID].palette.data,
+        .tag = paletteTag
+    };
     
-    LoadCompressedSpritePalette(&gTrainerFrontPicTable[trainerSpriteID].palette);
+    LoadCompressedSpritePalette(&spritePalette);
     LoadCompressedSpriteSheet(&gTrainerFrontPicTable[trainerSpriteID].pic);
     
     spriteTemplate.tileTag = gTrainerFrontPicTable[trainerSpriteID].pic.tag;
-    spriteTemplate.paletteTag = gTrainerFrontPicTable[trainerSpriteID].palette.tag;
+    spriteTemplate.paletteTag = paletteTag;
     spriteTemplate.oam = &sMugShotOamAttributes;
     spriteTemplate.anims = gDummySpriteAnimTable;
     spriteTemplate.images = NULL;
@@ -2622,10 +2736,8 @@ static void BT_Phase2Mugshots_CreateSprites(struct Task *task)
     s16 opponentRotationScales;
     u32 trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
 
-    gReservedSpritePaletteCount = 10;
-    task->tOpponentSpriteId = CreateTrainerSprite(trainerPicId, gTrainerFrontPicTable[trainerPicId].mugshotCoords.x - 32, gTrainerFrontPicTable[trainerPicId].mugshotCoords.y + 42, 0);
-    task->tPlayerSpriteId = CreateTrainerSprite(PlayerGenderToFrontTrainerPicId_Debug(gSaveBlock2Ptr->playerGender, TRUE), 272, 106, 0);
-    gReservedSpritePaletteCount = 12;
+    task->tOpponentSpriteId = CreateTrainerSprite(trainerPicId, gTrainerFrontPicTable[trainerPicId].mugshotCoords.x - 32, gTrainerFrontPicTable[trainerPicId].mugshotCoords.y + 42, 0, ITEMICON_TAG);
+    task->tPlayerSpriteId = CreateTrainerSprite(PlayerGenderToFrontTrainerPicId_Debug(gSaveBlock2Ptr->playerGender, TRUE), 272, 106, 0, CURSOR_TAG);
     
     opponentSprite = &gSprites[task->tOpponentSpriteId];
     playerSprite = &gSprites[task->tPlayerSpriteId];
@@ -3933,7 +4045,7 @@ static bool32 BT_Phase2RectangularSpiral_Init(struct Task *task)
     CpuCopy16(sGridSquareTileset, tilesetAddr, 0x20);
     CpuCopy16(&sGridSquareTileset[0x70], &tilesetAddr[0x20], 0x20);
     
-    LoadPalette(gSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
+    LoadPalette(sSlidingPokeballBigPokeballPalette, 0xF0, 0x20);
     
     task->data[3] = 1;
     

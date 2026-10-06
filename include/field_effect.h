@@ -36,6 +36,5 @@ void StartAshFieldEffect(s16, s16, u32, s16);
 
 extern u16 gReflectionPaletteBuffer[16];
 extern const struct SpriteTemplate gSpriteTemplate_TallGrass;
-extern const u16 gSlidingPokeballBigPokeballPalette[];
 
 #endif //GUARD_FIELD_EFFECTS_H

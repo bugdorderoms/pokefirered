@@ -49,7 +49,7 @@
 #define FLDEFF_PHOTO_FLASH               45
 #define FLDEFF_X_ICON                    46
 #define FLDEFF_CAVE_DUST                 47
-#define FLDEFF_POKEBALL                  48
+#define FLDEFF_SNOW_FOOTPRINTS           48
 #define FLDEFF_POP_OUT_OF_ASH            49
 #define FLDEFF_LAVARIDGE_GYM_WARP        50 // For the ash puff effect when warping off the B1F ash tiles
 #define FLDEFF_SWEET_SCENT               51
@@ -59,15 +59,14 @@
 #define FLDEFF_CUT_GRASS                 55
 #define FLDEFF_FIELD_MOVE_SHOW_MON_INIT  56
 #define FLDEFF_HALL_OF_FAME_RECORD       57
-#define FLDEFF_SNOW_FOOTPRINTS           58
-#define FLDEFF_COUNT                     59
+#define FLDEFF_COUNT                     58
 
 #define FLDEFF_PAL_TAG_CUT_GRASS          0x1000
 #define FLDEFF_PAL_TAG_GENERAL_0          0x1004
 #define FLDEFF_PAL_TAG_GENERAL_1          0x1005
 #define FLDEFF_PAL_TAG_GENERAL_2          0x1006
 #define FLDEFF_PAL_TAG_POKECENTER_MONITOR 0x1007
-#define FLDEFF_PAL_TAG_SLIDING_POKEBALL   0x1009
+#define FLDEFF_PAL_TAG_UNUSED             0x1009
 #define FLDEFF_PAL_TAG_HALLOFFAME_MONITOR 0x1010
 #define FLDEFF_PAL_TAG_ASH                0x100D
 #define FLDEFF_PAL_TAG_SMALL_SPARKLE      0x100F

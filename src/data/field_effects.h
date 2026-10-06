@@ -43,7 +43,6 @@ static u32 FldEff_UseDive(void);
 static u32 FldEff_PhotoFlash(void);
 static u32 FldEff_XIcon(void);
 static u32 FldEff_CaveDust(void);
-static u32 FldEff_Pokeball(void);
 static u32 FldEff_PopOutOfAsh(void);
 static u32 FldEff_LavaridgeGymWarp(void);
 static u32 FldEff_Bubbles(void);
@@ -101,7 +100,6 @@ static u32 (*const sFldEffectsTable[FLDEFF_COUNT])(void) = {
     [FLDEFF_PHOTO_FLASH]               = FldEff_PhotoFlash,
     [FLDEFF_X_ICON]                    = FldEff_XIcon,
     [FLDEFF_CAVE_DUST]                 = FldEff_CaveDust,
-    [FLDEFF_POKEBALL]                  = FldEff_Pokeball,
     [FLDEFF_POP_OUT_OF_ASH]            = FldEff_PopOutOfAsh,
     [FLDEFF_LAVARIDGE_GYM_WARP]        = FldEff_LavaridgeGymWarp,
     [FLDEFF_SWEET_SCENT]               = FldEff_SweetScent,
@@ -125,13 +123,10 @@ static const u16 sUnknown_83CAFD0[] = INCBIN_U16("graphics/field_effects/unk_83C
 static const u16 sPokeballGfx[] = INCBIN_U16("graphics/field_effects/pokeball.4bpp");
 static const u16 sPokeballPal[] = INCBIN_U16("graphics/field_effects/pokeball.gbapal");
 static const u16 sFldEffUnk44_Tiles[] = INCBIN_U16("graphics/field_effects/unk_83CBDB0.4bpp");
-static const u8 sSpriteImage_SlidingPokeball[] = INCBIN_U8("graphics/battle_transitions/sliding_pokeball.4bpp");
-const u16 gSlidingPokeballBigPokeballPalette[] = INCBIN_U16("graphics/battle_transitions/sliding_pokeball.gbapal"); // Shared by big pokeball and sliding pokeball
 static const u16 sUnknown_83CB3F0[] = INCBIN_U16("graphics/field_effects/unk_83CB3F0.4bpp");
 static const u16 sUnknown_83CB3D0[] = INCBIN_U16("graphics/field_effects/unk_83CB3D0.gbapal");
 
 const struct SpritePalette gSpritePalette_GeneralFieldEffect0 = { .data = gFieldEffectObjectPalette0, .tag = FLDEFF_PAL_TAG_GENERAL_0 };
 const struct SpritePalette gSpritePalette_GeneralFieldEffect1 = { .data = gFieldEffectObjectPalette1, .tag = FLDEFF_PAL_TAG_GENERAL_1 };
 const struct SpritePalette gSpritePalette_GeneralFieldEffect2 = { .data = gFieldEffectObjectPalette2, .tag = FLDEFF_PAL_TAG_GENERAL_2 };
-const struct SpritePalette gSpritePalette_SlidingPokeball = { .data = gSlidingPokeballBigPokeballPalette, .tag = FLDEFF_PAL_TAG_SLIDING_POKEBALL };
 const struct SpritePalette gSpritePalette_Ash = { .data = gFieldEffectPal_Ash, .tag = FLDEFF_PAL_TAG_ASH };
