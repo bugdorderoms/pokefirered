@@ -168,7 +168,7 @@ void BlendPalette(u32 palOffset, u32 numEntries, u32 coeff, u32 blendColor)
         gPlttBufferFaded[index] = RGBA((r + (((rBlend - r) * coeff) >> 4)),
                                        (g + (((gBlend - g) * coeff) >> 4)),
                                        (b + (((bBlend - b) * coeff) >> 4)),
-                                       IS_ALPHA(color));
+                                       IS_ALPHA(color) | IS_ALPHA(blendColor));
     }
 }
 

@@ -110,6 +110,7 @@ static void BT_Phase2Rayquaza(u32 taskId);
 static void BT_Phase2RectangularSpiral(u32 taskId);
 static void BT_Phase2Zygarde(u32 taskId);
 static void BT_Phase2JawBite(u32 taskId);
+static void BT_Phase2Regigigas(u32 taskId);
 
 static const TransitionStateFunc sBT_MainPhases[] =
 {
@@ -153,6 +154,7 @@ static const TaskFunc sBT_Phase2Tasks[] =
     [B_TRANSITION_RECTANGULAR_SPIRAL]    = BT_Phase2RectangularSpiral,
     [B_TRANSITION_ZYGARDE]               = BT_Phase2Zygarde,
     [B_TRANSITION_JAW_BITE]              = BT_Phase2JawBite,
+    [B_TRANSITION_REGIGIGAS]             = BT_Phase2Regigigas,
 };
 
 ////////////////////////
@@ -3731,7 +3733,7 @@ static bool32 BT_Phase2Rayquaza_PaletteFlash(struct Task *task)
 {
     if (task->tTimer % 4 == 0)
     {
-        u16 value = task->tTimer / 4;
+        u32 value = task->tTimer / 4;
         LoadPalette(&sRayquazaPalette[(value + 5) * 16], 0xF0, 0x20);
     }
     
@@ -3776,7 +3778,7 @@ static bool32 BT_Phase2Rayquaza_TriRing(struct Task *task)
 {
     if (task->tTimer % 3 == 0)
     {
-        u16 value = task->tTimer / 3;
+        u32 value = task->tTimer / 3;
         LoadPalette(&sRayquazaPalette[(value + 0) * 16], 0xF0, 0x20);
     }
     
@@ -4506,3 +4508,206 @@ static bool32 BT_Phase2JawBite_Shake(struct Task *task)
 #undef tFrameCounter
 #undef tPosLeft
 #undef tPosRight
+
+//------------------------
+// B_TRANSITION_REGIGIGAS
+//------------------------
+
+static bool32 BT_Phase2Regigigas_FadeToWhite(struct Task *task);
+static bool32 BT_Phase2Regigigas_Init(struct Task *task);
+static bool32 BT_Phase2Regigigas_InitialDelay(struct Task *task);
+static bool32 BT_Phase2Regigigas_Dots(struct Task *task);
+static bool32 BT_Phase2Regigigas_BlackLines(struct Task *task);
+static bool32 BT_Phase2Regigigas_Blink(struct Task *task);
+static void BT_RegigigasDots_CyclePalette(u16 *cycleIndex);
+static void HBCB_BT_Phase2Regigigas(void);
+
+static const u32 sRegigigasTileset[] = INCBIN_U32("graphics/battle_transitions/regigigas.4bpp");
+static const u32 sRegigigasTilemap[] = INCBIN_U32("graphics/battle_transitions/regigigas.bin");
+static const u16 sRegigigasBlackLinesPalette[] = INCBIN_U16("graphics/battle_transitions/regigigas_blacklines.gbapal");
+static const u16 sRegigigasDotsPalette[] = INCBIN_U16("graphics/battle_transitions/regigigas_dots.gbapal");
+
+struct RegigigasDot
+{
+    u8 x;
+    u8 y;
+    u16 tileIndices[4];
+};
+
+static const struct RegigigasDot sRegigigasDotsMap[7] =
+{
+    [0] = {.x = 14, .y = 18, .tileIndices = {24, 25, 32, 33}},
+    [1] = {.x = 14, .y = 14, .tileIndices = {1, 2, 3, 4}},
+    [2] = {.x = 14, .y = 11, .tileIndices = {24, 25, 32, 33}},
+    [3] = {.x = 14, .y =  7, .tileIndices = {1, 2, 3, 4}},
+    [4] = {.x = 10, .y =  4, .tileIndices = {5, 6, 9, 10}},
+    [5] = {.x = 18, .y =  4, .tileIndices = {7, 8, 11, 9 | 0x0400}},
+    [6] = {.x = 14, .y =  0, .tileIndices = {1, 2, 3, 4}},
+};
+
+static const TransitionStateFunc sBT_Phase2RegigigasFuncs[] =
+{
+    BT_Phase2Regigigas_FadeToWhite,
+    BT_Phase2Kyogre_WaitPaletteFade,
+    BT_Phase2Regigigas_Init,
+    BT_Phase2Regigigas_InitialDelay,
+    BT_Phase2Regigigas_Dots,
+    BT_Phase2Regigigas_BlackLines,
+    BT_Phase2Regigigas_Blink,
+};
+
+#define tTimer          data[1]
+#define tCurrentDot     data[2]
+#define tDotCycleIndex  data[3]
+#define tBlackLineCycle data[4]
+
+static void BT_Phase2Regigigas(u32 taskId)
+{
+    while (sBT_Phase2RegigigasFuncs[gTasks[taskId].tState](&gTasks[taskId]));
+}
+
+static bool32 BT_Phase2Regigigas_FadeToWhite(struct Task *task)
+{
+    BeginNormalPaletteFade(PALETTES_ALL, 1, 0, 16, RGB_WHITE | RGB_ALPHA);
+    ++task->tState;
+    return FALSE;
+}
+
+static bool32 BT_Phase2Regigigas_Init(struct Task *task)
+{
+    u32 i;
+    u16 *tilemapAddr, *tilesetAddr;
+    
+    ScanlineEffect_Clear();
+    
+    SetGpuReg(REG_OFFSET_BG0CNT, BGCNT_CHARBASE(2) | BGCNT_SCREENBASE(26) | BGCNT_TXT256x256);
+    
+    BT_GetBg0TilemapAndTilesetBase(&tilemapAddr, &tilesetAddr);
+    CpuFill16(0, tilemapAddr, BG_SCREEN_SIZE);
+    CpuCopy16(sRegigigasTilemap, tilemapAddr, sizeof(sRegigigasTilemap));
+    CpuCopy16(sRegigigasTileset, tilesetAddr, sizeof(sRegigigasTileset));
+    
+    LoadPalette(&sRegigigasBlackLinesPalette[0xC3], 0xF0, 0x1A);
+    LoadPalette(sRegigigasDotsPalette, 0xFD, 0x6);
+
+    task->tTimer = 40;
+    
+    ++task->tState;
+    return FALSE;
+}
+
+static bool32 BT_Phase2Regigigas_InitialDelay(struct Task *task)
+{
+    if (--task->tTimer == 0)
+        ++task->tState;
+    return FALSE;
+}
+
+static bool32 BT_Phase2Regigigas_Dots(struct Task *task)
+{
+    // Spawn a new dot every 16 frames
+    if (task->tTimer <= 16 * ARRAY_COUNT(sRegigigasDotsMap))
+    {
+        if ((task->tTimer % 16) == 0)
+        {
+            u32 i;
+            u16 *tilemapAddr;
+            u16 tileIndices[4];
+            u32 x = sRegigigasDotsMap[task->tCurrentDot].x, y = sRegigigasDotsMap[task->tCurrentDot].y;
+            
+            memcpy(tileIndices, sRegigigasDotsMap[task->tCurrentDot].tileIndices, sizeof(tileIndices));
+
+            BT_GetBg0TilemapBase(&tilemapAddr);
+            
+            for (i = 0; i < 4; i++)
+                SET_TILE(tilemapAddr, y + (i / 2), x + (i % 2), tileIndices[i]);
+            
+            task->tCurrentDot++;
+        }
+    }
+    ++task->tState;
+    return TRUE;
+}
+
+static bool32 BT_Phase2Regigigas_BlackLines(struct Task *task)
+{
+    // Advance black lines every 8 frames, 17 is the number of palette cycles it takes to finish.
+    if (task->tTimer < 8 * 17)
+    {
+        if ((task->tTimer % 8) == 0)
+        {
+            u32 value = task->tTimer / 8;
+            LoadPalette(&sRegigigasBlackLinesPalette[value * 13], 0xF0, 0x1A);
+        }
+        ++task->tTimer;
+        --task->tState;
+    }
+    else
+    {
+        SetHBlankCallback(HBCB_BT_Phase2Regigigas);
+        EnableInterrupts(INTR_FLAG_HBLANK);
+        
+        task->tTimer = 0;
+        ++task->tState;
+    }
+    return FALSE;
+}
+
+static bool32 BT_Phase2Regigigas_Blink(struct Task *task)
+{
+    if (task->tTimer <= 10 * 5) // blink dots 5 times
+    {
+        // Blink dots colors every 10 frames
+        if ((task->tTimer % 10) == 0)
+            BT_RegigigasDots_CyclePalette(&task->tDotCycleIndex);
+        
+        // Blink black lines every 16 frames
+        if ((task->tTimer % 16) == 0)
+        {
+            task->tBlackLineCycle ^= 1;
+            LoadPalette(&sRegigigasBlackLinesPalette[0xD0 + (task->tBlackLineCycle * 13)], 0xF0, 0x1A);
+        }
+        task->tTimer++;
+    }
+    else
+    {
+        SetHBlankCallback(NULL);
+        BT_BlendPalettesToBlack();
+        BT_DestroyPhase2AnimTask(task);
+    }
+    return FALSE;
+}
+
+static void BT_RegigigasDots_CyclePalette(u16 *cycleIndex)
+{
+    u32 i, j;
+    
+    memset(gScanlineEffectRegBuffers[0], 0, DISPLAY_HEIGHT);
+    
+    for (i = 0; i < ARRAY_COUNT(sRegigigasDotsMap); i++)
+    {
+        u32 top = sRegigigasDotsMap[i].y * 8;
+        u32 bottom = top + 16;
+        
+        for (j = top; j <= bottom; j++)
+            gScanlineEffectRegBuffers[0][j] = *cycleIndex * 3;
+        
+        if (++*cycleIndex == 4) // The total number of colors a dot can change to
+            *cycleIndex = 0;
+    }
+}
+
+static void HBCB_BT_Phase2Regigigas(void)
+{
+    u32 whichPalette = gScanlineEffectRegBuffers[0][REG_VCOUNT];
+    vu16 *dest = (vu16 *)(BG_PLTT + 0x1FA);
+    
+    dest[0] = sRegigigasDotsPalette[whichPalette];
+    dest[1] = sRegigigasDotsPalette[whichPalette + 1];
+    dest[2] = sRegigigasDotsPalette[whichPalette + 2];
+}
+
+#undef tTimer
+#undef tCurrentDot
+#undef tDotCycleIndex
+#undef tBlackLineCycle
