@@ -3786,7 +3786,7 @@ static bool32 BT_Phase2Rayquaza_SetBlack(struct Task *task);
 static bool32 BT_Phase2Rayquaza_TriRing(struct Task *task);
 static void VBCB_BT_Phase2Rayquaza(void);
 
-static const u32 sRayquazaTileset[] = INCBIN_U32("graphics/battle_transitions/rayquaza.4bpp");
+static const u32 sRayquazaTileset[] = INCGFX_U32("graphics/battle_transitions/rayquaza", ".4bpp", "-num_tiles 938");
 static const u32 sRayquazaTilemap[] = INCBIN_U32("graphics/battle_transitions/rayquaza.bin");
 static const u16 sRayquazaPalette[] = INCBIN_U16("graphics/battle_transitions/rayquaza.gbapal");
 

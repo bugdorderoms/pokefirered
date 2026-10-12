@@ -656,7 +656,7 @@ static const u16 sBgPal_10[] = INCBIN_U16("graphics/slot_machine/unk_8465950.gba
 static const u16 sBgPal_20[] = INCBIN_U16("graphics/slot_machine/unk_8465970.gbapal");
 static const u16 sBgPal_30[] = INCBIN_U16("graphics/slot_machine/unk_8465990.gbapal");
 static const u16 sBgPal_40[] = INCBIN_U16("graphics/slot_machine/unk_84659b0.gbapal");
-static const u32 sBg2Tiles_00[] = INCBIN_U32("graphics/slot_machine/unk_84659d0.4bpp.lz");
+static const u32 sBg2Tiles_00[] = INCGFX_U32("graphics/slot_machine/unk_84659d0", ".4bpp.lz", "-num_tiles 138");
 static const u32 sBg2Map[] = INCBIN_U32("graphics/slot_machine/unk_84661d4.bin.lz");
 static const u16 sBgPal_50[] = INCBIN_U16("graphics/slot_machine/unk_84664bc.gbapal");
 static const u16 sBgPal_VictoryFlash[] = INCBIN_U16("graphics/slot_machine/unk_84664dc.gbapal","graphics/slot_machine/unk_84664fc.gbapal", "graphics/slot_machine/unk_846651c.gbapal");
@@ -676,7 +676,7 @@ static const u16 sBgPal_70[] = INCBIN_U16("graphics/slot_machine/unk_84665c0.gba
 static const u16 sBgPal_80[] = INCBIN_U16("graphics/slot_machine/unk_84665e0.gbapal");
 static const u16 sBgPal_90[] = INCBIN_U16("graphics/slot_machine/unk_8466600.gbapal");
 #if defined(FIRERED)
-static const u32 sBg1Tiles[] = INCBIN_U32("graphics/slot_machine/unk_8466620.4bpp.lz");
+static const u32 sBg1Tiles[] = INCGFX_U32("graphics/slot_machine/unk_8466620", ".4bpp.lz", "-num_tiles 66");
 static const u32 sBg1Map[] = INCBIN_U32("graphics/slot_machine/unk_8466998.bin.lz");
 #elif defined(LEAFGREEN)
 static const u32 sBg1Tiles[] = INCBIN_U32("graphics/slot_machine/unk_lg_8465f00.4bpp.lz");

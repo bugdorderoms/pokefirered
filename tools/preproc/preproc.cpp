@@ -20,6 +20,7 @@
 
 #include <string>
 #include <stack>
+#include <unistd.h>
 #include "preproc.h"
 #include "asm_file.h"
 #include "c_file.h"
@@ -103,9 +104,9 @@ void PreprocAsmFile(std::string filename)
     }
 }
 
-void PreprocCFile(std::string filename)
+void PreprocCFile(std::string filename, const char * graphicsRoot)
 {
-    CFile cFile(filename);
+    CFile cFile(filename, graphicsRoot);
     cFile.Preproc();
 }
 
@@ -130,25 +131,51 @@ char* GetFileExtension(char* filename)
     return extension;
 }
 
+static void PrintUsage(const char *program)
+{
+	std::fprintf(stderr, "Usage: %s [-g PATH] SRC_FILE CHARMAP_FILE\nwhere -g specifies the root for INCGFX", program);
+}
+
 int main(int argc, char **argv)
 {
-    if (argc != 3)
+	int opt;
+	char *source = NULL;
+    const char *charmap = NULL;
+	const char *graphicsRoot = "";
+	
+	while ((opt = getopt(argc, argv, "g:")) != -1)
     {
-        std::fprintf(stderr, "Usage: %s SRC_FILE CHARMAP_FILE", argv[0]);
-        return 1;
+        switch (opt)
+        {
+        case 'g':
+            graphicsRoot = optarg;
+            break;
+        default:
+            PrintUsage(argv[0]);
+            return 1;
+        }
     }
+	
+	if (optind + 2 != argc)
+	{
+        PrintUsage(argv[0]);
+		return 1;
+	}
 
-    g_charmap = new Charmap(argv[2]);
+    source = argv[optind + 0];
+    charmap = argv[optind + 1];
 
-    char* extension = GetFileExtension(argv[1]);
+    g_charmap = new Charmap(charmap);
+
+    char* extension = GetFileExtension(source);
 
     if (!extension)
         FATAL_ERROR("\"%s\" has no file extension.\n", argv[1]);
 
     if ((extension[0] == 's') && extension[1] == 0)
-        PreprocAsmFile(argv[1]);
+        PreprocAsmFile(source);
     else if ((extension[0] == 'c' || extension[0] == 'i') && extension[1] == 0)
-        PreprocCFile(argv[1]);
+        PreprocCFile(source, graphicsRoot);
     else
         FATAL_ERROR("\"%s\" has an unknown file extension of \"%s\".\n", argv[1], extension);
 

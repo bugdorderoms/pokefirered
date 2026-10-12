@@ -254,7 +254,7 @@ static const struct SpriteTemplate sSpriteTemplate_RedArrowCursor =
 
 static const u16 sRedArrowPal[] = INCBIN_U16("graphics/interface/red_arrow.gbapal");
 static const u32 sRedArrowOtherGfx[] = INCBIN_U32("graphics/interface/red_arrow_other.4bpp.lz");
-static const u32 sSelectorOutlineGfx[] = INCBIN_U32("graphics/interface/selector_outline.4bpp.lz");
+static const u32 sSelectorOutlineGfx[] = INCGFX_U32("graphics/interface/selector_outline", ".4bpp.lz", "-num_tiles 8");
 static const u32 sRedArrowGfx[] = INCBIN_U32("graphics/interface/red_arrow.4bpp.lz");
 
 #define tState data[0]

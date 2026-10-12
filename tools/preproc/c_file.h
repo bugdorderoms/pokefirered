@@ -31,7 +31,7 @@
 class CFile
 {
 public:
-    CFile(std::string filename);
+    CFile(std::string filename, const char * graphicsRootCStr);
     CFile(CFile&& other);
     CFile(const CFile&) = delete;
     ~CFile();
@@ -43,6 +43,7 @@ private:
     long m_size;
     long m_lineNum;
     std::string m_filename;
+	std::string m_graphicsRoot;
 	std::map<std::vector<unsigned char>, std::uint64_t> m_compoundStrings;
     std::string m_output;
 
@@ -54,7 +55,9 @@ private:
 	void TryConvertCompoundString();
     std::unique_ptr<unsigned char[]> ReadWholeFile(const std::string& path, int& size);
     bool CheckIdentifier(const std::string& ident);
+	std::string ReadString();
     void TryConvertIncbin();
+	void TryConvertIncgfx();
     void ReportDiagnostic(const char* type, const char* format, std::va_list args);
     void RaiseError(const char* format, ...);
     void RaiseWarning(const char* format, ...);

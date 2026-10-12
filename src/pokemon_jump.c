@@ -376,7 +376,7 @@ EWRAM_DATA static struct PokemonJumpGfx *sPokemonJumpGfx = NULL;
 static const u16 sInterface_Pal[] = INCBIN_U16("graphics/link_games/pkmnjump_pal3.gbapal");
 
 static const u16 sBg_Pal[] = INCBIN_U16("graphics/link_games/pkmnjump_bg.gbapal");
-static const u32 sBg_Gfx[] = INCBIN_U32("graphics/link_games/pkmnjump_bg.4bpp.lz");
+static const u32 sBg_Gfx[] = INCGFX_U32("graphics/link_games/pkmnjump_bg", ".4bpp.lz", "-num_tiles 63");
 static const u32 sBg_Tilemap[] = INCBIN_U32("graphics/link_games/pkmnjump_bg.bin.lz");
 
 static const u16 sVenusaur_Pal[] = INCBIN_U16("graphics/link_games/pkmnjump_venusaur.gbapal");

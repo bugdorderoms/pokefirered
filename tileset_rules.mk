@@ -6,6 +6,9 @@ $(TILESETGFXDIR)/primary/building/tiles.4bpp: %.4bpp: %.png
 $(TILESETGFXDIR)/primary/general/tiles.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -num_tiles 640
 
+$(TILESETGFXDIR)/primary/general/anim/water_current_landwatersedge/7.4bpp: %.4bpp: %.png
+	$(GFX) $< $@ -num_tiles 47
+
 $(TILESETGFXDIR)/secondary/pallet_town/tiles.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -num_tiles 76
 

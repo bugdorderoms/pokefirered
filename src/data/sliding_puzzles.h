@@ -1,7 +1,7 @@
-static const u32 sKabutoPuzzle_Gfx[] = INCBIN_U32("graphics/sliding_puzzle/puzzles/kabuto.4bpp.lz");
-static const u32 sOmanytePuzzle_Gfx[] = INCBIN_U32("graphics/sliding_puzzle/puzzles/omanyte.4bpp.lz");
-static const u32 sAerodactylPuzzle_Gfx[] = INCBIN_U32("graphics/sliding_puzzle/puzzles/aerodactyl.4bpp.lz");
-static const u32 sHoOhPuzzle_Gfx[] = INCBIN_U32("graphics/sliding_puzzle/puzzles/ho_oh.4bpp.lz");
+static const u32 sKabutoPuzzle_Gfx[] = INCGFX_U32("graphics/sliding_puzzle/puzzles/kabuto", ".4bpp.lz", "-mwidth 4 -mheight 4");
+static const u32 sOmanytePuzzle_Gfx[] = INCGFX_U32("graphics/sliding_puzzle/puzzles/omanyte", ".4bpp.lz", "-mwidth 4 -mheight 4");
+static const u32 sAerodactylPuzzle_Gfx[] = INCGFX_U32("graphics/sliding_puzzle/puzzles/aerodactyl", ".4bpp.lz", "-mwidth 4 -mheight 4");
+static const u32 sHoOhPuzzle_Gfx[] = INCGFX_U32("graphics/sliding_puzzle/puzzles/ho_oh", ".4bpp.lz", "-mwidth 4 -mheight 4");
 
 #define PUZZLE(name) {s##name##Puzzle_Gfx, 0x400 * 16, GFXTAG_TILES}
 

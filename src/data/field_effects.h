@@ -112,7 +112,7 @@ static u32 (*const sFldEffectsTable[FLDEFF_COUNT])(void) = {
     [FLDEFF_SNOW_FOOTPRINTS]           = FldEff_SnowFootprints,
 };
 
-static const u16 sGfx_Emoticons[] = INCBIN_U16("graphics/misc/emoticons.4bpp");
+static const u16 sGfx_Emoticons[] = INCGFX_U16("graphics/misc/emoticons", ".4bpp", "-mwidth 2 -mheight 2");
 static const u16 sFieldMoveStreaksTiles[] = INCBIN_U16("graphics/field_effects/unk_83CB5F0.4bpp");
 static const u16 sFieldMoveStreaksPalette[] = INCBIN_U16("graphics/field_effects/unk_83CB7F0.gbapal");
 static const u16 sFieldMoveStreaksTilemap[] = INCBIN_U16("graphics/field_effects/unk_83CB810.bin");
