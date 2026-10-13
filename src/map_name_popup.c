@@ -27,10 +27,14 @@ static const u8 sMapPopUpSecondary[] = INCBIN_U8("graphics/map_popup/secondary.4
 static const u16 sMapPopUpPalette[] = INCBIN_U16("graphics/map_popup/palette.gbapal");
 
 // Credit to RubbishKat for those sprites that i recreate here.
+static const u8 sFullMoonGfx[] = INCBIN_U8("graphics/map_popup/full_moon.4bpp");
+static const u8 sWaningGibbousMoonGfx[] = INCBIN_U8("graphics/map_popup/waning_gibbous_moon.4bpp");
+static const u8 sLastQuarterMoonGfx[] = INCBIN_U8("graphics/map_popup/last_quarter_moon.4bpp");
+static const u8 sWaningMoonGfx[] = INCBIN_U8("graphics/map_popup/waning_moon.4bpp");
 static const u8 sNewMoonGfx[] = INCBIN_U8("graphics/map_popup/new_moon.4bpp");
 static const u8 sCrescentMoonGfx[] = INCBIN_U8("graphics/map_popup/crescent_moon.4bpp");
-static const u8 sFullMoonGfx[] = INCBIN_U8("graphics/map_popup/full_moon.4bpp");
-static const u8 sWaningMoonGfx[] = INCBIN_U8("graphics/map_popup/waning_moon.4bpp");
+static const u8 sFirstQuarterMoonGfx[] = INCBIN_U8("graphics/map_popup/first_quarter_moon.4bpp");
+static const u8 sCrescentGibbousMoon[] = INCBIN_U8("graphics/map_popup/crescent_gibbous_moon.4bpp");
 
 static void Task_MapNamePopup(u32 taskId);
 static void ShowMapNamePopUpWindow(struct Task *task);
@@ -66,10 +70,14 @@ static const struct WindowTemplate sMapPopUpWindows[2] =
 
 static const u8 *const sMoonPhaseIcons[] =
 {
-    [PHASE_NEW_MOON]      = sNewMoonGfx,
-    [PHASE_CRESCENT_MOON] = sCrescentMoonGfx,
-    [PHASE_FULL_MOON]     = sFullMoonGfx,
-    [PHASE_WANING_MOON]   = sWaningMoonGfx,
+    [PHASE_FULL_MOON]             = sFullMoonGfx,
+    [PHASE_WANING_GIBBOUS_MOON]   = sWaningGibbousMoonGfx,
+    [PHASE_LAST_QUARTER_MOON]     = sLastQuarterMoonGfx,
+    [PHASE_WANING_MOON]           = sWaningMoonGfx,
+    [PHASE_NEW_MOON]              = sNewMoonGfx,
+    [PHASE_CRESCENT_MOON]         = sCrescentMoonGfx,
+    [PHASE_FIRST_QUARTER_MOON]    = sFirstQuarterMoonGfx,
+    [PHASE_CRESCENT_GIBBOUS_MOON] = sCrescentGibbousMoon
 };
 
 #define tState             data[0]

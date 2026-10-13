@@ -460,20 +460,5 @@ u32 DNSGetMoonPhase(void)
     moonPhase = julianaDate * 8 + 0.5;
     moonPhase &= 7;
     
-    switch (moonPhase)
-    {
-        case 0:
-            moonPhase = PHASE_FULL_MOON;
-            break;
-        case 1 ... 3:
-            moonPhase = PHASE_WANING_MOON;
-            break;
-        case 4:
-            moonPhase = PHASE_NEW_MOON;
-            break;
-        case 5 ... 7:
-            moonPhase = PHASE_CRESCENT_MOON;
-            break;
-    }
     return moonPhase;
 }
