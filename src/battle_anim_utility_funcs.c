@@ -51,6 +51,14 @@ static const union AffineAnimCmd sAffineAnim_DynamaxGrowthAttackAnim[] =
     AFFINEANIMCMD_END,
 };
 
+static const union AffineAnimCmd sAffineAnim_TotemGrowth[] =
+{
+    AFFINEANIMCMD_FRAME(-1, -1, 0, 64), // Increase in size over 1 second
+    AFFINEANIMCMD_FRAME(0, 0, 0, 64), // Pause for 1 second
+    AFFINEANIMCMD_FRAME(8, 8, 0, 8), // Shrink back down in 1/8 of a second
+    AFFINEANIMCMD_END,
+};
+
 // arg 0 is a bitfield.
 // Bits 0-10 result in the following palettes being selected:
 //   0: battle background palettes (BG palettes 1, 2, and 3)
@@ -839,6 +847,14 @@ void AnimTask_GetBattleTerrain(u32 taskId)
 void AnimTask_DynamaxGrowth(u32 taskId)
 {
     PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_ATTACKER), gBattleAnimArgs[0] ? sAffineAnim_DynamaxGrowthAttackAnim : sAffineAnim_DynamaxGrowth);
+    gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
+}
+
+// Animates the attacker's sprite growth during the totem boost animation.
+// No args.
+void AnimTask_TotemGrowth(u32 taskId)
+{
+    PrepareAffineAnimInTaskData(&gTasks[taskId], GetAnimBattlerSpriteId(ANIM_ATTACKER), sAffineAnim_TotemGrowth);
     gTasks[taskId].func = AnimTask_DestroyTaskAfterAffineAnimFromTaskDataEnds;
 }
 

@@ -75,6 +75,9 @@
 // If this setting is enabled, when a Pokémon calls for an ally, it will call for a species from the current map it is in if there is no ally set in its data.
 #define RANDOM_SOS_CALLS FALSE
 
+// If this setting is enabled, when a Totem Pokémon appears, it will apply an orange aura blend color to their sprite.
+#define TOTEM_ORANGE_AURA TRUE
+
 // If this setting is enabled, in a double wild battle where two natural enemies are present, the opposing Pokémon will attack each other
 // instead of the player's Pokémon. To do so, go to "src/battle_controller_opponent.c" and edit the natural enemies in "sEnemyPreySpecies" and "sNaturalEnemySpecies".
 #define DOUBLE_WILD_ATTACK_NATURAL_ENEMY TRUE

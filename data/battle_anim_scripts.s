@@ -1185,14 +1185,13 @@ gGeneralAnim_SilentFormChange::
 	clearmonbg ANIM_ATK_SIDE
 	end
 
-@ Credits: Skeli
+@ Credits: Skeli and Blackuser
 gGeneralAnim_TotemBoost::
 	loadspritegfx ANIM_TAG_FOCUS_ENERGY
 	loadspritepal ANIM_TAG_WHIP_HIT @ Green color
 	loadspritepal ANIM_TAG_SWEAT_BEAD @ Blue color
 	loadspritepal ANIM_TAG_PAW_PRINT @ Yellow color
-	monbg ANIM_ATK_SIDE
-	setalpha 12, 8
+	createvisualtask AnimTask_TotemGrowth, 2
 	playsewithpan SE_M_DRAGON_RAGE, SOUND_PAN_ATTACKER
 	createvisualtask AnimTask_BlendColorCycle, 2, F_PAL_ATTACKER, 0, 6, 0, 11, RGB_RED
 	call RainbowBuffEffect
@@ -1200,9 +1199,6 @@ gGeneralAnim_TotemBoost::
 	call RainbowBuffEffect
 	call RainbowBuffEffect
 	call RainbowBuffEffect
-	waitforvisualfinish
-	clearmonbg ANIM_ATK_SIDE
-	blendoff
 	end
 
 RainbowBuffEffect::

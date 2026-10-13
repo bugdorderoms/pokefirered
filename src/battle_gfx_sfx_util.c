@@ -418,12 +418,14 @@ static void TintBattlerSprite(u32 battlerId, u32 paletteOffset, u32 species)
         CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
     }
     
+#if TOTEM_ORANGE_AURA
     // Totem orange tint
     if (IsBattlerTotemPokemon(battlerId))
     {
         BlendPalette(paletteOffset, 16, 6, RGB(29, 16, 1));
         CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
     }
+#endif
     
     // Gimmick tint
     switch (GetActiveGimmick(battlerId))
