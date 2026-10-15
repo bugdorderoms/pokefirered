@@ -4,6 +4,7 @@
 #include "dexnav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
+#include "event_scripts.h"
 #include "evolution.h"
 #include "fieldmap.h"
 #include "field_camera.h"
@@ -11,6 +12,7 @@
 #include "field_effect.h"
 #include "field_effect_helpers.h"
 #include "field_player_avatar.h"
+#include "fldeff.h"
 #include "metatile_behavior.h"
 #include "new_menu_helpers.h"
 #include "overworld.h"
@@ -582,23 +584,28 @@ static u32 CheckMovementInputNotOnBike(u32 direction)
     if (direction == DIR_NONE)
     {
         gPlayerAvatar.runningState = NOT_MOVING;
-        return 0;
+        return BIKE_STATE_NORMAL;
     }
     else if (direction != GetPlayerMovementDirection() && gPlayerAvatar.runningState != MOVING)
     {
         gPlayerAvatar.runningState = TURN_DIRECTION;
-        return 1;
+        return BIKE_STATE_TURNING;
     }
     else
     {
         gPlayerAvatar.runningState = MOVING;
-        return 2;
+        return BIKE_STATE_SLOPE;
     }
 }
 
 static void MovePlayerNotOnBike(u32 direction, u16 heldKeys)
 {
-    sPlayerInputHandlers[CheckMovementInputNotOnBike(direction)](direction, heldKeys);
+    u32 input = CheckMovementInputNotOnBike(direction);
+    
+    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) && (heldKeys & B_BUTTON) && gPlayerAvatar.runningState == MOVING && CheckObjectGraphicsInFrontOfPlayer(OBJ_EVENT_GFX_ROCK_SMASH_ROCK))
+        ScriptContext1_SetupScript(EventScript_UseRockSmash);
+    
+    sPlayerInputHandlers[input](direction, heldKeys);
 }
 
 static void PlayerNotOnBikeNotMoving(u32 direction, u16 heldKeys)
@@ -635,10 +642,14 @@ static void PlayerNotOnBikeMoving(u32 direction, u16 heldKeys)
             gPlayerAvatar.creeping = TRUE;
             PlayerGoSlow(direction);
         }
-        else // speed 2 is fast, same speed as running
+        else
 #endif
-            PlayerGoSpeed2(direction);
-        
+        {
+            if (heldKeys & B_BUTTON)
+                PlayerGoSpeed4(direction);
+            else
+                PlayerGoSpeed2(direction); // speed 2 is fast, same speed as running
+        }
         return;
     }
 
