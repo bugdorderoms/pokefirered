@@ -2281,9 +2281,21 @@ void EnterHallOfFame(void)
         gHasHallOfFameRecords = FALSE;
         FlagSet(FLAG_SYS_GAME_CLEAR);
     }
+    
     if (GetGameStat(GAME_STAT_FIRST_HOF_PLAY_TIME) == 0)
         SetGameStat(GAME_STAT_FIRST_HOF_PLAY_TIME, (gSaveBlock2Ptr->playTimeHours << 16) | (gSaveBlock2Ptr->playTimeMinutes << 8) | gSaveBlock2Ptr->playTimeSeconds);
-
+    
+    if (!CheckBagHasItem(ITEM_AURORA_TICKET, 1))
+    {
+        AddBagItem(ITEM_AURORA_TICKET, 1);
+        FlagSet(FLAG_ENABLE_SHIP_BIRTH_ISLAND);
+    }
+    
+    if (!CheckBagHasItem(ITEM_MYSTIC_TICKET, 1))
+    {
+        AddBagItem(ITEM_MYSTIC_TICKET, 1);
+        FlagSet(FLAG_ENABLE_SHIP_NAVEL_ROCK);
+    }
     SetContinueGameWarpStatus();
     SetContinueGameWarpToHealLocation(SPAWN_PALLET_TOWN);
     SetMainCallback2(CB2_DoHallOfFameScreen);
