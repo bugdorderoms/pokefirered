@@ -1312,16 +1312,27 @@ static void TeachyTvLoadMapTilesetToBuffer(const struct Tileset *ts, u8 *dstBuff
 static void TeachyTvPushBackNewMapPalIndexArrayEntry(const struct Tileset *primaryTileset, const struct Tileset *secondaryTileset, u16 *buf1, u8 *palIndexArray, u16 mapEntry, u16 offset)
 {
     const u16 * metaTileEntryAddr;
+    u32 i, screenTileIndices[4] = {0, 1, 32, 33};
     
     if (mapEntry < NUM_METATILES_IN_PRIMARY)
         metaTileEntryAddr = &primaryTileset->metatiles[NUM_TILES_PER_METATILE * mapEntry];
     else
         metaTileEntryAddr = &secondaryTileset->metatiles[NUM_TILES_PER_METATILE * (mapEntry - NUM_METATILES_IN_PRIMARY)];
 
-    buf1[0] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, metaTileEntryAddr[0]) << 12) + 4 * offset;
-    buf1[1] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, metaTileEntryAddr[1]) << 12) + 4 * offset + 1;
-    buf1[32] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, metaTileEntryAddr[2]) << 12) + 4 * offset + 2;
-    buf1[33] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, metaTileEntryAddr[3]) << 12) + 4 * offset + 3;
+    for (i = 0; i < 4; i++)
+    {
+        u16 tile0 = metaTileEntryAddr[i];
+        u16 tile1 = metaTileEntryAddr[i + 4];
+        u16 tile2 = metaTileEntryAddr[i + 8];
+        u16 targetTile = tile0;
+
+        if ((tile2 & 0x3FF) != 0 && (tile2 & 0x3FF) != 0x3FF)
+            targetTile = tile2;
+        else if ((tile1 & 0x3FF) != 0 && (tile1 & 0x3FF) != 0x3FF)
+            targetTile = tile1;
+
+        buf1[screenTileIndices[i]] = (TeachyTvComputePalIndexArrayEntryByMetaTile(palIndexArray, targetTile) << 12) + (4 * offset) + i;
+    }
 }
 
 static void TeachyTvComputeMapTilesFromTilesetAndMetaTiles(const u16 *metaTilesArray, u8 *blockBuf, u8 *tileset)
